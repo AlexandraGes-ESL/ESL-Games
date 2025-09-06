@@ -1,0 +1,1021 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retro Verb Casino</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Scanlines эффект */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Основной контейнер */
+.casino-container {
+    background: rgba(15, 12, 41, 0.95);
+    border: 3px solid #00ffff;
+    border-radius: 20px;
+    padding: 20px;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 
+        0 0 50px rgba(0, 255, 255, 0.5),
+        inset 0 0 50px rgba(0, 255, 255, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+/* Неоновый заголовок */
+.neon-title {
+    text-align: center;
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-shadow: 
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        0 0 30px #ff00ff;
+    animation: neon-flicker 2s infinite alternate;
+}
+
+@keyframes neon-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* Табло счета */
+.score-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #ff00ff;
+}
+
+.score-item {
+    text-align: center;
+}
+
+.score-label {
+    color: #00ffff;
+    font-size: 8px;
+    margin-bottom: 5px;
+}
+
+.score-value {
+    color: #ffff00;
+    font-size: 16px;
+    text-shadow: 0 0 10px #ffff00;
+}
+
+/* Слот машина */
+.slot-machine {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid #ff00ff;
+    box-shadow: inset 0 0 30px rgba(255, 0, 255, 0.3);
+}
+
+.slots-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.slot {
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    border: 3px solid #00ffff;
+    border-radius: 10px;
+    padding: 15px;
+    position: relative;
+    min-height: 120px;
+}
+
+.slot-label {
+    color: #ff00ff;
+    font-size: 8px;
+    text-align: center;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.slot-window {
+    background: #000;
+    border: 2px solid #00ffff;
+    border-radius: 5px;
+    padding: 10px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.slot-content {
+    color: #00ff00;
+    font-size: 12px;
+    text-align: center;
+    text-shadow: 0 0 10px #00ff00;
+    line-height: 1.4;
+}
+
+/* Анимация вращения слота */
+.slot-spinning {
+    animation: slot-spin 0.3s linear infinite;
+}
+
+@keyframes slot-spin {
+    0% { transform: translateY(-100%); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* Кнопки спина */
+.spin-btn {
+    background: linear-gradient(180deg, #ff006e 0%, #8338ec 100%);
+    border: 2px solid #ffff00;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+    transition: all 0.3s;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.spin-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 0, 110, 0.7);
+}
+
+.spin-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Перевод */
+.translation {
+    text-align: center;
+    color: #00ffff;
+    font-size: 10px;
+    margin-top: 10px;
+    text-shadow: 0 0 5px #00ffff;
+}
+
+/* Панель управления */
+.control-panel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.control-btn {
+    background: linear-gradient(180deg, #3f37c9 0%, #7209b7 100%);
+    border: 2px solid #00ffff;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.control-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 255, 255, 0.5);
+}
+
+.control-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.control-btn.hint {
+    background: linear-gradient(180deg, #f72585 0%, #b5179e 100%);
+}
+
+.control-btn.check {
+    background: linear-gradient(180deg, #06ffa5 0%, #00c896 100%);
+    color: #000;
+    font-weight: bold;
+}
+
+.control-btn.next {
+    background: linear-gradient(180deg, #ffbe0b 0%, #fb5607 100%);
+    color: #000;
+}
+
+/* Сообщения обратной связи */
+.feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: #000;
+    border: 3px solid #00ffff;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    z-index: 1000;
+    transition: transform 0.3s;
+}
+
+.feedback.show {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.feedback.correct {
+    border-color: #00ff00;
+    box-shadow: 0 0 50px #00ff00;
+}
+
+.feedback.incorrect {
+    border-color: #ff0000;
+    box-shadow: 0 0 50px #ff0000;
+}
+
+.feedback-text {
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.feedback-details {
+    color: #00ffff;
+    font-size: 10px;
+    margin-top: 10px;
+}
+
+/* Power-ups */
+.powerups {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.powerup {
+    background: rgba(255, 0, 255, 0.2);
+    border: 2px solid #ff00ff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 20px;
+}
+
+.powerup:hover:not(.used) {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #ff00ff;
+}
+
+.powerup.used {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Режим сложности */
+.difficulty {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.diff-btn {
+    background: transparent;
+    border: 2px solid #00ffff;
+    color: #00ffff;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.diff-btn.active {
+    background: #00ffff;
+    color: #000;
+    box-shadow: 0 0 20px #00ffff;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .neon-title {
+        font-size: 18px;
+    }
+
+    .slots-container {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .slot {
+        min-height: 80px;
+    }
+
+    .control-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .score-board {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+
+    .powerups {
+        margin-bottom: 10px;
+    }
+
+    .powerup {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+}
+
+/* Анимация правильного ответа */
+@keyframes correct-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 255, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+}
+
+.slot.correct {
+    animation: correct-pulse 1s;
+    border-color: #00ff00;
+}
+
+/* Анимация неправильного ответа */
+@keyframes wrong-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.slot.incorrect {
+    animation: wrong-shake 0.5s;
+    border-color: #ff0000;
+}
+
+/* Партиклы для эффектов */
+.particle {
+    position: fixed;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 999;
+}
+
+.particle.star {
+    color: #ffff00;
+    font-size: 20px;
+    animation: star-float 2s ease-out;
+}
+
+@keyframes star-float {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) rotate(360deg);
+    }
+}
+
+/* Мобильная оптимизация */
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+
+    .casino-container {
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    .slot-content {
+        font-size: 11px;
+    }
+
+    .control-btn {
+        font-size: 9px;
+        padding: 10px;
+    }
+}
+
+/* Прогресс бар */
+.progress-bar {
+    height: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border: 1px solid #00ffff;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ffff, #ff00ff, #ffff00);
+    border-radius: 4px;
+    transition: width 0.5s;
+    box-shadow: 0 0 10px currentColor;
+}
+</style>
+</head>
+<body>
+
+<div class="casino-container">
+    <h1 class="neon-title">🎰 RETRO VERB CASINO 🎰</h1>
+
+    <div class="difficulty">
+        <button class="diff-btn active" onclick="setDifficulty('easy')">EASY</button>
+        <button class="diff-btn" onclick="setDifficulty('medium')">MEDIUM</button>
+        <button class="diff-btn" onclick="setDifficulty('hard')">HARD</button>
+        <button class="diff-btn" onclick="setDifficulty('all')">ALL</button>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+    </div>
+
+    <div class="score-board">
+        <div class="score-item">
+            <div class="score-label">Score</div>
+            <div class="score-value" id="score">0</div>
+        </div>
+        <div class="score-item">
+            <div class="score-label">Streak</div>
+            <div class="score-value" id="streak">0</div>
+        </div>
+        <div class="score-item">
+            <div class="score-label">Level</div>
+            <div class="score-value" id="level">1/10</div>
+        </div>
+    </div>
+
+    <div class="powerups">
+        <div class="powerup" onclick="usePowerup('freeze')" title="Freeze one slot">❄️</div>
+        <div class="powerup" onclick="usePowerup('hint')" title="Show first letters">💡</div>
+        <div class="powerup" onclick="usePowerup('slow')" title="Slow down spinning">⏱️</div>
+    </div>
+
+    <div class="slot-machine">
+        <div class="slots-container">
+            <div class="slot" id="slot1">
+                <div class="slot-label">Infinitive</div>
+                <div class="slot-window">
+                    <div class="slot-content" id="infinitiveSlot">READY?</div>
+                </div>
+                <div class="translation" id="translation">Нажми START</div>
+            </div>
+
+            <div class="slot" id="slot2">
+                <div class="slot-label">Past Simple</div>
+                <div class="slot-window">
+                    <div class="slot-content" id="pastSimpleSlot">READY?</div>
+                </div>
+                <button class="spin-btn" id="spinBtn2" onclick="spinSlot(2)">SPIN</button>
+            </div>
+
+            <div class="slot" id="slot3">
+                <div class="slot-label">Past Participle</div>
+                <div class="slot-window">
+                    <div class="slot-content" id="pastParticipleSlot">READY?</div>
+                </div>
+                <button class="spin-btn" id="spinBtn3" onclick="spinSlot(3)">SPIN</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <button class="control-btn hint" onclick="getHint()" id="hintBtn">
+            💡 HINT
+        </button>
+        <button class="control-btn check" onclick="checkAnswer()" id="checkBtn">
+            ✓ CHECK
+        </button>
+        <button class="control-btn next" onclick="nextRound()" id="nextBtn">
+            START →
+        </button>
+    </div>
+</div>
+
+<div class="feedback" id="feedback">
+    <div class="feedback-text" id="feedbackText"></div>
+    <div class="feedback-details" id="feedbackDetails"></div>
+</div>
+
+<script>
+// База неправильных глаголов с уровнями сложности
+const verbs = [
+    // EASY (20 глаголов)
+    {infinitive: "be", pastSimple: "was/were", pastParticiple: "been", translation: "быть", difficulty: "easy"},
+    {infinitive: "come", pastSimple: "came", pastParticiple: "come", translation: "приходить", difficulty: "easy"},
+    {infinitive: "do", pastSimple: "did", pastParticiple: "done", translation: "делать", difficulty: "easy"},
+    {infinitive: "get", pastSimple: "got", pastParticiple: "got", translation: "получать", difficulty: "easy"},
+    {infinitive: "give", pastSimple: "gave", pastParticiple: "given", translation: "давать", difficulty: "easy"},
+    {infinitive: "go", pastSimple: "went", pastParticiple: "gone", translation: "идти", difficulty: "easy"},
+    {infinitive: "have", pastSimple: "had", pastParticiple: "had", translation: "иметь", difficulty: "easy"},
+    {infinitive: "know", pastSimple: "knew", pastParticiple: "known", translation: "знать", difficulty: "easy"},
+    {infinitive: "make", pastSimple: "made", pastParticiple: "made", translation: "делать", difficulty: "easy"},
+    {infinitive: "say", pastSimple: "said", pastParticiple: "said", translation: "говорить", difficulty: "easy"},
+    {infinitive: "see", pastSimple: "saw", pastParticiple: "seen", translation: "видеть", difficulty: "easy"},
+    {infinitive: "take", pastSimple: "took", pastParticiple: "taken", translation: "брать", difficulty: "easy"},
+    {infinitive: "think", pastSimple: "thought", pastParticiple: "thought", translation: "думать", difficulty: "easy"},
+    {infinitive: "find", pastSimple: "found", pastParticiple: "found", translation: "находить", difficulty: "easy"},
+    {infinitive: "tell", pastSimple: "told", pastParticiple: "told", translation: "рассказывать", difficulty: "easy"},
+    {infinitive: "feel", pastSimple: "felt", pastParticiple: "felt", translation: "чувствовать", difficulty: "easy"},
+    {infinitive: "put", pastSimple: "put", pastParticiple: "put", translation: "класть", difficulty: "easy"},
+    {infinitive: "bring", pastSimple: "brought", pastParticiple: "brought", translation: "приносить", difficulty: "easy"},
+    {infinitive: "begin", pastSimple: "began", pastParticiple: "begun", translation: "начинать", difficulty: "easy"},
+    {infinitive: "keep", pastSimple: "kept", pastParticiple: "kept", translation: "хранить", difficulty: "easy"},
+
+    // MEDIUM (20 глаголов)
+    {infinitive: "become", pastSimple: "became", pastParticiple: "become", translation: "становиться", difficulty: "medium"},
+    {infinitive: "leave", pastSimple: "left", pastParticiple: "left", translation: "покидать", difficulty: "medium"},
+    {infinitive: "write", pastSimple: "wrote", pastParticiple: "written", translation: "писать", difficulty: "medium"},
+    {infinitive: "mean", pastSimple: "meant", pastParticiple: "meant", translation: "означать", difficulty: "medium"},
+    {infinitive: "let", pastSimple: "let", pastParticiple: "let", translation: "позволять", difficulty: "medium"},
+    {infinitive: "meet", pastSimple: "met", pastParticiple: "met", translation: "встречать", difficulty: "medium"},
+    {infinitive: "run", pastSimple: "ran", pastParticiple: "run", translation: "бежать", difficulty: "medium"},
+    {infinitive: "pay", pastSimple: "paid", pastParticiple: "paid", translation: "платить", difficulty: "medium"},
+    {infinitive: "sit", pastSimple: "sat", pastParticiple: "sat", translation: "сидеть", difficulty: "medium"},
+    {infinitive: "speak", pastSimple: "spoke", pastParticiple: "spoken", translation: "говорить", difficulty: "medium"},
+    {infinitive: "lie", pastSimple: "lay", pastParticiple: "lain", translation: "лежать", difficulty: "medium"},
+    {infinitive: "stand", pastSimple: "stood", pastParticiple: "stood", translation: "стоять", difficulty: "medium"},
+    {infinitive: "lose", pastSimple: "lost", pastParticiple: "lost", translation: "терять", difficulty: "medium"},
+    {infinitive: "hear", pastSimple: "heard", pastParticiple: "heard", translation: "слышать", difficulty: "medium"},
+    {infinitive: "grow", pastSimple: "grew", pastParticiple: "grown", translation: "расти", difficulty: "medium"},
+    {infinitive: "break", pastSimple: "broke", pastParticiple: "broken", translation: "ломать", difficulty: "medium"},
+    {infinitive: "buy", pastSimple: "bought", pastParticiple: "bought", translation: "покупать", difficulty: "medium"},
+    {infinitive: "choose", pastSimple: "chose", pastParticiple: "chosen", translation: "выбирать", difficulty: "medium"},
+    {infinitive: "drive", pastSimple: "drove", pastParticiple: "driven", translation: "водить", difficulty: "medium"},
+    {infinitive: "fall", pastSimple: "fell", pastParticiple: "fallen", translation: "падать", difficulty: "medium"},
+
+    // HARD (10 глаголов)
+    {infinitive: "arise", pastSimple: "arose", pastParticiple: "arisen", translation: "возникать", difficulty: "hard"},
+    {infinitive: "bear", pastSimple: "bore", pastParticiple: "born", translation: "нести", difficulty: "hard"},
+    {infinitive: "bind", pastSimple: "bound", pastParticiple: "bound", translation: "связывать", difficulty: "hard"},
+    {infinitive: "breed", pastSimple: "bred", pastParticiple: "bred", translation: "разводить", difficulty: "hard"},
+    {infinitive: "cling", pastSimple: "clung", pastParticiple: "clung", translation: "цепляться", difficulty: "hard"},
+    {infinitive: "creep", pastSimple: "crept", pastParticiple: "crept", translation: "ползать", difficulty: "hard"},
+    {infinitive: "dwell", pastSimple: "dwelt", pastParticiple: "dwelt", translation: "обитать", difficulty: "hard"},
+    {infinitive: "flee", pastSimple: "fled", pastParticiple: "fled", translation: "бежать (спасаться)", difficulty: "hard"},
+    {infinitive: "forsake", pastSimple: "forsook", pastParticiple: "forsaken", translation: "покидать", difficulty: "hard"},
+    {infinitive: "stride", pastSimple: "strode", pastParticiple: "stridden", translation: "шагать", difficulty: "hard"}
+];
+
+// Игровые переменные
+let currentVerb = null;
+let currentOptions = {
+    pastSimple: [],
+    pastParticiple: []
+};
+let spinning = {
+    slot2: false,
+    slot3: false
+};
+let spinIntervals = {
+    slot2: null,
+    slot3: null
+};
+let score = 0;
+let streak = 0;
+let currentLevel = 1;
+let maxLevel = 10;
+let attempts = 0;
+let difficulty = 'easy';
+let powerupsUsed = {
+    freeze: false,
+    hint: false,
+    slow: false
+};
+let frozenSlots = [];
+let verbsUsed = [];
+let gameStarted = false;
+
+// Инициализация игры при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    initGame();
+});
+
+function initGame() {
+    document.getElementById('spinBtn2').disabled = true;
+    document.getElementById('spinBtn3').disabled = true;
+    document.getElementById('checkBtn').disabled = true;
+    document.getElementById('hintBtn').disabled = true;
+    updateScore();
+}
+
+// Фильтрация глаголов по сложности
+function getVerbsByDifficulty(diff) {
+    if (diff === 'all') return verbs;
+    return verbs.filter(v => v.difficulty === diff);
+}
+
+// Установка сложности
+function setDifficulty(diff) {
+    difficulty = diff;
+    document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    resetGame();
+}
+
+// Сброс игры
+function resetGame() {
+    score = 0;
+    streak = 0;
+    currentLevel = 1;
+    verbsUsed = [];
+    gameStarted = false;
+    updateScore();
+    initGame();
+    document.getElementById('nextBtn').textContent = 'START →';
+    document.getElementById('infinitiveSlot').textContent = 'READY?';
+    document.getElementById('pastSimpleSlot').textContent = 'READY?';
+    document.getElementById('pastParticipleSlot').textContent = 'READY?';
+    document.getElementById('translation').textContent = 'Нажми START';
+}
+
+// Генерация вариантов для слотов
+function generateOptions() {
+    const availableVerbs = getVerbsByDifficulty(difficulty);
+    const options = {
+        pastSimple: [],
+        pastParticiple: []
+    };
+
+    // Добавляем правильный ответ
+    options.pastSimple.push(currentVerb.pastSimple);
+    options.pastParticiple.push(currentVerb.pastParticiple);
+
+    // Добавляем неправильные варианты
+    const shuffled = [...availableVerbs].sort(() => Math.random() - 0.5);
+    for (let verb of shuffled) {
+        if (verb.infinitive !== currentVerb.infinitive) {
+            if (options.pastSimple.length < 5) {
+                options.pastSimple.push(verb.pastSimple);
+            }
+            if (options.pastParticiple.length < 5) {
+                options.pastParticiple.push(verb.pastParticiple);
+            }
+        }
+    }
+
+    // Перемешиваем варианты
+    options.pastSimple.sort(() => Math.random() - 0.5);
+    options.pastParticiple.sort(() => Math.random() - 0.5);
+
+    return options;
+}
+
+// Следующий раунд
+function nextRound() {
+    if (!gameStarted) {
+        gameStarted = true;
+        document.getElementById('nextBtn').textContent = 'SKIP →';
+    }
+
+    // Сброс состояния
+    resetSlots();
+    powerupsUsed = {freeze: false, hint: false, slow: false};
+    document.querySelectorAll('.powerup').forEach(p => p.classList.remove('used'));
+    frozenSlots = [];
+    attempts = 0;
+
+    // Выбираем новый глагол
+    const availableVerbs = getVerbsByDifficulty(difficulty);
+    const unusedVerbs = availableVerbs.filter(v => !verbsUsed.includes(v.infinitive));
+
+    if (unusedVerbs.length === 0) {
+        showGameComplete();
+        return;
+    }
+
+    currentVerb = unusedVerbs[Math.floor(Math.random() * unusedVerbs.length)];
+    verbsUsed.push(currentVerb.infinitive);
+
+    // Генерируем варианты
+    currentOptions = generateOptions();
+
+    // Отображаем глагол
+    document.getElementById('infinitiveSlot').textContent = currentVerb.infinitive.toUpperCase();
+    document.getElementById('translation').textContent = currentVerb.translation;
+    document.getElementById('pastSimpleSlot').textContent = '???';
+    document.getElementById('pastParticipleSlot').textContent = '???';
+
+    // Обновляем уровень
+    currentLevel = verbsUsed.length;
+    const totalVerbs = getVerbsByDifficulty(difficulty).length;
+    document.getElementById('level').textContent = `${currentLevel}/${totalVerbs}`;
+    updateProgress();
+
+    // Активируем кнопки
+    document.getElementById('spinBtn2').disabled = false;
+    document.getElementById('spinBtn3').disabled = false;
+    document.getElementById('checkBtn').disabled = false;
+    document.getElementById('hintBtn').disabled = false;
+}
+
+// Вращение слота
+function spinSlot(slotNumber) {
+    if (frozenSlots.includes(slotNumber)) return;
+
+    const slotId = slotNumber === 2 ? 'pastSimpleSlot' : 'pastParticipleSlot';
+    const options = slotNumber === 2 ? currentOptions.pastSimple : currentOptions.pastParticiple;
+    const slotElement = document.getElementById(slotId);
+    const spinBtn = document.getElementById(`spinBtn${slotNumber}`);
+
+    if (spinning[`slot${slotNumber}`]) {
+        // Останавливаем вращение
+        spinning[`slot${slotNumber}`] = false;
+        slotElement.classList.remove('slot-spinning');
+        spinBtn.textContent = 'SPIN';
+
+        // Очищаем интервал
+        if (spinIntervals[`slot${slotNumber}`]) {
+            clearInterval(spinIntervals[`slot${slotNumber}`]);
+            spinIntervals[`slot${slotNumber}`] = null;
+        }
+
+        // Устанавливаем случайное значение
+        const randomOption = options[Math.floor(Math.random() * options.length)];
+        slotElement.textContent = randomOption.toUpperCase();
+    } else {
+        // Начинаем вращение
+        spinning[`slot${slotNumber}`] = true;
+        slotElement.classList.add('slot-spinning');
+        spinBtn.textContent = 'STOP';
+
+        // Анимация смены значений
+        spinIntervals[`slot${slotNumber}`] = setInterval(() => {
+            const randomOption = options[Math.floor(Math.random() * options.length)];
+            slotElement.textContent = randomOption.toUpperCase();
+        }, powerupsUsed.slow ? 200 : 100);
+    }
+}
+
+// Проверка ответа
+function checkAnswer() {
+    // Останавливаем все вращения
+    stopAllSpins();
+
+    const pastSimpleAnswer = document.getElementById('pastSimpleSlot').textContent.toLowerCase();
+    const pastParticipleAnswer = document.getElementById('pastParticipleSlot').textContent.toLowerCase();
+
+    const isCorrect = 
+        pastSimpleAnswer === currentVerb.pastSimple.toLowerCase() &&
+        pastParticipleAnswer === currentVerb.pastParticiple.toLowerCase();
+
+    if (isCorrect) {
+        handleCorrectAnswer();
+    } else {
+        handleIncorrectAnswer();
+    }
+}
+
+// Обработка правильного ответа
+function handleCorrectAnswer() {
+    // Обновляем счет
+    let points = 100;
+    if (attempts === 0) points = 150;
+    if (powerupsUsed.hint) points -= 25;
+
+    score += points * (1 + streak * 0.1);
+    streak++;
+
+    updateScore();
+
+    // Визуальная обратная связь
+    document.getElementById('slot2').classList.add('correct');
+    document.getElementById('slot3').classList.add('correct');
+
+    showFeedback(true, `EXCELLENT! +${points} points`);
+    createParticles();
+
+    // Деактивируем кнопки
+    document.getElementById('checkBtn').disabled = true;
+    document.getElementById('spinBtn2').disabled = true;
+    document.getElementById('spinBtn3').disabled = true;
+
+    setTimeout(() => {
+        document.getElementById('slot2').classList.remove('correct');
+        document.getElementById('slot3').classList.remove('correct');
+    }, 1000);
+}
+
+// Обработка неправильного ответа
+function handleIncorrectAnswer() {
+    attempts++;
+    streak = 0;
+    updateScore();
+
+    // Визуальная обратная связь
+    document.getElementById('slot2').classList.add('incorrect');
+    document.getElementById('slot3').classList.add('incorrect');
+
+    const correctAnswer = `${currentVerb.pastSimple} | ${currentVerb.pastParticiple}`;
+    showFeedback(false, 'TRY AGAIN!', `Correct: ${correctAnswer}`);
+
+    setTimeout(() => {
+        document.getElementById('slot2').classList.remove('incorrect');
+        document.getElementById('slot3').classList.remove('incorrect');
+    }, 500);
+}
+
+// Подсказка
+function getHint() {
+    if (powerupsUsed.hint) return;
+
+    powerupsUsed.hint = true;
+    document.querySelector('.powerup:nth-child(2)').classList.add('used');
+
+    // Показываем первые буквы
+    const hintPastSimple = currentVerb.pastSimple.substring(0, 3) + '...';
+    const hintPastParticiple = currentVerb.pastParticiple.substring(0, 3) + '...';
+
+    showFeedback(true, 'HINT', `Past: ${hintPastSimple} | PP: ${hintPastParticiple}`);
+}
+
+// Power-ups
+function usePowerup(type) {
+    if (powerupsUsed[type]) return;
+
+    powerupsUsed[type] = true;
+    event.target.classList.add('used');
+
+    switch(type) {
+        case 'freeze':
+            // Замораживаем один правильный слот
+            if (!frozenSlots.includes(2) && Math.random() > 0.5) {
+                document.getElementById('pastSimpleSlot').textContent = currentVerb.pastSimple.toUpperCase();
+                document.getElementById('spinBtn2').disabled = true;
+                frozenSlots.push(2);
+                document.getElementById('slot2').style.borderColor = '#00ffff';
+            } else if (!frozenSlots.includes(3)) {
+                document.getElementById('pastParticipleSlot').textContent = currentVerb.pastParticiple.toUpperCase();
+                document.getElementById('spinBtn3').disabled = true;
+                frozenSlots.push(3);
+                document.getElementById('slot3').style.borderColor = '#00ffff';
+            }
+            break;
+        case 'hint':
+            getHint();
+            break;
+        case 'slow':
+            // Замедление уже применено в spinSlot
+            showFeedback(true, 'SLOW MODE ON!');
+            break;
+    }
+}
+
+// Показать обратную связь
+function showFeedback(isCorrect, message, details = '') {
+    const feedback = document.getElementById('feedback');
+    const feedbackText = document.getElementById('feedbackText');
+    const feedbackDetails = document.getElementById('feedbackDetails');
+
+    feedback.className = 'feedback show';
+    if (isCorrect) {
+        feedback.classList.add('correct');
+    } else {
+        feedback.classList.add('incorrect');
+    }
+
+    feedbackText.textContent = message;
+    feedbackDetails.textContent = details;
+
+    setTimeout(() => {
+        feedback.classList.remove('show');
+    }, 2000);
+}
+
+// Обновление счета
+function updateScore() {
+    document.getElementById('score').textContent = Math.floor(score);
+    document.getElementById('streak').textContent = streak;
+}
+
+// Обновление прогресса
+function updateProgress() {
+    const totalVerbs = getVerbsByDifficulty(difficulty).length;
+    const progress = (verbsUsed.length / totalVerbs) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+}
+
+// Сброс слотов
+function resetSlots() {
+    // Останавливаем все вращения
+    stopAllSpins();
+
+    // Сбрасываем стили
+    document.getElementById('slot2').style.borderColor = '#00ffff';
+    document.getElementById('slot3').style.borderColor = '#00ffff';
+}
+
+// Остановить все вращения
+function stopAllSpins() {
+    // Останавливаем слот 2
+    if (spinning.slot2) {
+        spinning.slot2 = false;
+        document.getElementById('pastSimpleSlot').classList.remove('slot-spinning');
+        document.getElementById('spinBtn2').textContent = 'SPIN';
+        if (spinIntervals.slot2) {
+            clearInterval(spinIntervals.slot2);
+            spinIntervals.slot2 = null;
+        }
+    }
+
+    // Останавливаем слот 3
+    if (spinning.slot3) {
+        spinning.slot3 = false;
+        document.getElementById('pastParticipleSlot').classList.remove('slot-spinning');
+        document.getElementById('spinBtn3').textContent = 'SPIN';
+        if (spinIntervals.slot3) {
+            clearInterval(spinIntervals.slot3);
+            spinIntervals.slot3 = null;
+        }
+    }
+}
+
+// Создание частиц для эффекта
+function createParticles() {
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.className = 'particle star';
+            particle.innerHTML = '⭐';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = window.innerHeight / 2 + 'px';
+            document.body.appendChild(particle);
+
+            setTimeout(() => particle.remove(), 2000);
+        }, i * 100);
+    }
+}
+
+// Завершение игры
+function showGameComplete() {
+    const totalVerbs = getVerbsByDifficulty(difficulty).length;
+    showFeedback(true, 'GAME COMPLETE!', `Final Score: ${Math.floor(score)}`);
+
+    setTimeout(() => {
+        if (confirm(`Отлично! Ты изучил все ${totalVerbs} глаголов!\nТвой счет: ${Math.floor(score)}\n\nСыграть еще раз?`)) {
+            resetGame();
+        }
+    }, 2500);
+}
+</script>
+
+</body>
+</html>
