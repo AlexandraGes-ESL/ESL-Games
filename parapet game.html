@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Parapet</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Pontano+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background-color: #050505; overflow: hidden;
+  }
+
+  * { box-sizing: border-box; user-select: none; -webkit-user-select: none; font-family: 'Pontano Sans', sans-serif; }
+
+  #prpt-game {
+    position: absolute; width: 1200px; height: 675px;
+    top: 0; left: 0; transform-origin: 0 0; 
+    background-color: #050505; overflow: hidden;
+  }
+
+  #prpt-inner {
+    position: absolute; width: 100%; height: 100%;
+    left: 0; top: 0; transform-origin: center center;
+  }
+
+  #prpt-bg {
+    position: absolute; top: -5%; left: -5%;
+    width: 110%; height: 110%; z-index: 1; 
+    transition: transform 1.5s ease-in-out, background-image 1s ease-in-out, filter 1s ease;
+    background-size: cover; background-position: center bottom;
+    filter: blur(0px) grayscale(0%);
+  }
+
+  .blur-bg { filter: blur(6px) grayscale(60%) !important; }
+
+  #prpt-rain-container {
+    position: absolute; top: -10%; left: -10%;
+    width: 120%; height: 120%; z-index: 2;
+    pointer-events: none; opacity: 1; transition: opacity 1.5s ease;
+  }
+  .svg-drop { stroke: rgba(255, 255, 255, 0.4); stroke-width: 1.5; stroke-linecap: round; }
+
+  #prpt-flash {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%; background-color: #fff; z-index: 100;
+    opacity: 0; pointer-events: none; transition: opacity 0.1s ease-out; mix-blend-mode: overlay;
+  }
+
+  #prpt-warning-banner {
+    position: absolute; top: 90px; left: 50%; transform: translateX(-50%); z-index: 200;
+    background: rgba(15, 5, 5, 0.95); border: 1px solid #a32a2a; border-radius: 4px; padding: 12px 30px;
+    font-family: 'Cinzel', serif; font-size: 22px; font-weight: 600;
+    color: #ffb3b3; text-shadow: 1px 1px 3px #000; letter-spacing: 1px; white-space: nowrap;
+    opacity: 0; pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,0.8); transition: opacity 0.3s ease;
+  }
+
+  #prpt-hud {
+    position: absolute; top: 0; left: 0; width: 100%; padding: 20px 40px; display: flex;
+    justify-content: space-between; z-index: 10; font-family: 'Cinzel', serif; color: #cca65d; 
+    font-size: 24px; text-shadow: 2px 2px 4px #000; opacity: 0; transition: opacity 1s;
+  }
+  .prpt-stat-box { background: rgba(10, 15, 20, 0.85); border: 1px solid #cca65d; padding: 8px 20px; border-radius: 4px; }
+  #prpt-mistake-count { color: #ff6b6b; }
+
+  .prpt-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex;
+    align-items: center; justify-content: center; z-index: 50; 
+    background: rgba(0, 0, 0, 0.3); transition: background 1s ease;
+  }
+
+  .prpt-card {
+    position: relative; background: rgba(10, 15, 20, 0.85); backdrop-filter: blur(4px); 
+    padding: 40px 60px; width: 800px; text-align: center; color: rgb(255, 240, 240); 
+    box-shadow: 0 15px 50px rgba(0,0,0,0.8); transform: scale(0.9); opacity: 0; 
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border-top: 2px solid #cca65d; border-bottom: 2px solid #cca65d;
+  }
+
+  .prpt-card.compact-layout {
+    position: absolute; bottom: 30px; width: 700px; padding: 20px 40px; background: rgba(10, 15, 20, 0.95);
+  }
+  .prpt-card.compact-layout .prpt-title { margin-bottom: 10px; font-size: 26px; border-bottom: none;}
+  .prpt-card.compact-layout .prpt-text { margin-bottom: 0; font-size: 20px; }
+
+  .prpt-card::before, .prpt-card::after {
+    content: '❖'; position: absolute; left: 50%; transform: translateX(-50%); color: #cca65d; 
+    font-size: 24px; background: inherit; padding: 0 15px; line-height: 1;
+  }
+  .prpt-card::before { top: -14px; }
+  .prpt-card::after { bottom: -14px; }
+  .prpt-card.visible { transform: scale(1); opacity: 1; }
+  
+  .prpt-title { font-family: 'Cinzel', serif; font-size: 30px; margin-bottom: 20px; color: #cca65d; letter-spacing: 2px; }
+  .prpt-text { font-family: 'Pontano Sans', sans-serif; font-size: 24px; line-height: 1.5; margin-bottom: 35px; }
+
+  .prpt-opts { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+  .prpt-opt-wrap {
+    background: #e5a93d; clip-path: polygon(25px 0, calc(100% - 25px) 0, 100% 50%, calc(100% - 25px) 100%, 25px 100%, 0 50%);
+    padding: 3px; width: 80%; cursor: pointer; transition: all 0.2s;
+  }
+  .prpt-opt-btn { 
+    font-family: 'Pontano Sans', sans-serif; font-size: 22px; font-weight: 700; background: #ffffff; color: #000000; 
+    clip-path: polygon(23px 0, calc(100% - 23px) 0, 100% 50%, calc(100% - 23px) 100%, 23px 100%, 0 50%);
+    width: 100%; padding: 15px 40px; border: none; outline: none; cursor: pointer; transition: all 0.2s;
+  }
+  
+  .prpt-opt-wrap:hover { background: #ffc45e; transform: scale(1.02); }
+  .prpt-opt-wrap:hover .prpt-opt-btn { background: #fdfdfd; }
+  .prpt-opt-wrap.correct { background: #28a745; pointer-events: none;}
+  .prpt-opt-btn.correct { background: #d4edda; color: #155724;}
+  .prpt-opt-wrap.wrong { background: #dc3545; pointer-events: none;}
+  .prpt-opt-btn.wrong { background: #f8d7da; color: #721c24;}
+  .prpt-opt-wrap.disabled { pointer-events: none; opacity: 0.8;}
+  
+  .prpt-action-wrap {
+    background: #cca65d; clip-path: polygon(25px 0, calc(100% - 25px) 0, 100% 50%, calc(100% - 25px) 100%, 25px 100%, 0 50%);
+    padding: 3px; display: none; margin-top: 10px; cursor: pointer; transition: all 0.2s;
+  }
+  .prpt-action-wrap:hover { background: #e6c887; transform: scale(1.05); }
+  .prpt-action-btn { 
+    font-family: 'Pontano Sans', sans-serif; font-size: 22px; font-weight: 700; background: #111111; color: #cca65d; 
+    clip-path: polygon(23px 0, calc(100% - 23px) 0, 100% 50%, calc(100% - 23px) 100%, 23px 100%, 0 50%);
+    padding: 15px 50px; border: none; cursor: pointer; transition: all 0.2s;
+  }
+  .prpt-action-wrap:hover .prpt-action-btn { color: #e6c887; }
+</style>
+</head>
+<body>
+
+<div id="prpt-game">
+  <div id="prpt-inner">
+    <div id="prpt-bg"></div>
+    <svg id="prpt-rain-container" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="prpt-flash"></div>
+    <div id="prpt-warning-banner"></div> 
+
+    <div id="prpt-hud">
+      <div class="prpt-stat-box">Step: <span id="prpt-step-count">0</span> / 10</div>
+      <div class="prpt-stat-box">Mistakes: <span id="prpt-mistake-count">0</span> / 2</div>
+    </div>
+
+    <div class="prpt-overlay" id="prpt-overlay">
+      <div class="prpt-card" id="prpt-card">
+        <div class="prpt-title" id="prpt-card-title">The Parapet</div>
+        <div class="prpt-text" id="prpt-card-text">Loading...</div>
+        <div class="prpt-opts" id="prpt-quiz-opts"></div>
+        <div class="prpt-action-wrap" id="prpt-action-wrap">
+          <button class="prpt-action-btn" id="prpt-action-btn">CONTINUE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  
+  var P = {
+    $: function(id) { return document.getElementById(id); },
+    state: { step: 0, mistakes: 0, maxMistakes: 2, totalSteps: 10, bgScale: 1 },
+    images: {
+      main: "https://i.postimg.cc/28R3QZ66/8.png",
+      win: "https://i.postimg.cc/pr89fYkd/parapet-final-win.jpg", // Твоя новая картинка
+      lose: "https://i.postimg.cc/28R3QZ66/8.png" 
+    },
+    sounds: {},
+    audioUnlocked: false
+  };
+
+  P.data = {
+    intro: "Listen up, Cadet! The stone is wet today. You have room for exactly two mistakes. Slip once—catch your balance. Slip twice—pray. Slip a third time... the wind takes you. Move!",
+    win: "Your boots hit the rough, solid ground. You collapse to your knees, gasping for air. You did it. Welcome to the Riders Quadrant.",
+    lose: "The wind is too strong. Your foot slips on the slick, wet stone. The wind takes you, pulling you into the dark, bottomless mist...",
+    questions: [
+      { q: "Once you step on the bridge, you ________ look down. If you do, you'll panic.", opts: ["don't have to", "must not", "shouldn't have"], ans: 1 },
+      { q: "While a candidate ahead of me ________, a massive gust of wind hit him.", opts: ["was walking", "walked", "is walking"], ans: 0 },
+      { q: "If you panic, you ________ your balance.", opts: ["would lose", "will lose", "loses"], ans: 1 },
+      { q: "I must keep moving straight ________ the bridge, no matter what.", opts: ["through", "across", "above"], ans: 1 },
+      { q: "Rhiannon told me to avoid ________ about the bottomless chasm below.", opts: ["to think", "think", "thinking"], ans: 2 },
+      { q: "Unfortunately, many cadets ________ by the brutal wind every year.", opts: ["are swept away", "swept away", "have swept away"], ans: 0 },
+      { q: "I ________ this far. I can't give up now.", opts: ["came", "have come", "had come"], ans: 1 },
+      { q: "If I fell from this height, nobody ________ me.", opts: ["could save", "can save", "will save"], ans: 0 },
+      { q: "Keep your eyes on the massive doors ________ stand at the end of the bridge.", opts: ["who", "which", "where"], ans: 1 },
+      { q: "As soon as I ________ the solid ground, I will be a real cadet.", opts: ["will reach", "reached", "reach"], ans: 2 }
+    ]
+  };
+
+  P.loadSound = function(key, url) { var a = new Audio(); a.crossOrigin = 'anonymous'; a.src = url; P.sounds[key] = a; };
+  P.loadSound('bgMusic', 'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/der_sternfahrer-gewitter-blitz-donner-regen-wind-167203.mp3'); 
+  P.loadSound('step', 'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/freesound_community-water-step-90358.mp3'); 
+  P.loadSound('fail', 'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/universfield-giant-fall-impact-352446.mp3'); 
+
+  P.unlockAudio = function() {
+    if(P.audioUnlocked) return;
+    for(var key in P.sounds) {
+      var a = P.sounds[key];
+      a.volume = 0; a.play().then(function(){ a.pause(); a.volume = 1; }).catch(function(){});
+    }
+    P.audioUnlocked = true;
+    document.removeEventListener('click', P.unlockAudio);
+  };
+  document.addEventListener('click', P.unlockAudio);
+
+  P.playSound = function(key, loop) {
+    var a = P.sounds[key]; if(!a) return;
+    if(loop) a.loop = true;
+    try { if(loop) { a.play(); } else { var cl = a.cloneNode(); cl.volume = 1.0; cl.play(); } } catch(e){}
+  };
+  P.stopMusic = function() { if(P.sounds['bgMusic']) { P.sounds['bgMusic'].pause(); P.sounds['bgMusic'].currentTime = 0; } };
+
+  P.initRain = function() {
+    var container = P.$('prpt-rain-container'); container.innerHTML = ''; 
+    for (var i = 0; i < 100; i++) {
+      var drop = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      var startX = Math.random() * 120; var startY = (Math.random() * 120) - 20; var length = 5 + Math.random() * 10; 
+      drop.setAttribute("x1", startX + "%"); drop.setAttribute("y1", startY + "%");
+      drop.setAttribute("x2", (startX - length * 0.5) + "%"); drop.setAttribute("y2", (startY + length) + "%"); 
+      drop.setAttribute("class", "svg-drop");
+      var anim = document.createElementNS("http://www.w3.org/2000/svg", "animateTransform");
+      anim.setAttribute("attributeName", "transform"); anim.setAttribute("type", "translate");
+      anim.setAttribute("from", "0 0"); anim.setAttribute("to", "-200 600");
+      anim.setAttribute("dur", (0.5 + Math.random() * 0.5) + "s"); anim.setAttribute("repeatCount", "indefinite");
+      drop.appendChild(anim); container.appendChild(drop);
+    }
+  };
+
+  P.saveState = function() { sessionStorage.setItem('prpt_state', JSON.stringify({step: P.state.step, mistakes: P.state.mistakes})); };
+  P.loadState = function() {
+    try { var saved = sessionStorage.getItem('prpt_state');
+      if(saved) { var p = JSON.parse(saved); P.state.step = p.step || 0; P.state.mistakes = p.mistakes || 0; return true; }
+    } catch(e){} return false;
+  };
+  P.clearState = function() { sessionStorage.removeItem('prpt_state'); };
+
+  P.updateHUD = function() { P.$('prpt-step-count').innerText = P.state.step; P.$('prpt-mistake-count').innerText = P.state.mistakes; };
+
+  P.setBgZoom = function() {
+    var bg = P.$('prpt-bg');
+    bg.style.transition = 'transform 1.5s ease-in-out, background-image 1s ease-in-out, filter 1s ease';
+    P.state.bgScale = 1 + (P.state.step * 0.05);
+    bg.style.transform = 'scale(' + P.state.bgScale + ')';
+  };
+
+  P.triggerFailEffect = function() {
+    var inner = P.$('prpt-inner'), flash = P.$('prpt-flash'), banner = P.$('prpt-warning-banner');
+    
+    if (P.state.mistakes === 1) banner.innerText = "Slip once. Catch your balance. (1 chance left)";
+    else if (P.state.mistakes === 2) banner.innerText = "Slip twice. Pray. (Last chance)";
+
+    inner.animate([
+      { transform: 'translate(0, 0) rotate(0)' }, { transform: 'translate(-15px, -15px) rotate(-1.5deg)' },
+      { transform: 'translate(15px, 15px) rotate(1.5deg)' }, { transform: 'translate(-15px, 10px) rotate(-1deg)' },
+      { transform: 'translate(15px, -10px) rotate(1deg)' }, { transform: 'translate(-10px, 5px) rotate(-0.5deg)' },
+      { transform: 'translate(0, 0) rotate(0)' }
+    ], { duration: 500, easing: 'ease-in-out' });
+
+    flash.style.opacity = '0.8';
+    if(P.state.mistakes <= P.state.maxMistakes) banner.style.opacity = '1';
+    P.playSound('fail'); 
+    
+    setTimeout(function(){ flash.style.opacity = '0'; }, 80);
+    setTimeout(function(){ flash.style.opacity = '0.5'; }, 150);
+    setTimeout(function(){ flash.style.opacity = '0'; }, 500);
+    setTimeout(function(){ banner.style.opacity = '0'; }, 1500);
+  };
+
+  P.showScreen = function(title, text, btnText, btnCallback, showOpts) {
+    var card = P.$('prpt-card'); card.classList.remove('visible');
+    setTimeout(function(){
+      P.$('prpt-card-title').innerText = title; P.$('prpt-card-text').innerHTML = text;
+      var optsContainer = P.$('prpt-quiz-opts');
+      optsContainer.style.display = showOpts ? 'flex' : 'none';
+      if (!showOpts) optsContainer.innerHTML = '';
+      
+      var actionWrap = P.$('prpt-action-wrap');
+      if(btnText) {
+        actionWrap.style.display = 'inline-block'; P.$('prpt-action-btn').innerText = btnText;
+        actionWrap.onclick = btnCallback;
+      } else { actionWrap.style.display = 'none'; }
+      card.classList.add('visible');
+    }, 300);
+  };
+
+  P.startIntro = function() {
+    P.clearState(); P.$('prpt-card').classList.remove('compact-layout');
+    P.$('prpt-overlay').style.background = 'rgba(0, 0, 0, 0.3)';
+    var bg = P.$('prpt-bg'); bg.classList.remove('blur-bg');
+    bg.style.transition = 'none'; bg.style.transform = 'scale(1)'; bg.style.backgroundImage = 'url("' + P.images.main + '")';
+    P.$('prpt-rain-container').style.opacity = '1'; P.initRain();
+    P.showScreen("The Parapet", P.data.intro, "Step onto the Parapet", P.startGame, false);
+  };
+
+  P.startGame = function() { P.playSound('bgMusic', true); P.state.step = 0; P.state.mistakes = 0; P.setBgZoom(); P.updateHUD(); P.$('prpt-hud').style.opacity = '1'; P.nextQuestion(); };
+  
+  P.resumeGame = function() { P.playSound('bgMusic', true); P.setBgZoom(); P.updateHUD(); P.$('prpt-hud').style.opacity = '1'; P.$('prpt-rain-container').style.opacity = '1'; P.initRain(); P.nextQuestion(); };
+
+  P.nextQuestion = function() {
+    if (P.state.step >= P.state.totalSteps) { P.winGame(); return; }
+    P.saveState();
+    var qData = P.data.questions[P.state.step], optsContainer = P.$('prpt-quiz-opts'); optsContainer.innerHTML = ''; 
+    qData.opts.forEach(function(optText, index) {
+      var wrap = document.createElement('div'); wrap.className = 'prpt-opt-wrap';
+      var btn = document.createElement('button'); btn.className = 'prpt-opt-btn'; btn.innerText = optText;
+      wrap.onclick = function() { P.checkAnswer(wrap, btn, index, qData.ans); };
+      wrap.appendChild(btn); optsContainer.appendChild(wrap);
+    });
+    P.showScreen("Step " + (P.state.step + 1), qData.q, null, null, true);
+  };
+
+  P.checkAnswer = function(clickedWrap, clickedBtn, selectedIndex, correctIndex) {
+    var allWraps = P.$('prpt-quiz-opts').querySelectorAll('.prpt-opt-wrap');
+    allWraps.forEach(function(w) { w.classList.add('disabled'); });
+    if (selectedIndex === correctIndex) {
+      clickedWrap.classList.add('correct'); clickedBtn.classList.add('correct'); P.playSound('step'); 
+      setTimeout(function(){ P.state.step++; P.setBgZoom(); P.updateHUD(); P.nextQuestion(); }, 1000);
+    } else {
+      clickedWrap.classList.add('wrong'); clickedBtn.classList.add('wrong');
+      var cw = allWraps[correctIndex]; cw.classList.add('correct'); cw.querySelector('.prpt-opt-btn').classList.add('correct');
+      P.state.mistakes++; P.updateHUD(); P.triggerFailEffect();
+      setTimeout(function(){ if (P.state.mistakes > P.state.maxMistakes) { P.loseGame(); } else { P.state.step++; P.nextQuestion(); } }, 2000); 
+    }
+  };
+
+  P.winGame = function() {
+    P.clearState(); P.$('prpt-hud').style.opacity = '0'; P.stopMusic();
+    var bg = P.$('prpt-bg'); bg.classList.remove('blur-bg');
+    bg.style.transition = 'none'; bg.style.transform = 'scale(1)'; bg.style.backgroundImage = 'url("' + P.images.win + '")';
+    P.$('prpt-rain-container').style.opacity = '0'; P.$('prpt-card').classList.add('compact-layout'); P.$('prpt-overlay').style.background = 'transparent'; 
+    P.showScreen("You Survived", P.data.win, null, null, false);
+  };
+
+  P.loseGame = function() {
+    P.clearState(); P.$('prpt-hud').style.opacity = '0'; P.stopMusic();
+    var bg = P.$('prpt-bg'); bg.style.transition = 'filter 1s ease, transform 1s ease'; bg.style.transform = 'scale(1)';
+    bg.style.backgroundImage = 'url("' + P.images.lose + '")'; bg.classList.add('blur-bg');
+    P.$('prpt-rain-container').style.opacity = '0'; P.$('prpt-card').classList.remove('compact-layout'); P.$('prpt-overlay').style.background = 'rgba(0, 0, 0, 0.4)'; 
+    P.showScreen("Game Over", P.data.lose, "ONE MORE CHANCE", P.startIntro, false);
+  };
+
+  P.resize = function() {
+    var game = P.$('prpt-game'), parent = window;
+    var pw = parent.innerWidth, ph = parent.innerHeight;
+    var sc = Math.min(pw/1200, ph/675), ox = (pw - 1200*sc) / 2, oy = (ph - 675*sc) / 2;
+    game.style.transform = 'translate('+ox+'px,'+oy+'px) scale('+sc+')';
+  };
+
+  window.addEventListener('resize', P.resize);
+  document.addEventListener('DOMContentLoaded', function(){ 
+    setTimeout(function(){ 
+      P.resize(); 
+      if(P.loadState() && P.state.step > 0 && P.state.step < P.state.totalSteps) { P.resumeGame(); } else { P.startIntro(); }
+    }, 100); 
+  });
+})();
+</script>
+</body>
+</html>
