@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Parapet</title>
+<!-- Принудительно просим браузер начать качать главную картинку как можно раньше -->
+<link rel="preload" as="image" href="https://i.postimg.cc/28R3QZ66/8.png">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Pontano+Sans:wght@400;700&display=swap" rel="stylesheet">
 <style>
   html, body {
@@ -30,6 +32,8 @@
     transition: transform 1.5s ease-in-out, background-image 1s ease-in-out, filter 1s ease;
     background-size: cover; background-position: center bottom;
     filter: blur(0px) grayscale(0%);
+    /* Изначально фон черный, ждем загрузки */
+    background-color: #050505;
   }
 
   .blur-bg { filter: blur(6px) grayscale(60%) !important; }
@@ -141,9 +145,10 @@
     </div>
 
     <div class="prpt-overlay" id="prpt-overlay">
-      <div class="prpt-card" id="prpt-card">
+      <!-- Сразу показываем карточку с загрузкой -->
+      <div class="prpt-card visible" id="prpt-card">
         <div class="prpt-title" id="prpt-card-title">The Parapet</div>
-        <div class="prpt-text" id="prpt-card-text">Loading...</div>
+        <div class="prpt-text" id="prpt-card-text">Loading assets...</div>
         <div class="prpt-opts" id="prpt-quiz-opts"></div>
         <div class="prpt-action-wrap" id="prpt-action-wrap">
           <button class="prpt-action-btn" id="prpt-action-btn">CONTINUE</button>
@@ -162,7 +167,7 @@
     state: { step: 0, mistakes: 0, maxMistakes: 2, totalSteps: 10, bgScale: 1 },
     images: {
       main: "https://i.postimg.cc/28R3QZ66/8.png",
-      win: "https://i.postimg.cc/pr89fYkd/parapet-final-win.jpg", // Твоя новая картинка
+      win: "https://i.postimg.cc/pr89fYkd/parapet-final-win.jpg",
       lose: "https://i.postimg.cc/28R3QZ66/8.png" 
     },
     sounds: {},
@@ -346,12 +351,35 @@
     game.style.transform = 'translate('+ox+'px,'+oy+'px) scale('+sc+')';
   };
 
+  // ФУНКЦИЯ ПРЕДЗАГРУЗКИ КАРТИНОК
+  P.preloadImages = function(callback) {
+    var urls = [P.images.main, P.images.win, P.images.lose];
+    var loadedCount = 0;
+    var checkDone = function() {
+      loadedCount++;
+      if (loadedCount === urls.length) callback();
+    };
+    for (var i = 0; i < urls.length; i++) {
+      var img = new Image();
+      img.onload = checkDone;
+      img.onerror = checkDone; // Если картинка битая, все равно продолжаем
+      img.src = urls[i];
+    }
+  };
+
   window.addEventListener('resize', P.resize);
+  
   document.addEventListener('DOMContentLoaded', function(){ 
-    setTimeout(function(){ 
-      P.resize(); 
-      if(P.loadState() && P.state.step > 0 && P.state.step < P.state.totalSteps) { P.resumeGame(); } else { P.startIntro(); }
-    }, 100); 
+    P.resize(); 
+    // Сначала ждем загрузки ВСЕХ картинок в кэш
+    P.preloadImages(function() {
+      // И только когда они загружены, запускаем игру или восстанавливаем сохранение
+      if(P.loadState() && P.state.step > 0 && P.state.step < P.state.totalSteps) { 
+        P.resumeGame(); 
+      } else { 
+        P.startIntro(); 
+      }
+    });
   });
 })();
 </script>
