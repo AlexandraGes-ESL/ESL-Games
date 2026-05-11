@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scene 2 — Sparring Mats</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Pontano+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background-color: #050505; overflow: hidden;
+  }
+  * { box-sizing: border-box; user-select: none; -webkit-user-select: none; font-family: 'Pontano Sans', sans-serif; }
+
+  #game-wrapper {
+    position: absolute; width: 1200px; height: 675px;
+    top: 0; left: 0; transform-origin: 0 0; 
+    background-color: #050505; overflow: hidden;
+  }
+  
+  #vignette {
+    position: absolute; inset: 0; z-index: 8; pointer-events: none;
+    box-shadow: inset 0 0 150px 30px rgba(0,0,0,0.7);
+  }
+
+  .scene { position: absolute; inset: 0; display: none; background-size: cover; background-position: center; }
+  .scene.active { display: block; }
+
+  /* СЛОИ ПЕРСОНАЖЕЙ */
+  .layer { position: absolute; pointer-events: none; transition: opacity 0.3s ease, transform 0.2s ease; }
+  .imogen { bottom: 25%; left: 15%; transform: translateX(-50%); height: 50%; z-index: 2; }
+  .caeden { bottom: 22%; left: 89%; transform: translateX(-50%); height: 55%; z-index: 2; }
+  
+  /* Враг остается крупным в центре */
+  .enemy { bottom: 8%; left: 50%; transform: translateX(-50%); height: 75%; z-index: 3; }
+  
+  /* РУКИ (Сделали меньше, опустили ниже, убрали анимацию прыжка) */
+  .hands { 
+    bottom: -15%; left: 50%; transform: translateX(-50%); width: 70%; 
+    z-index: 16; 
+  }
+  
+  /* Screen Shake */
+  .shake { animation: shake 0.4s; }
+  @keyframes shake {
+    0%, 100% { transform: translate(var(--ox, 0px), var(--oy, 0px)) scale(var(--sc, 1)); }
+    20% { transform: translate(calc(var(--ox, 0px) - 8px), calc(var(--oy, 0px) + 6px)) scale(var(--sc, 1)); }
+    40% { transform: translate(calc(var(--ox, 0px) + 9px), calc(var(--oy, 0px) - 5px)) scale(var(--sc, 1)); }
+    60% { transform: translate(calc(var(--ox, 0px) - 5px), calc(var(--oy, 0px) + 7px)) scale(var(--sc, 1)); }
+    80% { transform: translate(calc(var(--ox, 0px) + 6px), calc(var(--oy, 0px) - 4px)) scale(var(--sc, 1)); }
+  }
+
+  /* Эффект урона */
+  .damage-overlay {
+    position: absolute; inset: 0; z-index: 10; 
+    background: radial-gradient(circle, transparent 40%, rgba(180, 0, 0, 0.8) 100%);
+    opacity: 0; pointer-events: none;
+  }
+  .damage-overlay.active { animation: damageFlash 0.5s ease-out; }
+  @keyframes damageFlash { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+
+  /* Hit Marker */
+  .hit-marker {
+    position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+    width: 120px; height: 120px; z-index: 9; pointer-events: none;
+    background: radial-gradient(circle, rgba(255, 220, 100, 0.9) 0%, transparent 70%);
+    opacity: 0;
+  }
+  .hit-marker.active { animation: hitFlash 0.4s ease-out; }
+  @keyframes hitFlash { 
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } 
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); } 
+  }
+
+  /* HUD */
+  #hud { position: absolute; top: 20px; left: 20px; z-index: 20; display: flex; gap: 10px; font-size: 36px; opacity: 0; transition: opacity 1s;}
+  .heart { color: #c0392b; text-shadow: 0 0 8px rgba(192, 57, 43, 0.8); transition: color 0.3s, transform 0.3s; }
+  .heart.lost { color: #222; transform: scale(0.8); text-shadow: none; }
+
+  /* Прогресс раундов */
+  #round-progress { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); z-index: 20; display: flex; gap: 6px; opacity: 0; transition: opacity 1s;}
+  .round-dot { width: 30px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 2px; transition: background 0.4s; }
+  .round-dot.done { background: #cca65d; box-shadow: 0 0 8px #cca65d; }
+  .round-dot.current { background: #e5a93d; }
+
+  /* UI Диалогов */
+  .dialog-box {
+    position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 85%; max-width: 900px;
+    background: rgba(10, 15, 20, 0.85); border: 1px solid #6b1f1f; border-top: 2px solid #cca65d; border-bottom: 2px solid #cca65d;
+    padding: 15px 25px; z-index: 15; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    animation: dialogIn 0.4s ease-out;
+  }
+  @keyframes dialogIn { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  
+  .speaker { color: #cca65d; font-family: 'Cinzel', serif; font-size: 16px; font-weight: 600; letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase;}
+  .speaker.narrator { color: #888; font-style: italic; }
+  .speaker.imogen { color: #e91e63; }
+  .speaker.caeden { color: #a89f91; }
+  .dialog-text { font-size: 20px; line-height: 1.4; color: #f0e6d2; }
+  
+  .question-highlight { color: #e5a93d; font-weight: bold; }
+  .codex-quote { font-style: italic; border-left: 3px solid #cca65d; padding-left: 15px; margin: 10px 0; color: #d4c4a0; font-size: 18px;}
+
+  .choices { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+  .choice-btn, .continue-btn {
+    background: rgba(20, 10, 10, 0.9); border: 1px solid #cca65d; color: #f0e6d2; padding: 10px 15px;
+    font-size: 18px; font-family: 'Pontano Sans', sans-serif; cursor: pointer; text-align: left; transition: all 0.2s; border-radius: 4px;
+  }
+  .choice-btn:hover:not(:disabled), .continue-btn:hover { background: #cca65d; color: #000; font-weight: bold; transform: translateX(5px); }
+  .choice-btn:disabled { cursor: not-allowed; transform: none; }
+  .choice-btn.correct { background: rgba(40, 167, 69, 0.4); border-color: #28a745; color: #d4edda; }
+  .choice-btn.wrong { background: rgba(220, 53, 69, 0.4); border-color: #dc3545; color: #f8d7da; }
+  .continue-btn { display: inline-block; text-align: center; margin-top: 10px; background: #111; color: #cca65d; }
+
+  /* Таймер */
+  #timer-bar-container { position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.5); z-index: 25; display: none;}
+  #timer-bar { height: 100%; width: 100%; background: #28a745; transition: width 0.1s linear, background-color 0.3s; }
+  
+  #fade { position: absolute; inset: 0; background: #000; z-index: 100; transition: opacity 1.5s; pointer-events: none; }
+  
+  .feedback-box {
+    position: absolute; top: 35%; left: 50%; background: rgba(10,10,15,0.95);
+    border: 2px solid #cca65d; padding: 20px 40px; font-size: 24px; font-family: 'Cinzel', serif; z-index: 50; 
+    text-align: center; border-radius: 6px; opacity: 0; pointer-events: none; transform: translate(-50%, -50%) scale(0.8);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 600px;
+  }
+  .feedback-box.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .feedback-box.success { border-color: #28a745; color: #d4edda; }
+  .feedback-box.fail { border-color: #dc3545; color: #f8d7da; }
+  .feedback-hint { font-size: 16px; font-family: 'Pontano Sans', sans-serif; color: #cca65d; margin-top: 10px; font-style: italic;}
+
+  /* "READY?" экран */
+  #ready-screen {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.7); z-index: 70;
+    display: none; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif; color: #e5a93d; font-size: 120px;
+    text-shadow: 0 0 30px rgba(229, 169, 61, 0.8);
+  }
+  #ready-screen.show { display: flex; }
+  #ready-screen .countdown { animation: pulse 0.8s ease-out; }
+  @keyframes pulse {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0; transform: scale(1); }
+  }
+
+  .scene-bg-wide { background-image: url('https://i.yapx.ru/dkryR.png'); }
+  .scene-bg-close { background-image: url('https://i.yapx.ru/dkryS.png'); filter: brightness(0.85); }
+  
+  #game-over-overlay {
+      position: absolute; inset: 0; background: rgba(15, 5, 5, 0.92); z-index: 60;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 1s;
+  }
+  #game-over-overlay h1 { font-family: 'Cinzel', serif; color: #c0392b; font-size: 64px; margin-bottom: 10px; letter-spacing: 4px;}
+  #game-over-overlay p { color: #888; font-size: 20px; margin-bottom: 30px; }
+</style>
+</head>
+<body>
+
+<div id="game-wrapper">
+  <div id="vignette"></div>
+  <div id="fade"></div>
+  
+  <div id="timer-bar-container"><div id="timer-bar"></div></div>
+  
+  <div id="hud"><span class="heart" id="hp1">♥</span><span class="heart" id="hp2">♥</span><span class="heart" id="hp3">♥</span></div>
+  <div id="round-progress"></div>
+  
+  <div class="damage-overlay" id="damageFx"></div>
+  <div class="hit-marker" id="hitMarker"></div>
+  <div class="feedback-box" id="feedback"></div>
+
+  <div id="ready-screen"><div class="countdown" id="countdown-text">3</div></div>
+
+  <div id="game-over-overlay">
+      <h1>DEFEATED</h1>
+      <p>You fell on the sparring mat. Rise again.</p>
+      <button class="continue-btn" onclick="restartGame()" style="font-size: 22px; padding: 14px 40px;">TRY AGAIN</button>
+  </div>
+
+  <!-- SCENE 1: Reveal -->
+  <div class="scene scene-bg-wide active" id="scene-reveal">
+    <div class="dialog-box">
+      <div class="speaker narrator">Narrator</div>
+      <div class="dialog-text">Cold air. The smell of sweat and chalk. Your knuckles are wrapped.<br>Imogen stands at the edge of the mat. Caeden watches from the shadows.</div>
+      <div style="margin-top:10px;"><div class="speaker imogen">Imogen</div>
+      <div class="dialog-text">"Your opponent is Garrick Vextra. The rules are simple: survive his attacks. React fast, read his body language. Don't let him break you."</div></div>
+      <button class="continue-btn" onclick="showReady()">Step onto the mat →</button>
+    </div>
+  </div>
+
+  <!-- SCENE 2: The Fight -->
+  <div class="scene scene-bg-close" id="scene-fight">
+    <img src="https://i.yapx.ru/dkuEF.png" class="layer caeden" alt="Caeden">
+    <img src="https://i.yapx.ru/dkryP.png" class="layer imogen" alt="Imogen">
+    <img src="https://i.yapx.ru/dkryN.png" class="layer enemy" id="enemy-fight" alt="Enemy">
+    <img src="https://i.yapx.ru/dkryQ.png" class="layer hands" id="hands-fight" alt="Hands">
+    
+    <div class="dialog-box" id="fight-dialog">
+      <div class="speaker narrator">Round <span id="round-num">1</span> of 7</div>
+      <div class="dialog-text question-highlight" id="fight-text">...</div>
+      <div class="choices" id="fight-choices">
+        <button class="choice-btn" id="btn-0" onclick="handleAnswer(0)"></button>
+        <button class="choice-btn" id="btn-1" onclick="handleAnswer(1)"></button>
+        <button class="choice-btn" id="btn-2" onclick="handleAnswer(2)"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 3: Final Choice -->
+  <div class="scene scene-bg-close" id="scene-final">
+    <img src="https://i.yapx.ru/dkuEF.png" class="layer caeden" alt="Caeden">
+    <img src="https://i.yapx.ru/dkryP.png" class="layer imogen" alt="Imogen">
+    <!-- ПОВЕРЖЕННЫЙ ВРАГ (заменено на правильную ссылку dkryO.png) -->
+    <img src="https://i.yapx.ru/dkryN.png" class="layer enemy" alt="Defeated Enemy">
+    <img src="https://i.yapx.ru/dkryQ.png" class="layer hands" alt="Hands">
+    
+    <div class="dialog-box">
+      <div class="speaker narrator">Narrator</div><div class="dialog-text">Garrick is on his knees, panting heavily. Imogen doesn't call the match.</div>
+      <div class="speaker imogen" style="margin-top:10px;">Imogen</div><div class="dialog-text">"The Codex is clear. Decide."</div>
+      <div class="codex-quote">📜 <strong>Article VII:</strong> Mercy must be earned.</div>
+      <div class="choices">
+        <button class="choice-btn" onclick="finishGame('finish')">A) "I will eliminate him. No mercy."</button>
+        <button class="choice-btn" onclick="finishGame('mercy')">B) "I will spare him. The fight is over."</button>
+        <button class="choice-btn" onclick="finishGame('balanced')">C) "We are even. He fought honorably."</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 4: Outro -->
+  <div class="scene scene-bg-close" id="scene-outro">
+    <img src="https://i.yapx.ru/dkuEF.png" class="layer caeden" alt="Caeden">
+    <img src="https://i.yapx.ru/dkryQ.png" class="layer hands" alt="Hands">
+    
+    <div class="dialog-box">
+      <div class="speaker narrator">Narrator</div><div class="dialog-text" id="ending-text"></div>
+      <div class="speaker caeden" style="margin-top:15px;">Caeden</div><div class="dialog-text" id="caeden-reaction"></div>
+      <button class="continue-btn" onclick="saveAndExit()">Continue Journey →</button>
+    </div>
+  </div>
+
+</div>
+
+<audio id="audio-hit" src="https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/freesound_community-big-punch-short-with-male-moan-83735.mp3" preload="auto"></audio>
+<audio id="audio-swoosh" src="https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/dheerajakam4jor-swoosh-sound-effect-for-fight-scenes-or-transitions-1-149889.mp3" preload="auto"></audio>
+<audio id="audio-block" src="https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/freesound_community-block-6839.mp3" preload="auto"></audio>
+
+<script>
+  // RESIZE
+  function resizeGame() {
+    const game = document.getElementById('game-wrapper');
+    const sc = Math.min(window.innerWidth/1200, window.innerHeight/675);
+    const ox = (window.innerWidth - 1200*sc) / 2, oy = (window.innerHeight - 675*sc) / 2;
+    game.style.setProperty('--ox', ox + 'px');
+    game.style.setProperty('--oy', oy + 'px');
+    game.style.setProperty('--sc', sc);
+    game.style.transform = `translate(${ox}px, ${oy}px) scale(${sc})`;
+  }
+  window.addEventListener('resize', resizeGame); resizeGame();
+
+  // QUESTIONS DATA
+  const qData = [
+    { q: "Garrick has been training hard. He says he 'works ______' at the gym every day.", opts: ["out", "on", "up"], ans: 0, hint: "work out = заниматься спортом" },
+    { q: "He's strong, but you must never ______ up. Keep fighting!", opts: ["give", "make", "take"], ans: 0, hint: "give up = сдаваться" },
+    { q: "He throws a fast punch! ______ on tight and stay focused!", opts: ["Get", "Hold", "Keep"], ans: 1, hint: "hold on = держаться" },
+    { q: "If you hit him hard enough, you might ______ him out cold.", opts: ["knock", "push", "break"], ans: 0, hint: "knock out = вырубить" },
+    { q: "He's trying to scare you. Don't back ______ now — show no fear!", opts: ["off", "down", "away"], ans: 1, hint: "back down = отступить" },
+    { q: "A true warrior always stands ______ to a bigger opponent.", opts: ["up", "out", "by"], ans: 0, hint: "stand up to = противостоять" },
+    { q: "He's exhausted. He's about to 'throw in the ______' and surrender.", opts: ["fight", "towel", "match"], ans: 1, hint: "throw in the towel = сдаться (идиома)" }
+  ];
+
+  const state = { hp: 3, step: 0, timer: null, timerStart: 0 };
+  const TIME_PER_ROUND = 10000;
+
+  window.onload = () => {
+    setTimeout(() => { document.getElementById('fade').style.opacity = '0'; }, 300);
+    buildRoundProgress();
+  };
+
+  function buildRoundProgress() {
+    const cont = document.getElementById('round-progress');
+    cont.innerHTML = '';
+    for (let i = 0; i < qData.length; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'round-dot'; dot.id = 'dot-' + i;
+      cont.appendChild(dot);
+    }
+  }
+
+  function updateRoundProgress() {
+    for (let i = 0; i < qData.length; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.classList.remove('current', 'done');
+      if (i < state.step) dot.classList.add('done');
+      else if (i === state.step) dot.classList.add('current');
+    }
+  }
+
+  function playSnd(id) { const a = document.getElementById(id); if(a) { a.currentTime=0; a.play().catch(()=>{}); } }
+  function goToScene(id) { document.querySelectorAll('.scene').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+
+  function updateHP() {
+    for (let i = 1; i <= 3; i++) {
+      const h = document.getElementById('hp' + i);
+      if (i > state.hp) h.classList.add('lost'); else h.classList.remove('lost');
+    }
+  }
+
+  function showFeedback(text, type, hint, cb) {
+    const fb = document.getElementById('feedback'); 
+    let html = text;
+    if (hint) html += `<div class="feedback-hint">${hint}</div>`;
+    fb.innerHTML = html;
+    fb.className = 'feedback-box show ' + type;
+    setTimeout(() => { 
+      fb.className = 'feedback-box'; 
+      if(cb) cb(); 
+    }, hint ? 1800 : 1200);
+  }
+
+  function showReady() {
+    const screen = document.getElementById('ready-screen');
+    const text = document.getElementById('countdown-text');
+    screen.classList.add('show');
+    
+    const sequence = ['3', '2', '1', 'FIGHT!'];
+    let i = 0;
+    
+    function nextCount() {
+      if (i >= sequence.length) {
+        screen.classList.remove('show');
+        startSparring();
+        return;
+      }
+      text.textContent = sequence[i];
+      text.style.animation = 'none';
+      void text.offsetWidth; 
+      text.style.animation = 'pulse 0.8s ease-out';
+      if (i < 3) playSnd('audio-block');
+      else playSnd('audio-swoosh');
+      i++;
+      setTimeout(nextCount, 800);
+    }
+    nextCount();
+  }
+
+  function startSparring() {
+    state.hp = 3; state.step = 0; updateHP();
+    document.getElementById('hud').style.opacity = '1';
+    document.getElementById('round-progress').style.opacity = '1';
+    document.getElementById('game-over-overlay').style.opacity = '0';
+    document.getElementById('game-over-overlay').style.pointerEvents = 'none';
+    goToScene('scene-fight');
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    if (state.hp <= 0) { 
+        document.getElementById('timer-bar-container').style.display = 'none';
+        document.getElementById('game-over-overlay').style.opacity = '1'; 
+        document.getElementById('game-over-overlay').style.pointerEvents = 'all';
+        return; 
+    }
+    if (state.step >= qData.length) { startFinal(); return; }
+
+    updateRoundProgress();
+
+    const q = qData[state.step];
+    document.getElementById('round-num').innerText = state.step + 1;
+    document.getElementById('fight-text').innerHTML = q.q.replace('______', '<span style="color:#fff; text-decoration:underline;">______</span>');
+    
+    // Меняем картинки врага во время боя (M = атака, N = стойка)
+    document.getElementById('enemy-fight').src = (state.step % 2 === 0) ? "https://i.yapx.ru/dkryO.png" : "https://i.yapx.ru/dkryM.png";
+    
+    // Опускаем руки в обычное положение (анимации больше нет)
+    document.getElementById('hands-fight').src = "https://i.yapx.ru/dkryQ.png";
+
+    const dialog = document.getElementById('fight-dialog');
+    dialog.style.animation = 'none';
+    void dialog.offsetWidth;
+    dialog.style.animation = 'dialogIn 0.4s ease-out';
+
+    const letters = ['A) ', 'B) ', 'C) '];
+    for(let i=0; i<3; i++) {
+        const btn = document.getElementById('btn-'+i);
+        btn.innerText = letters[i] + q.opts[i];
+        btn.disabled = false;
+        btn.classList.remove('correct', 'wrong');
+    }
+
+    const container = document.getElementById('timer-bar-container');
+    const bar = document.getElementById('timer-bar');
+    container.style.display = 'block'; 
+    bar.style.transition = 'none'; 
+    bar.style.width = '100%';
+    bar.style.background = '#28a745';
+    
+    setTimeout(() => { 
+      bar.style.transition = `width ${TIME_PER_ROUND}ms linear, background-color 0.3s`; 
+      bar.style.width = '0%'; 
+    }, 50);
+
+    state.timerStart = Date.now();
+    clearInterval(state.timer);
+    state.timer = setInterval(() => {
+        const elapsed = Date.now() - state.timerStart;
+        const remaining = TIME_PER_ROUND - elapsed;
+        
+        if (remaining < 3000) bar.style.background = '#c0392b'; 
+        else if (remaining < 6000) bar.style.background = '#e5a93d'; 
+        
+        if (elapsed >= TIME_PER_ROUND) handleAnswer(-1);
+    }, 100);
+  }
+
+  function handleAnswer(ansIndex) {
+    clearInterval(state.timer);
+    document.getElementById('timer-bar-container').style.display = 'none';
+    
+    const q = qData[state.step];
+    
+    for(let i=0; i<3; i++) {
+      const btn = document.getElementById('btn-'+i);
+      btn.disabled = true;
+      if (i === q.ans) btn.classList.add('correct');
+      else if (i === ansIndex) btn.classList.add('wrong');
+    }
+    
+    if (ansIndex === q.ans) {
+        // SUCCESS: Картинка рук просто меняется на блок без подпрыгивания
+        playSnd(state.step % 2 === 0 ? 'audio-block' : 'audio-swoosh');
+        document.getElementById('hands-fight').src = "https://i.yapx.ru/dkud7.png"; 
+        
+        const hm = document.getElementById('hitMarker');
+        hm.classList.add('active');
+        setTimeout(() => hm.classList.remove('active'), 400);
+        
+        const successMsgs = ["Perfectly executed!", "Solid block!", "Quick reflexes!", "Well done!", "Brilliant!", "Sharp move!", "Flawless!"];
+        showFeedback(successMsgs[state.step % successMsgs.length], "success", null, () => { 
+          state.step++; 
+          loadQuestion(); 
+        });
+    } else {
+        // FAIL
+        state.hp--; 
+        updateHP(); 
+        playSnd('audio-hit');
+        
+        const wrapper = document.getElementById('game-wrapper');
+        wrapper.classList.add('shake');
+        setTimeout(() => wrapper.classList.remove('shake'), 400);
+        
+        const fx = document.getElementById('damageFx');
+        fx.classList.add('active'); 
+        setTimeout(() => fx.classList.remove('active'), 500);
+        
+        const failText = ansIndex === -1 ? "Too slow!" : "Wrong move!";
+        showFeedback(failText, "fail", q.hint, () => { 
+          state.step++; 
+          loadQuestion(); 
+        });
+    }
+  }
+
+  function restartGame() { 
+    document.getElementById('game-over-overlay').style.opacity = '0';
+    document.getElementById('game-over-overlay').style.pointerEvents = 'none';
+    setTimeout(showReady, 500);
+  }
+
+  function startFinal() {
+    document.getElementById('timer-bar-container').style.display = 'none';
+    document.getElementById('hud').style.opacity = '0';
+    document.getElementById('round-progress').style.opacity = '0';
+    goToScene('scene-final');
+  }
+
+  function finishGame(choice) {
+    let caedenReact = "";
+    let ending = "";
+    
+    if (choice === 'finish') {
+      caedenReact = '"Cold. Efficient. I like that."';
+      ending = "You strike the final blow. Garrick falls silent.";
+    } else if (choice === 'mercy') {
+      caedenReact = '"Mercy is a luxury we cannot afford in this world."';
+      ending = "You lower your fists. Imogen's eyes narrow — but she nods slowly.";
+    } else {
+      caedenReact = '"Diplomatic. Clever. We shall see if it serves you."';
+      ending = "You offer your hand. Garrick takes it, breathing heavily. Honor preserved.";
+    }
+    
+    if (state.hp === 3) ending = "A flawless victory. The mat is yours. " + ending;
+    else if (state.hp === 1) ending = "You barely survived, body aching. " + ending;
+    else ending = "You survived the trial. " + ending;
+    
+    document.getElementById('ending-text').innerText = ending;
+    document.getElementById('caeden-reaction').innerText = caedenReact;
+    
+    try {
+      localStorage.setItem('sparring_hp', state.hp);
+      localStorage.setItem('sparring_choice', choice);
+    } catch(e) {}
+    
+    goToScene('scene-outro');
+  }
+
+  function saveAndExit() {
+    console.log("Final state - HP:", state.hp, "Choice:", localStorage.getItem('sparring_choice'));
+    alert("Scene complete!\nHP remaining: " + state.hp + "/3\nChoice: " + localStorage.getItem('sparring_choice'));
+  }
+</script>
+</body>
+</html>
