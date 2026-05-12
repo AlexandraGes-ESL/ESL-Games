@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My First Lesson — TOEFL & PhD Track</title>
+<meta name="description" content="Interactive English lesson for adult learners preparing for TOEFL and PhD applications.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========== DESIGN TOKENS ========== */
+:root{
+  --navy: #0F2A44;
+  --navy-soft: #1d3a5c;
+  --cream: #FAF6F0;
+  --cream-deep: #F2EADB;
+  --coral: #E26D5C;
+  --coral-soft: #f4a896;
+  --sage: #87A878;
+  --gold: #D4A24C;
+  --ink: #1a1a1a;
+  --muted: #6b7280;
+  --line: #E5DDD0;
+  --white: #ffffff;
+  --shadow-sm: 0 1px 3px rgba(15,42,68,0.06);
+  --shadow-md: 0 8px 24px rgba(15,42,68,0.08);
+  --shadow-lg: 0 20px 50px rgba(15,42,68,0.12);
+  --radius: 14px;
+  --radius-lg: 20px;
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html, body{height:100%;}
+body{
+  font-family: var(--font-sans);
+  background: var(--cream);
+  color: var(--ink);
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ========== LAYOUT ========== */
+.app{
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  background: var(--navy);
+  color: var(--cream);
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  position: relative;
+}
+/* decorative bg pattern */
+.sidebar::before{
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 200px;
+  background: radial-gradient(circle at top right, rgba(226,109,92,0.15), transparent 70%);
+  pointer-events: none;
+}
+.brand{
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+  position: relative;
+}
+.brand span{ color: var(--coral-soft); font-style: italic; }
+.brand-sub{
+  font-size: 11px;
+  color: rgba(250,246,240,0.55);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+/* ===== XP CARD (gamification) ===== */
+.xp-card{
+  background: linear-gradient(135deg, rgba(226,109,92,0.2), rgba(212,162,76,0.15));
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.xp-card::after{
+  content: '';
+  position: absolute;
+  top: -50%; right: -20%;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
+  pointer-events: none;
+}
+.xp-row{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.xp-label{
+  font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(250,246,240,0.6);
+}
+.xp-value{
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1;
+}
+.xp-value .plus{
+  display: inline-block;
+  font-size: 12px;
+  color: var(--gold);
+  margin-left: 4px;
+  animation: pulsePlus 0.6s ease;
+}
+@keyframes pulsePlus{
+  0%{ transform: translateY(0) scale(1); opacity: 0;}
+  50%{ transform: translateY(-8px) scale(1.3); opacity: 1;}
+  100%{ transform: translateY(-16px) scale(1); opacity: 0;}
+}
+.streak-row{
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px;
+  color: rgba(250,246,240,0.8);
+}
+.streak-flame{
+  font-size: 14px;
+  filter: grayscale(0.6);
+  transition: filter 0.3s;
+}
+.streak-flame.hot{ filter: grayscale(0); animation: flameDance 1.2s ease-in-out infinite alternate; }
+@keyframes flameDance{
+  from{ transform: scale(1) rotate(-3deg); }
+  to{ transform: scale(1.1) rotate(3deg); }
+}
+
+.nav-title{
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(250,246,240,0.4);
+  margin-bottom: 10px;
+  position: relative;
+}
+.nav{ display: flex; flex-direction: column; gap: 3px; position: relative; }
+.nav-item{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: rgba(250,246,240,0.7);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  position: relative;
+}
+.nav-item:hover{ background: rgba(255,255,255,0.05); color: var(--cream); }
+.nav-item.active{
+  background: var(--coral);
+  color: white;
+  box-shadow: 0 4px 12px rgba(226,109,92,0.4);
+}
+.nav-item.done .nav-num{ background: var(--sage); color: white; }
+.nav-item.done .nav-num::after{ content: "✓"; }
+.nav-item.done .nav-num .num-text{ display: none; }
+.nav-num{
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.nav-item.active .nav-num{ background: rgba(255,255,255,0.25); }
+
+/* ===== ACHIEVEMENTS in sidebar ===== */
+.achievements-block{
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.ach-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.ach-cell{
+  aspect-ratio: 1;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  position: relative;
+  cursor: help;
+  transition: all 0.3s;
+  filter: grayscale(1) opacity(0.4);
+}
+.ach-cell.unlocked{
+  background: linear-gradient(135deg, rgba(212,162,76,0.3), rgba(226,109,92,0.2));
+  filter: grayscale(0) opacity(1);
+  animation: achPop 0.6s cubic-bezier(.4,1.6,.6,1);
+}
+.ach-cell:hover::after{
+  content: attr(data-title);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 100;
+  pointer-events: none;
+}
+@keyframes achPop{
+  0%{ transform: scale(0.3) rotate(-180deg); opacity: 0; }
+  60%{ transform: scale(1.2) rotate(10deg); }
+  100%{ transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.progress-block{
+  margin-top: auto;
+  padding-top: 20px;
+}
+.progress-track{
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--coral), var(--gold));
+  transition: width 0.6s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 0 12px rgba(226,109,92,0.4);
+}
+.progress-text{ font-size: 11px; margin-top: 6px; color: rgba(250,246,240,0.6); }
+
+/* ===== STAGE ===== */
+.stage{
+  position: relative;
+  overflow-y: auto;
+  background: var(--cream);
+  padding: 56px 72px;
+}
+/* subtle decorative shapes */
+.stage::before{
+  content: '';
+  position: fixed;
+  top: 10%; right: -100px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(212,162,76,0.08), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.slide{
+  display: none;
+  animation: slideIn 0.5s cubic-bezier(.2,.8,.2,1);
+  max-width: 920px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.slide.active{ display: block; }
+@keyframes slideIn{
+  from{ opacity: 0; transform: translateY(16px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+.tag{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--cream-deep);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.tag-dot{ width: 6px; height: 6px; background: var(--coral); border-radius: 50%; }
+.tag-xp{
+  background: linear-gradient(135deg, var(--gold), var(--coral));
+  color: white;
+  border: none;
+  margin-left: 8px;
+}
+
+h1.slide-title{
+  font-family: var(--font-serif);
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--navy);
+  letter-spacing: -1.5px;
+  margin-bottom: 16px;
+}
+h1.slide-title em{ font-style: italic; color: var(--coral); font-weight: 500; }
+.lead{
+  font-size: 17px;
+  color: var(--navy-soft);
+  margin-bottom: 32px;
+  max-width: 640px;
+  line-height: 1.65;
+}
+
+/* ===== HERO ILLUSTRATION ===== */
+.hero-illustration{
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin: 20px 0 32px;
+}
+.hero-illustration .svg-wrap{
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+}
+.hero-illustration .hero-text{ flex: 1; }
+
+.hero-meta{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 24px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.meta-card{
+  padding: 18px;
+  background: var(--white);
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  transition: transform 0.2s;
+}
+.meta-card:hover{ transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.meta-card .icon{
+  width: 36px; height: 36px;
+  background: var(--cream-deep);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.meta-card .label{
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.meta-card .val{
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* ===== CARDS ===== */
+.card{
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-sm);
+}
+.card-head{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+.card-title{
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: -0.5px;
+}
+.card-hint{
+  font-size: 12px;
+  color: var(--muted);
+  padding: 4px 10px;
+  background: var(--cream);
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* ===== BINGO ===== */
+.bingo{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.bingo-cell{
+  aspect-ratio: 1;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(.4,0,.2,1);
+  position: relative;
+  color: var(--navy-soft);
+  line-height: 1.35;
+}
+.bingo-cell:hover{
+  border-color: var(--coral-soft);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.bingo-cell.on{
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--cream);
+  font-weight: 600;
+  animation: bingoSelect 0.4s ease;
+}
+@keyframes bingoSelect{
+  0%{ transform: scale(1); }
+  50%{ transform: scale(1.08); }
+  100%{ transform: scale(1); }
+}
+.bingo-cell.on::after{
+  content: "✓";
+  position: absolute;
+  top: 6px; right: 9px;
+  font-size: 11px;
+  color: var(--coral-soft);
+}
+.bingo-summary{
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--cream-deep);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bingo-summary b{ color: var(--coral); font-family: var(--font-serif); font-size: 18px; }
+
+/* ===== READING ===== */
+.blogs{ display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
+.blog{
+  padding: 26px;
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+.blog.a{ background: linear-gradient(135deg, #FBE9C8 0%, #F2D7A0 100%); }
+.blog.b{ background: linear-gradient(135deg, #D9E4D1 0%, #B8CDA8 100%); }
+.blog-avatar{
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 19px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 10px rgba(15,42,68,0.1);
+}
+.blog-name{
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.blog-role{
+  font-size: 11px;
+  color: var(--navy-soft);
+  margin-bottom: 14px;
+  letter-spacing: 0.5px;
+}
+.blog-text{ font-size: 14px; color: var(--ink); line-height: 1.7; }
+.blog-text mark{
+  background: rgba(255,255,255,0.6);
+  padding: 0 4px;
+  border-radius: 3px;
+  color: var(--navy);
+  font-weight: 500;
+}
+
+/* ===== Q&A (MCQ) ===== */
+.q-text{
+  font-size: 16px;
+  color: var(--navy);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.options{ display: flex; flex-direction: column; gap: 10px; }
+.option{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.option:hover{ border-color: var(--coral-soft); background: var(--cream); }
+.option input{ display: none; }
+.option .key{
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--cream-deep);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--navy);
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.option.chosen{ border-color: var(--navy); background: var(--cream); }
+.option.chosen .key{ background: var(--navy); color: var(--cream); }
+.option.correct{ border-color: var(--sage); background: rgba(135,168,120,0.1); }
+.option.correct .key{ background: var(--sage); color: white; }
+.option.wrong{ border-color: var(--coral); background: rgba(226,109,92,0.08); }
+.option.wrong .key{ background: var(--coral); color: white; }
+
+/* ===== BUTTONS ===== */
+.btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  background: var(--navy);
+  color: var(--cream);
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn:hover{ background: var(--navy-soft); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn.coral{ background: var(--coral); }
+.btn.coral:hover{ background: #d05a48; }
+.btn.ghost{ background: transparent; color: var(--navy); border: 1.5px solid var(--line); }
+.btn.ghost:hover{ background: var(--cream-deep); }
+.btn-row{ display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+
+/* ===== FEEDBACK ===== */
+.feedback{
+  margin-top: 16px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  display: none;
+  border-left: 3px solid;
+}
+.feedback.show{ display: block; animation: slideIn 0.3s; }
+.feedback.good{ background: rgba(135,168,120,0.1); border-color: var(--sage); color: #3d5a30; }
+.feedback.bad{ background: rgba(226,109,92,0.08); border-color: var(--coral); color: #8a3528; }
+.feedback.tip{ background: var(--cream-deep); border-color: var(--gold); color: var(--navy); }
+.feedback strong{ display: block; margin-bottom: 4px; font-family: var(--font-serif); font-size: 15px; }
+
+/* ===== WRITING ===== */
+textarea.essay{
+  width: 100%;
+  min-height: 180px;
+  padding: 20px;
+  background: var(--cream);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  resize: vertical;
+    color: var(--ink);
+  transition: border 0.2s;
+}
+textarea.essay:focus{ outline: none; border-color: var(--coral); background: var(--white); }
+.writing-meta{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.word-count{ font-weight: 600; color: var(--navy); }
+.word-count.good{ color: var(--sage); }
+.prompt-helper{
+  background: var(--cream-deep);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: var(--navy);
+  border-left: 3px solid var(--gold);
+}
+.prompt-helper b{ display: block; margin-bottom: 4px; font-family: var(--font-serif); font-size: 14px;}
+
+/* ===== GRAMMAR GRID ===== */
+.gram-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.gram-box{
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.gram-box:hover{ transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.gram-num{
+  position: absolute;
+  top: 14px; right: 20px;
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--cream-deep);
+  line-height: 1;
+}
+.gram-tag{
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--coral);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.gram-q{
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--navy);
+  margin-bottom: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.gram-q i{ background: var(--cream-deep); padding: 2px 8px; border-radius: 4px; font-style: normal; color: var(--coral); font-family: var(--font-sans); font-size: 14px;}
+
+.mini-options{ display: flex; flex-direction: column; gap: 6px; }
+.mini-opt{
+  padding: 10px 14px;
+  background: var(--cream);
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+.mini-opt:hover{ background: var(--cream-deep); }
+.mini-opt.chosen{ border-color: var(--navy); background: var(--white); font-weight: 600; }
+.mini-opt.correct{ background: rgba(135,168,120,0.15); border-color: var(--sage); color: #3d5a30; font-weight: 600; }
+.mini-opt.wrong{ background: rgba(226,109,92,0.1); border-color: var(--coral); color: #8a3528; }
+
+/* ===== ERROR CORRECTION ===== */
+.tf-list{ display: flex; flex-direction: column; gap: 14px; }
+.tf-row{
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: center;
+  transition: border 0.2s;
+}
+.tf-row.solved{ border-color: var(--sage); }
+.tf-sentence{ font-family: var(--font-serif); font-size: 16px; color: var(--navy); }
+.tf-sentence::before{
+  content: "“";
+  color: var(--coral);
+  font-size: 26px;
+  vertical-align: -6px;
+  margin-right: 2px;
+}
+.tf-sentence::after{
+  content: "”";
+  color: var(--coral);
+  font-size: 26px;
+  vertical-align: -6px;
+  margin-left: 2px;
+}
+.tf-actions{ display: flex; gap: 8px; }
+.tf-btn{
+  padding: 8px 16px;
+  border: 1.5px solid var(--line);
+  background: var(--white);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tf-btn.ok{ color: var(--sage); }
+.tf-btn.no{ color: var(--coral); }
+.tf-btn:hover{ background: var(--cream); }
+.tf-btn.selected.ok{ background: var(--sage); color: white; border-color: var(--sage); }
+.tf-btn.selected.no{ background: var(--coral); color: white; border-color: var(--coral); }
+.tf-explain{
+  grid-column: 1 / -1;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  font-size: 13px;
+  color: var(--navy-soft);
+  display: none;
+}
+.tf-explain.show{ display: block; animation: slideIn 0.3s; }
+.tf-explain b{ color: var(--coral); font-family: var(--font-serif); font-size: 14px; }
+
+/* ===== FINAL SCORECARD (Spotify-Wrapped style) ===== */
+.scorecard{
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  color: var(--cream);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.scorecard::before{
+  content: '';
+  position: absolute;
+  top: -50%; right: -20%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(226,109,92,0.25), transparent 70%);
+  pointer-events: none;
+}
+.scorecard::after{
+  content: '';
+  position: absolute;
+  bottom: -30%; left: -10%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(212,162,76,0.2), transparent 70%);
+  pointer-events: none;
+}
+.score-eyebrow{
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--coral-soft);
+  margin-bottom: 12px;
+  position: relative;
+}
+.score-title{
+  font-family: var(--font-serif);
+  font-size: 38px;
+  font-weight: 600;
+  line-height: 1.1;
+  margin-bottom: 28px;
+  letter-spacing: -1px;
+  position: relative;
+}
+.score-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  position: relative;
+}
+.score-stat{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 18px;
+  backdrop-filter: blur(10px);
+}
+.score-stat .num{
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.score-stat .lbl{
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(250,246,240,0.65);
+}
+
+/* ===== ROADMAP ===== */
+.roadmap{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 24px 0; }
+.road-step{
+  padding: 20px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  position: relative;
+  transition: transform 0.2s;
+}
+.road-step:hover{ transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.road-step .num{
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--coral);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.road-step .ttl{
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.road-step .desc{ font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ===== ACHIEVEMENT TOAST ===== */
+.toast{
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+  color: var(--cream);
+  padding: 16px 22px;
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 1000;
+  transform: translateX(420px);
+  transition: transform 0.5s cubic-bezier(.2,1.6,.4,1);
+  max-width: 360px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.toast.show{ transform: translateX(0); }
+.toast-icon{
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--gold), var(--coral));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  animation: toastIconSpin 0.8s ease;
+}
+@keyframes toastIconSpin{
+  0%{ transform: rotate(-180deg) scale(0.5); opacity: 0; }
+  100%{ transform: rotate(0) scale(1); opacity: 1; }
+}
+.toast-content{ flex: 1; }
+.toast-label{
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 2px;
+}
+.toast-title{
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.toast-sub{ font-size: 12px; color: rgba(250,246,240,0.7); }
+
+/* ===== CONFETTI ===== */
+.confetti-wrap{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+.confetti-piece{
+  position: absolute;
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confettiFall linear forwards;
+}
+@keyframes confettiFall{
+  0%{ transform: translateY(-100px) rotate(0); opacity: 1; }
+  100%{ transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* ===== SOUND TOGGLE ===== */
+.sound-toggle{
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  transition: all 0.2s;
+}
+.sound-toggle:hover{ transform: scale(1.1); }
+
+/* ===== BOTTOM BAR ===== */
+.bottom-bar{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  max-width: 920px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.step-counter{
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+.step-counter b{ color: var(--navy); font-family: var(--font-serif); font-size: 16px;}
+
+/* ===== MOBILE ===== */
+@media (max-width: 900px){
+  .app{ grid-template-columns: 1fr; }
+  .sidebar{
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    padding: 14px 18px;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 12px;
+    height: 70px;
+  }
+  .brand-sub, .nav-title, .progress-block, .achievements-block, .xp-card{ display: none; }
+  .brand{ font-size: 16px; margin: 0; white-space: nowrap; }
+  .nav{ flex-direction: row; flex: none; gap: 6px; }
+  .nav-item{ padding: 8px 12px; font-size: 12px; }
+  .nav-item .nav-label{ display: none; }
+  .stage{ padding: 90px 20px 40px; }
+  h1.slide-title{ font-size: 32px; }
+  .lead{ font-size: 15px; }
+  .card{ padding: 22px; }
+  .blogs, .gram-grid, .roadmap, .hero-meta, .score-grid{ grid-template-columns: 1fr; }
+  .bingo{ grid-template-columns: repeat(2, 1fr); }
+  .tf-row{ grid-template-columns: 1fr; }
+  .tf-actions{ justify-content: flex-start; }
+  .hero-illustration{ flex-direction: column; text-align: center; }
+  .toast{ left: 16px; right: 16px; max-width: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============ SOUND TOGGLE ============ -->
+<button class="sound-toggle" id="soundToggle" onclick="toggleSound()" title="Toggle sound">🔊</button>
+
+<!-- ============ CONFETTI LAYER ============ -->
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<!-- ============ ACHIEVEMENT TOAST ============ -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toastIcon">🏆</div>
+  <div class="toast-content">
+    <div class="toast-label">Achievement unlocked</div>
+    <div class="toast-title" id="toastTitle">First Steps</div>
+    <div class="toast-sub" id="toastSub">+50 XP</div>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">My First <span>Lesson</span></div>
+    <div class="brand-sub">TOEFL · PhD Track</div>
+
+    <!-- GAMIFICATION CARD -->
+    <div class="xp-card">
+      <div class="xp-row">
+        <div>
+          <div class="xp-label">Total XP</div>
+          <div class="xp-value"><span id="xpVal">0</span><span class="plus" id="xpPlus" style="display:none;"></span></div>
+        </div>
+        <div style="text-align:right;">
+          <div class="xp-label">Streak</div>
+          <div class="streak-row">
+            <span class="streak-flame" id="streakFlame">🔥</span>
+            <span id="streakVal">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-title">Lesson Map</div>
+    <nav class="nav" id="nav"></nav>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="achievements-block">
+      <div class="nav-title">Achievements</div>
+      <div class="ach-grid" id="achGrid"></div>
+    </div>
+
+    <div class="progress-block">
+      <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
+      <div class="progress-text" id="ptext">0 of 7 completed</div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN STAGE ============ -->
+  <main class="stage" id="stage">
+
+    <!-- ===== SLIDE 1: WELCOME ===== -->
+    <section class="slide active" data-title="Welcome">
+      <div class="tag"><span class="tag-dot"></span>Session 01 · Introductory</div>
+      <h1 class="slide-title">Welcome — let's design the path to <em>your PhD</em>.</h1>
+
+      <div class="hero-illustration">
+        <div class="svg-wrap">
+          <!-- Inline SVG illustration: a stylized journey/mountain -->
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- background circle -->
+            <circle cx="100" cy="100" r="95" fill="#F2EADB"/>
+            <!-- sun -->
+            <circle cx="145" cy="65" r="18" fill="#D4A24C" opacity="0.85"/>
+            <!-- back mountain -->
+            <path d="M0 150 L60 80 L110 130 L160 70 L200 120 L200 200 L0 200 Z" fill="#1d3a5c"/>
+            <!-- front mountain -->
+            <path d="M0 170 L40 110 L90 150 L140 100 L200 150 L200 200 L0 200 Z" fill="#0F2A44"/>
+            <!-- snow caps -->
+            <path d="M50 95 L60 80 L70 95 L65 100 L55 100 Z" fill="#FAF6F0"/>
+            <path d="M150 85 L160 70 L170 85 L165 90 L155 90 Z" fill="#FAF6F0"/>
+            <!-- flag on top -->
+            <line x1="160" y1="70" x2="160" y2="40" stroke="#E26D5C" stroke-width="2"/>
+            <path d="M160 40 L175 47 L160 54 Z" fill="#E26D5C"/>
+            <!-- path/road -->
+            <path d="M100 200 Q110 170, 130 160 T160 70" stroke="#FAF6F0" stroke-width="2" stroke-dasharray="4 4" fill="none" opacity="0.6"/>
+            <!-- person silhouette -->
+            <circle cx="100" cy="185" r="4" fill="#FAF6F0"/>
+            <rect x="97" y="188" width="6" height="10" rx="2" fill="#FAF6F0"/>
+          </svg>
+        </div>
+        <div class="hero-text">
+          <p class="lead">This first session is a soft diagnostic. We'll talk, read, write, and explore grammar together — not to judge you, but to map the journey ahead.</p>
+          <p class="lead" style="margin-bottom:0;"><strong style="color:var(--navy);">Mistakes are data, not failures.</strong> Every answer helps me tailor the next 100+ hours of study to <em>you</em>.</p>
+        </div>
+      </div>
+
+      <div class="hero-meta">
+        <div class="meta-card">
+          <div class="icon">🎯</div>
+          <div class="label">Target Score</div>
+          <div class="val">TOEFL iBT 100+</div>
+        </div>
+        <div class="meta-card">
+          <div class="icon">📍</div>
+          <div class="label">Starting Level</div>
+          <div class="val">B1 → B2/C1</div>
+        </div>
+        <div class="meta-card">
+          <div class="icon">🎓</div>
+          <div class="label">End Goal</div>
+          <div class="val">PhD in the USA</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 2: BINGO ===== -->
+    <section class="slide" data-title="Ice-breaker">
+      <div class="tag"><span class="tag-dot"></span>Get to Know You<span class="tag tag-xp" style="margin-left:8px;">+5 XP each</span></div>
+      <h1 class="slide-title">Find <em>yourself</em> on the board.</h1>
+      <p class="lead">Click every square that describes you. This helps me understand your world and tailor texts to your interests.</p>
+
+      <div class="card">
+        <div class="bingo" id="bingo">
+          <div class="bingo-cell">Has traveled to 3+ countries</div>
+          <div class="bingo-cell">Speaks more than one language</div>
+          <div class="bingo-cell">Has read an academic paper recently</div>
+          <div class="bingo-cell">Lives or works in Dubai</div>
+          <div class="bingo-cell">Enjoys cooking</div>
+          <div class="bingo-cell">Has a pet</div>
+          <div class="bingo-cell">Watches series in English</div>
+          <div class="bingo-cell">Has presented in public</div>
+          <div class="bingo-cell">Loves coffee culture</div>
+          <div class="bingo-cell">Enjoys long walks</div>
+          <div class="bingo-cell">Has lived abroad</div>
+          <div class="bingo-cell">Reads non-fiction</div>
+          <div class="bingo-cell">Is a morning person</div>
+          <div class="bingo-cell">Writes a journal</div>
+          <div class="bingo-cell">Has studied online before</div>
+          <div class="bingo-cell">Dreams of academic life</div>
+        </div>
+        <div class="bingo-summary">
+          ✦ You selected <b id="bingoCount">0</b> out of 16 — saved automatically.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 3: READING ===== -->
+    <section class="slide" data-title="Reading">
+      <div class="tag"><span class="tag-dot"></span>Reading · Inference<span class="tag tag-xp" style="margin-left:8px;">+50 XP</span></div>
+      <h1 class="slide-title">Two voices, one <em>weekend</em>.</h1>
+      <p class="lead">Read both blog posts. Then answer a TOEFL-style inference question — we'll work on <i>what is implied</i>, not just what is stated.</p>
+
+      <div class="blogs">
+        <div class="blog a">
+          <div class="blog-avatar">A</div>
+          <div class="blog-name">Amelia, 28</div>
+          <div class="blog-role">MARKETING MANAGER · DUBAI</div>
+          <div class="blog-text">
+            My perfect weekend starts with <mark>sleeping in</mark> on Saturday. I enjoy a slow breakfast — pancakes, fresh fruit, good coffee. Then I head to the beach or take a long walk along the marina. Sundays are for books, podcasts, and absolutely no emails. Weekends are how I <mark>recharge</mark>.
+          </div>
+        </div>
+        <div class="blog b">
+          <div class="blog-avatar">T</div>
+          <div class="blog-name">Dr. Tyler, 34</div>
+          <div class="blog-role">RESEARCHER · UNIVERSITY</div>
+          <div class="blog-text">
+            My weekend is busy but <mark>rewarding</mark>. On Saturday, I usually head to the lab to finish experiments I couldn't complete during the week. I plan my writing schedule and review drafts. Sunday afternoon is family time — finally. I've learned that <mark>balance</mark> matters more than hours.
+          </div>
+        </div>
+      </div>
+
+            <div class="card">
+        <div class="card-head">
+          <div class="card-title">Inference Question</div>
+          <span class="card-hint">TOEFL-style · 1 attempt</span>
+        </div>
+        <div class="q-text">Which statement can we most reasonably <b>infer</b> from Dr. Tyler's post?</div>
+        <div class="options" data-q="readQ1" data-correct="C">
+          <label class="option"><input type="radio" name="readQ1" value="A"><span class="key">A</span><span>He dislikes his job and wants to quit.</span></label>
+          <label class="option"><input type="radio" name="readQ1" value="B"><span class="key">B</span><span>He works seven days a week without rest.</span></label>
+          <label class="option"><input type="radio" name="readQ1" value="C"><span class="key">C</span><span>He once struggled with overworking and learned to set limits.</span></label>
+          <label class="option"><input type="radio" name="readQ1" value="D"><span class="key">D</span><span>He prefers working in the lab to spending time with family.</span></label>
+        </div>
+        <div class="btn-row">
+          <button class="btn coral" onclick="checkMCQ('readQ1')">Check answer</button>
+        </div>
+        <div class="feedback" id="fb-readQ1"></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 4: WRITING ===== -->
+    <section class="slide" data-title="Writing">
+      <div class="tag"><span class="tag-dot"></span>Independent Writing<span class="tag tag-xp" style="margin-left:8px;">+100 XP</span></div>
+      <h1 class="slide-title">What's <em>your</em> perfect weekend?</h1>
+      <p class="lead">Mini Independent Writing task. Don't worry about perfection — write naturally. I'll review the language with you afterwards.</p>
+
+      <div class="card">
+        <div class="prompt-helper">
+          <b>Prompt</b>
+          Describe your ideal weekend in 5–7 sentences. Then add one sentence about how TOEFL preparation could fit into that weekend. Try to use at least one connector: <i>however, in addition, for example, as a result</i>.
+        </div>
+
+        <textarea class="essay" id="writingArea" placeholder="On a typical Saturday, I usually..."></textarea>
+        <div class="writing-meta">
+          <span>💡 Target: 60–100 words</span>
+          <span class="word-count"><span id="wc">0</span> words</span>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn coral" onclick="saveWriting()">Save my answer</button>
+          <button class="btn ghost" onclick="document.getElementById('writingArea').value=''; updateWC();">Clear</button>
+        </div>
+        <div class="feedback" id="fb-writing"></div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 5: GRAMMAR ===== -->
+    <section class="slide" data-title="Grammar">
+      <div class="tag"><span class="tag-dot"></span>Grammar Diagnostic<span class="tag tag-xp" style="margin-left:8px;">+25 XP each</span></div>
+      <h1 class="slide-title">Grammar <em>time</em>.</h1>
+      <p class="lead">Four quick questions — each targets a structure that often costs B1 students points on TOEFL Writing & Speaking.</p>
+
+      <div class="gram-grid">
+
+        <div class="gram-box">
+          <div class="gram-num">01</div>
+          <div class="gram-tag">Present Perfect vs Past Simple</div>
+          <div class="gram-q">She <i>___</i> to three conferences this year.</div>
+          <div class="mini-options" data-q="gramQ1" data-correct="B">
+            <div class="mini-opt" data-v="A">A) went</div>
+            <div class="mini-opt" data-v="B">B) has been</div>
+            <div class="mini-opt" data-v="C">C) was going</div>
+          </div>
+          <div class="feedback" id="fb-gramQ1"></div>
+        </div>
+
+        <div class="gram-box">
+          <div class="gram-num">02</div>
+          <div class="gram-tag">Gerund vs Infinitive</div>
+          <div class="gram-q">I enjoy <i>___</i> academic articles before bed.</div>
+          <div class="mini-options" data-q="gramQ2" data-correct="C">
+            <div class="mini-opt" data-v="A">A) to read</div>
+            <div class="mini-opt" data-v="B">B) read</div>
+            <div class="mini-opt" data-v="C">C) reading</div>
+          </div>
+          <div class="feedback" id="fb-gramQ2"></div>
+        </div>
+
+        <div class="gram-box">
+          <div class="gram-num">03</div>
+          <div class="gram-tag">Articles · Uncountables</div>
+          <div class="gram-q">Could you give me <i>___</i> on my essay?</div>
+          <div class="mini-options" data-q="gramQ3" data-correct="A">
+            <div class="mini-opt" data-v="A">A) some advice</div>
+            <div class="mini-opt" data-v="B">B) an advice</div>
+            <div class="mini-opt" data-v="C">C) some advices</div>
+          </div>
+          <div class="feedback" id="fb-gramQ3"></div>
+        </div>
+
+        <div class="gram-box">
+          <div class="gram-num">04</div>
+          <div class="gram-tag">Subject–Verb Agreement</div>
+          <div class="gram-q">The data <i>___</i> that students improve faster with feedback.</div>
+          <div class="mini-options" data-q="gramQ4" data-correct="B">
+            <div class="mini-opt" data-v="A">A) shows</div>
+            <div class="mini-opt" data-v="B">B) show</div>
+            <div class="mini-opt" data-v="C">C) is showing</div>
+          </div>
+          <div class="feedback" id="fb-gramQ4"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 6: ERROR CORRECTION ===== -->
+    <section class="slide" data-title="Error Hunt">
+      <div class="tag"><span class="tag-dot"></span>Error Correction<span class="tag tag-xp" style="margin-left:8px;">+20 XP each</span></div>
+      <h1 class="slide-title">Correct, or <em>not quite</em>?</h1>
+      <p class="lead">Decide whether each sentence is grammatically correct. These are real high-frequency mistakes from TOEFL Writing samples.</p>
+
+      <div class="tf-list" id="tfList">
+
+        <div class="tf-row" data-correct="false" data-explain="<b>Why it's wrong:</b> with a specific past time (“last week”) we use <i>Past Simple</i>: <i>I visited</i>. Present Perfect doesn't go with completed past times.">
+          <div class="tf-sentence">I have visited my grandmother last week.</div>
+          <div class="tf-actions">
+            <button class="tf-btn ok" onclick="answerTF(this, true)">Correct</button>
+            <button class="tf-btn no" onclick="answerTF(this, false)">Incorrect</button>
+          </div>
+          <div class="tf-explain"></div>
+        </div>
+
+        <div class="tf-row" data-correct="true" data-explain="<b>Why it's correct:</b> in academic English, “research” is often treated as singular and uncountable. ✓">
+          <div class="tf-sentence">The research shows very promising results.</div>
+          <div class="tf-actions">
+            <button class="tf-btn ok" onclick="answerTF(this, true)">Correct</button>
+            <button class="tf-btn no" onclick="answerTF(this, false)">Incorrect</button>
+          </div>
+          <div class="tf-explain"></div>
+        </div>
+
+        <div class="tf-row" data-correct="false" data-explain="<b>Why it's wrong:</b> “information” is uncountable — no plural, no article <i>an</i>. Correct: <i>useful information</i> / <i>a piece of information</i>.">
+          <div class="tf-sentence">She gave me an useful information about the program.</div>
+          <div class="tf-actions">
+            <button class="tf-btn ok" onclick="answerTF(this, true)">Correct</button>
+            <button class="tf-btn no" onclick="answerTF(this, false)">Incorrect</button>
+          </div>
+          <div class="tf-explain"></div>
+        </div>
+
+        <div class="tf-row" data-correct="false" data-explain="<b>Why it's wrong:</b> third-person plural needs <i>don't</i>, not <i>doesn't</i>. Correct: <i>They don't understand the instructions.</i>">
+          <div class="tf-sentence">They doesn't understand the instructions.</div>
+          <div class="tf-actions">
+            <button class="tf-btn ok" onclick="answerTF(this, true)">Correct</button>
+            <button class="tf-btn no" onclick="answerTF(this, false)">Incorrect</button>
+          </div>
+          <div class="tf-explain"></div>
+        </div>
+
+        <div class="tf-row" data-correct="true" data-explain="<b>Why it's correct:</b> Past Simple with a clear past time marker — perfectly idiomatic. ✓">
+          <div class="tf-sentence">We were happy to see our friends yesterday.</div>
+          <div class="tf-actions">
+            <button class="tf-btn ok" onclick="answerTF(this, true)">Correct</button>
+            <button class="tf-btn no" onclick="answerTF(this, false)">Incorrect</button>
+          </div>
+          <div class="tf-explain"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 7: FINISH / SCORECARD / ROADMAP ===== -->
+    <section class="slide" data-title="Wrapped">
+      <div class="tag"><span class="tag-dot"></span>Your Lesson · Wrapped</div>
+      <h1 class="slide-title">Well done — <em>this is your launchpad</em>.</h1>
+
+      <!-- SPOTIFY-WRAPPED STYLE SCORECARD -->
+      <div class="scorecard">
+        <div class="score-eyebrow">Session 01 · Wrapped</div>
+        <div class="score-title">You earned <span style="color:var(--gold);"><span id="finalXP">0</span> XP</span> today.</div>
+        <div class="score-grid">
+          <div class="score-stat">
+            <div class="num" id="statCorrect">0</div>
+            <div class="lbl">Correct answers</div>
+          </div>
+          <div class="score-stat">
+            <div class="num" id="statWords">0</div>
+            <div class="lbl">Words written</div>
+          </div>
+          <div class="score-stat">
+            <div class="num" id="statStreak">0</div>
+            <div class="lbl">Best streak 🔥</div>
+          </div>
+          <div class="score-stat">
+            <div class="num" id="statAch">0</div>
+            <div class="lbl">Achievements</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="lead">Based on today's diagnostic, here's the roadmap we'll build together over the coming months.</p>
+
+      <div class="roadmap">
+        <div class="road-step">
+          <div class="num">01</div>
+          <div class="ttl">Foundation</div>
+          <div class="desc">Lift B1 → B2: grammar accuracy, academic vocabulary, listening for ideas.</div>
+        </div>
+        <div class="road-step">
+          <div class="num">02</div>
+          <div class="ttl">TOEFL Skills</div>
+          <div class="desc">Strategy training: Reading inference, Listening notes, Integrated tasks.</div>
+        </div>
+        <div class="road-step">
+          <div class="num">03</div>
+          <div class="ttl">Production</div>
+          <div class="desc">Academic Writing & Speaking — templates, fluency, complexity.</div>
+        </div>
+        <div class="road-step">
+          <div class="num">04</div>
+          <div class="ttl">Mock & Apply</div>
+          <div class="desc">Full mocks, score 100+, SOP support, PhD application coaching.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Take your results with you</div>
+          <span class="card-hint">Private · stays on this device</span>
+        </div>
+        <p style="color:var(--muted); font-size:14px; margin-bottom:6px;">All your answers are saved locally. You can export them to share with me before the next lesson.</p>
+        <div class="btn-row">
+          <button class="btn coral" onclick="exportTxt()">⬇ Export as .txt</button>
+          <button class="btn" onclick="exportJson()">⬇ Export as .json</button>
+          <button class="btn ghost" onclick="clearAll()">Restart lesson</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BOTTOM NAVIGATION ===== -->
+    <div class="bottom-bar">
+      <button class="btn ghost" id="prevBtn" onclick="go(-1)">← Back</button>
+      <div class="step-counter">Step <b id="curStep">1</b> of <b id="totSteps">7</b></div>
+      <button class="btn" id="nextBtn" onclick="go(1)">Continue →</button>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   STATE & STORAGE
+============================================================ */
+const STORAGE_KEY = 'lesson01_phd_track_v2';
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+  bingo: [],
+  answers: {},
+  writing: '',
+  tf: {},
+  xp: 0,
+  streak: 0,
+  bestStreak: 0,
+  achievements: [],
+  visited: [],
+  soundOn: true
+};
+
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+/* ============================================================
+   ACHIEVEMENTS SYSTEM
+============================================================ */
+const ACHIEVEMENTS = [
+  { id: 'first_steps',  emoji: '🌱', title: 'First Steps',       sub: 'Started the lesson',           xp: 25 },
+  { id: 'social',       emoji: '👋', title: 'Social Butterfly',  sub: 'Picked 8+ bingo squares',      xp: 50 },
+  { id: 'reader',       emoji: '📖', title: 'Close Reader',      sub: 'Nailed the inference question',xp: 75 },
+  { id: 'writer',       emoji: '✍️', title: 'Academic Voice',    sub: 'Wrote with a connector',       xp: 75 },
+  { id: 'grammarian',   emoji: '🎯', title: 'Grammar Sniper',    sub: 'All 4 grammar correct',        xp: 150 },
+  { id: 'streak3',      emoji: '🔥', title: 'On Fire',           sub: '3 correct in a row',           xp: 50 },
+  { id: 'perfectionist',emoji: '💎', title: 'Perfectionist',     sub: 'All error-hunt correct',       xp: 100 },
+  { id: 'finisher',     emoji: '🏆', title: 'Mission Complete',  sub: 'Reached the final slide',      xp: 100 },
+  { id: 'explorer',     emoji: '🧭', title: 'Explorer',          sub: 'Visited every section',        xp: 50 }
+];
+
+function renderAchievements(){
+  const grid = document.getElementById('achGrid');
+  grid.innerHTML = '';
+  ACHIEVEMENTS.forEach(a => {
+    const cell = document.createElement('div');
+    cell.className = 'ach-cell' + (state.achievements.includes(a.id) ? ' unlocked' : '');
+    cell.textContent = a.emoji;
+    cell.dataset.title = a.title + ' — ' + a.sub;
+    grid.appendChild(cell);
+  });
+  document.getElementById('statAch') && (document.getElementById('statAch').textContent = state.achievements.length);
+}
+
+function unlockAchievement(id){
+  if (state.achievements.includes(id)) return;
+  const ach = ACHIEVEMENTS.find(a => a.id === id);
+  if (!ach) return;
+  state.achievements.push(id);
+  addXP(ach.xp, false); // no double toast
+  save();
+  renderAchievements();
+  showToast(ach.emoji, ach.title, '+' + ach.xp + ' XP · ' + ach.sub);
+  playSound('achievement');
+}
+
+/* ============================================================
+   XP SYSTEM
+============================================================ */
+function addXP(amount, showFloat = true){
+  state.xp += amount;
+  save();
+  document.getElementById('xpVal').textContent = state.xp;
+  if (showFloat){
+    const plus = document.getElementById('xpPlus');
+    plus.textContent = '+' + amount;
+    plus.style.display = 'inline-block';
+    plus.style.animation = 'none';
+    void plus.offsetWidth; // reflow trick
+    plus.style.animation = 'pulsePlus 0.6s ease';
+    setTimeout(() => plus.style.display = 'none', 600);
+  }
+}
+
+function bumpStreak(correct){
+  if (correct){
+    state.streak += 1;
+    if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+    if (state.streak >= 3) unlockAchievement('streak3');
+  } else {
+    state.streak = 0;
+  }
+  document.getElementById('streakVal').textContent = state.streak;
+  document.getElementById('streakFlame').classList.toggle('hot', state.streak >= 2);
+  save();
+}
+
+/* ============================================================
+   TOAST (achievement popup)
+============================================================ */
+let toastTimer;
+function showToast(icon, title, sub){
+  const toast = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastSub').textContent = sub;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+/* ============================================================
+   CONFETTI
+============================================================ */
+function fireConfetti(count = 50){
+  const wrap = document.getElementById('confettiWrap');
+  const colors = ['#E26D5C', '#D4A24C', '#87A878', '#0F2A44', '#f4a896'];
+  for (let i = 0; i < count; i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + '%';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+    piece.style.animationDelay = Math.random() * 0.3 + 's';
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    wrap.appendChild(piece);
+    setTimeout(() => piece.remove(), 4500);
+  }
+}
+
+/* ============================================================
+   SOUND (WebAudio — no external files)
+============================================================ */
+let audioCtx;
+function getAudio(){
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playSound(type){
+  if (!state.soundOn) return;
+  try {
+    const ctx = getAudio();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.value = 0.08;
+
+    if (type === 'correct'){
+      o.frequency.setValueAtTime(660, ctx.currentTime);
+      o.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
+    } else if (type === 'wrong'){
+      o.frequency.setValueAtTime(220, ctx.currentTime);
+      o.frequency.setValueAtTime(180, ctx.currentTime + 0.1);
+    } else if (type === 'achievement'){
+      o.frequency.setValueAtTime(523, ctx.currentTime);
+      o.frequency.setValueAtTime(659, ctx.currentTime + 0.08);
+      o.frequency.setValueAtTime(784, ctx.currentTime + 0.16);
+    } else if (type === 'click'){
+      o.frequency.setValueAtTime(440, ctx.currentTime);
+      g.gain.value = 0.04;
+    }
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    o.start();
+    o.stop(ctx.currentTime + 0.3);
+  } catch(e){}
+}
+function toggleSound(){
+  state.soundOn = !state.soundOn;
+  document.getElementById('soundToggle').textContent = state.soundOn ? '🔊' : '🔇';
+  save();
+}
+document.getElementById('soundToggle').textContent = state.soundOn ? '🔊' : '🔇';
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+const slides = document.querySelectorAll('.slide');
+const navEl = document.getElementById('nav');
+let cur = 0;
+
+slides.forEach((s, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'nav-item' + (i === 0 ? ' active' : '');
+  btn.innerHTML = `<span class="nav-num"><span class="num-text">${i+1}</span></span><span class="nav-label">${s.dataset.title}</span>`;
+  btn.onclick = () => jumpTo(i);
+  navEl.appendChild(btn);
+});
+document.getElementById('totSteps').textContent = slides.length;
+
+function jumpTo(i){
+  if (i < 0 || i >= slides.length) return;
+  slides[cur].classList.remove('active');
+  cur = i;
+  slides[cur].classList.add('active');
+
+  // mark visited
+  if (!state.visited.includes(i)){
+    state.visited.push(i);
+    save();
+    if (state.visited.length === slides.length) unlockAchievement('explorer');
+  }
+
+  // navigation styling
+  document.querySelectorAll('.nav-item').forEach((n, idx) => {
+    n.classList.toggle('active', idx === cur);
+    n.classList.toggle('done', state.visited.includes(idx) && idx !== cur);
+  });
+
+  document.getElementById('curStep').textContent = cur + 1;
+  document.getElementById('prevBtn').style.visibility = cur === 0 ? 'hidden' : 'visible';
+  document.getElementById('nextBtn').style.visibility = cur === slides.length - 1 ? 'hidden' : 'visible';
+  document.getElementById('stage').scrollTo({top: 0, behavior: 'smooth'});
+
+  // special slide actions
+  if (i === 0) unlockAchievement('first_steps');
+  if (i === slides.length - 1){
+    unlockAchievement('finisher');
+    renderScorecard();
+    fireConfetti(80);
+  }
+  updateProgress();
+  playSound('click');
+}
+function go(dir){ jumpTo(cur + dir); }
+
+function updateProgress(){
+  let done = 0;
+  if (state.bingo.length > 0) done++;
+  if (state.answers.readQ1) done++;
+  if (state.writing && state.writing.length > 0) done++;
+  if (state.answers.gramQ1 && state.answers.gramQ2 && state.answers.gramQ3 && state.answers.gramQ4) done++;
+  if (Object.keys(state.tf).length >= 5) done++;
+
+  const total = 5; // 5 interactive blocks
+  const percent = (done / total) * 100;
+  document.getElementById('pfill').style.width = percent + '%';
+  document.getElementById('ptext').textContent = `${done} of ${total} completed`;
+}
+
+/* ============================================================
+   BINGO
+============================================================ */
+const bingoCells = document.querySelectorAll('.bingo-cell');
+bingoCells.forEach(cell => {
+  const txt = cell.textContent.trim();
+  if (state.bingo.includes(txt)) cell.classList.add('on');
+
+  cell.addEventListener('click', () => {
+    cell.classList.toggle('on');
+    if (cell.classList.contains('on')){
+      state.bingo.push(txt);
+      addXP(5);
+      playSound('click');
+    } else {
+      state.bingo = state.bingo.filter(b => b !== txt);
+    }
+    save();
+    document.getElementById('bingoCount').textContent = state.bingo.length;
+    if (state.bingo.length >= 8) unlockAchievement('social');
+    updateProgress();
+  });
+});
+document.getElementById('bingoCount').textContent = state.bingo.length;
+
+/* ============================================================
+   MCQ (Reading)
+============================================================ */
+document.querySelectorAll('.options').forEach(group => {
+  group.querySelectorAll('.option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      group.querySelectorAll('.option').forEach(o => o.classList.remove('chosen'));
+      opt.classList.add('chosen');
+      opt.querySelector('input').checked = true;
+    });
+  });
+
+  const qName = group.dataset.q;
+  if (state.answers[qName]){
+    const chosenVal = state.answers[qName].answer;
+    const target = group.querySelector(`.option input[value="${chosenVal}"]`);
+    if (target){
+      target.checked = true;
+      target.closest('.option').classList.add('chosen');
+    }
+  }
+});
+
+function checkMCQ(qName){
+  const group = document.querySelector(`.options[data-q="${qName}"]`);
+  const correct = group.dataset.correct;
+  const selected = group.querySelector('input:checked');
+  const fb = document.getElementById('fb-' + qName);
+
+  if (!selected){
+    fb.className = 'feedback bad show';
+    fb.innerHTML = '<strong>Pick an option first</strong>Choose one of the four answers to continue.';
+    return;
+  }
+
+  const val = selected.value;
+  const wasAnswered = !!state.answers[qName];
+  state.answers[qName] = { answer: val, correct: val === correct };
+  save();
+
+  group.querySelectorAll('.option').forEach(o => {
+    o.classList.remove('chosen', 'correct', 'wrong');
+    const v = o.querySelector('input').value;
+    if (v === correct) o.classList.add('correct');
+    if (v === val && val !== correct) o.classList.add('wrong');
+  });
+
+  if (val === correct){
+    fb.className = 'feedback good show';
+    fb.innerHTML = '<strong>Excellent — that\'s the inference.</strong>Tyler hints at having <i>learned</i> that balance matters, which implies he previously didn\'t have it. That\'s exactly the kind of "reading between the lines" TOEFL rewards.';
+    if (!wasAnswered) {
+      addXP(50);
+      bumpStreak(true);
+      unlockAchievement('reader');
+      fireConfetti(40);
+      playSound('correct');
+    }
+  } else {
+    fb.className = 'feedback bad show';
+    fb.innerHTML = `<strong>Not quite — let\'s look closer.</strong>The correct answer is <b>${correct}</b>. The phrase "I\'ve learned that balance matters" suggests an earlier imbalance — that\'s an inference, not a stated fact. We\'ll practise this pattern often.`;
+    if (!wasAnswered) {
+      bumpStreak(false);
+      playSound('wrong');
+    }
+  }
+  updateProgress();
+}
+
+/* ============================================================
+   WRITING
+============================================================ */
+const writingArea = document.getElementById('writingArea');
+const wcEl = document.getElementById('wc');
+if (state.writing) writingArea.value = state.writing;
+
+function updateWC(){
+  const words = writingArea.value.trim().split(/\s+/).filter(Boolean).length;
+  wcEl.textContent = words;
+  wcEl.parentElement.classList.toggle('good', words >= 60 && words <= 120);
+}
+writingArea.addEventListener('input', updateWC);
+updateWC();
+
+function saveWriting(){
+  const txt = writingArea.value.trim();
+  const fb = document.getElementById('fb-writing');
+  if (!txt){
+    fb.className = 'feedback bad show';
+    fb.innerHTML = '<strong>Empty answer</strong>Write a few sentences first — even a rough draft is useful diagnostic data.';
+    return;
+  }
+  const wasEmpty = !state.writing;
+  state.writing = txt;
+  save();
+
+  const words = txt.split(/\s+/).filter(Boolean).length;
+  const connectors = /\b(however|in addition|for example|as a result|moreover|therefore|on the other hand)\b/i.test(txt);
+
+  let msg = `<strong>Saved — ${words} words.</strong>`;
+  if (words < 60) msg += `You\'re a little below the target range. For TOEFL Independent Writing, aim for fuller development of ideas — try adding one example or one personal reason.`;
+  else if (words > 130) msg += `Great length! Watch concision too — TOEFL rewards <i>clear</i> elaboration, not just more words.`;
+  else msg += `Length is right in the sweet spot. ✓`;
+
+  if (connectors) {
+    msg += `<br><br>✨ Nice — I can see you used an academic connector. That\'s exactly the move TOEFL Writing rubric rewards.`;
+    if (wasEmpty) unlockAchievement('writer');
+  } else {
+    msg += `<br><br>💡 Next time, try one connector (<i>however, in addition, as a result</i>) to lift the academic tone.`;
+  }
+
+  fb.className = 'feedback tip show';
+  fb.innerHTML = msg;
+
+  if (wasEmpty) {
+    addXP(100);
+    playSound('correct');
+    fireConfetti(30);
+  }
+  updateProgress();
+}
+
+/* ============================================================
+   GRAMMAR (mini-options)
+============================================================ */
+document.querySelectorAll('.mini-options').forEach(group => {
+  const qName = group.dataset.q;
+  const correct = group.dataset.correct;
+  const fb = document.getElementById('fb-' + qName);
+
+  const explanations = {
+    gramQ1: {
+      correct: 'Present Perfect is used for actions within an unfinished time period ("this year"). ✓',
+      wrong: 'We use Present Perfect ("has been") because "this year" is still ongoing. Past Simple would need a finished time marker like "last year".'
+    },
+    gramQ2: {
+      correct: 'After <i>enjoy</i> we always use the gerund (-ing form). ✓',
+      wrong: 'Verbs like <i>enjoy, mind, finish, suggest</i> are always followed by a gerund: <i>enjoy reading</i>.'
+    },
+    gramQ3: {
+      correct: '"Advice" is uncountable — no plural, no <i>a/an</i>. Use <i>some advice</i> or <i>a piece of advice</i>. ✓',
+      wrong: '"Advice" is uncountable in English. We can\'t say <i>an advice</i> or <i>advices</i> — only <i>some advice</i> / <i>a piece of advice</i>.'
+    },
+    gramQ4: {
+      correct: 'In academic English, <i>data</i> is treated as plural — <i>the data show</i>. This is a hallmark of formal writing. ✓',
+      wrong: 'In academic writing, <i>data</i> is plural: <i>the data show / suggest / indicate</i>. (In casual English you\'ll hear "shows", but TOEFL graders prefer the academic form.)'
+    }
+  };
+
+  group.querySelectorAll('.mini-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const val = opt.dataset.v;
+      const isCorrect = val === correct;
+      const wasAnswered = !!state.answers[qName];
+
+      group.querySelectorAll('.mini-opt').forEach(o => {
+        o.classList.remove('chosen', 'correct', 'wrong');
+        if (o.dataset.v === correct) o.classList.add('correct');
+      });
+      if (!isCorrect) opt.classList.add('wrong');
+
+      state.answers[qName] = { answer: val, correct: isCorrect };
+      save();
+
+      fb.className = 'feedback ' + (isCorrect ? 'good' : 'bad') + ' show';
+      fb.innerHTML = isCorrect
+        ? `<strong>Correct!</strong>${explanations[qName].correct}`
+        : `<strong>Not quite — answer is ${correct}.</strong>${explanations[qName].wrong}`;
+
+      if (!wasAnswered) {
+        if (isCorrect) {
+          addXP(25);
+          bumpStreak(true);
+          playSound('correct');
+        } else {
+          bumpStreak(false);
+          playSound('wrong');
+        }
+      }
+
+      // check if all 4 grammar correct
+      const allGramCorrect = ['gramQ1','gramQ2','gramQ3','gramQ4']
+        .every(q => state.answers[q] && state.answers[q].correct);
+      if (allGramCorrect) {
+        unlockAchievement('grammarian');
+        fireConfetti(60);
+      }
+
+      updateProgress();
+    });
+  });
+
+  if (state.answers[qName]){
+    const prev = state.answers[qName].answer;
+    const target = group.querySelector(`.mini-opt[data-v="${prev}"]`);
+    if (target){
+      // restore visually without re-firing XP
+      group.querySelectorAll('.mini-opt').forEach(o => {
+        o.classList.remove('chosen', 'correct', 'wrong');
+        if (o.dataset.v === correct) o.classList.add('correct');
+      });
+      if (prev !== correct) target.classList.add('wrong');
+      fb.className = 'feedback ' + (prev === correct ? 'good' : 'bad') + ' show';
+      fb.innerHTML = prev === correct
+        ? `<strong>Correct!</strong>${explanations[qName].correct}`
+        : `<strong>Not quite — answer is ${correct}.</strong>${explanations[qName].wrong}`;
+    }
+  }
+});
+
+/* ============================================================
+   ERROR CORRECTION (True/False)
+============================================================ */
+function answerTF(btn, userSaysCorrect){
+  const row = btn.closest('.tf-row');
+  const actual = row.dataset.correct === 'true';
+  const userRight = (userSaysCorrect === actual);
+  const idx = Array.from(row.parentNode.children).indexOf(row);
+  const key = 'tf' + idx;
+  const wasAnswered = !!state.tf[key];
+
+  row.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  const explain = row.querySelector('.tf-explain');
+  explain.classList.add('show');
+  explain.innerHTML = (userRight
+    ? '<b>Spot on.</b> '
+    : '<b>Almost — let\'s see why.</b> ') + row.dataset.explain;
+
+  row.classList.add('solved');
+
+  state.tf[key] = {
+    sentence: row.querySelector('.tf-sentence').textContent,
+    userSaid: userSaysCorrect ? 'correct' : 'incorrect',
+    actuallyCorrect: actual,
+    userWasRight: userRight
+  };
+  save();
+
+  if (!wasAnswered) {
+    if (userRight) {
+      addXP(20);
+      bumpStreak(true);
+      playSound('correct');
+    } else {
+      bumpStreak(false);
+      playSound('wrong');
+    }
+  }
+
+  // check if all TF correct
+  const allTfCorrect = Object.keys(state.tf).length === 5 &&
+                       Object.values(state.tf).every(t => t.userWasRight);
+  if (allTfCorrect) {
+    unlockAchievement('perfectionist');
+    fireConfetti(60);
+  }
+
+  updateProgress();
+}
+
+// restore TF answers visually
+document.querySelectorAll('.tf-row').forEach((row, idx) => {
+  const key = 'tf' + idx;
+  if (state.tf[key]){
+    const wasCorrectAnswer = state.tf[key].userSaid === 'correct';
+    const targetBtn = row.querySelector(wasCorrectAnswer ? '.tf-btn.ok' : '.tf-btn.no');
+    if (targetBtn) {
+      // restore without re-firing
+      row.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('selected'));
+      targetBtn.classList.add('selected');
+      const explain = row.querySelector('.tf-explain');
+      explain.classList.add('show');
+      explain.innerHTML = (state.tf[key].userWasRight
+        ? '<b>Spot on.</b> '
+        : '<b>Almost — let\'s see why.</b> ') + row.dataset.explain;
+      row.classList.add('solved');
+    }
+  }
+});
+
+/* ============================================================
+   FINAL SCORECARD
+============================================================ */
+function renderScorecard(){
+  document.getElementById('finalXP').textContent = state.xp;
+
+  // count correct answers
+  let correct = 0;
+  Object.values(state.answers).forEach(a => { if (a.correct) correct++; });
+  Object.values(state.tf).forEach(t => { if (t.userWasRight) correct++; });
+  document.getElementById('statCorrect').textContent = correct;
+
+  const words = state.writing
+    ? state.writing.trim().split(/\s+/).filter(Boolean).length
+    : 0;
+  document.getElementById('statWords').textContent = words;
+  document.getElementById('statStreak').textContent = state.bestStreak;
+  document.getElementById('statAch').textContent = state.achievements.length;
+}
+
+/* ============================================================
+   EXPORT
+============================================================ */
+function buildExportText(){
+  let out = '═══════════════════════════════════════\n';
+  out += '   MY FIRST LESSON — DIAGNOSTIC RESULTS\n';
+  out += '   TOEFL & PhD Track\n';
+  out += '═══════════════════════════════════════\n\n';
+
+  out += `Date: ${new Date().toLocaleString()}\n`;
+  out += `Total XP: ${state.xp}\n`;
+  out += `Best streak: ${state.bestStreak}\n`;
+  out += `Achievements unlocked: ${state.achievements.length} / ${ACHIEVEMENTS.length}\n\n`;
+
+  out += '── ACHIEVEMENTS ──\n';
+  state.achievements.forEach(id => {
+    const a = ACHIEVEMENTS.find(x => x.id === id);
+    if (a) out += `  ${a.emoji}  ${a.title} — ${a.sub}\n`;
+  });
+  out += '\n';
+
+  out += '── 1. ICE-BREAKER (Bingo) ──\n';
+  if (state.bingo.length){
+    state.bingo.forEach(b => out += `  • ${b}\n`);
+  } else out += '  (no selections)\n';
+  out += '\n';
+
+  out += '── 2. READING (Inference Q1) ──\n';
+  if (state.answers.readQ1){
+    out += `  Your answer: ${state.answers.readQ1.answer}  →  ${state.answers.readQ1.correct ? '✓ correct' : '✗ incorrect (key: C)'}\n`;
+  } else out += '  (not answered)\n';
+  out += '\n';
+
+  out += '── 3. WRITING ──\n';
+  out += state.writing ? state.writing + '\n' : '  (no text)\n';
+  out += '\n';
+
+  out += '── 4. GRAMMAR DIAGNOSTIC ──\n';
+  const grams = {
+    gramQ1: 'Present Perfect vs Past Simple (key: B)',
+    gramQ2: 'Gerund vs Infinitive (key: C)',
+    gramQ3: 'Articles + Uncountables (key: A)',
+    gramQ4: 'Subject–Verb Agreement (key: B)'
+  };
+  Object.entries(grams).forEach(([k, label]) => {
+    if (state.answers[k]){
+      out += `  ${label}\n    → your answer: ${state.answers[k].answer}  ${state.answers[k].correct ? '✓' : '✗'}\n`;
+    } else {
+      out += `  ${label}\n    → (not answered)\n`;
+    }
+  });
+  out += '\n';
+
+  out += '── 5. ERROR CORRECTION ──\n';
+  Object.values(state.tf).forEach(t => {
+    out += `  "${t.sentence}"\n`;
+    out += `    Actually: ${t.actuallyCorrect ? 'CORRECT' : 'INCORRECT'} · You: ${t.userWasRight ? '✓' : '✗'}\n`;
+  });
+  out += '\n';
+
+  out += '═══════════════════════════════════════\n';
+  out += '   End of report — see you next lesson!\n';
+  out += '═══════════════════════════════════════\n';
+  return out;
+}
+
+function download(filename, content, type){
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportTxt(){
+  download(`lesson01_results_${Date.now()}.txt`, buildExportText(), 'text/plain');
+}
+
+function exportJson(){
+  const payload = {
+    meta: { lesson: 'My First Lesson — TOEFL & PhD Track', date: new Date().toISOString() },
+    ...state
+  };
+  download(`lesson01_results_${Date.now()}.json`, JSON.stringify(payload, null, 2), 'application/json');
+}
+
+function clearAll(){
+  if (!confirm('This will erase all your answers and progress from this lesson. Continue?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+/* ============================================================
+   KEYBOARD
+============================================================ */
+document.addEventListener('keydown', e => {
+  if (e.target.matches('textarea, input')) return;
+  if (e.key === 'ArrowRight') go(1);
+  if (e.key === 'ArrowLeft') go(-1);
+});
+
+/* ============================================================
+   INIT
+============================================================ */
+document.getElementById('xpVal').textContent = state.xp;
+document.getElementById('streakVal').textContent = state.bestStreak;
+renderAchievements();
+jumpTo(0);
+updateProgress();
+</script>
+
+</body>
+</html>
