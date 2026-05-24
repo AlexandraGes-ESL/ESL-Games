@@ -30,7 +30,6 @@
             background-image: url('https://i.yapx.ru/drzM1.png');
         }
 
-        /* === ПЛАШКИ === */
         .screen {
             display: none;
             position: absolute;
@@ -73,7 +72,6 @@
         h2 { font-size: 1.6rem; }
         p  { font-size: 1.1rem; line-height: 1.5; margin: 0 0 20px; }
 
-        /* === КНОПКИ === */
         .btn {
             display: inline-block;
             width: 100%;
@@ -97,7 +95,6 @@
         }
         .btn-center { text-align: center; }
 
-        /* === КНОПКИ ГРАММАТИКИ === */
         .grammar-btn {
             text-align: center;
             width: 45%;
@@ -157,7 +154,6 @@
             75%      { transform: translateX(8px); }
         }
 
-        /* === ПРОГРЕСС === */
         .progress-wrap {
             display: flex;
             justify-content: center;
@@ -173,7 +169,6 @@
         .progress-dot.done    { background: var(--primary-gold); }
         .progress-dot.current { background: var(--primary-gold); box-shadow: 0 0 10px var(--primary-gold); }
 
-        /* === КВИЗ === */
         #options-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -185,7 +180,6 @@
             padding: 10px 14px;
         }
 
-        /* === ДРАКОН === */
         #dragon-on-arena {
             position: absolute;
             top: 42%;
@@ -204,14 +198,12 @@
             opacity: 1;
             transform: translate(-50%, -50%) scale(1);
         }
-        /* Зум при подходе */
         #dragon-on-arena.zooming {
             opacity: 1;
             transform: translate(-50%, -50%) scale(2.2);
             transition: transform 1.8s ease-in, opacity 1.8s ease-in;
         }
 
-        /* === МОНОЛОГ === */
         .monologue-text {
             font-style: italic;
             font-size: 1.15rem;
@@ -223,7 +215,6 @@
             margin: 0 0 20px;
         }
 
-        /* === MUTE === */
         #sound-toggle {
             position: absolute;
             top: 20px; right: 20px;
@@ -245,7 +236,6 @@
             box-shadow: 0 0 15px var(--primary-gold);
         }
 
-        /* Виньетка */
         #game-container::after {
             content: '';
             position: absolute;
@@ -262,14 +252,12 @@
     <button id="sound-toggle" onclick="toggleSound()" title="Toggle sound">🔊</button>
     <img id="dragon-on-arena" src="" alt="">
 
-    <!-- СЦЕНА 1: ВХОД -->
     <div id="screen-intro" class="screen active">
         <h1>The Threshing Grounds</h1>
         <p>You step into the Valley of Dragons. The air is thick with smoke and ancient magic. Around you, massive beasts of scale and fire watch from the peaks. To bond with a dragon, you must survive their scrutiny.</p>
         <button class="btn btn-center" onclick="startWarmup()">Step Forward</button>
     </div>
 
-    <!-- СЦЕНА 1.5: ПЕРЕХОД — лес → арена -->
     <div id="screen-bridge" class="screen">
         <h2>The Valley Opens</h2>
         <p>You have walked since dawn. The forest pressed close on all sides — ancient trees, heavy silence, the smell of ash growing stronger with every step.</p>
@@ -279,7 +267,6 @@
         <button class="btn btn-center" onclick="goToArena()">Walk into the Arena</button>
     </div>
 
-    <!-- СЦЕНА 2: ГРАММАТИКА -->
     <div id="screen-warmup" class="screen">
         <h2>Dragon's Mind</h2>
         <p>A deep voice echoes in your mind. Focus your thoughts to break the mental barrier!</p>
@@ -294,7 +281,6 @@
         </div>
     </div>
 
-    <!-- СЦЕНА 3: КВИЗ -->
     <div id="screen-test" class="screen">
         <div class="progress-wrap" id="progress-wrap"></div>
         <h2 id="question-title">Question 1/6</h2>
@@ -302,7 +288,6 @@
         <div id="options-container"></div>
     </div>
 
-    <!-- СЦЕНА 4: РЕЗУЛЬТАТ — описание дракона -->
     <div id="screen-result" class="screen">
         <h1 id="result-title">You have been chosen.</h1>
         <p id="result-name" style="font-family:'Cinzel',serif; color:var(--primary-gold); font-size:1.25rem; margin-bottom: 8px;"></p>
@@ -310,20 +295,17 @@
         <button class="btn btn-center" onclick="approachDragon()">Approach Your Dragon →</button>
     </div>
 
-    <!-- СЦЕНА 5: МОНОЛОГ ДРАКОНА -->
     <div id="screen-monologue" class="screen">
         <h2 id="monologue-name"></h2>
         <div class="monologue-text" id="monologue-text"></div>
-        <button class="btn btn-center" onclick="finishAndExit()">Continue →</button>
+        <button class="btn btn-center" onclick="finishAndExit()">The End</button>
     </div>
 
 </div>
 <script>
     // ==========================================
-    // НАСТРОЙКИ
+    // АССЕТЫ
     // ==========================================
-    const NEXT_SLIDE_URL = 'https://view.genially.com/YOUR_GENIALLY_ID/#page-4';
-
     const ASSETS = {
         valley: 'https://i.yapx.ru/drzM1.png',
         arena:  'https://i.yapx.ru/drzM2.png',
@@ -335,31 +317,36 @@
     Object.values(ASSETS).forEach(src => { const i = new Image(); i.src = src; });
 
     // ==========================================
-    // ЗВУК ЧЕРЕЗ WEB SPEECH API (TTS монолог)
-    // + обычные звуки через Audio()
+    // ЗВУКИ — все из репозитория Sounds
     // ==========================================
+    const SOUNDS_BASE = 'https://raw.githubusercontent.com/AlexandraGes-ESL/Sounds/main/';
+
+    const SOUNDS = {
+        roar:    SOUNDS_BASE + 'dragon-studio-dragon-growl-364483.mp3',
+        whoosh:  SOUNDS_BASE + 'dragon-studio-dragon-flapping-wings-364476.mp3',
+        // монологи
+        black:   SOUNDS_BASE + 'black.mp3',
+        blue:    SOUNDS_BASE + 'blue.mp3',
+        red:     SOUNDS_BASE + 'red.mp3',
+        green:   SOUNDS_BASE + 'green.mp3'
+    };
+
     let soundEnabled = true;
     let ambientAudio = null;
+    let monologueAudio = null;
 
-    // Файловые звуки (положи в /sounds/)
-    const SOUNDS = {
-        click:   'sounds/click.mp3',
-        correct: 'sounds/correct.mp3',
-        wrong:   'sounds/wrong.mp3',
-        roar:    'sounds/dragon-roar.mp3',
-        whoosh:  'sounds/fire-whoosh.mp3',
-        ambient: 'sounds/ambient-wind.mp3'
-    };
     const audioCache = {};
     function preloadSounds() {
-        Object.entries(SOUNDS).forEach(([key, src]) => {
+        // Предзагружаем только служебные звуки (не монологи — они большие)
+        ['roar', 'whoosh'].forEach(key => {
             try {
-                const a = new Audio(src);
+                const a = new Audio(SOUNDS[key]);
                 a.preload = 'auto';
                 audioCache[key] = a;
             } catch(e) {}
         });
     }
+
     function playSound(name, volume = 0.6) {
         if (!soundEnabled || !audioCache[name]) return;
         try {
@@ -368,59 +355,38 @@
             sfx.play().catch(() => {});
         } catch(e) {}
     }
-    function startAmbient() {
-        if (!soundEnabled || ambientAudio) return;
+
+    // Монолог — отдельный аудио-объект (можно остановить)
+    function playMonologue(dragonColor) {
+        if (!soundEnabled) return;
+        stopMonologue();
         try {
-            ambientAudio = new Audio(SOUNDS.ambient);
-            ambientAudio.loop = true;
-            ambientAudio.volume = 0.25;
-            ambientAudio.play().catch(() => {});
+            monologueAudio = new Audio(SOUNDS[dragonColor]);
+            monologueAudio.volume = 0.9;
+            monologueAudio.play().catch(() => {});
         } catch(e) {}
     }
-    function stopAmbient() {
-        if (ambientAudio) { ambientAudio.pause(); ambientAudio = null; }
+
+    function stopMonologue() {
+        if (monologueAudio) {
+            monologueAudio.pause();
+            monologueAudio.currentTime = 0;
+            monologueAudio = null;
+        }
     }
+
     function toggleSound() {
         soundEnabled = !soundEnabled;
         document.getElementById('sound-toggle').innerText = soundEnabled ? '🔊' : '🔇';
         if (!soundEnabled) {
-            stopAmbient();
-            window.speechSynthesis && window.speechSynthesis.cancel();
-        } else {
-            const test = document.getElementById('screen-test');
-            const res  = document.getElementById('screen-result');
-            if (test.classList.contains('active') || res.classList.contains('active')) startAmbient();
+            stopMonologue();
         }
     }
 
-    // TTS — монолог дракона через Web Speech API
-    function speakMonologue(text) {
-        if (!soundEnabled || !window.speechSynthesis) return;
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = 'en-US';
-        utter.pitch = 0.6;   // глубокий голос
-        utter.rate  = 0.85;
-        utter.volume = 0.9;
-
-        // Пробуем выбрать низкий мужской голос
-        const voices = window.speechSynthesis.getVoices();
-        const preferred = voices.find(v =>
-            v.lang.startsWith('en') && v.name.toLowerCase().includes('male')
-        ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
-        if (preferred) utter.voice = preferred;
-
-        window.speechSynthesis.speak(utter);
-    }
-
     preloadSounds();
-    // Голоса грузятся асинхронно
-    if (window.speechSynthesis) {
-        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-    }
 
     // ==========================================
-    // ДАННЫЕ
+    // ДАННЫЕ — грамматика
     // ==========================================
     const grammarTasks = [
         { quote: '"I have watched a thousand riders fall."',   answer: 'Present Perfect' },
@@ -431,7 +397,7 @@
     let currentTask = 0;
 
     // ==========================================
-    // ВОПРОСЫ — обновлены под новые архетипы
+    // ВОПРОСЫ
     // ==========================================
     const questions = [
         {
@@ -458,9 +424,9 @@
             title: "Reputation",
             text: "\"What do others say about you — when you are not in the room?\"",
             options: [
-                { text: "That I see things others don't. That I'm difficult to read.",                    dragon: "black" },
-                { text: "That I'm cold. Precise. That I always have a plan.",                             dragon: "blue"  },
-                { text: "That I feel everything too loudly. That I never back down.",                     dragon: "red"   },
+                { text: "That I see things others don't. That I'm difficult to read.",             dragon: "black" },
+                { text: "That I'm cold. Precise. That I always have a plan.",                      dragon: "blue"  },
+                { text: "That I feel everything too loudly. That I never back down.",              dragon: "red"   },
                 { text: "That I'm steady. The one you want beside you when everything falls apart.", dragon: "green" }
             ]
         },
@@ -468,10 +434,10 @@
             title: "The Rule",
             text: "\"A rule stands between you and what you know is right. What do you do?\"",
             options: [
-                { text: "Rules are written for people who need them. I don't.",       dragon: "black" },
-                { text: "I find the most efficient path around it and I move.",       dragon: "blue"  },
-                { text: "I break it. And I own the consequence.",                     dragon: "red"   },
-                { text: "I find a way that protects my people without burning it all down.", dragon: "green" }
+                { text: "Rules are written for people who need them. I don't.",                    dragon: "black" },
+                { text: "I find the most efficient path around it and I move.",                    dragon: "blue"  },
+                { text: "I break it. And I own the consequence.",                                  dragon: "red"   },
+                { text: "I find a way that protects my people without burning it all down.",       dragon: "green" }
             ]
         },
         {
@@ -497,32 +463,36 @@
     ];
 
     // ==========================================
-    // ПРОФИЛИ ДРАКОНОВ — новые имена + архетипы
+    // ПРОФИЛИ ДРАКОНОВ
     // ==========================================
     const dragonProfiles = {
         "black": {
             name: "Vorrath, the Black Morningstartail",
             description: "Rarest of all dragons. Vorrath does not choose riders who conform — he chooses those who carry something the academy cannot name. Ancient, powerful, and deeply discerning, he has waited a long time for someone like you.",
             monologue: "The others chose riders who fit. I have no use for fitting. You carry something the academy cannot name and cannot train. I have waited a long time for someone like you.",
-            img: ASSETS.black
+            img: ASSETS.black,
+            color: 'black'
         },
         "blue": {
             name: "Taevin, the Blue Swordtail",
-            description: "Fierce, strategic, and coldly brilliant. Taevin does not want a partner who follows — she wants one who commands. Blue dragons think faster than any other breed and fight with ruthless precision. Cold fury is smarter than hot.",
+            description: "Fierce, strategic, and coldly brilliant. Taevin does not want a partner who follows — he wants one who commands. Blue dragons think faster than any other breed and fight with ruthless precision. Cold fury is smarter than hot.",
             monologue: "I am not gentle. Neither are you — beneath all that composure. You have already calculated three ways out of this valley. I chose you because I fight to win. And so do you.",
-            img: ASSETS.blue
+            img: ASSETS.blue,
+            color: 'blue'
         },
         "red": {
             name: "Caorragh, the Red Scorpiontail",
-            description: "Volatile outside, fiercely devoted within. Caorragh appears dangerous to everyone — and is. But those she bonds with, she would die for without a second thought. She chose you because you feel things fully and never apologise for it.",
+            description: "Volatile outside, fiercely devoted within. Caorragh appears dangerous to everyone — and is. But those he bonds with, he would die for without a second thought. He chose you because you feel things fully and never apologise for it.",
             monologue: "You don't wait for permission to feel things. Good. The sky belongs to those who take it — and you already knew that long before I chose you.",
-            img: ASSETS.red
+            img: ASSETS.red,
+            color: 'red'
         },
         "green": {
             name: "Fealath, the Green Daggertail",
-            description: "Loyal, sharp, and relentlessly practical. Fealath does not bond out of sentiment — she bonds out of trust earned. She will not die for you out of feeling. She will survive for you, because that is smarter. She chose you because when the plan collapsed, you were still thinking.",
+            description: "Loyal, sharp, and relentlessly practical. Fealath does not bond out of sentiment — he bonds out of trust earned. He will not die for you out of feeling. He will survive for you, because that is smarter. He chose you because when the plan collapsed, you were still thinking.",
             monologue: "You are not the loudest in the room. But when the plan falls apart, you are the one still standing and still thinking. That is exactly why I am here.",
-            img: ASSETS.green
+            img: ASSETS.green,
+            color: 'green'
         }
     };
 
@@ -559,29 +529,24 @@
         if (currentTask < grammarTasks.length) {
             document.getElementById('grammar-quote').innerText = grammarTasks[currentTask].quote;
         } else {
-            // Грамматика пройдена — показываем переход
             switchScreen('screen-warmup', 'screen-bridge');
         }
     }
 
     function checkGrammar(answer, btnElement) {
         if (answer === grammarTasks[currentTask].answer) {
-            playSound('correct');
             currentTask++;
             updateGrammarTask();
         } else {
-            playSound('wrong');
             btnElement.classList.add('wrong');
             setTimeout(() => btnElement.classList.remove('wrong'), 400);
         }
     }
 
-    // Из bridge — идём на арену
     function goToArena() {
         playSound('whoosh');
         hideAllScreens();
         document.getElementById('game-container').style.backgroundImage = `url('${ASSETS.arena}')`;
-        startAmbient();
         setTimeout(() => {
             showScreen('screen-test');
             renderQuestion();
@@ -597,7 +562,7 @@
         for (let i = 0; i < questions.length; i++) {
             const dot = document.createElement('div');
             dot.className = 'progress-dot';
-            if (i < currentQuestion)      dot.classList.add('done');
+            if (i < currentQuestion)        dot.classList.add('done');
             else if (i === currentQuestion) dot.classList.add('current');
             wrap.appendChild(dot);
         }
@@ -621,14 +586,13 @@
     }
 
     function selectOption(dragonType) {
-        playSound('click');
         scores[dragonType]++;
         currentQuestion++;
         renderQuestion();
     }
 
     // ==========================================
-    // ФИНАЛ КВИЗА — дракон приземляется
+    // ФИНАЛ КВИЗА
     // ==========================================
     function finishTest() {
         const order = ['black', 'blue', 'red', 'green'];
@@ -651,9 +615,8 @@
         if (dragon.complete && dragon.naturalWidth > 0) triggerLanding();
         else dragon.onload = triggerLanding;
 
-        // Через 2 сек — плашка описания
         setTimeout(() => {
-            document.getElementById('result-name').innerText = profile.name;
+            document.getElementById('result-name').innerText  = profile.name;
             document.getElementById('result-title').innerText = profile.name + ' has chosen you.';
             document.getElementById('result-text').innerText  = profile.description;
             showScreen('screen-result');
@@ -668,17 +631,14 @@
         hideAllScreens();
 
         const dragon = document.getElementById('dragon-on-arena');
-        // Запускаем зум
         dragon.classList.remove('landed');
         dragon.classList.add('zooming');
 
         const profile = dragonProfiles[selectedDragon];
 
-        // Через 1.2 сек — монолог появляется поверх зума
         setTimeout(() => {
             document.getElementById('monologue-name').innerText = profile.name;
 
-            // Разбиваем монолог на строки для красивого отображения
             const mono = document.getElementById('monologue-text');
             mono.innerHTML = profile.monologue
                 .split('. ')
@@ -686,30 +646,25 @@
                 .filter(s => s.length)
                 .map(s => `<span>${s}${s.endsWith('.') ? '' : '.'}</span>`)
                 .join('<br><br>');
-                      showScreen('screen-monologue');
 
-            // TTS — дракон говорит
-            speakMonologue(profile.monologue);
+            showScreen('screen-monologue');
+
+            // Воспроизводим mp3-монолог из репо
+            playMonologue(profile.color);
 
         }, 1200);
     }
 
     // ==========================================
-    // ВЫХОД — возврат к Genially
+    // ФИНАЛ — просто останавливаем звук
     // ==========================================
     function finishAndExit() {
-        playSound('whoosh');
-        stopAmbient();
-        window.speechSynthesis && window.speechSynthesis.cancel();
-
-        setTimeout(() => {
-            try {
-                window.top.location.href = NEXT_SLIDE_URL;
-            } catch(e) {
-                window.open(NEXT_SLIDE_URL, '_blank');
-            }
-        }, 400);
+        stopMonologue();
+        // Ничего больше — квиз завершён
     }
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
