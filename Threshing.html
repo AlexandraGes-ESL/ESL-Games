@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Threshing</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+        :root {
+            --primary-gold: #d4af37;
+            --dark-bg: rgba(15, 15, 20, 0.85);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Lato', sans-serif;
+            color: white;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-image: url('https://i.yapx.ru/drzM1.png');
+        }
+
+        /* === ПЛАШКИ === */
+        .screen {
+            display: none;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 760px;
+            background: var(--dark-bg);
+            padding: 30px 40px;
+            border-radius: 15px;
+            border: 2px solid var(--primary-gold);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            text-align: center;
+            backdrop-filter: blur(6px);
+            animation: fadeIn 1s;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+        .active { display: block; }
+
+        #screen-intro    { top: 50%; transform: translate(-50%, -50%); }
+        #screen-bridge   { top: 50%; transform: translate(-50%, -50%); max-width: 680px; }
+        #screen-warmup   { top: 50%; transform: translate(-50%, -50%); max-width: 680px; }
+        #screen-test     { bottom: 4vh; max-width: 820px; padding: 22px 32px; }
+        #screen-result   { bottom: 4vh; max-width: 720px; padding: 22px 32px; }
+        #screen-monologue{ bottom: 4vh; max-width: 720px; padding: 22px 32px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        h1, h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-gold);
+            margin: 0 0 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+        h1 { font-size: 2.2rem; }
+        h2 { font-size: 1.6rem; }
+        p  { font-size: 1.1rem; line-height: 1.5; margin: 0 0 20px; }
+
+        /* === КНОПКИ === */
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px 18px;
+            margin: 6px 0;
+            font-size: 1rem;
+            font-family: 'Lato', sans-serif;
+            color: white;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--primary-gold);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            box-sizing: border-box;
+        }
+        .btn:hover {
+            background: rgba(212,175,55,0.2);
+            box-shadow: 0 0 15px var(--primary-gold);
+            transform: scale(1.02);
+        }
+        .btn-center { text-align: center; }
+
+        /* === КНОПКИ ГРАММАТИКИ === */
+        .grammar-btn {
+            text-align: center;
+            width: 45%;
+            display: inline-block;
+            margin: 10px 2%;
+            padding: 18px 20px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--primary-gold);
+            background: linear-gradient(135deg, rgba(40,25,10,0.9) 0%, rgba(20,15,8,0.95) 100%);
+            border: 2px solid var(--primary-gold);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(212,175,55,0.1), 0 4px 15px rgba(0,0,0,0.5);
+            transition: all 0.4s ease;
+            text-shadow: 0 0 10px rgba(212,175,55,0.5);
+        }
+        .grammar-btn small {
+            display: block;
+            font-family: 'Lato', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+        .grammar-btn:hover {
+            background: linear-gradient(135deg, rgba(80,50,20,0.95) 0%, rgba(40,25,10,1) 100%);
+            border-color: #ffd966;
+            color: #ffd966;
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: inset 0 0 30px rgba(212,175,55,0.25), 0 8px 25px rgba(212,175,55,0.4), 0 0 20px rgba(212,175,55,0.3);
+            text-shadow: 0 0 15px rgba(255,217,102,0.8);
+        }
+        .grammar-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.2), transparent);
+            transition: left 0.6s;
+        }
+        .grammar-btn:hover::before { left: 100%; }
+        .grammar-btn.wrong {
+            animation: shake 0.4s;
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25%      { transform: translateX(-8px); }
+            75%      { transform: translateX(8px); }
+        }
+
+        /* === ПРОГРЕСС === */
+        .progress-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .progress-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid var(--primary-gold);
+        }
+        .progress-dot.done    { background: var(--primary-gold); }
+        .progress-dot.current { background: var(--primary-gold); box-shadow: 0 0 10px var(--primary-gold); }
+
+        /* === КВИЗ === */
+        #options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        #options-container .btn {
+            margin: 0;
+            font-size: 0.95rem;
+            padding: 10px 14px;
+        }
+
+        /* === ДРАКОН === */
+        #dragon-on-arena {
+            position: absolute;
+            top: 42%;
+            left: 58%;
+            transform: translate(-50%, -50%) scale(1.4);
+            width: 38vw;
+            max-width: 520px;
+            min-width: 280px;
+            opacity: 0;
+            filter: drop-shadow(0 10px 40px rgba(0,0,0,0.8)) drop-shadow(0 0 30px rgba(212,175,55,0.3));
+            pointer-events: none;
+            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+            z-index: 5;
+        }
+        #dragon-on-arena.landed {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        /* Зум при подходе */
+        #dragon-on-arena.zooming {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(2.2);
+            transition: transform 1.8s ease-in, opacity 1.8s ease-in;
+        }
+
+        /* === МОНОЛОГ === */
+        .monologue-text {
+            font-style: italic;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.92);
+            border-left: 3px solid var(--primary-gold);
+            padding-left: 18px;
+            text-align: left;
+            margin: 0 0 20px;
+        }
+
+        /* === MUTE === */
+        #sound-toggle {
+            position: absolute;
+            top: 20px; right: 20px;
+            z-index: 100;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--primary-gold);
+            color: var(--primary-gold);
+            font-size: 1.4rem;
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        #sound-toggle:hover {
+            background: rgba(212,175,55,0.2);
+            box-shadow: 0 0 15px var(--primary-gold);
+        }
+
+        /* Виньетка */
+        #game-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+<div id="game-container">
+
+    <button id="sound-toggle" onclick="toggleSound()" title="Toggle sound">🔊</button>
+    <img id="dragon-on-arena" src="" alt="">
+
+    <!-- СЦЕНА 1: ВХОД -->
+    <div id="screen-intro" class="screen active">
+        <h1>The Threshing Grounds</h1>
+        <p>You step into the Valley of Dragons. The air is thick with smoke and ancient magic. Around you, massive beasts of scale and fire watch from the peaks. To bond with a dragon, you must survive their scrutiny.</p>
+        <button class="btn btn-center" onclick="startWarmup()">Step Forward</button>
+    </div>
+
+    <!-- СЦЕНА 1.5: ПЕРЕХОД — лес → арена -->
+    <div id="screen-bridge" class="screen">
+        <h2>The Valley Opens</h2>
+        <p>You have walked since dawn. The forest pressed close on all sides — ancient trees, heavy silence, the smell of ash growing stronger with every step.</p>
+        <p>Then the treeline breaks.</p>
+        <p>The arena stretches before you, vast and scarred by centuries of fire. And there, among the smoke and stone — <em>dragons</em>. More than you expected. More than you feared.</p>
+        <p style="color: var(--primary-gold); font-style: italic;">They are already watching you.</p>
+        <button class="btn btn-center" onclick="goToArena()">Walk into the Arena</button>
+    </div>
+
+    <!-- СЦЕНА 2: ГРАММАТИКА -->
+    <div id="screen-warmup" class="screen">
+        <h2>Dragon's Mind</h2>
+        <p>A deep voice echoes in your mind. Focus your thoughts to break the mental barrier!</p>
+        <p style="color: var(--primary-gold); font-style: italic; font-size: 1.3rem;" id="grammar-quote">"I have watched a thousand riders fall."</p>
+        <div>
+            <button class="grammar-btn" onclick="checkGrammar('Past Simple', this)">
+                Past Simple<br><small>Finished action</small>
+            </button>
+            <button class="grammar-btn" onclick="checkGrammar('Present Perfect', this)">
+                Present Perfect<br><small>Life experience</small>
+            </button>
+        </div>
+    </div>
+
+    <!-- СЦЕНА 3: КВИЗ -->
+    <div id="screen-test" class="screen">
+        <div class="progress-wrap" id="progress-wrap"></div>
+        <h2 id="question-title">Question 1/6</h2>
+        <p id="question-text">...</p>
+        <div id="options-container"></div>
+    </div>
+
+    <!-- СЦЕНА 4: РЕЗУЛЬТАТ — описание дракона -->
+    <div id="screen-result" class="screen">
+        <h1 id="result-title">You have been chosen.</h1>
+        <p id="result-name" style="font-family:'Cinzel',serif; color:var(--primary-gold); font-size:1.25rem; margin-bottom: 8px;"></p>
+        <p id="result-text"></p>
+        <button class="btn btn-center" onclick="approachDragon()">Approach Your Dragon →</button>
+    </div>
+
+    <!-- СЦЕНА 5: МОНОЛОГ ДРАКОНА -->
+    <div id="screen-monologue" class="screen">
+        <h2 id="monologue-name"></h2>
+        <div class="monologue-text" id="monologue-text"></div>
+        <button class="btn btn-center" onclick="finishAndExit()">Continue →</button>
+    </div>
+
+</div>
+<script>
+    // ==========================================
+    // НАСТРОЙКИ
+    // ==========================================
+    const NEXT_SLIDE_URL = 'https://view.genially.com/YOUR_GENIALLY_ID/#page-4';
+
+    const ASSETS = {
+        valley: 'https://i.yapx.ru/drzM1.png',
+        arena:  'https://i.yapx.ru/drzM2.png',
+        red:    'https://i.yapx.ru/drzMz.png',
+        blue:   'https://i.yapx.ru/drzM0.png',
+        black:  'https://i.yapx.ru/drzcN.png',
+        green:  'https://i.yapx.ru/drzcO.png'
+    };
+    Object.values(ASSETS).forEach(src => { const i = new Image(); i.src = src; });
+
+    // ==========================================
+    // ЗВУК ЧЕРЕЗ WEB SPEECH API (TTS монолог)
+    // + обычные звуки через Audio()
+    // ==========================================
+    let soundEnabled = true;
+    let ambientAudio = null;
+
+    // Файловые звуки (положи в /sounds/)
+    const SOUNDS = {
+        click:   'sounds/click.mp3',
+        correct: 'sounds/correct.mp3',
+        wrong:   'sounds/wrong.mp3',
+        roar:    'sounds/dragon-roar.mp3',
+        whoosh:  'sounds/fire-whoosh.mp3',
+        ambient: 'sounds/ambient-wind.mp3'
+    };
+    const audioCache = {};
+    function preloadSounds() {
+        Object.entries(SOUNDS).forEach(([key, src]) => {
+            try {
+                const a = new Audio(src);
+                a.preload = 'auto';
+                audioCache[key] = a;
+            } catch(e) {}
+        });
+    }
+    function playSound(name, volume = 0.6) {
+        if (!soundEnabled || !audioCache[name]) return;
+        try {
+            const sfx = audioCache[name].cloneNode();
+            sfx.volume = volume;
+            sfx.play().catch(() => {});
+        } catch(e) {}
+    }
+    function startAmbient() {
+        if (!soundEnabled || ambientAudio) return;
+        try {
+            ambientAudio = new Audio(SOUNDS.ambient);
+            ambientAudio.loop = true;
+            ambientAudio.volume = 0.25;
+            ambientAudio.play().catch(() => {});
+        } catch(e) {}
+    }
+    function stopAmbient() {
+        if (ambientAudio) { ambientAudio.pause(); ambientAudio = null; }
+    }
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        document.getElementById('sound-toggle').innerText = soundEnabled ? '🔊' : '🔇';
+        if (!soundEnabled) {
+            stopAmbient();
+            window.speechSynthesis && window.speechSynthesis.cancel();
+        } else {
+            const test = document.getElementById('screen-test');
+            const res  = document.getElementById('screen-result');
+            if (test.classList.contains('active') || res.classList.contains('active')) startAmbient();
+        }
+    }
+
+    // TTS — монолог дракона через Web Speech API
+    function speakMonologue(text) {
+        if (!soundEnabled || !window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-US';
+        utter.pitch = 0.6;   // глубокий голос
+        utter.rate  = 0.85;
+        utter.volume = 0.9;
+
+        // Пробуем выбрать низкий мужской голос
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find(v =>
+            v.lang.startsWith('en') && v.name.toLowerCase().includes('male')
+        ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+        if (preferred) utter.voice = preferred;
+
+        window.speechSynthesis.speak(utter);
+    }
+
+    preloadSounds();
+    // Голоса грузятся асинхронно
+    if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
+
+    // ==========================================
+    // ДАННЫЕ
+    // ==========================================
+    const grammarTasks = [
+        { quote: '"I have watched a thousand riders fall."',   answer: 'Present Perfect' },
+        { quote: '"Yesterday, a cadet bled on these stones."', answer: 'Past Simple'      },
+        { quote: '"Have you ever broken a sacred rule?"',      answer: 'Present Perfect' },
+        { quote: '"I fought in the great war ten years ago."', answer: 'Past Simple'      }
+    ];
+    let currentTask = 0;
+
+    // ==========================================
+    // ВОПРОСЫ — обновлены под новые архетипы
+    // ==========================================
+    const questions = [
+        {
+            title: "Why",
+            text: "A voice cuts through the smoke: \"Why did you step forward today?\"",
+            options: [
+                { text: "Because I have always known I was meant for more than ordinary.", dragon: "black" },
+                { text: "Because my wing needed someone to lead. I am that someone.",       dragon: "blue"  },
+                { text: "Because the fire in my chest has never let me stand still.",       dragon: "red"   },
+                { text: "Because the people I love are counting on me to come back alive.", dragon: "green" }
+            ]
+        },
+        {
+            title: "Command",
+            text: "\"Your wing is surrounded on three sides. You have seconds. What do you do?\"",
+            options: [
+                { text: "I already see the gap they missed. I take point and push through.", dragon: "black" },
+                { text: "I assess, I decide, I give the order. No hesitation.",              dragon: "blue"  },
+                { text: "I go first. If someone has to take the hit, it's me.",              dragon: "red"   },
+                { text: "I hold the line until everyone else is clear.",                     dragon: "green" }
+            ]
+        },
+        {
+            title: "Reputation",
+            text: "\"What do others say about you — when you are not in the room?\"",
+            options: [
+                { text: "That I see things others don't. That I'm difficult to read.",                    dragon: "black" },
+                { text: "That I'm cold. Precise. That I always have a plan.",                             dragon: "blue"  },
+                { text: "That I feel everything too loudly. That I never back down.",                     dragon: "red"   },
+                { text: "That I'm steady. The one you want beside you when everything falls apart.", dragon: "green" }
+            ]
+        },
+        {
+            title: "The Rule",
+            text: "\"A rule stands between you and what you know is right. What do you do?\"",
+            options: [
+                { text: "Rules are written for people who need them. I don't.",       dragon: "black" },
+                { text: "I find the most efficient path around it and I move.",       dragon: "blue"  },
+                { text: "I break it. And I own the consequence.",                     dragon: "red"   },
+                { text: "I find a way that protects my people without burning it all down.", dragon: "green" }
+            ]
+        },
+        {
+            title: "Fear",
+            text: "\"I smell your fear,\" the voice rumbles low. \"What is it?\"",
+            options: [
+                { text: "Being ordinary. Being forgotten. Being less than I was made to be.", dragon: "black" },
+                { text: "Losing control of a situation I should have anticipated.",           dragon: "blue"  },
+                { text: "Being abandoned. Being left behind by the people I'd die for.",      dragon: "red"   },
+                { text: "Failing the ones who trusted me to keep them safe.",                 dragon: "green" }
+            ]
+        },
+        {
+            title: "The Moment",
+            text: "\"The dragon stands before you. What do you feel?\"",
+            options: [
+                { text: "Recognition. Like meeting something that has always existed inside me.", dragon: "black" },
+                { text: "Focus. This is the alliance I have been building toward.",              dragon: "blue"  },
+                { text: "Fire. Pure and absolute.",                                              dragon: "red"   },
+                { text: "Certainty. This is who I fight beside from now on.",                   dragon: "green" }
+            ]
+        }
+    ];
+
+    // ==========================================
+    // ПРОФИЛИ ДРАКОНОВ — новые имена + архетипы
+    // ==========================================
+    const dragonProfiles = {
+        "black": {
+            name: "Vorrath, the Black Morningstartail",
+            description: "Rarest of all dragons. Vorrath does not choose riders who conform — he chooses those who carry something the academy cannot name. Ancient, powerful, and deeply discerning, he has waited a long time for someone like you.",
+            monologue: "The others chose riders who fit. I have no use for fitting. You carry something the academy cannot name and cannot train. I have waited a long time for someone like you.",
+            img: ASSETS.black
+        },
+        "blue": {
+            name: "Taevin, the Blue Swordtail",
+            description: "Fierce, strategic, and coldly brilliant. Taevin does not want a partner who follows — she wants one who commands. Blue dragons think faster than any other breed and fight with ruthless precision. Cold fury is smarter than hot.",
+            monologue: "I am not gentle. Neither are you — beneath all that composure. You have already calculated three ways out of this valley. I chose you because I fight to win. And so do you.",
+            img: ASSETS.blue
+        },
+        "red": {
+            name: "Caorragh, the Red Scorpiontail",
+            description: "Volatile outside, fiercely devoted within. Caorragh appears dangerous to everyone — and is. But those she bonds with, she would die for without a second thought. She chose you because you feel things fully and never apologise for it.",
+            monologue: "You don't wait for permission to feel things. Good. The sky belongs to those who take it — and you already knew that long before I chose you.",
+            img: ASSETS.red
+        },
+        "green": {
+            name: "Fealath, the Green Daggertail",
+            description: "Loyal, sharp, and relentlessly practical. Fealath does not bond out of sentiment — she bonds out of trust earned. She will not die for you out of feeling. She will survive for you, because that is smarter. She chose you because when the plan collapsed, you were still thinking.",
+            monologue: "You are not the loudest in the room. But when the plan falls apart, you are the one still standing and still thinking. That is exactly why I am here.",
+            img: ASSETS.green
+        }
+    };
+
+    let currentQuestion = 0;
+    let scores = { red: 0, black: 0, green: 0, blue: 0 };
+    let selectedDragon = null;
+
+    // ==========================================
+    // УПРАВЛЕНИЕ СЦЕНАМИ
+    // ==========================================
+    function hideAllScreens() {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    }
+    function showScreen(id) {
+        hideAllScreens();
+        document.getElementById(id).classList.add('active');
+    }
+    function switchScreen(hideId, showId) {
+        document.getElementById(hideId).classList.remove('active');
+        document.getElementById(showId).classList.add('active');
+    }
+
+    // ==========================================
+    // ФЛОУ
+    // ==========================================
+    function startWarmup() {
+        playSound('whoosh');
+        switchScreen('screen-intro', 'screen-warmup');
+        currentTask = 0;
+        updateGrammarTask();
+    }
+
+    function updateGrammarTask() {
+        if (currentTask < grammarTasks.length) {
+            document.getElementById('grammar-quote').innerText = grammarTasks[currentTask].quote;
+        } else {
+            // Грамматика пройдена — показываем переход
+            switchScreen('screen-warmup', 'screen-bridge');
+        }
+    }
+
+    function checkGrammar(answer, btnElement) {
+        if (answer === grammarTasks[currentTask].answer) {
+            playSound('correct');
+            currentTask++;
+            updateGrammarTask();
+        } else {
+            playSound('wrong');
+            btnElement.classList.add('wrong');
+            setTimeout(() => btnElement.classList.remove('wrong'), 400);
+        }
+    }
+
+    // Из bridge — идём на арену
+    function goToArena() {
+        playSound('whoosh');
+        hideAllScreens();
+        document.getElementById('game-container').style.backgroundImage = `url('${ASSETS.arena}')`;
+        startAmbient();
+        setTimeout(() => {
+            showScreen('screen-test');
+            renderQuestion();
+        }, 3000);
+    }
+
+    // ==========================================
+    // КВИЗ
+    // ==========================================
+    function renderProgress() {
+        const wrap = document.getElementById('progress-wrap');
+        wrap.innerHTML = '';
+        for (let i = 0; i < questions.length; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'progress-dot';
+            if (i < currentQuestion)      dot.classList.add('done');
+            else if (i === currentQuestion) dot.classList.add('current');
+            wrap.appendChild(dot);
+        }
+    }
+
+    function renderQuestion() {
+        if (currentQuestion >= questions.length) { finishTest(); return; }
+        const q = questions[currentQuestion];
+        renderProgress();
+        document.getElementById('question-title').innerText = `Question ${currentQuestion + 1} / ${questions.length}: ${q.title}`;
+        document.getElementById('question-text').innerText  = q.text;
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.innerText = opt.text;
+            btn.onclick = () => selectOption(opt.dragon);
+            container.appendChild(btn);
+        });
+    }
+
+    function selectOption(dragonType) {
+        playSound('click');
+        scores[dragonType]++;
+        currentQuestion++;
+        renderQuestion();
+    }
+
+    // ==========================================
+    // ФИНАЛ КВИЗА — дракон приземляется
+    // ==========================================
+    function finishTest() {
+        const order = ['black', 'blue', 'red', 'green'];
+        let winner = order[0];
+        order.forEach(k => { if (scores[k] > scores[winner]) winner = k; });
+        selectedDragon = winner;
+
+        const profile = dragonProfiles[winner];
+        hideAllScreens();
+
+        const dragon = document.getElementById('dragon-on-arena');
+        dragon.src = profile.img;
+
+        const triggerLanding = () => {
+            setTimeout(() => {
+                dragon.classList.add('landed');
+                playSound('roar', 0.7);
+            }, 100);
+        };
+        if (dragon.complete && dragon.naturalWidth > 0) triggerLanding();
+        else dragon.onload = triggerLanding;
+
+        // Через 2 сек — плашка описания
+        setTimeout(() => {
+            document.getElementById('result-name').innerText = profile.name;
+            document.getElementById('result-title').innerText = profile.name + ' has chosen you.';
+            document.getElementById('result-text').innerText  = profile.description;
+            showScreen('screen-result');
+        }, 2000);
+    }
+
+    // ==========================================
+    // ПОДХОД К ДРАКОНУ — зум + монолог
+    // ==========================================
+    function approachDragon() {
+        playSound('whoosh');
+        hideAllScreens();
+
+        const dragon = document.getElementById('dragon-on-arena');
+        // Запускаем зум
+        dragon.classList.remove('landed');
+        dragon.classList.add('zooming');
+
+        const profile = dragonProfiles[selectedDragon];
+
+        // Через 1.2 сек — монолог появляется поверх зума
+        setTimeout(() => {
+            document.getElementById('monologue-name').innerText = profile.name;
+
+            // Разбиваем монолог на строки для красивого отображения
+            const mono = document.getElementById('monologue-text');
+            mono.innerHTML = profile.monologue
+                .split('. ')
+                .map(s => s.trim())
+                .filter(s => s.length)
+                .map(s => `<span>${s}${s.endsWith('.') ? '' : '.'}</span>`)
+                .join('<br><br>');
+                      showScreen('screen-monologue');
+
+            // TTS — дракон говорит
+            speakMonologue(profile.monologue);
+
+        }, 1200);
+    }
+
+    // ==========================================
+    // ВЫХОД — возврат к Genially
+    // ==========================================
+    function finishAndExit() {
+        playSound('whoosh');
+        stopAmbient();
+        window.speechSynthesis && window.speechSynthesis.cancel();
+
+        setTimeout(() => {
+            try {
+                window.top.location.href = NEXT_SLIDE_URL;
+            } catch(e) {
+                window.open(NEXT_SLIDE_URL, '_blank');
+            }
+        }, 400);
+    }
+</script>
+</body>
+</html>
