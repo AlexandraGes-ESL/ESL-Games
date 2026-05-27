@@ -1041,16 +1041,22 @@ function startStage1(){
   state.stage1Progress = 0;
 
   fadeCard(()=>{
-    let html = `
-      <h2>The Codex</h2>
-      <div class="subtitle">Stage I · Restore the Wards</div>
-      <div class="speaker">${state.companion.name}</div>
-      <div class="speech" style="font-size:17px;min-height:auto;margin-bottom:8px">${state.companion.stage1}</div>
-      <div class="divider"><span>${STAGE1.intro}</span></div>
-      <div class="codex-list" id="codexList"></div>
-      <div class="pronoun-bank" id="pronBank"></div>
-      <div class="btn-row"><button class="btn" id="goStage2" disabled>Proceed · Case Files</button></div>
-    `;
+   let html = `
+  <div class="card-header">
+    <h2>The Codex</h2>
+    <div class="subtitle">Stage I · Restore the Wards</div>
+    <div class="speaker">${state.companion.name}</div>
+    <div class="speech" style="font-size:16px;margin-bottom:6px">${state.companion.stage1}</div>
+    <div class="divider"><span>${STAGE1.intro}</span></div>
+  </div>
+  <div class="card-content">
+    <div class="codex-list" id="codexList"></div>
+    <div class="pronoun-bank" id="pronBank"></div>
+  </div>
+  <div class="card-footer">
+    <button class="btn" id="goStage2" disabled>Proceed · Case Files</button>
+  </div>
+`;
     cardBody.innerHTML = html;
 
     const list = $('#codexList');
