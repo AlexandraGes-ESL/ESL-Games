@@ -413,6 +413,20 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 @keyframes drawSig{
   to{stroke-dashoffset:0}
 }
+  /* Iframe-fix: отступ от краёв для встраивания */
+.scene, .page, .codex-frame, .panel{
+  box-sizing:border-box;
+}
+
+html, body{
+  min-height:100vh;
+}
+
+/* Если контент длиннее экрана — разрешить прокрутку внутри */
+.page.active{
+  overflow-y:auto;
+  max-height:100vh;
+}
 </style>
 </head>
 <body>
