@@ -68,7 +68,6 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
   50%{transform:translateX(0) translateY(-5px)}
 }
 
-/* foot shadow — под силуэтом, а не под img */
 .foot-shadow{
   position:absolute;
   left:10vw;
@@ -83,14 +82,16 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
   transition:opacity 1s ease;
 }
 .companion.visible ~ .foot-shadow{opacity:1}
-  /* ===== DIALOG CARD (rewritten) ===== */
+
+/* ===== DIALOG CARD (iframe-safe flex column) ===== */
 .card-wrap{
   position:absolute;
   left:50%;
   top:50%;
   transform:translate(-50%, -50%);
   width:min(680px, 54vw);
-  max-height:calc(100vh - 120px);     /* отступы от прогресс-бара и низа */
+  height:auto;
+  max-height:min(calc(100vh - 100px), calc(100% - 100px));
   z-index:10;
   opacity:0;
   visibility:hidden;
@@ -109,7 +110,7 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
   position:relative;
   background:var(--parch);
   border:1px solid var(--gold);
-  padding:32px 42px;
+  padding:28px 38px;
   backdrop-filter:blur(8px);
   -webkit-backdrop-filter:blur(8px);
   box-shadow:
@@ -118,8 +119,10 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
     0 0 80px rgba(212,175,55,.08);
   display:flex;
   flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
   max-height:100%;
-  overflow:hidden;                    /* сама карточка не скроллится */
+  overflow:hidden;
 }
 
 .card-wrap.visible .card{
@@ -130,23 +133,31 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
   to{opacity:1;transform:translateY(0) scale(1)}
 }
 
-/* убираем двойную рамку — оставляем только уголки-засечки */
+#cardBody{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+  max-height:100%;
+  overflow:hidden;
+}
+
+/* углы карточки */
 .card .corner{
   position:absolute;
   width:18px;
   height:18px;
   border:1px solid var(--gold);
   pointer-events:none;
-  font-size:0;                        /* прячем символы из HTML */
+  font-size:0;
 }
 .card .corner.tl{top:-1px;left:-1px;border-right:none;border-bottom:none}
 .card .corner.tr{top:-1px;right:-1px;border-left:none;border-bottom:none}
 .card .corner.bl{bottom:-1px;left:-1px;border-right:none;border-top:none}
 .card .corner.br{bottom:-1px;right:-1px;border-left:none;border-top:none}
 .card .corner.tc,
-.card .corner.bc{display:none}        /* центральные уголки убираем */
+.card .corner.bc{display:none}
 
-/* акцентные точки в углах */
 .card .corner::after{
   content:'';
   position:absolute;
@@ -161,29 +172,26 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .card .corner.bl::after{bottom:-2px;left:-2px}
 .card .corner.br::after{bottom:-2px;right:-2px}
 
-/* фиксированный верх — заголовок и компаньон не скроллятся */
+/* три зоны карточки */
 .card-header{
   flex-shrink:0;
-  margin-bottom:16px;
+  margin-bottom:14px;
 }
-
-/* скроллируемая область с контентом упражнения */
 .card-content{
   flex:1 1 auto;
   overflow-y:auto;
   overflow-x:hidden;
   padding-right:8px;
-  min-height:0;                       /* критично для flex-скролла */
+  min-height:0;
 }
 .card-content::-webkit-scrollbar{width:6px}
 .card-content::-webkit-scrollbar-track{background:rgba(0,0,0,.2)}
 .card-content::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px}
 
-/* фиксированный низ — кнопки */
 .card-footer{
   flex-shrink:0;
-  margin-top:18px;
-  padding-top:18px;
+  margin-top:14px;
+  padding-top:14px;
   border-top:1px solid var(--gold-dim);
   text-align:center;
 }
@@ -261,7 +269,6 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 }
 .btn:disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
 
-/* старый .btn-row оставляем как алиас .card-footer для совместимости со scene-рендерами */
 .btn-row{
   flex-shrink:0;
   margin-top:18px;
@@ -296,20 +303,28 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .select-card .name{font-family:'Cinzel',serif;font-size:14px;letter-spacing:3px;color:var(--gold-bright);margin-bottom:4px}
 .select-card .desc{font-size:14px;font-style:italic;color:var(--ink-dim);line-height:1.3}
 
-/* ===== STAGE 1 — GAPS ===== */
-.codex-list{max-height:340px;overflow-y:auto;padding-right:8px;margin:10px 0 4px}
-.codex-list::-webkit-scrollbar{width:6px}
-.codex-list::-webkit-scrollbar-track{background:rgba(0,0,0,.2)}
-.codex-list::-webkit-scrollbar-thumb{background:var(--gold-dim)}
+/* ===== STAGE 1 — GAPS (no double-scroll, sticky pronoun bank) ===== */
+.codex-list{
+  padding-right:4px;
+  margin:6px 0 4px;
+}
 .signet-block{
-  margin-bottom:10px;        /* было 14 */
-  padding:8px 12px;          /* было 10 12 */
+  margin-bottom:10px;
+  padding:8px 12px;
   border-left:2px solid var(--gold-dim);
   background:rgba(0,0,0,.15);
 }
+.signet-block .sig-name{
+  font-family:'Cinzel',serif;
+  font-size:12px;
+  letter-spacing:2px;
+  color:var(--gold-bright);
+  margin-bottom:4px;
+  text-transform:uppercase;
+}
 .signet-block .sig-line{
-  font-size:15px;            /* было 16 */
-  line-height:1.6;           /* было 1.7 */
+  font-size:15px;
+  line-height:1.6;
   margin:3px 0;
 }
 .gap{display:inline-block;min-width:80px;padding:1px 8px;margin:0 2px;background:rgba(212,175,55,.08);border-bottom:1px solid var(--gold);color:var(--gold-bright);font-style:normal;text-align:center;cursor:pointer;transition:all .25s;border-radius:2px 2px 0 0}
@@ -319,32 +334,56 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .gap.wrong{background:rgba(168,50,50,.35);border-bottom-color:var(--red);color:#ffb0b0;animation:shake .4s}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 
-.pronoun-bank{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px;padding-top:14px;border-top:1px solid var(--gold-dim)}
+.pronoun-bank{
+  position:sticky;
+  bottom:0;
+  background:linear-gradient(180deg, rgba(26,20,16,0) 0%, var(--parch) 25%, var(--parch) 100%);
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:10px;
+  padding:12px 0 6px;
+  border-top:1px solid var(--gold-dim);
+  z-index:2;
+}
 .pronoun{padding:6px 18px;background:rgba(212,175,55,.08);border:1px solid var(--gold-dim);color:var(--gold-bright);font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;cursor:grab;transition:all .25s}
 .pronoun:hover{background:rgba(212,175,55,.2);border-color:var(--gold)}
 .pronoun.dragging{opacity:.4}
 .gap.active-target{box-shadow:0 0 12px var(--gold-bright)}
 
-/* ===== STAGE 2 — CASES ===== */
+/* ===== STAGE 2 — CASES (flex-safe) ===== */
 .case-meta{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--ink-dim);text-align:center;margin-bottom:14px;text-transform:uppercase}
-.case-text{font-size:18px;line-height:1.6;color:var(--ink);font-style:italic;margin-bottom:18px;padding:14px 18px;border-left:2px solid var(--gold);background:rgba(0,0,0,.2);min-height:120px}
+.case-text{
+  font-size:17px;
+  line-height:1.55;
+  color:var(--ink);
+  font-style:italic;
+  margin-bottom:14px;
+  padding:12px 16px;
+  border-left:2px solid var(--gold);
+  background:rgba(0,0,0,.2);
+}
 .case-text .blank{display:inline-block;min-width:140px;border-bottom:1px dashed var(--gold);color:var(--gold-bright);text-align:center;padding:0 8px;font-style:normal}
 .case-text .blank.solved{border-bottom-style:solid;color:var(--gold-bright)}
-.case-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.case-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
 .case-opt{padding:10px 14px;background:rgba(0,0,0,.25);border:1px solid var(--gold-dim);color:var(--ink);cursor:pointer;font-size:15px;transition:all .25s;text-align:left;font-family:inherit}
 .case-opt:hover{border-color:var(--gold);background:rgba(212,175,55,.08)}
 .case-opt.correct{border-color:#7acc7a;background:rgba(80,160,80,.2);color:#d4f0d4}
 .case-opt.wrong{border-color:var(--red);background:rgba(168,50,50,.25);color:#ffb0b0;animation:shake .4s}
 .case-opt:disabled{cursor:not-allowed;opacity:.5}
-.case-nav{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--ink-dim)}
+.case-nav{display:flex;justify-content:space-between;align-items:center;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--ink-dim)}
 
-/* ===== STAGE 3 — REFLECTION ===== */
+/* ===== STAGE 3 — REFLECTION (flex-safe) ===== */
 .q-counter{font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:var(--gold-dim);text-align:center;margin-bottom:8px}
 .q-cond{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-align:center;margin-bottom:14px;text-transform:uppercase}
-.q-text{font-size:21px;line-height:1.5;color:var(--ink);font-style:italic;text-align:center;margin-bottom:22px;min-height:90px;padding:0 10px}
-.q-options{display:flex;flex-direction:column;gap:9px;max-height:280px;overflow-y:auto;padding-right:6px}
-.q-options::-webkit-scrollbar{width:6px}
-.q-options::-webkit-scrollbar-thumb{background:var(--gold-dim)}
+.q-text{font-size:20px;line-height:1.45;color:var(--ink);font-style:italic;text-align:center;margin-bottom:16px;padding:0 10px}
+.q-options{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding-right:4px;
+}
 .q-opt{padding:11px 16px;background:rgba(0,0,0,.25);border:1px solid var(--gold-dim);color:var(--ink);cursor:pointer;font-size:16px;font-family:inherit;text-align:left;transition:all .25s;line-height:1.4}
 .q-opt:hover{border-color:var(--gold);background:rgba(212,175,55,.1);transform:translateX(4px)}
 .q-opt.selected{border-color:var(--gold-bright);background:rgba(212,175,55,.18);box-shadow:0 0 14px rgba(212,175,55,.25)}
@@ -395,7 +434,6 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .reveal-companion .who{font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:8px}
 .reveal-companion .line{font-size:18px;font-style:italic;color:var(--ink);line-height:1.5}
 
-/* cascading reveal */
 @keyframes fadeInUp{
   from{opacity:0;transform:translateY(20px)}
   to{opacity:1;transform:translateY(0)}
@@ -407,7 +445,6 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .reveal-overlay.visible .reveal-canon    {animation:fadeInUp 1s ease 1.2s both}
 .reveal-overlay.visible .reveal-companion{animation:fadeInUp 1s ease 1.5s both}
 
-/* flash burst */
 .flash{
   position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0;
   background:radial-gradient(circle at center,rgba(240,216,120,.7) 0%,transparent 70%);
@@ -450,7 +487,7 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 @media (max-width:768px){
   .companion{opacity:0!important}
   .foot-shadow{display:none}
-  .card-wrap{width:92vw;top:70px}
+  .card-wrap{width:92vw;top:50%}
   .card{padding:24px 22px}
   .card h2{font-size:22px;letter-spacing:3px}
   .speech{font-size:17px}
@@ -458,8 +495,11 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
   .select-card{width:160px}
   .select-card .portrait{height:200px}
   .reveal-name{font-size:30px;letter-spacing:6px}
+  .case-options{grid-template-columns:1fr}
 }
-  .reveal-overlay.visible .reveal-sigil svg .sig-stroke{
+
+/* draw signet on reveal */
+.reveal-overlay.visible .reveal-sigil svg .sig-stroke{
   stroke-dasharray:400;
   stroke-dashoffset:400;
   animation:drawSig 2s ease-out .4s forwards;
@@ -1019,16 +1059,23 @@ function showIntro(){
   setProgress(1);
   fadeCard(()=>{
     cardBody.innerHTML = `
-      <h2>Restricted Section</h2>
-      <div class="subtitle">A whisper in the dark</div>
-      <div class="divider"><span>✦</span></div>
-      <div class="speaker">${state.companion.name}</div>
-      <div class="speech">${state.companion.intro}</div>
-      <div class="btn-row"><button class="btn" id="goStage1">Begin · Codex of Signets</button></div>
+      <div class="card-header">
+        <h2>Restricted Section</h2>
+        <div class="subtitle">A whisper in the dark</div>
+        <div class="divider"><span>✦</span></div>
+      </div>
+      <div class="card-content">
+        <div class="speaker">${state.companion.name}</div>
+        <div class="speech">${state.companion.intro}</div>
+      </div>
+      <div class="card-footer">
+        <button class="btn" id="goStage1">Begin · Codex of Signets</button>
+      </div>
     `;
     $('#goStage1').addEventListener('click',()=>{SFX.page(); startStage1();});
   });
 }
+
 
 /* ============================================================
    STAGE 1 — CODEX (drag/click pronouns into gaps)
@@ -1041,23 +1088,22 @@ function startStage1(){
   state.stage1Progress = 0;
 
   fadeCard(()=>{
-   let html = `
-  <div class="card-header">
-    <h2>The Codex</h2>
-    <div class="subtitle">Stage I · Restore the Wards</div>
-    <div class="speaker">${state.companion.name}</div>
-    <div class="speech" style="font-size:16px;margin-bottom:6px">${state.companion.stage1}</div>
-    <div class="divider"><span>${STAGE1.intro}</span></div>
-  </div>
-  <div class="card-content">
-    <div class="codex-list" id="codexList"></div>
-    <div class="pronoun-bank" id="pronBank"></div>
-  </div>
-  <div class="card-footer">
-    <button class="btn" id="goStage2" disabled>Proceed · Case Files</button>
-  </div>
-`;
-    cardBody.innerHTML = html;
+    cardBody.innerHTML = `
+      <div class="card-header">
+        <h2>The Codex</h2>
+        <div class="subtitle">Stage I · Restore the Wards</div>
+        <div class="speaker">${state.companion.name}</div>
+        <div class="speech" style="font-size:16px;margin-bottom:6px">${state.companion.stage1}</div>
+        <div class="divider"><span>${STAGE1.intro}</span></div>
+      </div>
+      <div class="card-content">
+        <div class="codex-list" id="codexList"></div>
+        <div class="pronoun-bank" id="pronBank"></div>
+      </div>
+      <div class="card-footer">
+        <button class="btn" id="goStage2" disabled>Proceed · Case Files</button>
+      </div>
+    `;
 
     const list = $('#codexList');
     STAGE1.signets.forEach((sig,si)=>{
@@ -1153,26 +1199,25 @@ function startStage1(){
 /* ============================================================
    STAGE 2 — CASE FILES
 ============================================================ */
-function startStage2(){
-  state.stage = 2;
-  state.stage2Index = 0;
-  setProgress(2);
-  renderCase();
-}
-
 function renderCase(){
   const c = STAGE2[state.stage2Index];
   fadeCard(()=>{
     cardBody.innerHTML = `
-      <h2>Case Files</h2>
-      <div class="subtitle">Stage II · Restricted Ledger</div>
-      <div class="speaker">${state.companion.name}</div>
-      <div class="speech" style="font-size:16px;min-height:auto;margin-bottom:10px">${state.stage2Index===0?state.companion.stage2:'Next file.'}</div>
-      <div class="divider"><span>◆</span></div>
-      <div class="case-meta">${c.file}</div>
-      <div class="case-text" id="caseText"></div>
-      <div class="case-options" id="caseOpts"></div>
-      <div class="case-nav"><span>File ${state.stage2Index+1} / ${STAGE2.length}</span><span id="hintLine"></span></div>
+      <div class="card-header">
+        <h2>Case Files</h2>
+        <div class="subtitle">Stage II · Restricted Ledger</div>
+        <div class="speaker">${state.companion.name}</div>
+        <div class="speech" style="font-size:15px;margin-bottom:6px">${state.stage2Index===0?state.companion.stage2:'Next file.'}</div>
+        <div class="divider"><span>◆</span></div>
+      </div>
+      <div class="card-content">
+        <div class="case-meta">${c.file}</div>
+        <div class="case-text" id="caseText"></div>
+        <div class="case-options" id="caseOpts"></div>
+      </div>
+      <div class="card-footer">
+        <div class="case-nav"><span>File ${state.stage2Index+1} / ${STAGE2.length}</span><span id="hintLine"></span></div>
+      </div>
     `;
     const txt = $('#caseText');
     txt.innerHTML = c.text.replace('___','<span class="blank" id="blank">______</span>');
@@ -1214,24 +1259,21 @@ function renderCase(){
 /* ============================================================
    STAGE 3 — REFLECTION
 ============================================================ */
-function startStage3(){
-  state.stage = 3;
-  state.stage3Index = 0;
-  setProgress(3);
-  renderQuestion();
-}
-
 function renderQuestion(){
   const q = STAGE3[state.stage3Index];
   fadeCard(()=>{
     cardBody.innerHTML = `
-      <h2>Reflection</h2>
-      <div class="subtitle">Stage III · The Wards Listen</div>
-      ${state.stage3Index===0?`<div class="speaker">${state.companion.name}</div><div class="speech" style="font-size:16px;min-height:auto;margin-bottom:10px">${state.companion.stage3}</div><div class="divider"><span>◆</span></div>`:''}
-      <div class="q-counter">Question ${state.stage3Index+1} of ${STAGE3.length}</div>
-      <div class="q-cond">${q.cond}</div>
-      <div class="q-text">${q.q}</div>
-      <div class="q-options" id="qOpts"></div>
+      <div class="card-header">
+        <h2>Reflection</h2>
+        <div class="subtitle">Stage III · The Wards Listen</div>
+        ${state.stage3Index===0?`<div class="speaker">${state.companion.name}</div><div class="speech" style="font-size:15px;margin-bottom:6px">${state.companion.stage3}</div><div class="divider"><span>◆</span></div>`:''}
+        <div class="q-counter">Question ${state.stage3Index+1} of ${STAGE3.length}</div>
+        <div class="q-cond">${q.cond}</div>
+        <div class="q-text">${q.q}</div>
+      </div>
+      <div class="card-content">
+        <div class="q-options" id="qOpts"></div>
+      </div>
     `;
     const opts = $('#qOpts');
     const shuffled = q.opts.map((o,i)=>({o,i})).sort(()=>Math.random()-0.5);
