@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Awakening of the Signet — The Archives</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#000}
+body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:none}
+
+:root{
+  --gold:#d4af37; --gold-bright:#f0d878; --gold-dim:#8a7028;
+  --ink:#f4e8c1; --ink-dim:#c9b88a; --dark:#1a1410;
+  --parch:rgba(26,20,16,.82); --parch-light:rgba(40,28,18,.78);
+  --red:#a83232;
+}
+
+/* ===== SCENE ===== */
+.scene{position:fixed;inset:0;background:url('https://i.yapx.ru/due8r.jpg') center center/cover no-repeat;overflow:hidden}
+.scene::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 55%,transparent 20%,rgba(0,0,0,.55) 80%,rgba(0,0,0,.85) 100%);pointer-events:none;z-index:1}
+.scene::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:
+    radial-gradient(circle at 20% 30%,rgba(244,232,200,.05) 1px,transparent 2px),
+    radial-gradient(circle at 70% 80%,rgba(244,232,200,.04) 1px,transparent 2px),
+    radial-gradient(circle at 40% 60%,rgba(244,232,200,.06) 1px,transparent 2px),
+    linear-gradient(180deg,rgba(0,0,0,.4) 0%,transparent 25%,transparent 75%,rgba(0,0,0,.5) 100%);
+  background-size:300px 300px,200px 200px,250px 250px,100% 100%;
+  animation:dustDrift 60s linear infinite;
+}
+@keyframes dustDrift{
+  from{background-position:0 0,0 0,0 0,0 0}
+  to{background-position:300px 300px,-200px 200px,250px -250px,0 0}
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress{position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:20;display:flex;gap:32px;align-items:center;padding:10px 28px;background:var(--parch);border:1px solid var(--gold-dim);border-radius:2px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;opacity:0;transition:opacity .5s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.progress.visible{opacity:1}
+.progress .step{color:var(--ink-dim);transition:color .4s;position:relative}
+.progress .step.active{color:var(--gold-bright);text-shadow:0 0 8px rgba(240,216,120,.5)}
+.progress .step.done{color:var(--gold)}
+.progress .step.done::after{content:' ✓';color:var(--gold)}
+.progress .sep{color:var(--gold-dim);font-size:8px}
+
+/* ===== COMPANION SPRITE ===== */
+.companion{
+  position:absolute;
+  left:-5vw;
+  bottom:0;
+  height:96vh;
+  width:auto;
+  z-index:5;
+  opacity:0;
+  transform:translateX(-40px);
+  transition:opacity .8s, transform .8s;
+  pointer-events:none;
+  filter:drop-shadow(0 10px 30px rgba(0,0,0,.7)) drop-shadow(0 0 20px rgba(212,175,55,.08));
+}
+.companion.visible{
+  opacity:1;
+  transform:translateX(0);
+  animation:companionBreathe 4s ease-in-out infinite 1s;
+}
+@keyframes companionBreathe{
+  0%,100%{transform:translateX(0) translateY(0)}
+  50%{transform:translateX(0) translateY(-5px)}
+}
+
+/* foot shadow — под силуэтом, а не под img */
+.foot-shadow{
+  position:absolute;
+  left:10vw;
+  bottom:2vh;
+  width:18vw;
+  max-width:340px;
+  height:3vh;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.75) 0%,transparent 70%);
+  z-index:4;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 1s ease;
+}
+.companion.visible ~ .foot-shadow{opacity:1}
+  /* ===== DIALOG CARD ===== */
+.card-wrap{
+  position:absolute;
+  left:50%;
+  top:80px;                          /* под прогресс-баром */
+  transform:translateX(-50%);
+  width:min(720px, 56vw);            /* шире — по верхнему блоку */
+  z-index:10;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .6s, visibility .6s;
+}
+.card-wrap.visible{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+
+.card{
+  position:relative;
+  background:var(--parch);
+  border:1px solid var(--gold);
+  padding:36px 48px;
+  max-height:80vh;
+  overflow-y:auto;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  box-shadow:0 0 0 1px var(--gold-dim) inset, 0 0 40px rgba(0,0,0,.7), 0 0 80px rgba(212,175,55,.08);
+}
+.card::-webkit-scrollbar{width:6px}
+.card::-webkit-scrollbar-track{background:rgba(0,0,0,.2)}
+.card::-webkit-scrollbar-thumb{background:var(--gold-dim)}
+
+.card-wrap.visible .card{
+  animation:cardEnter .9s ease both;
+}
+@keyframes cardEnter{
+  from{opacity:0;transform:translateY(20px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.card::before{
+  content:'';
+  position:absolute;
+  inset:6px;
+  border:1px solid var(--gold-dim);
+  pointer-events:none;
+}
+.card .corner{
+  position:absolute;
+  color:var(--gold);
+  font-size:16px;
+  line-height:1;
+  text-shadow:0 0 6px rgba(212,175,55,.6);
+}
+.card .corner.tl{top:-7px;left:-7px}
+.card .corner.tr{top:-7px;right:-7px}
+.card .corner.bl{bottom:-7px;left:-7px}
+.card .corner.br{bottom:-7px;right:-7px}
+.card .corner.tc{top:-7px;left:50%;transform:translateX(-50%)}
+.card .corner.bc{bottom:-7px;left:50%;transform:translateX(-50%)}
+
+.card h2{
+  font-family:'Cinzel',serif;
+  font-weight:700;
+  font-size:28px;                    /* ⬆ было 20 */
+  letter-spacing:5px;
+  text-transform:uppercase;
+  text-align:center;
+  color:var(--gold-bright);
+  margin-bottom:8px;
+}
+.card .subtitle{
+  font-family:'Cinzel',serif;
+  font-size:13px;                    /* ⬆ было 10 */
+  letter-spacing:5px;
+  text-transform:uppercase;
+  text-align:center;
+  color:var(--ink-dim);
+  margin-bottom:24px;
+}
+.card .divider{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin:14px 0 20px;
+}
+.card .divider::before,
+.card .divider::after{
+  content:'';
+  height:1px;
+  flex:1;
+  background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);
+}
+.card .divider span{color:var(--gold);font-size:13px;letter-spacing:3px;text-transform:uppercase}
+
+.speaker{
+  font-family:'Cinzel',serif;
+  font-size:14px;                    /* ⬆ было 11 */
+  letter-spacing:4px;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
+.speech{
+  font-size:21px;                    /* ⬆ было 17 */
+  line-height:1.6;
+  font-style:italic;
+  color:var(--ink);
+}
+.speech.player{color:var(--ink-dim)}
+
+.btn{
+  display:inline-block;
+  padding:14px 36px;                 /* крупнее */
+  background:transparent;
+  border:1px solid var(--gold);
+  color:var(--gold-bright);
+  font-family:'Cinzel',serif;
+  font-size:13px;                    /* ⬆ было 11 */
+  letter-spacing:4px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .3s;
+  margin-top:20px;
+  position:relative;
+}
+.btn:hover{
+  background:rgba(212,175,55,.12);
+  box-shadow:0 0 18px rgba(212,175,55,.3);
+}
+.btn:disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+.btn-row{
+  text-align:center;
+  margin-top:32px;
+  padding-top:22px;
+  border-top:1px solid var(--gold-dim);
+}
+
+/* ===== COMPANION SELECT (Stage 0) ===== */
+.select-screen{position:absolute;inset:0;z-index:15;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .6s;pointer-events:none}
+.select-screen.visible{opacity:1;pointer-events:auto}
+.select-screen .title{font-family:'Cinzel',serif;font-size:24px;letter-spacing:6px;text-transform:uppercase;color:var(--gold-bright);text-align:center;margin-bottom:6px;text-shadow:0 2px 12px rgba(0,0,0,.9)}
+.select-screen .sub{font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;color:var(--ink-dim);margin-bottom:32px;text-shadow:0 2px 8px #000}
+.select-grid{display:flex;gap:24px}
+.select-card{
+  width:200px;background:var(--parch);border:1px solid var(--gold-dim);
+  padding:14px;text-align:center;cursor:pointer;transition:all .35s;position:relative;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.select-card:hover{border-color:var(--gold);transform:translateY(-6px);box-shadow:0 8px 30px rgba(212,175,55,.25)}
+.select-card .portrait{
+  width:100%;height:260px;overflow:hidden;
+  background:radial-gradient(ellipse at center bottom, rgba(212,175,55,.25), rgba(26,20,16,.9) 70%);
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--gold-dim);margin-bottom:10px;
+}
+.select-card .portrait img{
+  width:100%;height:100%;object-fit:cover;object-position:center top;
+  transition:transform .5s ease;
+}
+.select-card:hover .portrait img{transform:scale(1.06)}
+.select-card .name{font-family:'Cinzel',serif;font-size:14px;letter-spacing:3px;color:var(--gold-bright);margin-bottom:4px}
+.select-card .desc{font-size:14px;font-style:italic;color:var(--ink-dim);line-height:1.3}
+
+/* ===== STAGE 1 — GAPS ===== */
+.codex-list{max-height:340px;overflow-y:auto;padding-right:8px;margin:10px 0 4px}
+.codex-list::-webkit-scrollbar{width:6px}
+.codex-list::-webkit-scrollbar-track{background:rgba(0,0,0,.2)}
+.codex-list::-webkit-scrollbar-thumb{background:var(--gold-dim)}
+.signet-block{margin-bottom:14px;padding:10px 12px;border-left:2px solid var(--gold-dim);background:rgba(0,0,0,.15)}
+.signet-block .sig-name{font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
+.signet-block .sig-line{font-size:16px;line-height:1.7;color:var(--ink);margin:4px 0}
+.gap{display:inline-block;min-width:80px;padding:1px 8px;margin:0 2px;background:rgba(212,175,55,.08);border-bottom:1px solid var(--gold);color:var(--gold-bright);font-style:normal;text-align:center;cursor:pointer;transition:all .25s;border-radius:2px 2px 0 0}
+.gap:hover{background:rgba(212,175,55,.2)}
+.gap.filled{background:rgba(212,175,55,.18)}
+.gap.correct{background:rgba(80,160,80,.25);border-bottom-color:#7acc7a;color:#d4f0d4;animation:none}
+.gap.wrong{background:rgba(168,50,50,.35);border-bottom-color:var(--red);color:#ffb0b0;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+.pronoun-bank{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px;padding-top:14px;border-top:1px solid var(--gold-dim)}
+.pronoun{padding:6px 18px;background:rgba(212,175,55,.08);border:1px solid var(--gold-dim);color:var(--gold-bright);font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;cursor:grab;transition:all .25s}
+.pronoun:hover{background:rgba(212,175,55,.2);border-color:var(--gold)}
+.pronoun.dragging{opacity:.4}
+.gap.active-target{box-shadow:0 0 12px var(--gold-bright)}
+
+/* ===== STAGE 2 — CASES ===== */
+.case-meta{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--ink-dim);text-align:center;margin-bottom:14px;text-transform:uppercase}
+.case-text{font-size:18px;line-height:1.6;color:var(--ink);font-style:italic;margin-bottom:18px;padding:14px 18px;border-left:2px solid var(--gold);background:rgba(0,0,0,.2);min-height:120px}
+.case-text .blank{display:inline-block;min-width:140px;border-bottom:1px dashed var(--gold);color:var(--gold-bright);text-align:center;padding:0 8px;font-style:normal}
+.case-text .blank.solved{border-bottom-style:solid;color:var(--gold-bright)}
+.case-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.case-opt{padding:10px 14px;background:rgba(0,0,0,.25);border:1px solid var(--gold-dim);color:var(--ink);cursor:pointer;font-size:15px;transition:all .25s;text-align:left;font-family:inherit}
+.case-opt:hover{border-color:var(--gold);background:rgba(212,175,55,.08)}
+.case-opt.correct{border-color:#7acc7a;background:rgba(80,160,80,.2);color:#d4f0d4}
+.case-opt.wrong{border-color:var(--red);background:rgba(168,50,50,.25);color:#ffb0b0;animation:shake .4s}
+.case-opt:disabled{cursor:not-allowed;opacity:.5}
+.case-nav{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--ink-dim)}
+
+/* ===== STAGE 3 — REFLECTION ===== */
+.q-counter{font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:var(--gold-dim);text-align:center;margin-bottom:8px}
+.q-cond{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-align:center;margin-bottom:14px;text-transform:uppercase}
+.q-text{font-size:21px;line-height:1.5;color:var(--ink);font-style:italic;text-align:center;margin-bottom:22px;min-height:90px;padding:0 10px}
+.q-options{display:flex;flex-direction:column;gap:9px;max-height:280px;overflow-y:auto;padding-right:6px}
+.q-options::-webkit-scrollbar{width:6px}
+.q-options::-webkit-scrollbar-thumb{background:var(--gold-dim)}
+.q-opt{padding:11px 16px;background:rgba(0,0,0,.25);border:1px solid var(--gold-dim);color:var(--ink);cursor:pointer;font-size:16px;font-family:inherit;text-align:left;transition:all .25s;line-height:1.4}
+.q-opt:hover{border-color:var(--gold);background:rgba(212,175,55,.1);transform:translateX(4px)}
+.q-opt.selected{border-color:var(--gold-bright);background:rgba(212,175,55,.18);box-shadow:0 0 14px rgba(212,175,55,.25)}
+
+/* ===== REVEAL ===== */
+.reveal-overlay{position:absolute;inset:0;z-index:25;background:radial-gradient(circle at center,rgba(20,15,10,.95) 0%,rgba(0,0,0,.98) 80%);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 1.2s}
+.reveal-overlay.visible{opacity:1;pointer-events:auto}
+.reveal-sigil{
+  width:160px;
+  height:160px;
+  margin-bottom:18px;
+  filter:drop-shadow(0 0 30px var(--gold-bright)) drop-shadow(0 0 60px rgba(212,175,55,.4));
+}
+.reveal-sigil svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+.reveal-sigil svg .sig-stroke{
+  stroke:var(--gold-bright);
+  stroke-width:1.5;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.reveal-sigil svg .sig-fill{
+  fill:var(--gold);
+  opacity:.15;
+}
+.reveal-sigil svg .sig-accent{
+  fill:var(--gold-bright);
+}
+@keyframes pulse{
+  0%,100%{
+    transform:scale(1) rotate(0deg);
+    filter:drop-shadow(0 0 30px var(--gold-bright)) drop-shadow(0 0 60px rgba(212,175,55,.4));
+  }
+  50%{
+    transform:scale(1.08) rotate(180deg);
+    filter:drop-shadow(0 0 50px var(--gold-bright)) drop-shadow(0 0 90px rgba(212,175,55,.6));
+  }
+}
+.reveal-label{font-family:'Cinzel',serif;font-size:14px;letter-spacing:8px;color:var(--gold-dim);text-transform:uppercase;margin-bottom:6px}
+.reveal-name{font-family:'Cinzel',serif;font-size:46px;font-weight:900;letter-spacing:10px;color:var(--gold-bright);text-transform:uppercase;text-shadow:0 0 30px rgba(240,216,120,.6);margin-bottom:20px;text-align:center}
+.reveal-desc{font-size:19px;font-style:italic;color:var(--ink);max-width:600px;text-align:center;line-height:1.5;margin-bottom:20px;padding:0 30px}
+.reveal-canon{font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:var(--gold-dim);text-transform:uppercase;margin-bottom:30px}
+.reveal-companion{max-width:600px;background:var(--parch);border:1px solid var(--gold);padding:20px 28px;margin-bottom:24px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.reveal-companion .who{font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;color:var(--gold);margin-bottom:8px}
+.reveal-companion .line{font-size:18px;font-style:italic;color:var(--ink);line-height:1.5}
+
+/* cascading reveal */
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.reveal-overlay.visible .reveal-sigil    {animation:fadeInUp 1s ease .2s both, pulse 2.4s ease-in-out infinite 1.4s}
+.reveal-overlay.visible .reveal-label    {animation:fadeInUp 1s ease .5s both}
+.reveal-overlay.visible .reveal-name     {animation:fadeInUp 1s ease .7s both}
+.reveal-overlay.visible .reveal-desc     {animation:fadeInUp 1s ease 1s both}
+.reveal-overlay.visible .reveal-canon    {animation:fadeInUp 1s ease 1.2s both}
+.reveal-overlay.visible .reveal-companion{animation:fadeInUp 1s ease 1.5s both}
+
+/* flash burst */
+.flash{
+  position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at center,rgba(240,216,120,.7) 0%,transparent 70%);
+  animation:flashBurst 1.4s ease-out both;
+}
+@keyframes flashBurst{
+  0%{opacity:0;transform:scale(.5)}
+  30%{opacity:1;transform:scale(1.2)}
+  100%{opacity:0;transform:scale(2)}
+}
+
+/* ===== CAEDEN CAMEO ===== */
+.cameo{max-width:640px;background:linear-gradient(135deg,rgba(40,15,15,.92),rgba(20,10,10,.95));border:1px solid var(--red);padding:22px 30px;margin-top:10px;position:relative;opacity:0;transform:translateY(20px);transition:all .8s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.cameo.visible{opacity:1;transform:translateY(0)}
+.cameo::before{content:'';position:absolute;inset:4px;border:1px solid rgba(168,50,50,.4);pointer-events:none}
+.cameo .who{font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;color:#e89090;margin-bottom:8px}
+.cameo .line{font-size:18px;font-style:italic;color:var(--ink);line-height:1.5;margin-bottom:14px}
+.cameo-choice{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.cameo-btn{padding:9px 22px;background:transparent;border:1px solid var(--gold-dim);color:var(--ink);font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .3s;font-style:normal}
+.cameo-btn:hover{border-color:var(--gold);color:var(--gold-bright);background:rgba(212,175,55,.1)}
+
+.reveal-final{font-family:'Cinzel',serif;font-size:12px;letter-spacing:6px;color:var(--gold);margin-top:22px;opacity:0;transition:opacity 1s}
+.reveal-final.visible{opacity:1}
+
+/* ===== SOUND TOGGLE ===== */
+.sound-toggle{position:absolute;top:18px;right:18px;z-index:30;width:36px;height:36px;background:var(--parch);border:1px solid var(--gold-dim);color:var(--gold);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .3s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.sound-toggle:hover{border-color:var(--gold);box-shadow:0 0 12px rgba(212,175,55,.3)}
+
+/* ===== FEEDBACK TOAST ===== */
+.toast{position:absolute;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);z-index:40;padding:10px 24px;background:var(--parch);border:1px solid var(--gold);color:var(--gold-bright);font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;opacity:0;transition:all .4s;pointer-events:none;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{border-color:var(--red);color:#ffb0b0}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:1100px){
+  .card-wrap{width:80vw}
+  .companion{height:80vh}
+  .select-grid{flex-wrap:wrap;justify-content:center;max-width:90vw}
+}
+@media (max-width:768px){
+  .companion{opacity:0!important}
+  .foot-shadow{display:none}
+  .card-wrap{width:92vw;top:70px}
+  .card{padding:24px 22px}
+  .card h2{font-size:22px;letter-spacing:3px}
+  .speech{font-size:17px}
+  .progress{font-size:9px;letter-spacing:2px;gap:14px;padding:8px 14px}
+  .select-card{width:160px}
+  .select-card .portrait{height:200px}
+  .reveal-name{font-size:30px;letter-spacing:6px}
+}
+  .reveal-overlay.visible .reveal-sigil svg .sig-stroke{
+  stroke-dasharray:400;
+  stroke-dashoffset:400;
+  animation:drawSig 2s ease-out .4s forwards;
+}
+@keyframes drawSig{
+  to{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+
+<div class="scene" id="scene">
+
+  <button class="sound-toggle" id="soundToggle" title="Toggle sound">🔊</button>
+
+  <div class="progress" id="progress">
+    <span class="step" data-step="1">I · Codex</span>
+    <span class="sep">◆</span>
+    <span class="step" data-step="2">II · Case Files</span>
+    <span class="sep">◆</span>
+    <span class="step" data-step="3">III · Reflection</span>
+    <span class="sep">◆</span>
+    <span class="step" data-step="4">IV · Awakening</span>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- ===== STAGE 0: COMPANION SELECT ===== -->
+  <div class="select-screen visible" id="stage0">
+    <div class="title">The Archives · Restricted Section</div>
+    <div class="sub">Choose who slips past the wards with you</div>
+    <div class="select-grid">
+      <div class="select-card" data-comp="ridoc">
+        <div class="portrait"><img src="https://i.yapx.ru/dudN8.png" alt="Ridoc"></div>
+        <div class="name">Ridoc</div>
+        <div class="desc">The one who laughs at danger</div>
+      </div>
+      <div class="select-card" data-comp="dain">
+        <div class="portrait"><img src="https://i.yapx.ru/dudOA.png" alt="Dain"></div>
+        <div class="name">Dain</div>
+        <div class="desc">The one who follows the rules — usually</div>
+      </div>
+      <div class="select-card" data-comp="caeden">
+        <div class="portrait"><img src="https://i.yapx.ru/dudOB.png" alt="Caeden"></div>
+        <div class="name">Caeden</div>
+        <div class="desc">The one who shouldn't be here at all</div>
+      </div>
+      <div class="select-card" data-comp="imogen">
+        <div class="portrait"><img src="https://i.yapx.ru/dudOC.png" alt="Imogen"></div>
+        <div class="name">Imogen</div>
+        <div class="desc">The one who knows what you came for</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== COMPANION SPRITE ===== -->
+  <img class="companion" id="companion" src="" alt="">
+  <div class="foot-shadow" id="footShadow"></div>
+
+  <!-- ===== DIALOG / CARD CONTAINER ===== -->
+  <div class="card-wrap" id="cardWrap">
+    <div class="card" id="card">
+      <span class="corner tl">✦</span><span class="corner tr">✦</span>
+      <span class="corner bl">✦</span><span class="corner br">✦</span>
+      <span class="corner tc">◆</span><span class="corner bc">◆</span>
+      <div id="cardBody"></div>
+    </div>
+  </div>
+
+  <!-- ===== REVEAL OVERLAY ===== -->
+  <div class="reveal-overlay" id="reveal">
+    <div class="reveal-sigil" id="revealSigil">✦</div>
+    <div class="reveal-label">Your signet has awakened</div>
+    <div class="reveal-name" id="revealName">—</div>
+    <div class="reveal-desc" id="revealDesc">—</div>
+    <div class="reveal-canon" id="revealCanon">—</div>
+    <div class="reveal-companion" id="revealCompanion">
+      <div class="who" id="revCompWho">—</div>
+      <div class="line" id="revCompLine">—</div>
+    </div>
+    <div class="cameo" id="cameo">
+      <div class="who" id="cameoWho">CAEDEN</div>
+      <div class="line" id="cameoLine">—</div>
+      <div class="cameo-choice" id="cameoChoice"></div>
+    </div>
+    <div class="reveal-final" id="revealFinal">— End of Scene —</div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   DATA
+============================================================ */
+
+const COMPANIONS = {
+  ridoc: {
+    name:'Ridoc',
+    sprite:'https://i.yapx.ru/dudN8.png',
+    intro:"Of all the rules to break, you picked the one with the most wards. I love it. Lead the way, friend.",
+    stage1:"Six signets. Six grammar traps. Try not to electrocute yourself on the relative pronouns.",
+    stage2:"Case files. Cold ink, colder names. Bet you a pint of ale we crack three before dawn.",
+    stage3:"Last bit. They're going to ask you something soft and existential. Lie convincingly.",
+    reveals:{
+      memory_reading:"Oh, that's unfair. You'll know every punchline before I land it.",
+      distance_wielding:"You're going to be impossible to find at curfew, aren't you.",
+      summoning:"So next time I lose my flask — you owe me a demonstration.",
+      warding:"A protector. Figures. You've been shielding me from my own jokes for weeks.",
+      shadow_wielding:"Shadows. Of course. The quiet ones always get the dramatic ones.",
+      mending:"A mender. Good. Someone in this squad should be able to fix what the rest of us break."
+    }
+  },
+  dain: {
+    name:'Dain',
+    sprite:'https://i.yapx.ru/dudOA.png',
+    intro:"This is a terrible idea. I'm here anyway. Don't make me regret it before the first sconce.",
+    stage1:"Read carefully. Half of these wards are spelled to catch the wrong word.",
+    stage2:"Names, dates, signets. Just like the duty rosters. Focus.",
+    stage3:"Whatever you answer — answer honestly. The wards can tell.",
+    reveals:{
+      memory_reading:"You and me both. That's... not a coincidence. We need to talk. Soon. Alone.",
+      distance_wielding:"A Walker. You could be gone before anyone notices you arrived. Be careful with that.",
+      summoning:"Useful. Dangerous. Don't pull anything in that you can't put back.",
+      warding:"A Warder. You'll be wanted at the border. They always are.",
+      shadow_wielding:"Shadow-wielding. ...I won't ask what side that puts you on. Not yet.",
+      mending:"A Mender. Thank the gods. The squad needs one — needed one for a while."
+    }
+  },
+  caeden: {
+    name:'Caeden',
+    sprite:'https://i.yapx.ru/dudOB.png',
+    intro:"You realize I could have you written up for this. ...And yet, here I am. Holding the lantern. Curious.",
+    stage1:"Read slowly. I'll be watching how you think — not just what you answer.",
+    stage2:"Whoever filed these cases hid something between the lines. Find it. I'm interested in what you notice.",
+    stage3:"This part isn't for the wards. It's for me. I want to know what you'd choose when no one's keeping score.",
+    reveals:{
+      memory_reading:"A reader of memories. Then you'll already know I wasn't going to stop you tonight.",
+      distance_wielding:"A Walker. Convenient — if you ever needed to disappear before someone caught up.",
+      summoning:"Summoning. So you pull what you want toward you. ...Bold. I'll keep that in mind.",
+      warding:"A Warder. You'd guard what matters to you. Good. I was hoping it would be that one.",
+      shadow_wielding:"Shadows. ...Of all the ones it could have been. We have considerably more to discuss now.",
+      mending:"A Mender. Of course. You came down here to find something broken and decided to fix it."
+    }
+  },
+  imogen: {
+    name:'Imogen',
+    sprite:'https://i.yapx.ru/dudOC.png',
+    intro:"You came down here to find out what you are. Smart. Most riders wait until something tries to kill them.",
+    stage1:"Grammar holds the wards together. Get it wrong and the page burns. Try not to.",
+    stage2:"Every case file is a dead rider with a story. Read like it could be yours.",
+    stage3:"Stop performing. Pick what's true. The signet doesn't care what you'd rather be.",
+    reveals:{
+      memory_reading:"Heavy gift. You'll learn fast that most people's heads are not places you want to be.",
+      distance_wielding:"A Walker. The world just got smaller for you. Don't let it make you reckless.",
+      summoning:"Useful in a fight. Useful in a betrayal. Try to remember which one you're in.",
+      warding:"A Warder. The ones who stand between. You'll bleed for that one — they always do.",
+      shadow_wielding:"Shadow-wielding. Welcome to the side of the war no one writes songs about.",
+      mending:"A Mender. Good. We lose too many because no one's there to put them back together."
+    }
+  }
+};
+
+/* ===== STAGE 1 — CODEX (B1+, relative pronouns) ===== */
+const STAGE1 = {
+  intro:"Six signet entries. The relative pronouns have burned off the page — restore them, or the wards stay shut.",
+  pronouns:['who','which','whose','that','where','whom'],
+  signets:[
+    {key:'memory_reading', icon:'🧠', name:'Memory Reading',
+     lines:[
+       {parts:["The signet ", " allows a rider to touch the past of another mind."], answers:["which"]},
+       {parts:["The rider ", " hand brushes a memory can see it unfold."], answers:["whose"]}
+     ]},
+    {key:'distance_wielding', icon:'🚶', name:'Distance Wielding',
+     lines:[
+       {parts:["A Walker is a rider ", " can cross a hundred miles in a single step."], answers:["who"]},
+       {parts:["The place ", " they appear is the place they have already imagined."], answers:["where"]}
+     ]},
+    {key:'summoning', icon:'🧲', name:'Summoning',
+     lines:[
+       {parts:["Summoning is the gift ", " pulls a chosen object across any distance."], answers:["that"]},
+       {parts:["The rider to ", " the blade flies has only to think of its weight."], answers:["whom"]}
+     ]},
+    {key:'warding', icon:'🛡️', name:'Warding',
+     lines:[
+       {parts:["A Warder is the rider ", " extends the border that keeps Navarre alive."], answers:["who"]},
+       {parts:["The land ", " their wards reach can sleep one more night."], answers:["where"]}
+     ]},
+    {key:'shadow_wielding', icon:'🌑', name:'Shadow Wielding',
+     lines:[
+       {parts:["Shadow Wielding is the signet ", " bends darkness into shape and step."], answers:["which","that"]},
+       {parts:["The rider ", " shadows answer is never truly alone in a room."], answers:["whose"]}
+     ]},
+    {key:'mending', icon:'✋', name:'Mending',
+     lines:[
+       {parts:["Mending is the gift ", " returns the broken to what it was."], answers:["that","which"]},
+       {parts:["The rider ", " hands close over a wound rewrites it from the bone out."], answers:["whose"]}
+     ]}
+  ]
+};
+
+/* ===== STAGE 2 — CASE FILES ===== */
+const STAGE2 = [
+  {
+    file:"FILE 037 · CADET SERETH IRELYN · DECEASED",
+    text:"Sereth's body was found at the inner gate. Reports state that the wards around her post had been ___ before the breach. No mage marks. No blood. Whoever did it walked through her defense as if it had never existed.",
+    blank:"taken down from within",
+    options:["extended outward","taken down from within","set on fire","copied onto parchment"],
+    hint:"Signet involved: Warding — but reversed against its owner.",
+    correctIdx:1
+  },
+  {
+    file:"FILE 102 · LIEUTENANT DORAN VASS · MISSING",
+    text:"Doran was last seen patrolling the eastern ridge. Witnesses claim he ___ mid-stride — one step on the stone, the next nowhere at all. No struggle. No signal flare. Search parties found only his cloak, folded.",
+    blank:"stepped out of the world",
+    options:["fell from the cliff","stepped out of the world","was burned alive","screamed once"],
+    hint:"Signet involved: Distance Wielding.",
+    correctIdx:1
+  },
+  {
+    file:"FILE 168 · CADET VAEL KORRIN · ANOMALY",
+    text:"Vael's name appears in three different battle reports from the same hour, each in a separate quadrant of the field. Commanders swore he ___ where he was needed. The reports cannot all be wrong — and yet they cannot all be true.",
+    blank:"arrived the instant",
+    options:["arrived the instant","wrote the reports himself","never existed at all","died three times"],
+    hint:"Signet involved: Distance Wielding — at the edge of its limit.",
+    correctIdx:0
+  },
+  {
+    file:"FILE 211 · CADET RIGGS HALD · UNCLASSIFIED",
+    text:"After the skirmish at Talven Pass, Riggs walked out of the smoke with a broken sword and ___. The healers found no scars on the men who should have died. Riggs has not spoken since. His name has been moved to the restricted ledger.",
+    blank:"four men who should not have lived",
+    options:["a sealed letter","four men who should not have lived","a stolen relic","an empty saddle"],
+    hint:"Signet involved: Mending — possibly beyond its known limit.",
+    correctIdx:1
+  }
+];
+
+/* ===== STAGE 3 — REFLECTION (conditionals, inner need) ===== */
+const STAGE3 = [
+  {
+    cond:"2nd Conditional · the surface choice",
+    q:"If you walked into a room where someone was lying to a friend you cared about, what would you do?",
+    opts:[
+      {t:"I would step closer and listen, until I knew exactly what they were hiding.", s:'memory_reading'},
+      {t:"I would not stay in the room. I would already be on the other side of the keep.", s:'distance_wielding'},
+      {t:"I would call my friend out — pull them to me, away from the lie.", s:'summoning'},
+      {t:"I would stand between them. Let the liar try to reach past me.", s:'warding'},
+      {t:"I would let them finish. I keep better in the dark, where no one watches.", s:'shadow_wielding'},
+      {t:"I would wait until the damage was done, and then quietly undo it.", s:'mending'}
+    ]
+  },
+  {
+    cond:"3rd Conditional · what you carry from before",
+    q:"If you had been given one chance to change something in your past, what would you have done differently?",
+    opts:[
+      {t:"I would have understood the people around me sooner — read them, not just heard them.", s:'memory_reading'},
+      {t:"I would have left. Earlier, further, without looking back.", s:'distance_wielding'},
+      {t:"I would have kept what mattered close to me, instead of letting it drift away.", s:'summoning'},
+      {t:"I would have stood in front of someone I failed to protect.", s:'warding'},
+      {t:"I would have stayed unseen a little longer. I revealed myself too soon.", s:'shadow_wielding'},
+      {t:"I would have put back what I broke before anyone noticed it was broken.", s:'mending'}
+    ]
+  },
+  {
+    cond:"Mixed Conditional · the wound that is still open",
+    q:"If you had been someone harder to hurt back then, you would not be ___ now.",
+    opts:[
+      {t:"…be reading every silence for the lie inside it.", s:'memory_reading'},
+      {t:"…be measuring every room by how fast I can leave it.", s:'distance_wielding'},
+      {t:"…be holding so tightly to the few I let close.", s:'summoning'},
+      {t:"…be standing guard over things that don't need guarding.", s:'warding'},
+      {t:"…be more comfortable in shadow than in any light.", s:'shadow_wielding'},
+      {t:"…be the one everyone brings their broken things to.", s:'mending'}
+    ]
+  },
+  {
+    cond:"2nd Conditional · the quiet truth",
+    q:"If no one would ever know what you did with your gift — no glory, no record, no witness — what would you use it for?",
+    opts:[
+      {t:"To finally understand the one person I never could.", s:'memory_reading'},
+      {t:"To walk somewhere I was never allowed to go.", s:'distance_wielding'},
+      {t:"To bring back the one thing I lost.", s:'summoning'},
+      {t:"To keep one person safe, even from themselves.", s:'warding'},
+      {t:"To disappear so completely that I could finally rest.", s:'shadow_wielding'},
+      {t:"To mend the one thing I never forgave myself for.", s:'mending'}
+    ]
+  }
+];
+  /* ===== SIGNET SVG ICONS ===== */
+const SIGNET_SVG = {
+  // Memory Reading — мозг/глаз внутри круга, лучи
+  memory_reading: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" class="sig-stroke"/>
+      <circle cx="50" cy="50" r="38" class="sig-stroke" opacity=".5"/>
+      <ellipse cx="50" cy="50" rx="26" ry="14" class="sig-stroke"/>
+      <circle cx="50" cy="50" r="7" class="sig-fill"/>
+      <circle cx="50" cy="50" r="3.5" class="sig-accent"/>
+      <line x1="50" y1="4" x2="50" y2="14" class="sig-stroke"/>
+      <line x1="50" y1="86" x2="50" y2="96" class="sig-stroke"/>
+      <line x1="4" y1="50" x2="14" y2="50" class="sig-stroke"/>
+      <line x1="86" y1="50" x2="96" y2="50" class="sig-stroke"/>
+      <line x1="17" y1="17" x2="24" y2="24" class="sig-stroke"/>
+      <line x1="76" y1="76" x2="83" y2="83" class="sig-stroke"/>
+      <line x1="83" y1="17" x2="76" y2="24" class="sig-stroke"/>
+      <line x1="24" y1="76" x2="17" y2="83" class="sig-stroke"/>
+    </svg>`,
+
+  // Distance Wielding — стрелка/портал, шаг через пространство
+  distance_wielding: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" class="sig-stroke"/>
+      <ellipse cx="28" cy="50" rx="10" ry="22" class="sig-stroke"/>
+      <ellipse cx="72" cy="50" rx="10" ry="22" class="sig-stroke"/>
+      <ellipse cx="28" cy="50" rx="5" ry="14" class="sig-fill"/>
+      <ellipse cx="72" cy="50" rx="5" ry="14" class="sig-fill"/>
+      <line x1="38" y1="50" x2="62" y2="50" class="sig-stroke" stroke-dasharray="2 3"/>
+      <polygon points="62,46 68,50 62,54" class="sig-accent"/>
+      <circle cx="28" cy="50" r="2" class="sig-accent"/>
+      <circle cx="72" cy="50" r="2" class="sig-accent"/>
+    </svg>`,
+
+  // Summoning — звезда внутри круга, сходящиеся линии
+  summoning: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" class="sig-stroke"/>
+      <circle cx="50" cy="50" r="36" class="sig-stroke" opacity=".4"/>
+      <polygon points="50,18 56,42 82,42 61,57 69,82 50,67 31,82 39,57 18,42 44,42"
+               class="sig-stroke"/>
+      <polygon points="50,28 54,44 70,44 57,54 62,70 50,61 38,70 43,54 30,44 46,44"
+               class="sig-fill"/>
+      <circle cx="50" cy="50" r="4" class="sig-accent"/>
+      <line x1="50" y1="50" x2="20" y2="20" class="sig-stroke" opacity=".4" stroke-dasharray="1 3"/>
+      <line x1="50" y1="50" x2="80" y2="20" class="sig-stroke" opacity=".4" stroke-dasharray="1 3"/>
+      <line x1="50" y1="50" x2="20" y2="80" class="sig-stroke" opacity=".4" stroke-dasharray="1 3"/>
+      <line x1="50" y1="50" x2="80" y2="80" class="sig-stroke" opacity=".4" stroke-dasharray="1 3"/>
+    </svg>`,
+
+  // Warding — щит/гексаграмма, защитная печать
+  warding: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" class="sig-stroke"/>
+      <path d="M50,12 L82,28 L82,58 Q82,76 50,90 Q18,76 18,58 L18,28 Z" class="sig-stroke"/>
+      <path d="M50,20 L74,32 L74,56 Q74,70 50,82 Q26,70 26,56 L26,32 Z" class="sig-fill"/>
+      <polygon points="50,32 60,50 50,68 40,50" class="sig-stroke"/>
+      <circle cx="50" cy="50" r="5" class="sig-accent"/>
+      <line x1="50" y1="38" x2="50" y2="62" class="sig-stroke" opacity=".5"/>
+      <line x1="42" y1="50" x2="58" y2="50" class="sig-stroke" opacity=".5"/>
+    </svg>`,
+
+  // Shadow Wielding — луна/затмение, изогнутые линии
+  shadow_wielding: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" class="sig-stroke"/>
+      <circle cx="50" cy="50" r="32" class="sig-fill" opacity=".4"/>
+      <path d="M50,18 A32,32 0 1,0 50,82 A22,32 0 1,1 50,18 Z" class="sig-stroke"/>
+      <path d="M50,22 A28,28 0 1,0 50,78 A20,28 0 1,1 50,22 Z" class="sig-fill" opacity=".6"/>
+      <circle cx="62" cy="38" r="2" class="sig-accent"/>
+      <circle cx="68" cy="50" r="1.5" class="sig-accent"/>
+      <circle cx="60" cy="62" r="2" class="sig-accent"/>
+      <circle cx="50" cy="50" r="44" class="sig-stroke" opacity=".3" stroke-dasharray="2 4"/>
+    </svg>`,
+
+  // Mending — две руки/узел, замкнутая петля
+  mending: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" class="sig-stroke"/>
+      <circle cx="50" cy="50" r="36" class="sig-stroke" opacity=".4"/>
+      <path d="M30,50 Q30,30 50,30 Q70,30 70,50 Q70,70 50,70 Q30,70 30,50 Z" class="sig-stroke" fill="none"/>
+      <path d="M35,50 Q35,35 50,35 Q65,35 65,50" class="sig-stroke"/>
+      <path d="M35,50 Q35,65 50,65 Q65,65 65,50" class="sig-stroke"/>
+      <circle cx="35" cy="50" r="3" class="sig-accent"/>
+      <circle cx="65" cy="50" r="3" class="sig-accent"/>
+      <circle cx="50" cy="50" r="2" class="sig-accent"/>
+      <line x1="50" y1="35" x2="50" y2="65" class="sig-stroke" opacity=".5" stroke-dasharray="1 2"/>
+    </svg>`
+};
+
+/* ===== SIGNET REVEAL DATA ===== */
+const SIGNETS = {
+  memory_reading:{
+    icon:'🧠', name:'Memory Reading',
+    desc:"You touch a hand, a shoulder, an old coin — and the memory unfolds for you as if it were your own. You will know things no one meant to give.",
+    canon:"Canon: shared by Dain Aetos · Psychic signet"
+  },
+  distance_wielding:{
+    icon:'🚶', name:'Distance Wielding',
+    desc:"A Walker. The world has folded for you. A single step now carries you where a hundred miles used to.",
+    canon:"Canon: shared by Garrick Tavis · Physical signet"
+  },
+  summoning:{
+    icon:'💫', name:'Summoning',
+    desc:"What you reach for, reaches back. A blade across the room. A name across the field. They come to your hand when you call.",
+    canon:"Canon: shared by Rhiannon Matthias · Physical signet"
+  },
+  warding:{
+    icon:'🛡️', name:'Warding',
+    desc:"You extend the line. Where your will reaches, the dark cannot follow. You are the border someone else gets to sleep behind.",
+    canon:"Canon: shared by Mira Sorrengail · Psychic signet"
+  },
+  shadow_wielding:{
+    icon:'🌑', name:'Shadow Wielding',
+    desc:"Shadow answers you the way fire answers a torch. You can wear it, walk through it, hide a blade or a kingdom inside it.",
+    canon:"Canon: shared by Xaden Riorson · Physical signet"
+  },
+  mending:{
+    icon:'✋', name:'Mending',
+    desc:"What is broken returns to itself under your hands. Bone, blade, the small things between people. You are what comes after the damage.",
+    canon:"Canon: shared by Brennan Sorrengail · Physical signet"
+  }
+};
+
+/* ===== CAEDEN CAMEO LINES ===== */
+const CAEDEN_CAMEO = {
+  asCompanion:{
+    memory_reading:"So. You've been in there the whole time. Reading me while I read you. ...I should be angry. I'm not. That should worry one of us.",
+    distance_wielding:"A Walker. You could leave this room before I finish the sentence. ...The fact that you haven't is something I'd like to remember.",
+    summoning:"You pull what you want toward you. Useful to know. I'll consider myself fairly warned.",
+    warding:"A Warder. ...Then I hope, one day, what you decide to guard turns out to be standing very close to you.",
+    shadow_wielding:"Of every signet it could have been — this one. We share more than a Restricted Section now. We'll have to be careful. Together.",
+    mending:"A Mender. I came down here expecting to find a thief. I found someone who fixes things. ...That's worse for me, somehow."
+  },
+  cameo:{
+    memory_reading:"You shouldn't be here. ...A reader of memories. That changes things. Don't make me regret what I'm about to not do.",
+    distance_wielding:"You shouldn't be here. ...A Walker. Convenient. Don't disappear before I'm finished deciding what to do with you.",
+    summoning:"You shouldn't be here. ...A Summoner. Then be careful what you call for next. Including, eventually, me.",
+    warding:"You shouldn't be here. ...A Warder. ...Good. Navarre needs more of those. Go. Before I change my mind.",
+    shadow_wielding:"You shouldn't be here. ...Shadows. Of course. We'll be having a conversation about this. Not tonight. But soon.",
+    mending:"You shouldn't be here. ...A Mender. ...Then I won't ask why. Some things deserve to be put back together quietly."
+  },
+  choices:[
+    {t:"Hold his gaze. Say nothing.", r:"Then we understand each other. For now."},
+    {t:"\"You won't regret it.\"", r:"That's the part I'm trying very hard to believe."}
+  ]
+};
+
+/* ============================================================
+   AUDIO — real MP3 files from CDN, pooled
+============================================================ */
+let soundOn = true;
+
+const SOUNDS = {
+  footsteps: 'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/freesound_community-indoor-footsteps-6385.mp3',
+  pageTurn:  'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/page-turn.mp3',
+  correct:   'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/gentle-bell.mp3',
+  wrong:     'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/low-thud.mp3',
+  reveal:    'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/magical-reveal.mp3',
+  hover:     'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/hover-bell.mp3'
+};
+
+// Audio pool — несколько копий каждого звука, чтобы можно было проигрывать с наложением
+const POOL_SIZE = 3;
+const audioPool = {};
+for(const key in SOUNDS){
+  audioPool[key] = [];
+  for(let i=0;i<POOL_SIZE;i++){
+    const a = new Audio(SOUNDS[key]);
+    a.preload = 'auto';
+    a.volume = 0.5;
+    audioPool[key].push(a);
+  }
+}
+
+let poolIdx = {};
+function playSound(key, vol=0.5){
+  if(!soundOn) return;
+  if(!audioPool[key]) return;
+  poolIdx[key] = (poolIdx[key]||0);
+  const audio = audioPool[key][poolIdx[key]];
+  poolIdx[key] = (poolIdx[key]+1) % POOL_SIZE;
+  try{
+    audio.currentTime = 0;
+    audio.volume = vol;
+    audio.play().catch(()=>{});
+  }catch(e){}
+}
+
+const SFX = {
+  click:   ()=>playSound('hover', 0.35),
+  correct: ()=>playSound('correct', 0.45),
+  wrong:   ()=>playSound('wrong', 0.4),
+  reveal:  ()=>playSound('reveal', 0.55),
+  page:    ()=>playSound('pageTurn', 0.4),
+  footsteps:()=>playSound('footsteps', 0.5)
+};
+
+/* ============================================================
+   STATE
+============================================================ */
+const state = {
+  companion:null,
+  stage:0,
+  signetScores:{memory_reading:0,distance_wielding:0,summoning:0,warding:0,shadow_wielding:0,mending:0},
+  stage1Progress:0,
+  stage1Total:0,
+  stage2Index:0,
+  stage3Index:0,
+  finalSignet:null
+};
+
+/* ============================================================
+   HELPERS
+============================================================ */
+const $ = sel => document.querySelector(sel);
+const cardBody = $('#cardBody');
+const cardWrap = $('#cardWrap');
+const companionEl = $('#companion');
+const progressEl = $('#progress');
+
+function showToast(msg, isError=false){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.toggle('error',isError);
+  t.classList.add('visible');
+  setTimeout(()=>t.classList.remove('visible'), 1800);
+}
+function setProgress(step){
+  document.querySelectorAll('.progress .step').forEach(s=>{
+    const n=parseInt(s.dataset.step);
+    s.classList.toggle('done', n<step);
+    s.classList.toggle('active', n===step);
+  });
+  progressEl.classList.add('visible');
+}
+function fadeCard(htmlBuilder){
+  cardWrap.style.opacity = '0';
+  setTimeout(()=>{
+    cardBody.innerHTML = '';
+    htmlBuilder();
+    cardWrap.classList.add('visible');
+    cardWrap.style.opacity = '';
+    // перезапуск анимации входа карточки
+    const card = $('#card');
+    card.style.animation = 'none';
+    void card.offsetWidth;
+    card.style.animation = '';
+  }, 350);
+}
+
+/* ============================================================
+   STAGE 0 — COMPANION SELECT
+============================================================ */
+document.querySelectorAll('.select-card').forEach(c=>{
+  c.addEventListener('click',()=>{
+    SFX.click();
+    const key = c.dataset.comp;
+    state.companion = COMPANIONS[key];
+    $('#stage0').classList.remove('visible');
+    companionEl.src = state.companion.sprite;
+    companionEl.alt = state.companion.name;
+    setTimeout(()=>{
+      companionEl.classList.add('visible');
+      showIntro();
+    }, 600);
+  });
+});
+
+function showIntro(){
+  state.stage = 0;
+  setProgress(1);
+  fadeCard(()=>{
+    cardBody.innerHTML = `
+      <h2>Restricted Section</h2>
+      <div class="subtitle">A whisper in the dark</div>
+      <div class="divider"><span>✦</span></div>
+      <div class="speaker">${state.companion.name}</div>
+      <div class="speech">${state.companion.intro}</div>
+      <div class="btn-row"><button class="btn" id="goStage1">Begin · Codex of Signets</button></div>
+    `;
+    $('#goStage1').addEventListener('click',()=>{SFX.page(); startStage1();});
+  });
+}
+
+/* ============================================================
+   STAGE 1 — CODEX (drag/click pronouns into gaps)
+============================================================ */
+function startStage1(){
+  state.stage = 1;
+  setProgress(1);
+
+  state.stage1Total = STAGE1.signets.reduce((s,sig)=>s+sig.lines.length,0);
+  state.stage1Progress = 0;
+
+  fadeCard(()=>{
+    let html = `
+      <h2>The Codex</h2>
+      <div class="subtitle">Stage I · Restore the Wards</div>
+      <div class="speaker">${state.companion.name}</div>
+      <div class="speech" style="font-size:17px;min-height:auto;margin-bottom:8px">${state.companion.stage1}</div>
+      <div class="divider"><span>${STAGE1.intro}</span></div>
+      <div class="codex-list" id="codexList"></div>
+      <div class="pronoun-bank" id="pronBank"></div>
+      <div class="btn-row"><button class="btn" id="goStage2" disabled>Proceed · Case Files</button></div>
+    `;
+    cardBody.innerHTML = html;
+
+    const list = $('#codexList');
+    STAGE1.signets.forEach((sig,si)=>{
+      const block = document.createElement('div');
+      block.className = 'signet-block';
+      let inner = `<div class="sig-name">${sig.icon} ${sig.name}</div>`;
+      sig.lines.forEach((line,li)=>{
+        let lineHtml = '<div class="sig-line">';
+        line.parts.forEach((p,pi)=>{
+          lineHtml += p;
+          if(pi < line.parts.length-1){
+            lineHtml += `<span class="gap" data-sig="${si}" data-line="${li}" data-gap="${pi}" data-answers='${JSON.stringify(line.answers)}'>____</span>`;
+          }
+        });
+        lineHtml += '</div>';
+        inner += lineHtml;
+      });
+      block.innerHTML = inner;
+      list.appendChild(block);
+    });
+
+    const bank = $('#pronBank');
+    STAGE1.pronouns.forEach(p=>{
+      const el = document.createElement('div');
+      el.className='pronoun';
+      el.textContent = p;
+      el.draggable = true;
+      el.dataset.word = p;
+      bank.appendChild(el);
+    });
+
+    let selected = null;
+    bank.querySelectorAll('.pronoun').forEach(p=>{
+      p.addEventListener('click',()=>{
+        SFX.click();
+        bank.querySelectorAll('.pronoun').forEach(x=>x.classList.remove('dragging'));
+        selected = p.dataset.word;
+        p.classList.add('dragging');
+      });
+    });
+
+    list.querySelectorAll('.gap').forEach(g=>{
+      g.addEventListener('click',()=>{
+        if(g.classList.contains('correct')) return;
+        if(!selected){ showToast('Pick a pronoun first',true); return; }
+        const answers = JSON.parse(g.dataset.answers);
+        if(answers.includes(selected)){
+          g.textContent = selected;
+          g.classList.remove('wrong');
+          g.classList.add('correct','filled');
+          SFX.correct();
+          state.stage1Progress++;
+          if(state.stage1Progress >= state.stage1Total){
+            $('#goStage2').disabled = false;
+            showToast('Wards restored');
+          }
+        } else {
+          g.textContent = selected;
+          g.classList.add('wrong');
+          SFX.wrong();
+          setTimeout(()=>{
+            g.classList.remove('wrong');
+            g.textContent = '____';
+          },650);
+        }
+        bank.querySelectorAll('.pronoun').forEach(x=>x.classList.remove('dragging'));
+        selected = null;
+      });
+
+      g.addEventListener('dragover',e=>{e.preventDefault(); g.classList.add('active-target');});
+      g.addEventListener('dragleave',()=>g.classList.remove('active-target'));
+      g.addEventListener('drop',e=>{
+        e.preventDefault();
+        g.classList.remove('active-target');
+        const word = e.dataTransfer.getData('text/plain');
+        selected = word;
+        g.click();
+      });
+    });
+
+    bank.querySelectorAll('.pronoun').forEach(p=>{
+      p.addEventListener('dragstart',e=>{
+        e.dataTransfer.setData('text/plain', p.dataset.word);
+        p.classList.add('dragging');
+      });
+      p.addEventListener('dragend',()=>p.classList.remove('dragging'));
+    });
+
+    $('#goStage2').addEventListener('click',()=>{SFX.page(); startStage2();});
+  });
+}
+
+/* ============================================================
+   STAGE 2 — CASE FILES
+============================================================ */
+function startStage2(){
+  state.stage = 2;
+  state.stage2Index = 0;
+  setProgress(2);
+  renderCase();
+}
+
+function renderCase(){
+  const c = STAGE2[state.stage2Index];
+  fadeCard(()=>{
+    cardBody.innerHTML = `
+      <h2>Case Files</h2>
+      <div class="subtitle">Stage II · Restricted Ledger</div>
+      <div class="speaker">${state.companion.name}</div>
+      <div class="speech" style="font-size:16px;min-height:auto;margin-bottom:10px">${state.stage2Index===0?state.companion.stage2:'Next file.'}</div>
+      <div class="divider"><span>◆</span></div>
+      <div class="case-meta">${c.file}</div>
+      <div class="case-text" id="caseText"></div>
+      <div class="case-options" id="caseOpts"></div>
+      <div class="case-nav"><span>File ${state.stage2Index+1} / ${STAGE2.length}</span><span id="hintLine"></span></div>
+    `;
+    const txt = $('#caseText');
+    txt.innerHTML = c.text.replace('___','<span class="blank" id="blank">______</span>');
+
+    const optsEl = $('#caseOpts');
+    c.options.forEach((opt,i)=>{
+      const b = document.createElement('button');
+      b.className='case-opt'; b.textContent = opt;
+      b.addEventListener('click',()=>{
+        if(b.disabled) return;
+        if(i===c.correctIdx){
+          b.classList.add('correct');
+          SFX.correct();
+          $('#blank').textContent = c.blank;
+          $('#blank').classList.add('solved');
+          $('#hintLine').textContent = c.hint;
+          optsEl.querySelectorAll('button').forEach(x=>x.disabled=true);
+          setTimeout(()=>{
+            state.stage2Index++;
+            if(state.stage2Index < STAGE2.length){
+              SFX.page();
+              renderCase();
+            } else {
+              SFX.page();
+              startStage3();
+            }
+          },1500);
+        } else {
+          b.classList.add('wrong');
+          SFX.wrong();
+          setTimeout(()=>b.classList.remove('wrong'),650);
+        }
+      });
+      optsEl.appendChild(b);
+    });
+  });
+}
+
+/* ============================================================
+   STAGE 3 — REFLECTION
+============================================================ */
+function startStage3(){
+  state.stage = 3;
+  state.stage3Index = 0;
+  setProgress(3);
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = STAGE3[state.stage3Index];
+  fadeCard(()=>{
+    cardBody.innerHTML = `
+      <h2>Reflection</h2>
+      <div class="subtitle">Stage III · The Wards Listen</div>
+      ${state.stage3Index===0?`<div class="speaker">${state.companion.name}</div><div class="speech" style="font-size:16px;min-height:auto;margin-bottom:10px">${state.companion.stage3}</div><div class="divider"><span>◆</span></div>`:''}
+      <div class="q-counter">Question ${state.stage3Index+1} of ${STAGE3.length}</div>
+      <div class="q-cond">${q.cond}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-options" id="qOpts"></div>
+    `;
+    const opts = $('#qOpts');
+    const shuffled = q.opts.map((o,i)=>({o,i})).sort(()=>Math.random()-0.5);
+    shuffled.forEach(({o})=>{
+      const b = document.createElement('button');
+      b.className = 'q-opt';
+      b.textContent = o.t;
+      b.addEventListener('click',()=>{
+        SFX.click();
+        opts.querySelectorAll('.q-opt').forEach(x=>x.classList.remove('selected'));
+        b.classList.add('selected');
+        state.signetScores[o.s] += 1;
+        setTimeout(()=>{
+          state.stage3Index++;
+          if(state.stage3Index < STAGE3.length){
+            SFX.page();
+            renderQuestion();
+          } else {
+            doReveal();
+          }
+        }, 550);
+      });
+      opts.appendChild(b);
+    });
+  });
+}
+
+/* ============================================================
+   STAGE 4 — REVEAL + CAEDEN CAMEO
+============================================================ */
+function doReveal(){
+  setProgress(4);
+
+  // FLASH BURST
+  const flash = document.createElement('div');
+  flash.className = 'flash';
+  document.body.appendChild(flash);
+  setTimeout(()=>flash.remove(), 1400);
+
+  let best=null, bestScore=-1;
+  for(const k in state.signetScores){
+    if(state.signetScores[k] > bestScore){ bestScore = state.signetScores[k]; best = k; }
+  }
+  state.finalSignet = best;
+
+  cardWrap.classList.remove('visible');
+  setTimeout(()=>{
+    const sig = SIGNETS[best];
+    $('#revealSigil').innerHTML = SIGNET_SVG[best];
+    $('#revealName').textContent = sig.name;
+    $('#revealDesc').textContent = sig.desc;
+    $('#revealCanon').textContent = sig.canon;
+
+    $('#revCompWho').textContent = state.companion.name.toUpperCase();
+    $('#revCompLine').textContent = state.companion.reveals[best];
+
+    $('#reveal').classList.add('visible');
+    SFX.reveal();
+
+    setTimeout(showCameo, 2800);
+  }, 600);
+}
+
+function showCameo(){
+  const isCaeden = state.companion === COMPANIONS.caeden;
+  const line = isCaeden
+    ? CAEDEN_CAMEO.asCompanion[state.finalSignet]
+    : CAEDEN_CAMEO.cameo[state.finalSignet];
+
+  $('#cameoWho').textContent = isCaeden ? 'CAEDEN' : 'CAEDEN · ARRIVING';
+  $('#cameoLine').textContent = line;
+
+  const choiceEl = $('#cameoChoice');
+  choiceEl.innerHTML = '';
+  CAEDEN_CAMEO.choices.forEach(ch=>{
+    const b = document.createElement('button');
+    b.className = 'cameo-btn';
+    b.textContent = ch.t;
+    b.addEventListener('click',()=>{
+      SFX.click();
+      $('#cameoLine').textContent = ch.r;
+      choiceEl.innerHTML = '';
+      setTimeout(()=>{
+        $('#revealFinal').classList.add('visible');
+      }, 1200);
+    });
+    choiceEl.appendChild(b);
+  });
+
+  $('#cameo').classList.add('visible');
+  SFX.page();
+}
+</script>
+</body>
+</html>
