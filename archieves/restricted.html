@@ -301,9 +301,17 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .codex-list::-webkit-scrollbar{width:6px}
 .codex-list::-webkit-scrollbar-track{background:rgba(0,0,0,.2)}
 .codex-list::-webkit-scrollbar-thumb{background:var(--gold-dim)}
-.signet-block{margin-bottom:14px;padding:10px 12px;border-left:2px solid var(--gold-dim);background:rgba(0,0,0,.15)}
-.signet-block .sig-name{font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
-.signet-block .sig-line{font-size:16px;line-height:1.7;color:var(--ink);margin:4px 0}
+.signet-block{
+  margin-bottom:10px;        /* было 14 */
+  padding:8px 12px;          /* было 10 12 */
+  border-left:2px solid var(--gold-dim);
+  background:rgba(0,0,0,.15);
+}
+.signet-block .sig-line{
+  font-size:15px;            /* было 16 */
+  line-height:1.6;           /* было 1.7 */
+  margin:3px 0;
+}
 .gap{display:inline-block;min-width:80px;padding:1px 8px;margin:0 2px;background:rgba(212,175,55,.08);border-bottom:1px solid var(--gold);color:var(--gold-bright);font-style:normal;text-align:center;cursor:pointer;transition:all .25s;border-radius:2px 2px 0 0}
 .gap:hover{background:rgba(212,175,55,.2)}
 .gap.filled{background:rgba(212,175,55,.18)}
