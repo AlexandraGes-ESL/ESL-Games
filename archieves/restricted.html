@@ -699,39 +699,97 @@ const STAGE1 = {
   ]
 };
 
-/* ===== STAGE 2 — CASE FILES ===== */
+/* ===== STAGE 2 — CASE FILES (signet identification) ===== */
 const STAGE2 = [
   {
     file:"FILE 037 · CADET SERETH IRELYN · DECEASED",
-    text:"Sereth's body was found at the inner gate. Reports state that the wards around her post had been ___ before the breach. No mage marks. No blood. Whoever did it walked through her defense as if it had never existed.",
-    blank:"taken down from within",
-    options:["extended outward","taken down from within","set on fire","copied onto parchment"],
-    hint:"Signet involved: Warding — but reversed against its owner.",
-    correctIdx:1
+    text:"Sereth was found at the inner gate, untouched. The boundary she'd been holding for six hours had simply ceased to exist — no breach, no struggle, no signs of forced entry. Her last log read: 'The line is steady. I could hold it in my sleep.' Whoever passed her did so as if her defense had never been raised at all.",
+    question:"Which signet failed — or was turned against her?",
+    options:[
+      {t:"Memory Reading", s:"memory_reading"},
+      {t:"Distance Wielding", s:"distance_wielding"},
+      {t:"Summoning", s:"summoning"},
+      {t:"Warding", s:"warding"},
+      {t:"Shadow Wielding", s:"shadow_wielding"},
+      {t:"Mending", s:"mending"}
+    ],
+    correct:"warding",
+    hint:"Sereth held a line — a boundary that kept what shouldn't pass, out. Only one signet does that. And only one signet can undo its own work."
   },
   {
     file:"FILE 102 · LIEUTENANT DORAN VASS · MISSING",
-    text:"Doran was last seen patrolling the eastern ridge. Witnesses claim he ___ mid-stride — one step on the stone, the next nowhere at all. No struggle. No signal flare. Search parties found only his cloak, folded.",
-    blank:"stepped out of the world",
-    options:["fell from the cliff","stepped out of the world","was burned alive","screamed once"],
-    hint:"Signet involved: Distance Wielding.",
-    correctIdx:1
+    text:"Doran was patrolling the eastern ridge at dawn. Two squadmates watched him take one step on the stone — and the next step was nowhere. No flash. No sound. No body. His cloak was found three miles north, folded neatly on a windowsill of a tavern he had never been inside.",
+    question:"What signet did Doran almost certainly carry?",
+    options:[
+      {t:"Memory Reading", s:"memory_reading"},
+      {t:"Distance Wielding", s:"distance_wielding"},
+      {t:"Summoning", s:"summoning"},
+      {t:"Warding", s:"warding"},
+      {t:"Shadow Wielding", s:"shadow_wielding"},
+      {t:"Mending", s:"mending"}
+    ],
+    correct:"distance_wielding",
+    hint:"One step here. The next step impossibly far. A Walker's gift — though something pulled him further than he meant to go."
   },
   {
     file:"FILE 168 · CADET VAEL KORRIN · ANOMALY",
-    text:"Vael's name appears in three different battle reports from the same hour, each in a separate quadrant of the field. Commanders swore he ___ where he was needed. The reports cannot all be wrong — and yet they cannot all be true.",
-    blank:"arrived the instant",
-    options:["arrived the instant","wrote the reports himself","never existed at all","died three times"],
-    hint:"Signet involved: Distance Wielding — at the edge of its limit.",
-    correctIdx:0
+    text:"During the skirmish at Cliffsbane, Vael's name appears in three field reports — all written within the same hour, all by different commanders, all in different quadrants of the battle. Each commander swears he arrived the instant they needed him. The reports cannot all be true. And yet none of them can be wrong.",
+    question:"Which signet stretched beyond its usual limit here?",
+    options:[
+      {t:"Memory Reading", s:"memory_reading"},
+      {t:"Distance Wielding", s:"distance_wielding"},
+      {t:"Summoning", s:"summoning"},
+      {t:"Warding", s:"warding"},
+      {t:"Shadow Wielding", s:"shadow_wielding"},
+      {t:"Mending", s:"mending"}
+    ],
+    correct:"distance_wielding",
+    hint:"Three places. One hour. Only a Walker could be in all of them — and only barely. This file is being studied to learn the true ceiling of the gift."
   },
   {
     file:"FILE 211 · CADET RIGGS HALD · UNCLASSIFIED",
-    text:"After the skirmish at Talven Pass, Riggs walked out of the smoke with a broken sword and ___. The healers found no scars on the men who should have died. Riggs has not spoken since. His name has been moved to the restricted ledger.",
-    blank:"four men who should not have lived",
-    options:["a sealed letter","four men who should not have lived","a stolen relic","an empty saddle"],
-    hint:"Signet involved: Mending — possibly beyond its known limit.",
-    correctIdx:1
+    text:"Riggs walked out of the smoke at Talven Pass with a broken sword and four men behind him — all four of whom had been pronounced dead by the field healers nineteen minutes earlier. None of them carries a scar. Riggs has not spoken since. His file has been moved to the restricted ledger by order of the Scribes themselves.",
+    question:"What gift did Riggs use — possibly beyond what should be possible?",
+    options:[
+      {t:"Memory Reading", s:"memory_reading"},
+      {t:"Distance Wielding", s:"distance_wielding"},
+      {t:"Summoning", s:"summoning"},
+      {t:"Warding", s:"warding"},
+      {t:"Shadow Wielding", s:"shadow_wielding"},
+      {t:"Mending", s:"mending"}
+    ],
+    correct:"mending",
+    hint:"What is broken returns to itself under a Mender's hands. Four men, returned from past the threshold — that is mending pushed to a place no Scribe has dared to name."
+  },
+  {
+    file:"FILE 256 · CADET MIREN ASHFOLD · INTERROGATION",
+    text:"Miren was brought before the tribunal for an alleged breach of confidence. Three sealed letters, witnessed only by their authors, had been quoted back to those authors word for word. Miren has no key. No spy network. No way of seeing the letters. She was, however, the squad scribe — and she had touched the wax seals when delivering them.",
+    question:"Which signet would explain Miren's knowledge?",
+    options:[
+      {t:"Memory Reading", s:"memory_reading"},
+      {t:"Distance Wielding", s:"distance_wielding"},
+      {t:"Summoning", s:"summoning"},
+      {t:"Warding", s:"warding"},
+      {t:"Shadow Wielding", s:"shadow_wielding"},
+      {t:"Mending", s:"mending"}
+    ],
+    correct:"memory_reading",
+    hint:"Her hand touched the seals. A memory reader doesn't need to open the letter — the wax remembers who pressed it, and what was said over it."
+  },
+  {
+    file:"FILE 304 · INSTRUCTOR KAERIS VOLLEN · RECLASSIFIED",
+    text:"At the siege of Aretia, an enemy commander was found dead inside his own tent — at the centre of his own camp, surrounded by his own guards, none of whom saw anyone enter or leave. His blade lay on the ground twenty paces from his hand. The hilt was warm, as if it had only just been let go of by someone else.",
+    question:"Which signet best explains the kill?",
+    options:[
+      {t:"Memory Reading", s:"memory_reading"},
+      {t:"Distance Wielding", s:"distance_wielding"},
+      {t:"Summoning", s:"summoning"},
+      {t:"Warding", s:"warding"},
+      {t:"Shadow Wielding", s:"shadow_wielding"},
+      {t:"Mending", s:"mending"}
+    ],
+    correct:"summoning",
+    hint:"The blade was the commander's own. It crossed twenty paces to a hand that called it. Summoning — quiet, precise, devastating."
   }
 ];
 
@@ -1216,34 +1274,35 @@ function renderCase(){
       <div class="card-header">
         <h2>Case Files</h2>
         <div class="subtitle">Stage II · Restricted Ledger</div>
-        <div class="speaker">${state.companion.name}</div>
-        <div class="speech" style="font-size:15px;margin-bottom:6px">${state.stage2Index===0?state.companion.stage2:'Next file.'}</div>
-        <div class="divider"><span>◆</span></div>
+        ${state.stage2Index===0?`<div class="speaker">${state.companion.name}</div><div class="speech" style="font-size:15px;margin-bottom:6px">${state.companion.stage2}</div>`:''}
+        <div class="divider"><span>◆ File ${state.stage2Index+1} of ${STAGE2.length} ◆</span></div>
       </div>
       <div class="card-content">
         <div class="case-meta">${c.file}</div>
-        <div class="case-text" id="caseText"></div>
+        <div class="case-text">${c.text}</div>
+        <div class="q-text" style="font-size:16px;margin:14px 0 10px;text-align:center;color:var(--gold-bright)">${c.question}</div>
         <div class="case-options" id="caseOpts"></div>
       </div>
       <div class="card-footer">
         <div class="case-nav"><span>File ${state.stage2Index+1} / ${STAGE2.length}</span><span id="hintLine"></span></div>
       </div>
     `;
-    const txt = $('#caseText');
-    txt.innerHTML = c.text.replace('___','<span class="blank" id="blank">______</span>');
 
     const optsEl = $('#caseOpts');
-    c.options.forEach((opt,i)=>{
+    // shuffle so the correct one isn't always in the same place
+    const shuffled = c.options.map((o,i)=>({o,i})).sort(()=>Math.random()-0.5);
+    shuffled.forEach(({o})=>{
       const b = document.createElement('button');
-      b.className='case-opt'; b.textContent = opt;
+      b.className = 'case-opt';
+      b.textContent = o.t;
       b.addEventListener('click',()=>{
         if(b.disabled) return;
-        if(i===c.correctIdx){
+        if(o.s === c.correct){
           b.classList.add('correct');
           SFX.correct();
-          $('#blank').textContent = c.blank;
-          $('#blank').classList.add('solved');
           $('#hintLine').textContent = c.hint;
+          // give the player a small signet score bonus — they identified it correctly
+          state.signetScores[c.correct] += 0.5;
           optsEl.querySelectorAll('button').forEach(x=>x.disabled=true);
           setTimeout(()=>{
             state.stage2Index++;
@@ -1254,11 +1313,12 @@ function renderCase(){
               SFX.page();
               startStage3();
             }
-          },1500);
+          }, 1800);
         } else {
           b.classList.add('wrong');
           SFX.wrong();
-          setTimeout(()=>b.classList.remove('wrong'),650);
+          showToast('Read the file again — the clue is in the details', true);
+          setTimeout(()=>b.classList.remove('wrong'), 650);
         }
       });
       optsEl.appendChild(b);
