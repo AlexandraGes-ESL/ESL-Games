@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>War Games — The Honor Trial | Fourth Wing Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   FOURTH WING QUEST · SCENE 5 · WAR GAMES (FINAL)
+   ============================================================ */
+:root{
+  --gold:#c9a96e; --gold-bright:#e8c989; --gold-dark:#8b7349;
+  --ink:#1a1410; --ink-deep:#0a0806;
+  --parch:#f4e8d0; --parch-dark:#d9c9a8;
+  --red:#8b2c2c; --red-bright:#c44545;
+  --green-ok:#4a7c4e; --blue-mana:#3b5f8f;
+  --crimson:#a83232;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'Cormorant Garamond',Georgia,serif;color:var(--parch);background:var(--ink-deep);overflow:hidden}
+body{display:flex;align-items:center;justify-content:center;position:relative}
+
+#sky-bg{position:fixed;inset:0;z-index:1;background-size:cover;background-position:center;background-repeat:no-repeat;transition:background-image 1.2s ease,opacity 1.2s ease,filter 1.2s ease}
+#sky-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,6,.3) 0%,rgba(10,8,6,.55) 60%,rgba(10,8,6,.85) 100%);pointer-events:none}
+
+#pov-dragon{position:fixed;left:50%;bottom:-8%;transform:translateX(-50%);width:min(900px,95vw);height:auto;z-index:2;opacity:0;pointer-events:none;transition:opacity 1.4s ease,transform 1.4s ease;filter:drop-shadow(0 -10px 40px rgba(0,0,0,.7))}
+#pov-dragon.visible{opacity:1;animation:dragonFloat 6s ease-in-out infinite}
+@keyframes dragonFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-15px)}}
+
+.card-wrap{position:relative;z-index:10;width:min(1100px,95vw);max-height:95vh;display:flex;flex-direction:column}
+.card{background:linear-gradient(180deg,rgba(20,15,10,.92),rgba(15,10,7,.95));border:1px solid var(--gold-dark);border-radius:4px;box-shadow:0 0 0 1px rgba(201,169,110,.15),0 20px 60px rgba(0,0,0,.7),inset 0 0 80px rgba(0,0,0,.4);position:relative;overflow:hidden;display:flex;flex-direction:column;max-height:95vh}
+
+.corner{position:absolute;width:32px;height:32px;border:1px solid var(--gold);z-index:5;pointer-events:none}
+.corner.tl{top:10px;left:10px;border-right:none;border-bottom:none}
+.corner.tr{top:10px;right:10px;border-left:none;border-bottom:none}
+.corner.bl{bottom:10px;left:10px;border-right:none;border-top:none}
+.corner.br{bottom:10px;right:10px;border-left:none;border-top:none}
+
+.head{padding:18px 36px 14px;border-bottom:1px solid rgba(201,169,110,.3);display:flex;align-items:center;justify-content:space-between;gap:20px;flex-shrink:0;background:linear-gradient(180deg,rgba(0,0,0,.4),transparent)}
+.head-left{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.timer-box,.hp-box,.honor-box{display:flex;align-items:center;gap:8px;font-family:'Cinzel',serif;font-size:14px;letter-spacing:1.5px;color:var(--gold-bright)}
+.timer-box .icon,.hp-box .icon,.honor-box .icon{font-size:16px;filter:drop-shadow(0 0 4px rgba(201,169,110,.5))}
+.hp-box .value{color:var(--red-bright)}
+.honor-box .value{color:var(--gold-bright)}
+.hp-box.low .value{animation:pulseRed .8s ease-in-out infinite}
+@keyframes pulseRed{0%,100%{color:var(--red-bright);text-shadow:0 0 8px rgba(196,69,69,.4)}50%{color:#ff6666;text-shadow:0 0 14px rgba(255,102,102,.8)}}
+.phase-progress{display:flex;align-items:center;gap:10px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px}
+.phase-progress .step{color:var(--gold-dark);transition:color .4s ease,text-shadow .4s ease}
+.phase-progress .step.active{color:var(--gold-bright);text-shadow:0 0 12px rgba(232,201,137,.6)}
+.phase-progress .step.done{color:var(--gold)}
+.phase-progress .sep{color:var(--gold-dark);font-size:11px}
+
+.content{padding:24px 36px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:18px;scrollbar-width:thin;scrollbar-color:var(--gold-dark) transparent}
+.content::-webkit-scrollbar{width:6px}
+.content::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:3px}
+
+h1.scene-title{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(22px,3vw,32px);letter-spacing:4px;color:var(--gold-bright);text-align:center;text-shadow:0 2px 20px rgba(201,169,110,.4);margin-bottom:6px}
+h2.phase-title{font-family:'Cinzel',serif;font-weight:500;font-size:clamp(16px,2vw,20px);letter-spacing:3px;color:var(--gold);text-align:center;text-transform:uppercase}
+.scene-subtitle{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(15px,1.8vw,18px);color:var(--parch-dark);text-align:center;opacity:.9}
+
+.divider{display:flex;align-items:center;justify-content:center;gap:14px;color:var(--gold-dark);margin:4px 0}
+.divider::before,.divider::after{content:'';flex:1;max-width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dark),transparent)}
+.divider .ornament{font-size:14px;color:var(--gold)}
+
+.comms-panel{background:linear-gradient(135deg,rgba(15,12,8,.85),rgba(25,18,12,.85));border:1px solid var(--gold-dark);border-radius:3px;padding:16px 20px;display:flex;gap:18px;align-items:flex-start;position:relative;box-shadow:inset 0 0 30px rgba(0,0,0,.4),0 4px 20px rgba(0,0,0,.4);animation:commsIn .6s ease}
+@keyframes commsIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.comms-panel.urgent{border-color:var(--red-bright);animation:commsIn .6s ease,urgentPulse 2s ease-in-out infinite}
+@keyframes urgentPulse{0%,100%{box-shadow:inset 0 0 30px rgba(0,0,0,.4),0 0 0 0 rgba(196,69,69,0)}50%{box-shadow:inset 0 0 30px rgba(0,0,0,.4),0 0 24px rgba(196,69,69,.5)}}
+.comms-panel.formal{border:2px double var(--gold);padding:18px 22px}
+.comms-portrait{flex-shrink:0;width:80px;height:80px;border-radius:50%;border:2px solid var(--gold);background:rgba(0,0,0,.5);overflow:hidden;box-shadow:0 0 16px rgba(201,169,110,.3);position:relative}
+.comms-portrait img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.comms-body{flex:1;min-width:0}
+.comms-header{display:flex;align-items:center;gap:12px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(201,169,110,.2)}
+.comms-name{font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:2px;color:var(--gold-bright);text-transform:uppercase}
+.comms-role{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--parch-dark);flex:1}
+.comms-audio-btn{background:transparent;border:1px solid var(--gold-dark);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gold);transition:all .25s ease;font-size:14px}
+.comms-audio-btn:hover{background:rgba(201,169,110,.15);border-color:var(--gold);transform:scale(1.08)}
+.comms-audio-btn.playing{background:var(--gold);color:var(--ink);animation:audioPulse 1s ease-in-out infinite}
+@keyframes audioPulse{0%,100%{box-shadow:0 0 0 0 rgba(201,169,110,.5)}50%{box-shadow:0 0 0 8px rgba(201,169,110,0)}}
+.comms-text{font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.5;color:var(--parch);font-style:italic;min-height:1.5em}
+.comms-text::after{content:'▌';color:var(--gold);animation:cursorBlink .8s infinite;margin-left:2px}
+.comms-text.done::after{display:none}
+@keyframes cursorBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+.task-card{background:linear-gradient(180deg,rgba(244,232,208,.05),rgba(244,232,208,.02));border:1px solid rgba(201,169,110,.3);border-radius:3px;padding:18px 22px;position:relative}
+.task-label{font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.task-label::before,.task-label::after{content:'';flex:1;height:1px;background:rgba(201,169,110,.2)}
+.tactical-text{font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.65;color:var(--parch);padding:10px 14px;background:rgba(0,0,0,.3);border-left:3px solid var(--gold);border-radius:2px;margin-bottom:14px;font-style:italic}
+.tactical-text strong{color:var(--gold-bright);font-style:normal;font-weight:600}
+.question-block{margin-bottom:14px}
+.question-block:last-child{margin-bottom:0}
+.question-text{font-family:'Cinzel',serif;font-size:14px;color:var(--gold-bright);letter-spacing:1px;margin-bottom:10px;font-weight:500}
+.question-text .qnum{color:var(--gold);margin-right:8px}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.option-btn{background:rgba(244,232,208,.04);border:1px solid rgba(201,169,110,.3);border-radius:2px;padding:10px 14px;font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--parch);cursor:pointer;text-align:left;transition:all .2s ease;position:relative;overflow:hidden}
+.option-btn:hover:not(.disabled){background:rgba(201,169,110,.12);border-color:var(--gold);transform:translateX(2px)}
+.option-btn.correct{background:rgba(74,124,78,.25);border-color:var(--green-ok);color:#a8e0a8;animation:correctFlash .5s ease}
+.option-btn.wrong{background:rgba(139,44,44,.25);border-color:var(--red-bright);color:#ffb8b8;animation:wrongShake .5s ease}
+.option-btn.disabled{cursor:not-allowed;opacity:.5}
+.option-btn.hidden-by-signet{opacity:.25;text-decoration:line-through;pointer-events:none}
+.option-btn.hinted{box-shadow:0 0 16px rgba(232,201,137,.5);border-color:var(--gold-bright);animation:hintGlow 1.5s ease-in-out infinite}
+@keyframes correctFlash{0%{background:rgba(74,124,78,.6)}100%{background:rgba(74,124,78,.25)}}
+@keyframes wrongShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@keyframes hintGlow{0%,100%{box-shadow:0 0 8px rgba(232,201,137,.4)}50%{box-shadow:0 0 20px rgba(232,201,137,.8)}}
+
+.listening-text{font-family:'Cormorant Garamond',serif;font-size:17px;line-height:2;color:var(--parch);padding:14px 18px;background:rgba(0,0,0,.3);border-left:3px solid var(--gold);border-radius:2px;margin-bottom:14px;font-style:italic}
+/* ===== GAP SELECT — стилизация выпадающего списка ===== */
+.gap-select{
+  display:inline-block;
+  background:rgba(20,15,10,.95);
+  border:1px solid var(--gold);
+  border-radius:2px;
+  padding:3px 26px 3px 10px;
+  font-family:'Cinzel',serif;
+  font-size:13px;
+  letter-spacing:1.5px;
+  color:var(--gold-bright);
+  cursor:pointer;
+  font-style:normal;
+  min-width:130px;
+  text-align:center;
+  text-align-last:center;
+  margin:0 3px;
+  transition:all .2s ease;
+  /* Убираем дефолтную стрелку браузера и рисуем свою */
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23c9a96e' d='M6 8L0 0h12z'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right 8px center;
+  background-size:9px;
+  box-shadow:inset 0 0 12px rgba(0,0,0,.5), 0 0 0 1px rgba(201,169,110,.15);
+}
+.gap-select:hover{
+  background-color:rgba(201,169,110,.18);
+  border-color:var(--gold-bright);
+  box-shadow:inset 0 0 12px rgba(0,0,0,.4), 0 0 12px rgba(232,201,137,.3);
+}
+.gap-select:focus{
+  outline:none;
+  border-color:var(--gold-bright);
+  box-shadow:inset 0 0 12px rgba(0,0,0,.4), 0 0 0 2px rgba(232,201,137,.4);
+}
+.gap-select.correct{
+  background-color:rgba(74,124,78,.35);
+  border-color:var(--green-ok);
+  color:#c8f0c8;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%234a7c4e' d='M6 8L0 0h12z'/></svg>");
+  box-shadow:inset 0 0 12px rgba(74,124,78,.3), 0 0 12px rgba(74,124,78,.4);
+}
+.gap-select.wrong{
+  background-color:rgba(139,44,44,.35);
+  border-color:var(--red-bright);
+  color:#ffd0d0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23c44545' d='M6 8L0 0h12z'/></svg>");
+  box-shadow:inset 0 0 12px rgba(139,44,44,.3), 0 0 12px rgba(196,69,69,.4);
+}
+.gap-select:disabled{
+  cursor:not-allowed;
+  opacity:.95;
+}
+
+/* Стилизация раскрытого списка (option-ов) */
+.gap-select option{
+  background:#1a1410;
+  color:var(--parch);
+  font-family:'Cormorant Garamond',serif;
+  font-size:15px;
+  font-style:italic;
+  padding:8px 12px;
+  letter-spacing:0;
+}
+.gap-select option:checked{
+  background:var(--gold) !important;
+  color:var(--ink) !important;
+  font-weight:600;
+}
+.gap-select option:hover{
+  background:rgba(201,169,110,.3);
+}
+.gap-select option[value=""]{
+  color:var(--gold-dark);
+  font-style:italic;
+}
+
+.selection-grid{display:grid;gap:12px;width:100%}
+.selection-grid.dragons{grid-template-columns:repeat(2,1fr)}
+.selection-grid.signets{grid-template-columns:repeat(3,1fr)}
+.select-card{background:linear-gradient(180deg,rgba(244,232,208,.06),rgba(244,232,208,.02));border:1px solid var(--gold-dark);border-radius:3px;padding:14px;cursor:pointer;text-align:center;transition:all .3s ease;position:relative;overflow:hidden}
+.select-card:hover{background:rgba(201,169,110,.12);border-color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.5),0 0 16px rgba(201,169,110,.2)}
+.select-card.selected{background:rgba(201,169,110,.2);border-color:var(--gold-bright);box-shadow:0 0 24px rgba(232,201,137,.5)}
+.select-card .sigil{width:60px;height:60px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;color:var(--gold)}
+.select-card .sigil svg{width:100%;height:100%}
+.select-card.selected .sigil{color:var(--gold-bright);filter:drop-shadow(0 0 8px rgba(232,201,137,.6))}
+.select-card .name{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:var(--gold-bright);text-transform:uppercase;margin-bottom:4px}
+.select-card .desc{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--parch-dark);font-style:italic;line-height:1.3}
+.select-card .dragon-mini{width:90px;height:90px;margin:0 auto 6px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.6))}
+
+.choices-grid{display:flex;flex-direction:column;gap:10px}
+.choice-btn{background:linear-gradient(180deg,rgba(244,232,208,.06),rgba(244,232,208,.02));border:1px solid var(--gold-dark);border-left:4px solid var(--gold-dark);border-radius:2px;padding:14px 18px;font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--parch);cursor:pointer;text-align:left;transition:all .25s ease;display:flex;gap:14px;align-items:flex-start}
+.choice-btn:hover:not(:disabled){background:rgba(201,169,110,.12);border-color:var(--gold);border-left-color:var(--gold-bright);transform:translateX(3px)}
+.choice-btn:disabled{opacity:.4;cursor:not-allowed}
+.choice-btn .label{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold-bright);padding:3px 8px;border:1px solid var(--gold);border-radius:2px;flex-shrink:0;white-space:nowrap}
+.choice-btn .label.defiant{color:#ff9b6e;border-color:#ff9b6e}
+.choice-btn .label.humble{color:#9ec0ff;border-color:#9ec0ff}
+.choice-btn .label.personal{color:#ff8fb1;border-color:#ff8fb1}
+.choice-btn .label.formal{color:#9ec0ff;border-color:#9ec0ff}
+.choice-btn .text{flex:1;font-style:italic;line-height:1.4}
+
+.foot{padding:14px 36px 18px;border-top:1px solid rgba(201,169,110,.3);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-shrink:0;background:linear-gradient(0deg,rgba(0,0,0,.4),transparent);flex-wrap:wrap}
+.foot-hint{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--parch-dark);opacity:.85;flex:1;min-width:200px}
+.foot-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+.btn{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:11px 22px;background:transparent;border:1px solid var(--gold);color:var(--gold-bright);cursor:pointer;transition:all .25s ease;border-radius:2px;position:relative;overflow:hidden}
+.btn:hover:not(:disabled){background:var(--gold);color:var(--ink);box-shadow:0 0 20px rgba(201,169,110,.5)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+.btn.primary{background:rgba(201,169,110,.15);border-width:2px}
+.btn.signet{border-color:#a78bfa;color:#c4b5fd}
+.btn.signet:hover:not(:disabled){background:#7c5fc0;color:#fff;box-shadow:0 0 24px rgba(167,139,250,.6)}
+.btn.signet.used{opacity:.4;border-color:var(--gold-dark);color:var(--gold-dark)}
+
+.timer-bar-wrap{width:100%;height:4px;background:rgba(0,0,0,.5);border-radius:2px;overflow:hidden;margin-bottom:12px}
+.timer-bar{height:100%;background:linear-gradient(90deg,var(--gold-bright),var(--gold));transition:width .2s linear;box-shadow:0 0 8px rgba(201,169,110,.6)}
+.timer-bar.warn{background:linear-gradient(90deg,#ffa050,#c44545)}
+
+#intro-screen{position:fixed;inset:0;z-index:1000;background:var(--ink-deep);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;opacity:1;transition:opacity 1.5s ease}
+#intro-screen.fading{opacity:0;pointer-events:none}
+.intro-text{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.4vw,26px);line-height:1.8;color:var(--parch);max-width:780px;text-align:center;font-style:italic;min-height:6em}
+.intro-text::after{content:'▌';color:var(--gold);animation:cursorBlink .8s infinite;margin-left:4px}
+.intro-text.done::after{display:none}
+.intro-continue{margin-top:40px;opacity:0;transition:opacity .8s ease}
+.intro-continue.visible{opacity:1}
+
+#final-screen{display:none;flex-direction:column;align-items:center;gap:18px;padding:30px 20px;text-align:center}
+#final-screen.active{display:flex}
+.final-emblem{font-size:54px;filter:drop-shadow(0 0 20px rgba(201,169,110,.5));margin-bottom:6px;animation:emblemPulse 2.4s ease-in-out infinite}
+@keyframes emblemPulse{0%,100%{filter:drop-shadow(0 0 20px rgba(201,169,110,.5))}50%{filter:drop-shadow(0 0 36px rgba(232,201,137,.9))}}
+.final-title{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(20px,2.6vw,28px);letter-spacing:5px;color:var(--gold-bright);text-shadow:0 0 24px rgba(201,169,110,.5)}
+.final-stats{display:grid;grid-template-columns:auto 1fr;gap:8px 24px;margin:14px 0;font-family:'Cinzel',serif;font-size:14px;letter-spacing:1.5px;text-align:left}
+.final-stats .lbl{color:var(--gold);text-transform:uppercase;font-size:12px}
+.final-stats .val{color:var(--parch);font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic}
+.final-stats .val.honor{color:var(--gold-bright)}
+.final-stats .val.verdict{color:var(--gold-bright);font-weight:600;letter-spacing:2px}
+.final-stats .val.verdict.failed{color:var(--red-bright)}
+.final-stats .val.verdict.disappointed{color:#ffb060}
+.final-stats .val.bond-romance{color:#ff8fb1}
+.final-verdict-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(16px,1.8vw,19px);color:var(--parch);max-width:640px;line-height:1.6;padding:18px 26px;background:rgba(0,0,0,.4);border-left:3px solid var(--gold);border-right:3px solid var(--gold);border-radius:2px;margin:10px 0}
+.final-verdict-sign{font-family:'Cinzel',serif;font-size:13px;letter-spacing:2px;color:var(--gold);margin-top:8px}
+
+.float-feedback{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Cinzel',serif;font-size:32px;font-weight:700;letter-spacing:4px;color:var(--gold-bright);text-shadow:0 0 30px rgba(232,201,137,.8);z-index:500;pointer-events:none;animation:floatFade 1.4s ease-out forwards}
+.float-feedback.minus{color:var(--red-bright);text-shadow:0 0 30px rgba(196,69,69,.8)}
+@keyframes floatFade{0%{opacity:0;transform:translate(-50%,-40%) scale(.7)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
+
+#signet-overlay{position:fixed;inset:0;background:rgba(10,8,6,.92);z-index:600;display:none;align-items:center;justify-content:center;padding:30px}
+#signet-overlay.active{display:flex;animation:overlayIn .5s ease}
+@keyframes overlayIn{from{opacity:0}to{opacity:1}}
+.signet-cast-box{background:linear-gradient(180deg,rgba(30,20,40,.95),rgba(15,10,25,.95));border:2px solid #a78bfa;border-radius:4px;padding:30px 40px;max-width:520px;text-align:center;box-shadow:0 0 60px rgba(167,139,250,.5);animation:signetPulse 2s ease-in-out infinite}
+@keyframes signetPulse{0%,100%{box-shadow:0 0 60px rgba(167,139,250,.5)}50%{box-shadow:0 0 100px rgba(167,139,250,.8)}}
+.signet-cast-title{font-family:'Cinzel',serif;font-weight:700;font-size:18px;letter-spacing:5px;color:#c4b5fd;margin-bottom:14px;text-shadow:0 0 16px rgba(167,139,250,.6)}
+.signet-cast-desc{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--parch);line-height:1.5;margin-bottom:20px}
+.signet-cast-cost{font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;color:var(--red-bright);margin-bottom:20px}
+.signet-cast-buttons{display:flex;gap:12px;justify-content:center}
+
+.phase-wrap{display:none;flex-direction:column;gap:18px;animation:phaseIn .6s ease}
+.phase-wrap.active{display:flex}
+@keyframes phaseIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeInSimple .5s ease}
+@keyframes fadeInSimple{from{opacity:0}to{opacity:1}}
+
+@media (max-width:720px){
+  .head{padding:14px 18px;flex-direction:column;align-items:flex-start;gap:10px}
+  .content{padding:18px 18px}
+  .foot{padding:12px 18px}
+  .options-grid{grid-template-columns:1fr}
+  .selection-grid.dragons,.selection-grid.signets{grid-template-columns:1fr 1fr}
+  .comms-portrait{width:60px;height:60px}
+}
+</style>
+</head>
+<body>
+
+<div id="sky-bg"></div>
+<img id="pov-dragon" alt="" />
+
+<!-- ============ INTRO ============ -->
+<div id="intro-screen">
+  <div class="intro-text" id="intro-text"></div>
+  <button class="btn primary intro-continue" id="intro-continue">⚔ Enter the War Games ⚔</button>
+</div>
+
+<!-- ============ MAIN CARD ============ -->
+<div class="card-wrap">
+<div class="card">
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
+
+  <div class="head">
+    <div class="head-left">
+      <div class="timer-box"><span class="icon">⏱</span><span id="timer-val">00:00</span></div>
+      <div class="hp-box" id="hp-box"><span class="icon">❤️</span><span class="value" id="hp-val">100</span></div>
+      <div class="honor-box"><span class="icon">🏅</span><span class="value" id="honor-val">0</span></div>
+    </div>
+    <div class="phase-progress" id="phase-progress">
+      <span class="step" data-phase="0">0</span><span class="sep">·</span>
+      <span class="step" data-phase="1">I</span><span class="sep">·</span>
+      <span class="step" data-phase="2">II</span><span class="sep">·</span>
+      <span class="step" data-phase="3">III</span><span class="sep">·</span>
+      <span class="step" data-phase="4">IV</span>
+    </div>
+  </div>
+
+  <div class="content" id="content"></div>
+
+  <div class="foot">
+    <div class="foot-hint" id="foot-hint">Awaiting orders...</div>
+    <div class="foot-actions" id="foot-actions"></div>
+  </div>
+</div>
+</div>
+
+<!-- ============ SIGNET OVERLAY ============ -->
+<div id="signet-overlay">
+  <div class="signet-cast-box">
+    <div class="signet-cast-title" id="signet-title">SIGNET ABILITY</div>
+    <div class="signet-cast-desc" id="signet-desc"></div>
+    <div class="signet-cast-cost" id="signet-cost">⚠ ONE USE ONLY</div>
+    <div class="signet-cast-buttons">
+      <button class="btn" id="signet-cancel">Cancel</button>
+      <button class="btn signet primary" id="signet-confirm">Channel Power</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   FOURTH WING QUEST · SCENE 5 · WAR GAMES (FINAL)
+   ============================================================ */
+
+// ===== STATE =====
+const STATE = {
+  hp: 100,
+  honor: 0,
+  startTime: null,
+  timerInterval: null,
+  currentPhase: 0,
+  signetUsed: false,
+  dragon: null,
+  signet: null,
+  speakingChoice: null,
+  phase4ReadingCorrect: false,
+  romanceFlag: false,        // ← Chosen in Phase 4 finale
+  qfCorrect: 0,
+  qfTotal: 0
+};
+
+// ===== ASSETS =====
+const AUDIO_BASE = 'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/';
+
+const ASSETS = {
+  bg: {
+    dawn:   'https://i.yapx.ru/du29L.jpg',
+    gorge:  'https://i.yapx.ru/du29J.png',
+    sunset: 'https://i.yapx.ru/du29I.jpg',
+    dusk:   'https://i.yapx.ru/du29H.jpg'
+  },
+  portraits: {
+    imogen:   'https://i.yapx.ru/du3F1.png',
+    rhiannon: 'https://i.yapx.ru/du3F4.png',
+    violet:   'https://i.yapx.ru/du3F6.png',
+    ridoc:    'https://i.yapx.ru/du3F2.png',
+    caeden:   'https://i.yapx.ru/du3F8.png'
+  },
+  audio: {
+    imogen:    AUDIO_BASE + 'imogen-briefing.mp3',
+    rhiannon:  AUDIO_BASE + 'rhiannon.mp3',
+    violet:    AUDIO_BASE + 'violet.mp3',
+    ridoc:     AUDIO_BASE + 'ridoc.mp3',
+    caeden:    AUDIO_BASE + 'caeden.mp3',
+    growl:     AUDIO_BASE + 'dragon-studio-dragon-growl-364483.mp3',
+    wings:     AUDIO_BASE + 'dragon-studio-dragon-flapping-wings-364476.mp3'
+  }
+};
+
+// ===== INTRO =====
+const INTRO_LINES = [
+  "Six months have passed since the Threshing.",
+  "Your dragon's heartbeat echoes in your chest. You have learned to fly. To fight. To survive.",
+  "Today, at dawn, the War Games begin.",
+  "This is not a drill. Honor is earned in the sky — or lost forever."
+];
+
+// ===== DRAGONS (canon-styled, with combat bonuses) =====
+const DRAGONS = [
+  {
+    id:'vorrath',
+    name:'VORRATH',
+    desc:'Black scales · creative tactics earn extra honor',
+    img:'https://i.yapx.ru/du3BH.png',
+    bonus:{ honorMul:1.5, timer:0, hp:0, dmgMul:1.0 },
+    bonusText:'+50% honor for bold choices'
+  },
+  {
+    id:'taevin',
+    name:'TAEVIN',
+    desc:'Blue scales · swift mind, sharper reflexes',
+    img:'https://i.yapx.ru/du3BE.png',
+    bonus:{ honorMul:1.0, timer:+2, hp:0, dmgMul:1.0 },
+    bonusText:'+2 sec on Quick-fire timer'
+  },
+  {
+    id:'caorragh',
+    name:'CAORRAGH',
+    desc:'Red scales · ferocious, but reckless',
+    img:'https://i.yapx.ru/du3BF.png',
+    bonus:{ honorMul:1.0, timer:0, hp:-10, dmgMul:1.5 },
+    bonusText:'+50% damage dealt · –10 HP start'
+  },
+  {
+    id:'fealath',
+    name:'FEALATH',
+    desc:'Green scales · steadfast and protective',
+    img:'https://i.yapx.ru/du3BG.png',
+    bonus:{ honorMul:1.0, timer:-2, hp:+20, dmgMul:1.0 },
+    bonusText:'+20 HP start · –2 sec on timer'
+  }
+];
+
+// ===== SIGNETS (6 canon abilities) =====
+const SIGNETS = [
+  {
+    id:'memory',
+    name:'MEMORY READING',
+    desc:'Peek the correct answer for 1 second',
+    icon:`<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2"><path d="M30 8 C18 8 12 18 12 28 C12 38 18 50 30 50 C42 50 48 38 48 28 C48 18 42 8 30 8 Z"/><path d="M22 24 Q30 18 38 24 M22 32 Q30 38 38 32"/><circle cx="30" cy="28" r="4" fill="currentColor"/></svg>`,
+    effect:'peek'
+  },
+  {
+    id:'distance',
+    name:'DISTANCE WIELDING',
+    desc:'Skip one question without penalty',
+    icon:`<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="30" r="4" fill="currentColor"/><path d="M22 30 L42 30 M36 24 L42 30 L36 36"/></svg>`,
+    effect:'skip'
+  },
+  {
+    id:'summoning',
+    name:'SUMMONING',
+    desc:'Summon focus — gain +10 seconds',
+    icon:`<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2"><circle cx="30" cy="30" r="20"/><path d="M30 14 L30 30 L40 36"/></svg>`,
+    effect:'time'
+  },
+  {
+    id:'warding',
+    name:'WARDING',
+    desc:'Shield yourself from one wrong answer',
+    icon:`<svg viewBox="0 0 60 60" fill="currentColor"><path d="M30 6 L48 14 L46 36 Q42 48 30 54 Q18 48 14 36 L12 14 Z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M22 28 L28 34 L40 22" stroke="currentColor" stroke-width="3" fill="none"/></svg>`,
+    effect:'shield'
+  },
+  {
+    id:'shadow',
+    name:'SHADOW WIELDING',
+    desc:'Cloak in shadow — eliminate 2 wrong options',
+    icon:`<svg viewBox="0 0 60 60" fill="currentColor"><path d="M30 5 L48 20 L42 50 L18 50 L12 20 Z" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="30" cy="32" r="8"/></svg>`,
+    effect:'fifty'
+  },
+  {
+    id:'mending',
+    name:'MENDING',
+    desc:'Heal your wounds — restore +15 HP',
+    icon:`<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2"><path d="M30 12 L30 48 M12 30 L48 30" stroke-width="4"/><circle cx="30" cy="30" r="20"/></svg>`,
+    effect:'heal'
+  }
+];
+
+// ===== PHASE 1: BRIEFING — IMOGEN — Reading =====
+const PHASE1 = {
+  npc:{ name:'IMOGEN CARDULO', role:'Tactical Officer · Fourth Wing', portrait:ASSETS.portraits.imogen },
+  intro:"Listen up, riders. War Games begin in five minutes. Your squad has been assigned the south flank — Athebyne ridge.",
+  audioKey:'imogen',
+  tactical:`<strong>WAR GAMES BRIEFING — DAY 1, DAWN</strong><br><br>
+    Your objective is simple: <strong>reach the ancient outpost</strong> at Athebyne <strong>before sundown</strong> without being intercepted. Two enemy wings are circling that ridge right now. You will be outnumbered.<br><br>
+    Don't try to be a hero. <strong>Stay with your formation.</strong> Follow your dragon's instincts — they've done this longer than you've been alive.<br><br>
+    And cadet — <strong>if you fall, your dragon falls with you.</strong> Don't forget that. Mount up.`,
+  questions:[
+    {
+      q:'What is the squad\'s primary objective?',
+      options:[
+        'To destroy both enemy wings at the ridge',
+        'To reach the Athebyne outpost before sundown',
+        'To split formation and confuse the enemy',
+        'To wait at base until reinforcements arrive'
+      ],
+      correct:1, creative:false
+    },
+    {
+      q:'According to Imogen, why should you trust your dragon\'s instincts?',
+      options:[
+        'Because dragons cannot be wounded',
+        'Because they outrank you in the wing',
+        'Because they have more experience than you',
+        'Because they cannot make mistakes'
+      ],
+      correct:2, creative:false
+    },
+    {
+      q:'What does "if you fall, your dragon falls with you" mean?',
+      options:[
+        'Your dragon will protect you no matter what',
+        'You and your dragon share the same fate — be careful',
+        'Dragons cannot fly without riders',
+        'You must dismount if you are injured'
+      ],
+      correct:1, creative:true   // recognizing the bond = creative
+    }
+  ]
+};
+
+// ===== PHASE 2: APPROACH — RHIANNON — Listening =====
+const PHASE2 = {
+  npc:{ name:'RHIANNON MATTHIAS', role:'Wingsister · Trusted Friend', portrait:ASSETS.portraits.rhiannon },
+  intro:"…I can see you on my left! The gorge narrows ahead — listen carefully, I won't repeat this.",
+  audioKey:'rhiannon',
+  // Gaps: [[id|correct|opt1,opt2,opt3]]
+  listeningText:`Stay tight to the [[1|eastern|eastern,western,northern]] wall as we enter the gorge. The wind shifts hard near the cliffs — don't let it push you out.<br><br>
+    Tairn picked up two heat signatures above the [[2|second|first,second,third]] ridge. I'm not sure if they're ours, so eyes up.<br><br>
+    Hold your altitude and <em>wait</em> for my signal — whatever you do, do <strong>not</strong> [[3|break formation|break formation,fire first,turn back]] early. We move together, or we don't move at all.<br><br>
+    If anything goes wrong, [[4|fall back|fall back,charge in,split up]] to the eastern ridge and regroup. Stay sharp.`
+};
+
+// ===== PHASE 3: ENGAGE — VIOLET + RIDOC — Quick-fire =====
+const PHASE3 = {
+  intro:{
+    npc:{ name:'VIOLET SORRENGAIL', role:'Lightning Wielder · Ally', portrait:ASSETS.portraits.violet },
+    text:"INCOMING — on your six! Two riders coming in fast! Bank LEFT and dive — NOW! Trust your dragon — GO!",
+    audioKey:'violet'
+  },
+  questions:[
+    {
+      npc:{ name:'VIOLET SORRENGAIL', role:'Lightning Wielder', portrait:ASSETS.portraits.violet },
+      audioKey:'',
+      q:'Enemy closing fast! "Bank LEFT — your dragon ____ around the cliff!" Choose the correct verb:',
+      options:['pulls','is pulling','pulled','will have pulled'],
+      correct:1, creative:false
+    },
+    {
+      npc:{ name:'RIDOC GAMLYN', role:'Wingmate · Ice Wielder', portrait:ASSETS.portraits.ridoc },
+      audioKey:'ridoc',
+      q:'"Well, that escalated quickly." Pick the phrasal verb — to suddenly avoid a hit, you must ____:',
+      options:['pull up','give in','run out','look up'],
+      correct:0, creative:false
+    },
+    {
+      npc:{ name:'VIOLET SORRENGAIL', role:'Lightning Wielder', portrait:ASSETS.portraits.violet },
+      audioKey:'',
+      q:'Defensive maneuver! "We must ____ the attack!" — pick the correct form:',
+      options:['avoiding','to avoid','avoid','avoided'],
+      correct:2, creative:false
+    },
+    {
+      npc:{ name:'RIDOC GAMLYN', role:'Wingmate · Ice Wielder', portrait:ASSETS.portraits.ridoc },
+      audioKey:'',
+      q:'"If we die today, just know I was always your favourite." Pick the synonym for "exhausted":',
+      options:['eager','drained','curious','calm'],
+      correct:1, creative:false
+    },
+    {
+      npc:{ name:'VIOLET SORRENGAIL', role:'Lightning Wielder', portrait:ASSETS.portraits.violet },
+      audioKey:'',
+      q:'They\'re retreating! "We ____ the ridge!" — choose the BEST verb:',
+      options:['lost','held','dropped','missed'],
+      correct:1, creative:true   // holding the ridge = bold tactic
+    }
+  ]
+};
+
+// ===== PHASE 4: JUDGMENT — CAEDEN =====
+const PHASE4 = {
+  npc:{ name:'CAEDEN AURELIS', role:'The Crimson Rider · Adjudicator', portrait:ASSETS.portraits.caeden },
+  audioKey:'caeden',
+  intro:"You made it back. Few do, on their first War Games. I watched you out there. Your dragon trusted you — and you didn't waste that trust.",
+  question:"You held your wing together when it counted. That's not something they teach at Basgiath — that's something you either have, or you don't. Tell me, rider — what guided your choices up there?",
+  choices:[
+    {
+      id:'honorable',
+      label:'HONORABLE',
+      text:'"My wing came first, sir. A rider who abandons their squad isn\'t worthy of a dragon."',
+      honorDelta:+10, hpDelta:0, creative:false,
+      response:"Spoken like someone who understands what the bond truly means."
+    },
+    {
+      id:'defiant',
+      label:'DEFIANT',
+      text:'"I trusted my instincts — and my dragon\'s. Rules are written by riders who never flew the south flank."',
+            honorDelta:+5, hpDelta:0, creative:true,
+      response:"Bold. Reckless. But the sky doesn't reward caution — and neither do I."
+    },
+    {
+      id:'humble',
+      label:'HUMBLE',
+      text:'"Honestly? I just tried not to die, sir. The rest was Tairn — my dragon — keeping me alive."',
+      honorDelta:+3, hpDelta:0, creative:false,
+      response:"Humility. Rare in a first-year. The bond will only deepen if you remember that."
+    }
+  ],
+  reading:{
+    intro:"One last thing. Before you're dismissed — read this. Carefully.",
+    text:`<strong>HONOR COUNCIL — STATEMENT OF RECORD</strong><br><br>
+    "A rider's worth is not measured by victories alone, but by the choices made when no one is watching. The Council recognizes that <strong>discipline without compassion is tyranny</strong>, and compassion without discipline is chaos. The true rider walks the edge between them — and falls neither way."`,
+    q:'According to the Council, what defines a true rider?',
+    options:[
+      'Always following orders, no matter what',
+      'Always choosing compassion over orders',
+      'Balancing discipline and compassion without falling into either extreme',
+      'Winning battles at any cost'
+    ],
+    correct:2
+  },
+  // Final Romance choice — appears AFTER reading is answered
+  romanceChoices:[
+    {
+      id:'formal',
+      label:'FORMAL',
+      text:'"Thank you, Adjudicator."',
+      romance:false,
+      response:"*He nods once, the corner of his mouth tightening into something that isn't quite a smile.* \"Sleep well, cadet.\" *He turns and walks toward the fortress, his crimson cloak catching the last light of the sun.*"
+    },
+    {
+      id:'personal',
+      label:'PERSONAL',
+      text:'"Will I see you again, Caeden?"',
+      romance:true,
+      response:"*He pauses. Turns back slowly.* \"Caeden.\" *He repeats it, as if testing the sound of his own name in your voice.* \"Yes. You will. Find me after the Recognition Ceremony. We have… much to discuss.\""
+    }
+  ]
+};
+
+// ============================================================
+// AUDIO HELPERS
+// ============================================================
+let currentAudio = null;
+function playAudio(src){
+  if(!src) return;
+  stopAudio();
+  try{
+    currentAudio = new Audio(src);
+    currentAudio.volume = 0.85;
+    currentAudio.play().catch(()=>{});
+  }catch(e){}
+}
+function stopAudio(){
+  if(currentAudio){
+    try{ currentAudio.pause(); }catch(e){}
+    currentAudio = null;
+  }
+}
+function playSfx(src, vol=0.5){
+  if(!src) return;
+  try{
+    const a = new Audio(src);
+    a.volume = vol;
+    a.play().catch(()=>{});
+  }catch(e){}
+}
+
+// ============================================================
+// TYPING EFFECT
+// ============================================================
+function typeText(el, text, speed=24, callback){
+  el.classList.remove('done');
+  el.innerHTML = '';
+  let i = 0;
+  const tick = ()=>{
+    if(i < text.length){
+      if(text[i] === '<'){
+        const end = text.indexOf('>', i);
+        el.innerHTML += text.slice(i, end+1);
+        i = end + 1;
+      } else {
+        el.innerHTML += text[i];
+        i++;
+      }
+      setTimeout(tick, speed);
+    } else {
+      el.classList.add('done');
+      if(callback) callback();
+    }
+  };
+  tick();
+}
+
+// ============================================================
+// FLOAT FEEDBACK
+// ============================================================
+function floatFeedback(text, isMinus=false){
+  const el = document.createElement('div');
+  el.className = 'float-feedback' + (isMinus ? ' minus' : '');
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1400);
+}
+
+// ============================================================
+// HP / HONOR
+// ============================================================
+function changeHP(delta){
+  STATE.hp = Math.max(0, Math.min(120, STATE.hp + delta));
+  document.getElementById('hp-val').textContent = STATE.hp;
+  document.getElementById('hp-box').classList.toggle('low', STATE.hp <= 30);
+  if(delta !== 0) floatFeedback((delta>0?'+':'') + delta + ' HP', delta<0);
+}
+function changeHonor(delta, isCreative=false){
+  // Apply Vorrath bonus to creative choices
+  if(isCreative && STATE.dragon === 'vorrath' && delta > 0){
+    delta = Math.round(delta * 1.5);
+  }
+  STATE.honor = Math.max(0, STATE.honor + delta);
+  document.getElementById('honor-val').textContent = STATE.honor;
+  if(delta !== 0) floatFeedback((delta>0?'+':'') + delta + ' HONOR', delta<0);
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+function startTimer(){
+  STATE.startTime = Date.now();
+  STATE.timerInterval = setInterval(()=>{
+    const elapsed = Math.floor((Date.now() - STATE.startTime) / 1000);
+    const m = String(Math.floor(elapsed/60)).padStart(2,'0');
+    const s = String(elapsed%60).padStart(2,'0');
+    document.getElementById('timer-val').textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+// ============================================================
+// PHASE PROGRESS / BACKGROUND / DRAGON
+// ============================================================
+function updatePhaseProgress(phase){
+  document.querySelectorAll('.phase-progress .step').forEach(el=>{
+    const p = parseInt(el.dataset.phase);
+    el.classList.remove('active','done');
+    if(p < phase) el.classList.add('done');
+    else if(p === phase) el.classList.add('active');
+  });
+}
+function setBackground(key){
+  const bg = document.getElementById('sky-bg');
+  if(ASSETS.bg[key]) bg.style.backgroundImage = `url('${ASSETS.bg[key]}')`;
+}
+function showDragon(dragonId){
+  const el = document.getElementById('pov-dragon');
+  const d = DRAGONS.find(x=>x.id===dragonId);
+  if(d){
+    el.src = d.img;
+    el.classList.add('visible');
+  }
+}
+function hideDragon(){
+  document.getElementById('pov-dragon').classList.remove('visible');
+}
+
+// ============================================================
+// COMMS PANEL
+// ============================================================
+function buildCommsPanel({npc, text, urgent=false, formal=false, audioKey='', onDone}){
+  const panel = document.createElement('div');
+  panel.className = 'comms-panel';
+  if(urgent) panel.classList.add('urgent');
+  if(formal) panel.classList.add('formal');
+
+  panel.innerHTML = `
+    <div class="comms-portrait"><img src="${npc.portrait}" alt="${npc.name}" onerror="this.style.display='none'"/></div>
+    <div class="comms-body">
+      <div class="comms-header">
+        <span class="comms-name">${npc.name}</span>
+        <span class="comms-role">${npc.role}</span>
+        <button class="comms-audio-btn" title="Play voice">🔊</button>
+      </div>
+      <div class="comms-text"></div>
+    </div>
+  `;
+
+  const audioSrc = ASSETS.audio[audioKey] || '';
+  const audioBtn = panel.querySelector('.comms-audio-btn');
+  const txt = panel.querySelector('.comms-text');
+
+  audioBtn.onclick = ()=>{
+    if(audioSrc){
+      playAudio(audioSrc);
+      audioBtn.classList.add('playing');
+      setTimeout(()=>audioBtn.classList.remove('playing'), 4000);
+    }
+  };
+
+  if(audioSrc){
+    setTimeout(()=>{
+      playAudio(audioSrc);
+      audioBtn.classList.add('playing');
+      setTimeout(()=>audioBtn.classList.remove('playing'), 4000);
+    }, 400);
+  }
+
+  setTimeout(()=>{
+    typeText(txt, text, 22, onDone);
+  }, 250);
+
+  return panel;
+}
+
+// ============================================================
+// CONTENT HELPERS
+// ============================================================
+function clearContent(){ document.getElementById('content').innerHTML = ''; }
+function setFooterHint(t){ document.getElementById('foot-hint').innerHTML = t; }
+function setFooterActions(html){ document.getElementById('foot-actions').innerHTML = html; }
+
+// ============================================================
+// INTRO CINEMATIC
+// ============================================================
+function runIntro(){
+  const introText = document.getElementById('intro-text');
+  const continueBtn = document.getElementById('intro-continue');
+  let i = 0;
+  const next = ()=>{
+    if(i >= INTRO_LINES.length){
+      continueBtn.classList.add('visible');
+      return;
+    }
+    typeText(introText, INTRO_LINES[i], 32, ()=>{
+      setTimeout(()=>{
+        i++;
+        if(i < INTRO_LINES.length){
+          introText.classList.remove('done');
+          introText.innerHTML = '';
+          setTimeout(next, 400);
+        } else {
+          continueBtn.classList.add('visible');
+        }
+      }, 1500);
+    });
+  };
+  setTimeout(next, 600);
+
+  continueBtn.onclick = ()=>{
+    document.getElementById('intro-screen').classList.add('fading');
+    setTimeout(()=>{
+      document.getElementById('intro-screen').style.display = 'none';
+      startTimer();
+      runPhase0();
+    }, 1500);
+  };
+}
+
+// ============================================================
+// PHASE 0 — PRE-FLIGHT CHECK
+// ============================================================
+function runPhase0(){
+  STATE.currentPhase = 0;
+  updatePhaseProgress(0);
+  setBackground('dawn');
+  clearContent();
+  setFooterHint('Choose your dragon and signet ability.');
+  setFooterActions('<button class="btn primary" id="phase0-next" disabled>Take Flight →</button>');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'phase-wrap active';
+  wrap.innerHTML = `
+    <h1 class="scene-title">⚔ THE WAR GAMES ⚔</h1>
+    <div class="divider"><span class="ornament">✦</span></div>
+    <h2 class="phase-title">Phase 0 · Pre-Flight Check</h2>
+    <p class="scene-subtitle">Six months of training. Now — confirm your bond.</p>
+
+    <div class="task-card">
+      <div class="task-label">Confirm Your Dragon</div>
+      <div class="selection-grid dragons" id="dragon-grid"></div>
+    </div>
+
+    <div class="task-card">
+      <div class="task-label">Confirm Your Signet Ability</div>
+      <div class="selection-grid signets" id="signet-grid"></div>
+    </div>
+  `;
+  document.getElementById('content').appendChild(wrap);
+
+  // Dragons
+  const dragonGrid = document.getElementById('dragon-grid');
+  DRAGONS.forEach(d=>{
+    const card = document.createElement('div');
+    card.className = 'select-card';
+    card.innerHTML = `
+      <img class="dragon-mini" src="${d.img}" alt="${d.name}" onerror="this.style.display='none'"/>
+      <div class="name">${d.name}</div>
+      <div class="desc">${d.desc}</div>
+      <div class="desc" style="color:var(--gold);font-size:11px;letter-spacing:1px;margin-top:6px">${d.bonusText}</div>
+    `;
+    card.onclick = ()=>{
+      document.querySelectorAll('#dragon-grid .select-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      STATE.dragon = d.id;
+      checkReady();
+    };
+    dragonGrid.appendChild(card);
+  });
+
+  // Signets
+  const signetGrid = document.getElementById('signet-grid');
+  SIGNETS.forEach(s=>{
+    const card = document.createElement('div');
+    card.className = 'select-card';
+    card.innerHTML = `
+      <div class="sigil">${s.icon}</div>
+      <div class="name">${s.name}</div>
+      <div class="desc">${s.desc}</div>
+    `;
+    card.onclick = ()=>{
+      document.querySelectorAll('#signet-grid .select-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      STATE.signet = s.id;
+      checkReady();
+    };
+    signetGrid.appendChild(card);
+  });
+
+  function checkReady(){
+    const btn = document.getElementById('phase0-next');
+    if(STATE.dragon && STATE.signet){
+      btn.disabled = false;
+      const d = DRAGONS.find(x=>x.id===STATE.dragon);
+      const s = SIGNETS.find(x=>x.id===STATE.signet);
+      setFooterHint(`Bonded with <strong>${d.name}</strong> · Signet: <strong>${s.name}</strong>`);
+    }
+  }
+
+  document.getElementById('phase0-next').onclick = ()=>{
+    // Apply dragon HP bonus
+    const d = DRAGONS.find(x=>x.id===STATE.dragon);
+    if(d.bonus.hp !== 0){
+      STATE.hp = 100 + d.bonus.hp;
+      document.getElementById('hp-val').textContent = STATE.hp;
+    }
+    showDragon(STATE.dragon);
+    playSfx(ASSETS.audio.growl, 0.4);
+    setTimeout(runPhase1, 900);
+  };
+}
+
+// ============================================================
+// PHASE 1 — BRIEFING (Imogen) — Reading
+// ============================================================
+function runPhase1(){
+  STATE.currentPhase = 1;
+  updatePhaseProgress(1);
+  setBackground('dawn');
+  clearContent();
+  setFooterHint('Read the briefing. Answer all three questions.');
+  setFooterActions('<button class="btn primary" id="phase1-next" disabled>Proceed to Approach →</button>');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'phase-wrap active';
+  wrap.innerHTML = `
+    <h2 class="phase-title">Phase I · Briefing at Basgiath</h2>
+    <div class="divider"><span class="ornament">✦</span></div>
+    <div id="phase1-comms"></div>
+    <div class="task-card" id="phase1-task" style="display:none">
+      <div class="task-label">Tactical Briefing</div>
+      <div class="tactical-text">${PHASE1.tactical}</div>
+      <div id="phase1-questions"></div>
+    </div>
+  `;
+  document.getElementById('content').appendChild(wrap);
+
+  const panel = buildCommsPanel({
+    npc:PHASE1.npc,
+    text:PHASE1.intro,
+    urgent:true,
+    audioKey:PHASE1.audioKey,
+    onDone:()=>{
+      setTimeout(()=>{
+        document.getElementById('phase1-task').style.display = 'block';
+        buildPhase1Questions();
+      }, 600);
+    }
+  });
+  document.getElementById('phase1-comms').appendChild(panel);
+}
+
+function buildPhase1Questions(){
+  const container = document.getElementById('phase1-questions');
+  let answered = 0;
+  const total = PHASE1.questions.length;
+
+  PHASE1.questions.forEach((q, idx)=>{
+    const block = document.createElement('div');
+    block.className = 'question-block fade-in';
+    block.innerHTML = `
+      <div class="question-text"><span class="qnum">Q${idx+1}.</span>${q.q}</div>
+      <div class="options-grid" data-q="${idx}"></div>
+    `;
+    container.appendChild(block);
+
+    const grid = block.querySelector('.options-grid');
+    q.options.forEach((opt, i)=>{
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.onclick = ()=>{
+        grid.querySelectorAll('.option-btn').forEach(b=>b.classList.add('disabled'));
+        if(i === q.correct){
+          btn.classList.add('correct');
+          changeHonor(+5, q.creative);
+        } else {
+          btn.classList.add('wrong');
+          changeHP(-10);
+          grid.querySelectorAll('.option-btn')[q.correct].classList.add('correct');
+        }
+        answered++;
+        if(answered === total){
+          document.getElementById('phase1-next').disabled = false;
+          setFooterHint('Briefing complete. Mount up.');
+        }
+      };
+      grid.appendChild(btn);
+    });
+  });
+
+  document.getElementById('phase1-next').onclick = ()=>{
+    playSfx(ASSETS.audio.wings, 0.4);
+    runPhase2();
+  };
+}
+
+// ============================================================
+// PHASE 2 — APPROACH (Rhiannon) — Listening gaps
+// ============================================================
+function runPhase2(){
+  STATE.currentPhase = 2;
+  updatePhaseProgress(2);
+  setBackground('gorge');
+  clearContent();
+  setFooterHint('Listen to Rhiannon. Fill in the gaps from memory.');
+  setFooterActions('<button class="btn primary" id="phase2-next" disabled>Engage the Enemy →</button>');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'phase-wrap active';
+  wrap.innerHTML = `
+    <h2 class="phase-title">Phase II · Approach the Gorge</h2>
+    <div class="divider"><span class="ornament">✦</span></div>
+    <div id="phase2-comms"></div>
+    <div class="task-card" id="phase2-task" style="display:none">
+      <div class="task-label">Mental Link — Rhiannon's Voice</div>
+      <div class="listening-text" id="listening-text"></div>
+    </div>
+  `;
+  document.getElementById('content').appendChild(wrap);
+
+  const panel = buildCommsPanel({
+    npc:PHASE2.npc,
+    text:PHASE2.intro,
+    audioKey:PHASE2.audioKey,
+    onDone:()=>{
+      setTimeout(()=>{
+        document.getElementById('phase2-task').style.display = 'block';
+        buildPhase2Listening();
+      }, 600);
+    }
+  });
+  document.getElementById('phase2-comms').appendChild(panel);
+}
+
+function buildPhase2Listening(){
+  const container = document.getElementById('listening-text');
+  // Более явный regex без вложенности
+  const gapRegex = /\[\[(\d+)\|([^|\]]+)\|([^\]]+)\]\]/g;
+  let html = PHASE2.listeningText;
+  const gaps = [];
+
+  console.log('[Phase2] Source text:', html.substring(0, 200));
+  console.log('[Phase2] Matches found:', html.match(gapRegex));
+
+  html = html.replace(gapRegex, (match, id, correct, optsStr)=>{
+    const opts = optsStr.split(',').map(o=>o.trim());
+    const shuffled = [...opts].sort(()=>Math.random()-0.5);
+    gaps.push({ id:parseInt(id), correct:correct.trim() });
+    const optionsHtml = shuffled.map(o=>`<option value="${o}">${o}</option>`).join('');
+    return `<select class="gap-select" data-gap-id="${id}" data-correct="${correct.trim()}"><option value="">— ? —</option>${optionsHtml}</select>`;
+  });
+
+  console.log('[Phase2] Gaps registered:', gaps.length);
+  container.innerHTML = html;
+
+  const totalGaps = gaps.length;
+  let filled = 0;
+  const answers = {};
+
+  const selects = container.querySelectorAll('.gap-select');
+  console.log('[Phase2] Select elements in DOM:', selects.length);
+
+  selects.forEach(sel=>{
+    sel.addEventListener('change', ()=>{
+      const id = sel.dataset.gapId;
+      const correct = sel.dataset.correct;
+      const val = sel.value;
+      if(!val) return;
+      if(answers[id] === undefined) filled++;
+      answers[id] = val;
+      sel.classList.remove('correct','wrong');
+      if(val === correct){
+        sel.classList.add('correct');
+        changeHonor(+4);
+      } else {
+        sel.classList.add('wrong');
+        changeHP(-5);
+      }
+      sel.disabled = true;
+
+      if(filled === totalGaps){
+        document.getElementById('phase2-next').disabled = false;
+        setFooterHint('Signal received. Ready to engage.');
+      }
+    });
+  });
+
+  document.getElementById('phase2-next').onclick = ()=>{
+    playSfx(ASSETS.audio.growl, 0.5);
+    runPhase3();
+  };
+}
+
+// ============================================================
+// PHASE 3 — ENGAGE (Violet + Ridoc) — Quick-fire
+// ============================================================
+let phase3State = {
+  qIndex:0,
+  timerInterval:null,
+  timeLeft:20,
+  signetActiveEffect:null,
+  shieldActive:false
+};
+
+function runPhase3(){
+  STATE.currentPhase = 3;
+  updatePhaseProgress(3);
+  setBackground('sunset');
+  clearContent();
+  setFooterHint('Quick-fire combat. Answer fast. Use your signet wisely.');
+  renderSignetButton();
+
+  const wrap = document.createElement('div');
+  wrap.className = 'phase-wrap active';
+  wrap.innerHTML = `
+    <h2 class="phase-title">Phase III · Engage the Enemy</h2>
+    <div class="divider"><span class="ornament">⚔</span></div>
+    <div id="phase3-intro-comms"></div>
+    <div id="phase3-arena" style="display:none">
+      <div class="task-card">
+        <div class="task-label" id="qf-label">Question 1 of 5</div>
+        <div class="timer-bar-wrap"><div class="timer-bar" id="qf-timer-bar"></div></div>
+        <div id="qf-comms"></div>
+        <div id="qf-question"></div>
+      </div>
+    </div>
+  `;
+  document.getElementById('content').appendChild(wrap);
+
+  const introComms = buildCommsPanel({
+    npc:PHASE3.intro.npc,
+    text:PHASE3.intro.text,
+    urgent:true,
+    audioKey:PHASE3.intro.audioKey,
+    onDone:()=>{
+      setTimeout(()=>{
+        document.getElementById('phase3-intro-comms').style.display = 'none';
+        document.getElementById('phase3-arena').style.display = 'block';
+        phase3State.qIndex = 0;
+        STATE.qfTotal = PHASE3.questions.length;
+        showPhase3Question();
+      }, 1000);
+    }
+  });
+  document.getElementById('phase3-intro-comms').appendChild(introComms);
+}
+
+function renderSignetButton(){
+  const signet = SIGNETS.find(s=>s.id===STATE.signet);
+  if(!signet) { setFooterActions(''); return; }
+  if(STATE.signetUsed){
+    setFooterActions(`<button class="btn signet used" disabled>✦ ${signet.name} (Used)</button>`);
+  } else {
+    setFooterActions(`<button class="btn signet" id="signet-btn">✦ ${signet.name}</button>`);
+    document.getElementById('signet-btn').onclick = openSignetOverlay;
+  }
+}
+
+function showPhase3Question(){
+  // Done?
+  if(phase3State.qIndex >= PHASE3.questions.length){
+    clearInterval(phase3State.timerInterval);
+    setTimeout(runPhase4, 600);
+    return;
+  }
+
+  const q = PHASE3.questions[phase3State.qIndex];
+  document.getElementById('qf-label').textContent = `Question ${phase3State.qIndex+1} of ${PHASE3.questions.length}`;
+
+  // Reset timer (with dragon bonus)
+  const d = DRAGONS.find(x=>x.id===STATE.dragon);
+  const baseTime = 20 + (d ? d.bonus.timer : 0);
+  phase3State.timeLeft = baseTime;
+  const bar = document.getElementById('qf-timer-bar');
+  bar.classList.remove('warn');
+  bar.style.width = '100%';
+
+  // Comms for the question
+  const commsContainer = document.getElementById('qf-comms');
+  commsContainer.innerHTML = '';
+  const panel = buildCommsPanel({
+    npc:q.npc,
+    text:q.q,
+    urgent:true,
+    audioKey:q.audioKey || ''
+  });
+  commsContainer.appendChild(panel);
+
+  // Options
+  const qDiv = document.getElementById('qf-question');
+  qDiv.innerHTML = `<div class="options-grid" id="qf-options"></div>`;
+  const grid = document.getElementById('qf-options');
+
+  q.options.forEach((opt, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.dataset.idx = i;
+    btn.onclick = ()=> answerPhase3(i, q);
+    grid.appendChild(btn);
+  });
+
+  // Apply pre-activated signet effect (if Memory/Shadow/Summoning was queued before question)
+  if(phase3State.signetActiveEffect){
+    applySignetEffect(phase3State.signetActiveEffect, grid, q.correct);
+    phase3State.signetActiveEffect = null;
+  }
+
+  // Start timer
+  clearInterval(phase3State.timerInterval);
+  const startTime = Date.now();
+  const initialTime = phase3State.timeLeft;
+  phase3State.timerInterval = setInterval(()=>{
+    const elapsed = (Date.now() - startTime) / 1000;
+    phase3State.timeLeft = Math.max(0, initialTime - elapsed);
+    const pct = (phase3State.timeLeft / baseTime) * 100;
+    bar.style.width = Math.min(100, pct) + '%';
+    if(phase3State.timeLeft < 7) bar.classList.add('warn');
+    if(phase3State.timeLeft <= 0){
+      clearInterval(phase3State.timerInterval);
+      grid.querySelectorAll('.option-btn').forEach(b=>b.classList.add('disabled'));
+      grid.querySelectorAll('.option-btn')[q.correct].classList.add('correct');
+      floatFeedback('TIMEOUT', true);
+      changeHP(-8);
+      setTimeout(()=>{
+        phase3State.qIndex++;
+        showPhase3Question();
+      }, 1300);
+    }
+  }, 100);
+}
+
+function answerPhase3(chosen, q){
+  clearInterval(phase3State.timerInterval);
+  const grid = document.getElementById('qf-options');
+  grid.querySelectorAll('.option-btn').forEach(b=>b.classList.add('disabled'));
+  const chosenBtn = grid.querySelector(`[data-idx="${chosen}"]`);
+
+  if(chosen === q.correct){
+    chosenBtn.classList.add('correct');
+    // Apply Caorragh damage multiplier to honor (treats as damage dealt)
+    const d = DRAGONS.find(x=>x.id===STATE.dragon);
+    let honorGain = 6;
+    if(d && d.bonus.dmgMul > 1) honorGain = Math.round(honorGain * d.bonus.dmgMul);
+    changeHonor(honorGain, q.creative);
+    STATE.qfCorrect++;
+  } else {
+    chosenBtn.classList.add('wrong');
+    grid.querySelector(`[data-idx="${q.correct}"]`).classList.add('correct');
+    if(phase3State.shieldActive){
+      // Warding signet blocks one wrong answer
+      floatFeedback('SHIELDED', false);
+      phase3State.shieldActive = false;
+      renderSignetButton();
+    } else {
+      changeHP(-12);
+    }
+  }
+
+  setTimeout(()=>{
+    phase3State.qIndex++;
+    showPhase3Question();
+  }, 1400);
+}
+
+// ============================================================
+// SIGNET LOGIC
+// ============================================================
+function openSignetOverlay(){
+  if(STATE.signetUsed) return;
+  const signet = SIGNETS.find(s=>s.id===STATE.signet);
+  document.getElementById('signet-title').textContent = '✦ ' + signet.name + ' ✦';
+  document.getElementById('signet-desc').textContent = signet.desc;
+  document.getElementById('signet-cost').textContent = '⚠ ONE USE ONLY';
+  document.getElementById('signet-overlay').classList.add('active');
+
+  document.getElementById('signet-cancel').onclick = ()=>{
+    document.getElementById('signet-overlay').classList.remove('active');
+  };
+  document.getElementById('signet-confirm').onclick = ()=>{
+    document.getElementById('signet-overlay').classList.remove('active');
+    castSignet(signet);
+  };
+}
+
+function castSignet(signet){
+  STATE.signetUsed = true;
+  floatFeedback('✦ ' + signet.name + ' ✦', false);
+
+  const grid = document.getElementById('qf-options');
+  const q = PHASE3.questions[phase3State.qIndex];
+
+  switch(signet.effect){
+    case 'peek':
+      // Memory Reading — flash correct answer for 1.2 sec
+      if(grid && q){
+        const correctBtn = grid.querySelectorAll('.option-btn')[q.correct];
+        correctBtn.classList.add('hinted');
+        setTimeout(()=>correctBtn.classList.remove('hinted'), 1200);
+      }
+      break;
+
+    case 'skip':
+      // Distance Wielding — skip current question with no penalty
+      clearInterval(phase3State.timerInterval);
+      if(grid) grid.querySelectorAll('.option-btn').forEach(b=>b.classList.add('disabled'));
+      floatFeedback('SKIPPED', false);
+      setTimeout(()=>{
+        phase3State.qIndex++;
+        showPhase3Question();
+      }, 800);
+      break;
+
+    case 'time':
+      // Summoning — +10 seconds
+      phase3State.timeLeft += 10;
+      floatFeedback('+10 SEC', false);
+      // Re-render bar will happen next tick automatically
+      break;
+
+    case 'shield':
+      // Warding — block next wrong answer
+      phase3State.shieldActive = true;
+      break;
+
+    case 'fifty':
+      // Shadow — eliminate 2 wrong options
+      if(grid && q){
+        const opts = Array.from(grid.querySelectorAll('.option-btn'));
+        const wrongs = opts.filter((b,i)=> i !== q.correct && !b.classList.contains('disabled'));
+        wrongs.sort(()=>Math.random()-0.5);
+        wrongs.slice(0,2).forEach(b=>b.classList.add('hidden-by-signet'));
+      }
+      break;
+
+    case 'heal':
+      // Mending — +15 HP
+      changeHP(+15);
+      break;
+  }
+
+  renderSignetButton();
+}
+
+// ============================================================
+// PHASE 4 — JUDGMENT (Caeden)
+// ============================================================
+function runPhase4(){
+  STATE.currentPhase = 4;
+  updatePhaseProgress(4);
+  setBackground('dusk');
+  clearContent();
+  setFooterHint('Stand before the Adjudicator. Speak truthfully.');
+  setFooterActions('');
+  hideDragon();
+
+  const wrap = document.createElement('div');
+  wrap.className = 'phase-wrap active';
+  wrap.innerHTML = `
+    <h2 class="phase-title">Phase IV · Judgment at Dusk</h2>
+    <div class="divider"><span class="ornament">⚖</span></div>
+    <div id="phase4-comms"></div>
+    <div class="task-card" id="phase4-task" style="display:none">
+      <div class="task-label">Caeden's Question</div>
+      <div class="tactical-text" id="phase4-question-text"></div>
+      <div class="task-label" style="margin-top:14px">Your Response</div>
+      <div class="choices-grid" id="phase4-choices"></div>
+    </div>
+    <div id="phase4-response" style="display:none"></div>
+    <div class="task-card" id="phase4-reading" style="display:none">
+      <div class="task-label">Honor Council — Statement</div>
+      <div class="tactical-text" id="phase4-reading-text"></div>
+      <div class="question-block">
+        <div class="question-text"><span class="qnum">Q.</span>${PHASE4.reading.q}</div>
+        <div class="options-grid" id="phase4-reading-options"></div>
+      </div>
+    </div>
+    <div id="phase4-romance" style="display:none"></div>
+    <div id="phase4-final-response" style="display:none"></div>
+  `;
+  document.getElementById('content').appendChild(wrap);
+
+  const introPanel = buildCommsPanel({
+    npc:PHASE4.npc,
+    text:PHASE4.intro,
+    formal:true,
+    audioKey:PHASE4.audioKey,
+    onDone:()=>{
+      setTimeout(()=>{
+        document.getElementById('phase4-task').style.display = 'block';
+        document.getElementById('phase4-question-text').textContent = PHASE4.question;
+        buildPhase4Choices();
+      }, 800);
+    }
+  });
+  document.getElementById('phase4-comms').appendChild(introPanel);
+}
+
+function buildPhase4Choices(){
+  const container = document.getElementById('phase4-choices');
+  container.innerHTML = '';
+  PHASE4.choices.forEach(choice=>{
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    const labelClass = choice.id === 'defiant' ? 'defiant' :
+                       choice.id === 'humble'  ? 'humble'  : '';
+    btn.innerHTML = `
+      <span class="label ${labelClass}">${choice.label}</span>
+      <span class="text">${choice.text}</span>
+    `;
+    btn.onclick = ()=> selectPhase4Choice(choice);
+    container.appendChild(btn);
+  });
+}
+
+function selectPhase4Choice(choice){
+  document.querySelectorAll('#phase4-choices .choice-btn').forEach(b=> b.disabled = true);
+  STATE.speakingChoice = choice.id;
+  if(choice.honorDelta) changeHonor(choice.honorDelta, choice.creative);
+  if(choice.hpDelta) changeHP(choice.hpDelta);
+
+  setTimeout(()=>{
+    const respDiv = document.getElementById('phase4-response');
+    respDiv.style.display = 'block';
+    respDiv.innerHTML = '';
+    const respPanel = buildCommsPanel({
+      npc:PHASE4.npc,
+      text:choice.response,
+      formal:true,
+      audioKey:'',
+      onDone:()=>{
+        setTimeout(buildPhase4Reading, 800);
+      }
+    });
+    respDiv.appendChild(respPanel);
+  }, 700);
+}
+
+function buildPhase4Reading(){
+  const card = document.getElementById('phase4-reading');
+  card.style.display = 'block';
+  document.getElementById('phase4-reading-text').innerHTML = PHASE4.reading.text;
+
+  const grid = document.getElementById('phase4-reading-options');
+  grid.innerHTML = '';
+
+  PHASE4.reading.options.forEach((opt, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = ()=>{
+      grid.querySelectorAll('.option-btn').forEach(b=>b.classList.add('disabled'));
+      if(i === PHASE4.reading.correct){
+        btn.classList.add('correct');
+        changeHonor(+10);
+        STATE.phase4ReadingCorrect = true;
+      } else {
+        btn.classList.add('wrong');
+        changeHP(-8);
+        grid.querySelectorAll('.option-btn')[PHASE4.reading.correct].classList.add('correct');
+        STATE.phase4ReadingCorrect = false;
+      }
+      setTimeout(buildPhase4Romance, 1100);
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function buildPhase4Romance(){
+  const wrap = document.getElementById('phase4-romance');
+  wrap.style.display = 'block';
+  wrap.innerHTML = `
+    <div class="task-card">
+      <div class="task-label">Final Words</div>
+      <div class="tactical-text">
+        <em>Caeden turns to leave. The light catches his crimson cloak. You have one chance to speak before he disappears into the fortress.</em>
+      </div>
+      <div class="task-label" style="margin-top:14px">Choose your parting words</div>
+      <div class="choices-grid" id="phase4-romance-choices"></div>
+    </div>
+  `;
+
+  const grid = document.getElementById('phase4-romance-choices');
+  PHASE4.romanceChoices.forEach(choice=>{
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    const labelClass = choice.id === 'personal' ? 'personal' : 'formal';
+    btn.innerHTML = `
+      <span class="label ${labelClass}">${choice.label}</span>
+      <span class="text">${choice.text}</span>
+    `;
+    btn.onclick = ()=> selectRomanceChoice(choice);
+    grid.appendChild(btn);
+  });
+}
+
+function selectRomanceChoice(choice){
+  document.querySelectorAll('#phase4-romance-choices .choice-btn').forEach(b=>b.disabled = true);
+  STATE.romanceFlag = choice.romance;
+  if(choice.romance) changeHonor(+3);
+
+  setTimeout(()=>{
+    const respDiv = document.getElementById('phase4-final-response');
+    respDiv.style.display = 'block';
+    respDiv.innerHTML = '';
+    const respPanel = buildCommsPanel({
+      npc:PHASE4.npc,
+      text:choice.response,
+      formal:true,
+      audioKey:'',
+      onDone:()=>{
+        setTimeout(()=>{
+          setFooterHint('The trial is complete. The Council deliberates...');
+          setFooterActions('<button class="btn primary" id="finish-btn">Receive Verdict →</button>');
+          document.getElementById('finish-btn').onclick = showFinalScreen;
+        }, 800);
+      }
+    });
+    respDiv.appendChild(respPanel);
+  }, 700);
+}
+
+// ============================================================
+// FINAL VERDICT
+// ============================================================
+function determineVerdict(){
+  const h = STATE.honor;
+  const hp = STATE.hp;
+
+  if(hp <= 0){
+    return {
+      key:'fallen',
+      title:'FALLEN IN BATTLE',
+      cssClass:'verdict failed',
+      emblem:'💀',
+      text:'"You did not return from the ridge, rider. Your dragon mourned, then took to the skies alone. The Council records your name in the Wall of the Lost. May your courage be remembered — and your mistakes studied."',
+      sign:'— Caeden Aurelis, Adjudicator'
+    };
+  }
+  if(h >= 75 && STATE.phase4ReadingCorrect && (STATE.speakingChoice === 'honorable' || STATE.speakingChoice === 'defiant')){
+    return {
+      key:'exemplar',
+      title:'EXEMPLAR OF THE FOURTH WING',
+      cssClass:'verdict',
+      emblem:'🏆',
+      text:'"You held your wing. You answered with honor. You understood the Council\'s balance. Few first-year riders earn the title of Exemplar — fewer still deserve it. Rise, rider. Your name is recorded in gold."',
+      sign:'— Caeden Aurelis, Adjudicator'
+    };
+  }
+  if(h >= 55){
+    return {
+      key:'commended',
+      title:'COMMENDED RIDER',
+      cssClass:'verdict',
+      emblem:'⚔',
+      text:'"You acquitted yourself well. The mistakes were honest, the courage real. The Council finds no fault worth pursuing today — but remember, rider: war does not grade on a curve. Train harder."',
+      sign:'— Caeden Aurelis, Adjudicator'
+    };
+  }
+  if(h >= 30){
+    return {
+      key:'reprimanded',
+      title:'REPRIMANDED',
+      cssClass:'verdict disappointed',
+      emblem:'⚠',
+      text:'"You survived. That is the lowest bar a rider can clear, and you barely cleared it. The Council expects improvement. The next trial will not be so forgiving."',
+      sign:'— Caeden Aurelis, Adjudicator'
+    };
+  }
+  return {
+    key:'dishonored',
+    title:'DISHONORED',
+    cssClass:'verdict failed',
+    emblem:'⚫',
+    text:'"You returned alive. That is all the Council can say in your favor. Your conduct today shamed the Wing. You will repeat the trial — or you will turn in your saddle."',
+    sign:'— Caeden Aurelis, Adjudicator'
+  };
+}
+
+function showFinalScreen(){
+  clearInterval(STATE.timerInterval);
+  stopAudio();
+
+  const verdict = determineVerdict();
+  const elapsed = Math.floor((Date.now() - STATE.startTime) / 1000);
+  const m = String(Math.floor(elapsed/60)).padStart(2,'0');
+  const s = String(elapsed%60).padStart(2,'0');
+
+  const dragon = DRAGONS.find(d=>d.id===STATE.dragon);
+  const signet = SIGNETS.find(s=>s.id===STATE.signet);
+
+  // Bond status
+  const bondStatus = STATE.romanceFlag
+    ? '<span style="color:#ff8fb1">❤ Crimson Tie — A bond unspoken</span>'
+    : '<span style="color:#9ec0ff">⚖ Adjudicator — Respect, nothing more</span>';
+
+  clearContent();
+  setFooterHint('');
+  setFooterActions('<button class="btn primary" id="end-btn">⚔ End of Trial ⚔</button>');
+
+  const wrap = document.createElement('div');
+  wrap.id = 'final-screen';
+  wrap.className = 'active';
+  wrap.innerHTML = `
+    <div class="final-emblem">${verdict.emblem}</div>
+    <h1 class="scene-title">VERDICT OF THE COUNCIL</h1>
+    <div class="divider"><span class="ornament">✦</span></div>
+
+    <div class="final-stats">
+      <div class="lbl">Verdict</div>
+      <div class="val ${verdict.cssClass}">${verdict.title}</div>
+
+      <div class="lbl">Dragon</div>
+      <div class="val">${dragon ? dragon.name : '—'}</div>
+
+      <div class="lbl">Signet</div>
+      <div class="val">${signet ? signet.name : '—'} ${STATE.signetUsed ? '<span style="color:var(--gold)">(channelled)</span>' : '<span style="color:var(--gold-dark)">(unused)</span>'}</div>
+
+      <div class="lbl">Honor Earned</div>
+      <div class="val honor">🏅 ${STATE.honor}</div>
+
+      <div class="lbl">HP Remaining</div>
+      <div class="val">❤️ ${STATE.hp}</div>
+
+      <div class="lbl">Quick-fire</div>
+      <div class="val">${STATE.qfCorrect} / ${STATE.qfTotal} correct</div>
+
+      <div class="lbl">Time</div>
+      <div class="val">⏱ ${m}:${s}</div>
+
+      <div class="lbl">Speaking</div>
+      <div class="val">${STATE.speakingChoice ? STATE.speakingChoice.toUpperCase() : '—'}</div>
+
+      <div class="lbl">Reading Final</div>
+      <div class="val">${STATE.phase4ReadingCorrect ? '<span style="color:#a8e0a8">✓ Correct</span>' : '<span style="color:#ffb8b8">✗ Incorrect</span>'}</div>
+
+      <div class="lbl">Bond</div>
+      <div class="val bond-romance">${bondStatus}</div>
+    </div>
+
+    <div class="final-verdict-text">
+      ${verdict.text}
+      <div class="final-verdict-sign">${verdict.sign}</div>
+    </div>
+  `;
+  document.getElementById('content').appendChild(wrap);
+
+  document.getElementById('end-btn').onclick = ()=>{
+    // End of quest — no transition to next scene
+    const msg = STATE.romanceFlag
+      ? '⚔ The trial is complete. ⚔\n\nYou have earned the right to call him Caeden.\nThe Recognition Ceremony awaits — but that is a story for another sky.\n\nThank you for flying, rider.'
+      : '⚔ The trial is complete. ⚔\n\nThe Adjudicator has spoken. You have earned your place — or lost it.\nThe sky remembers every choice.\n\nThank you for flying, rider.';
+    alert(msg);
+  };
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+window.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('hp-val').textContent = STATE.hp;
+  document.getElementById('honor-val').textContent = STATE.honor;
+  document.getElementById('timer-val').textContent = '00:00';
+  setBackground('dawn');
+  runIntro();
+});
+
+</script>
+</body>
+</html>
