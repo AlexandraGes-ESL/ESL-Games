@@ -1115,7 +1115,7 @@ function startStage1(){
         line.parts.forEach((p,pi)=>{
           lineHtml += p;
           if(pi < line.parts.length-1){
-            lineHtml += `<span class="gap" data-sig="${si}" data-line="${li}" data-gap="${pi}" data-answers='${JSON.stringify(line.answers)}'>____</span>`;
+            lineHtml += `<span class="gap" data-sig="${si}" data-line="${li}" data-gap="${pi}" data-answers="${line.answers.join('|')}">____</span>`;
           }
         });
         lineHtml += '</div>';
@@ -1149,7 +1149,7 @@ function startStage1(){
       g.addEventListener('click',()=>{
         if(g.classList.contains('correct')) return;
         if(!selected){ showToast('Pick a pronoun first',true); return; }
-        const answers = JSON.parse(g.dataset.answers);
+        const answers = g.dataset.answers.split('|');
         if(answers.includes(selected)){
           g.textContent = selected;
           g.classList.remove('wrong');
@@ -1157,9 +1157,10 @@ function startStage1(){
           SFX.correct();
           state.stage1Progress++;
           if(state.stage1Progress >= state.stage1Total){
-            $('#goStage2').disabled = false;
-            showToast('Wards restored');
-          }
+  $('#goStage2').disabled = false;
+  $('#goStage2').removeAttribute('disabled');
+  showToast('Wards restored');
+}
         } else {
           g.textContent = selected;
           g.classList.add('wrong');
