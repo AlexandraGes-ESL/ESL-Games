@@ -26,9 +26,31 @@ body{display:flex;align-items:center;justify-content:center;position:relative}
 #sky-bg{position:fixed;inset:0;z-index:1;background-size:cover;background-position:center;background-repeat:no-repeat;transition:background-image 1.2s ease,opacity 1.2s ease,filter 1.2s ease}
 #sky-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,6,.3) 0%,rgba(10,8,6,.55) 60%,rgba(10,8,6,.85) 100%);pointer-events:none}
 
-#pov-dragon{position:fixed;left:50%;bottom:-8%;transform:translateX(-50%);width:min(900px,95vw);height:auto;z-index:2;opacity:0;pointer-events:none;transition:opacity 1.4s ease,transform 1.4s ease;filter:drop-shadow(0 -10px 40px rgba(0,0,0,.7))}
-#pov-dragon.visible{opacity:1;animation:dragonFloat 6s ease-in-out infinite}
-@keyframes dragonFloat{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-15px)}}
+#pov-dragon{
+  position:fixed;left:50%;bottom:-8%;transform:translateX(-50%);
+  width:min(900px,95vw);height:auto;z-index:2;opacity:0;pointer-events:none;
+  transition:opacity 1.4s ease;
+  filter:drop-shadow(0 -10px 40px rgba(0,0,0,.7))
+}
+#pov-dragon.visible{opacity:1;animation:dragonFloat 5s ease-in-out infinite}
+#pov-dragon.flying{animation:dragonFly 4s ease-in-out infinite}
+@keyframes dragonFloat{
+  0%,100%{transform:translateX(-50%) translateY(0) rotate(0deg)}
+  50%{transform:translateX(-50%) translateY(-18px) rotate(-0.5deg)}
+}
+@keyframes dragonFly{
+  0%,100%{transform:translateX(-50%) translateY(0) rotate(-1deg)}
+  25%{transform:translateX(-52%) translateY(-20px) rotate(-2deg)}
+  50%{transform:translateX(-50%) translateY(-8px) rotate(0deg)}
+  75%{transform:translateX(-48%) translateY(-22px) rotate(2deg)}
+}
+
+/* Фон с лёгким параллаксом */
+#sky-bg{animation:skyDrift 20s ease-in-out infinite}
+@keyframes skyDrift{
+  0%,100%{transform:scale(1.05) translateY(0)}
+  50%{transform:scale(1.08) translateY(-15px)}
+}
 
 .card-wrap{position:relative;z-index:10;width:min(1100px,95vw);max-height:95vh;display:flex;flex-direction:column}
 .card{background:linear-gradient(180deg,rgba(20,15,10,.92),rgba(15,10,7,.95));border:1px solid var(--gold-dark);border-radius:4px;box-shadow:0 0 0 1px rgba(201,169,110,.15),0 20px 60px rgba(0,0,0,.7),inset 0 0 80px rgba(0,0,0,.4);position:relative;overflow:hidden;display:flex;flex-direction:column;max-height:95vh}
@@ -541,37 +563,29 @@ const PHASE3 = {
     {
       npc:{ name:'VIOLET SORRENGAIL', role:'Lightning Wielder', portrait:ASSETS.portraits.violet },
       audioKey:'',
-      q:'Enemy closing fast! "Bank LEFT — your dragon ____ around the cliff!" Choose the correct verb:',
-      options:['pulls','is pulling','pulled','will have pulled'],
-      correct:1, creative:false
+      scene:"Tairn's wing dips hard left. Violet's voice cuts through the bond — sharp, urgent.",
+      q:'"Listen to me. If you ____ now, none of us walk away from this ridge."',
+      options:['would hesitate','hesitate','had hesitated','will have hesitated'],
+      correct:1, creative:false,
+      hint:'1st Conditional · real future consequence'
     },
     {
       npc:{ name:'RIDOC GAMLYN', role:'Wingmate · Ice Wielder', portrait:ASSETS.portraits.ridoc },
       audioKey:'ridoc',
-      q:'"Well, that escalated quickly." Pick the phrasal verb — to suddenly avoid a hit, you must ____:',
-      options:['pull up','give in','run out','look up'],
-      correct:0, creative:false
+      scene:"An enemy rider lunges at your flank. Ridoc swerves in beside you — ice already curling around his fingers.",
+      q:'"Don\'t you DARE ____ now! Stand your ground, knock him cold, and let\'s go home!"',
+      options:['back down','work out','hold on','throw in the towel'],
+      correct:0, creative:false,
+      hint:'Phrasal verb — remember Garrick\'s training?'
     },
     {
       npc:{ name:'VIOLET SORRENGAIL', role:'Lightning Wielder', portrait:ASSETS.portraits.violet },
       audioKey:'',
-      q:'Defensive maneuver! "We must ____ the attack!" — pick the correct form:',
-      options:['avoiding','to avoid','avoid','avoided'],
-      correct:2, creative:false
-    },
-    {
-      npc:{ name:'RIDOC GAMLYN', role:'Wingmate · Ice Wielder', portrait:ASSETS.portraits.ridoc },
-      audioKey:'',
-      q:'"If we die today, just know I was always your favourite." Pick the synonym for "exhausted":',
-      options:['eager','drained','curious','calm'],
-      correct:1, creative:false
-    },
-    {
-      npc:{ name:'VIOLET SORRENGAIL', role:'Lightning Wielder', portrait:ASSETS.portraits.violet },
-      audioKey:'',
-      q:'They\'re retreating! "We ____ the ridge!" — choose the BEST verb:',
-      options:['lost','held','dropped','missed'],
-      correct:1, creative:true   // holding the ridge = bold tactic
+      scene:"The last enemy banner falls. Smoke clears. Your wing forms up around you.",
+      q:'Violet, panting, exhilarated: "We ____ them. Three wings down. We held the ridge."',
+      options:['beat','have beaten','had beaten','were beating'],
+      correct:1, creative:true,
+      hint:'Result still relevant · just happened'
     }
   ]
 };
@@ -1143,6 +1157,8 @@ function runPhase3(){
   STATE.currentPhase = 3;
   updatePhaseProgress(3);
   setBackground('sunset');
+   document.getElementById('pov-dragon').classList.add('flying');
+playSfx(ASSETS.audio.wings, 0.35);
   clearContent();
   setFooterHint('Quick-fire combat. Answer fast. Use your signet wisely.');
   renderSignetButton();
@@ -1194,7 +1210,6 @@ function renderSignetButton(){
 }
 
 function showPhase3Question(){
-  // Done?
   if(phase3State.qIndex >= PHASE3.questions.length){
     clearInterval(phase3State.timerInterval);
     setTimeout(runPhase4, 600);
@@ -1204,28 +1219,31 @@ function showPhase3Question(){
   const q = PHASE3.questions[phase3State.qIndex];
   document.getElementById('qf-label').textContent = `Question ${phase3State.qIndex+1} of ${PHASE3.questions.length}`;
 
-  // Reset timer (with dragon bonus)
+  // 30 sec base + dragon bonus
   const d = DRAGONS.find(x=>x.id===STATE.dragon);
-  const baseTime = 20 + (d ? d.bonus.timer : 0);
+  const baseTime = 30 + (d ? d.bonus.timer : 0);
   phase3State.timeLeft = baseTime;
   const bar = document.getElementById('qf-timer-bar');
   bar.classList.remove('warn');
   bar.style.width = '100%';
 
-  // Comms for the question
+  // Comms: scene description + question text — NO audio per question
   const commsContainer = document.getElementById('qf-comms');
   commsContainer.innerHTML = '';
+  const fullText = (q.scene ? q.scene + '<br><br>' : '') + q.q;
   const panel = buildCommsPanel({
     npc:q.npc,
-    text:q.q,
+    text:fullText,
     urgent:true,
-    audioKey:q.audioKey || ''
+    audioKey:''  // ← intro-аудио уже отыграло, вопросы без аудио
   });
   commsContainer.appendChild(panel);
 
-  // Options
+  // Hint line
   const qDiv = document.getElementById('qf-question');
-  qDiv.innerHTML = `<div class="options-grid" id="qf-options"></div>`;
+  qDiv.innerHTML = `
+    ${q.hint ? `<div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold);text-align:center;margin:8px 0 12px;opacity:.75">✦ ${q.hint} ✦</div>` : ''}
+    <div class="options-grid" id="qf-options"></div>`;
   const grid = document.getElementById('qf-options');
 
   q.options.forEach((opt, i)=>{
@@ -1237,13 +1255,11 @@ function showPhase3Question(){
     grid.appendChild(btn);
   });
 
-  // Apply pre-activated signet effect (if Memory/Shadow/Summoning was queued before question)
   if(phase3State.signetActiveEffect){
     applySignetEffect(phase3State.signetActiveEffect, grid, q.correct);
     phase3State.signetActiveEffect = null;
   }
 
-  // Start timer
   clearInterval(phase3State.timerInterval);
   const startTime = Date.now();
   const initialTime = phase3State.timeLeft;
@@ -1252,13 +1268,13 @@ function showPhase3Question(){
     phase3State.timeLeft = Math.max(0, initialTime - elapsed);
     const pct = (phase3State.timeLeft / baseTime) * 100;
     bar.style.width = Math.min(100, pct) + '%';
-    if(phase3State.timeLeft < 7) bar.classList.add('warn');
+    if(phase3State.timeLeft < 10) bar.classList.add('warn');
     if(phase3State.timeLeft <= 0){
       clearInterval(phase3State.timerInterval);
       grid.querySelectorAll('.option-btn').forEach(b=>b.classList.add('disabled'));
       grid.querySelectorAll('.option-btn')[q.correct].classList.add('correct');
       floatFeedback('TIMEOUT', true);
-      changeHP(-8);
+      // ← мягкий timeout: без штрафа HP
       setTimeout(()=>{
         phase3State.qIndex++;
         showPhase3Question();
@@ -1275,9 +1291,8 @@ function answerPhase3(chosen, q){
 
   if(chosen === q.correct){
     chosenBtn.classList.add('correct');
-    // Apply Caorragh damage multiplier to honor (treats as damage dealt)
     const d = DRAGONS.find(x=>x.id===STATE.dragon);
-    let honorGain = 6;
+    let honorGain = 8;  // ← было 6
     if(d && d.bonus.dmgMul > 1) honorGain = Math.round(honorGain * d.bonus.dmgMul);
     changeHonor(honorGain, q.creative);
     STATE.qfCorrect++;
@@ -1285,12 +1300,11 @@ function answerPhase3(chosen, q){
     chosenBtn.classList.add('wrong');
     grid.querySelector(`[data-idx="${q.correct}"]`).classList.add('correct');
     if(phase3State.shieldActive){
-      // Warding signet blocks one wrong answer
       floatFeedback('SHIELDED', false);
       phase3State.shieldActive = false;
       renderSignetButton();
     } else {
-      changeHP(-12);
+      changeHP(-6);  // ← было -12
     }
   }
 
