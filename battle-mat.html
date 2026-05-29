@@ -154,6 +154,121 @@
   }
   #game-over-overlay h1 { font-family: 'Cinzel', serif; color: #c0392b; font-size: 64px; margin-bottom: 10px; letter-spacing: 4px;}
   #game-over-overlay p { color: #888; font-size: 20px; margin-bottom: 30px; }
+    /* ===== AUDIO CONTROLS ===== */
+  #audio-toggle{
+    position:fixed;
+    top:18px; right:18px;
+    z-index:1100;
+    width:44px; height:44px;
+    border-radius:50%;
+    background:rgba(20,15,10,.85);
+    border:1px solid #cca65d;
+    color:#cca65d;
+    cursor:pointer;
+    font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .25s ease;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  #audio-toggle:hover{
+    border-color:#e5a93d;
+    background:rgba(229,169,61,.2);
+    color:#e5a93d;
+  }
+  #audio-panel{
+    position:fixed;
+    top:70px; right:18px;
+    z-index:1100;
+    background:linear-gradient(180deg, rgba(20,15,10,.96), rgba(15,10,7,.98));
+    border:1px solid #cca65d;
+    border-radius:4px;
+    padding:18px 20px;
+    width:260px;
+    display:none;
+    box-shadow:0 10px 40px rgba(0,0,0,.7), 0 0 0 1px rgba(204,166,93,.15);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    font-family:'Pontano Sans', sans-serif;
+  }
+  #audio-panel.open{display:block;animation:panelIn .3s ease}
+  @keyframes panelIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+  .audio-panel-title{
+    font-family:'Cinzel',serif;
+    font-size:12px;
+    letter-spacing:3px;
+    color:#e5a93d;
+    text-align:center;
+    margin-bottom:14px;
+    padding-bottom:8px;
+    border-bottom:1px solid rgba(204,166,93,.25);
+  }
+  .audio-slider-row{margin-bottom:14px}
+  .audio-slider-row:last-child{margin-bottom:0}
+  .audio-slider-label{
+    display:flex; justify-content:space-between;
+    font-family:'Cinzel',serif;
+    font-size:11px;
+    letter-spacing:1.5px;
+    color:#cca65d;
+    margin-bottom:6px;
+  }
+  .audio-slider-value{color:#e5a93d}
+  .audio-slider{
+    width:100%;
+    -webkit-appearance:none;
+    appearance:none;
+    height:4px;
+    background:rgba(204,166,93,.2);
+    border-radius:2px;
+    outline:none;
+    cursor:pointer;
+  }
+  .audio-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    appearance:none;
+    width:14px; height:14px;
+    border-radius:50%;
+    background:#e5a93d;
+    cursor:pointer;
+    box-shadow:0 0 6px rgba(229,169,61,.6);
+    border:none;
+  }
+  .audio-slider::-moz-range-thumb{
+    width:14px; height:14px;
+    border-radius:50%;
+    background:#e5a93d;
+    cursor:pointer;
+    box-shadow:0 0 6px rgba(229,169,61,.6);
+    border:none;
+  }
+  .audio-mute-row{
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid rgba(204,166,93,.25);
+    display:flex; justify-content:center;
+  }
+  .audio-mute-btn{
+    font-family:'Cinzel',serif;
+    font-size:11px;
+    letter-spacing:2px;
+    background:transparent;
+    border:1px solid #cca65d;
+    color:#e5a93d;
+    padding:6px 16px;
+    border-radius:2px;
+    cursor:pointer;
+    transition:all .2s ease;
+  }
+  .audio-mute-btn:hover{
+    background:#cca65d;
+    color:#000;
+  }
+  .audio-mute-btn.muted{
+    background:#c0392b;
+    border-color:#c0392b;
+    color:#fff;
+  }
 </style>
 </head>
 <body>
@@ -246,7 +361,131 @@
 <audio id="audio-swoosh" src="https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/dheerajakam4jor-swoosh-sound-effect-for-fight-scenes-or-transitions-1-149889.mp3" preload="auto"></audio>
 <audio id="audio-block" src="https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/freesound_community-block-6839.mp3" preload="auto"></audio>
 
+<!-- ⬇️ ФОНОВАЯ МУЗЫКА БОЯ -->
+<audio id="audio-music" src="https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/mat-fighting.mp3" loop preload="auto"></audio>
+
+<!-- ⬇️ АУДИО-ПАНЕЛЬ -->
+<button id="audio-toggle" title="Audio Settings">🔊</button>
+<div id="audio-panel">
+  <div class="audio-panel-title">⚙ AUDIO SETTINGS</div>
+
+  <div class="audio-slider-row">
+    <div class="audio-slider-label">
+      <span>🎵 Music</span>
+      <span class="audio-slider-value" id="music-val">35%</span>
+    </div>
+    <input type="range" min="0" max="100" value="35" class="audio-slider" id="music-slider">
+  </div>
+
+  <div class="audio-slider-row">
+    <div class="audio-slider-label">
+      <span>⚔ Sound FX</span>
+      <span class="audio-slider-value" id="sfx-val">70%</span>
+    </div>
+    <input type="range" min="0" max="100" value="70" class="audio-slider" id="sfx-slider">
+  </div>
+
+  <div class="audio-mute-row">
+    <button class="audio-mute-btn" id="mute-btn">🔇 MUTE ALL</button>
+  </div>
+</div>
+
 <script>
+    // ============================================================
+  // AUDIO ENGINE
+  // ============================================================
+  const AUDIO = {
+    music: null,
+    musicStarted: false,
+    volumes: { music: 0.35, sfx: 0.70 },
+    muted: false,
+    sfxIds: ['audio-hit', 'audio-swoosh', 'audio-block'],
+
+    init() {
+      this.music = document.getElementById('audio-music');
+      this.music.volume = 0; // стартуем с 0 для fade-in
+      this.applyVolumes();
+      this.bindControls();
+    },
+
+    bindControls() {
+      const toggle = document.getElementById('audio-toggle');
+      const panel = document.getElementById('audio-panel');
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!panel.contains(e.target) && e.target !== toggle) {
+          panel.classList.remove('open');
+        }
+      });
+
+      const bindSlider = (id, valId, key) => {
+        const slider = document.getElementById(id);
+        const valEl = document.getElementById(valId);
+        slider.addEventListener('input', (e) => {
+          const v = parseInt(e.target.value, 10) / 100;
+          this.volumes[key] = v;
+          valEl.textContent = e.target.value + '%';
+          this.applyVolumes();
+        });
+      };
+      bindSlider('music-slider', 'music-val', 'music');
+      bindSlider('sfx-slider', 'sfx-val', 'sfx');
+
+      document.getElementById('mute-btn').addEventListener('click', () => {
+        this.muted = !this.muted;
+        const btn = document.getElementById('mute-btn');
+        btn.classList.toggle('muted', this.muted);
+        btn.innerHTML = this.muted ? '🔇 UNMUTE' : '🔇 MUTE ALL';
+        this.applyVolumes();
+        document.getElementById('audio-toggle').textContent = this.muted ? '🔇' : '🔊';
+      });
+    },
+
+    applyVolumes() {
+      this.sfxIds.forEach(id => {
+        const a = document.getElementById(id);
+        if (a) a.volume = this.muted ? 0 : this.volumes.sfx;
+      });
+      if (this.music && this.musicStarted) {
+        this.music.volume = this.muted ? 0 : this.volumes.music;
+      }
+    },
+
+    startMusic() {
+      if (this.musicStarted || this.muted) return;
+      this.musicStarted = true;
+      this.music.play().then(() => {
+        this.fadeMusic(this.volumes.music, 2000);
+      }).catch(() => {
+        this.musicStarted = false;
+      });
+    },
+
+    stopMusic(duration = 1500) {
+      if (!this.music || !this.musicStarted) return;
+      this.fadeMusic(0, duration, () => {
+        this.music.pause();
+        this.music.currentTime = 0;
+        this.musicStarted = false;
+      });
+    },
+
+    fadeMusic(targetVol, duration = 1000, onDone) {
+      if (!this.music) return;
+      const startVol = this.music.volume;
+      const startTime = performance.now();
+      const step = (now) => {
+        const t = Math.min(1, (now - startTime) / duration);
+        this.music.volume = startVol + (targetVol - startVol) * t;
+        if (t < 1) requestAnimationFrame(step);
+        else if (onDone) onDone();
+      };
+      requestAnimationFrame(step);
+    }
+  };
   // RESIZE
   function resizeGame() {
     const game = document.getElementById('game-wrapper');
@@ -273,9 +512,10 @@
   const state = { hp: 3, step: 0, timer: null, timerStart: 0 };
   const TIME_PER_ROUND = 10000;
 
-  window.onload = () => {
+    window.onload = () => {
     setTimeout(() => { document.getElementById('fade').style.opacity = '0'; }, 300);
     buildRoundProgress();
+    AUDIO.init();
   };
 
   function buildRoundProgress() {
@@ -319,10 +559,12 @@
     }, hint ? 1800 : 1200);
   }
 
-  function showReady() {
+    function showReady() {
     const screen = document.getElementById('ready-screen');
     const text = document.getElementById('countdown-text');
     screen.classList.add('show');
+    
+    AUDIO.startMusic(); // ⬅️ ДОБАВИТЬ — старт музыки боя
     
     const sequence = ['3', '2', '1', 'FIGHT!'];
     let i = 0;
@@ -356,10 +598,11 @@
   }
 
   function loadQuestion() {
-    if (state.hp <= 0) { 
+        if (state.hp <= 0) { 
         document.getElementById('timer-bar-container').style.display = 'none';
         document.getElementById('game-over-overlay').style.opacity = '1'; 
         document.getElementById('game-over-overlay').style.pointerEvents = 'all';
+        AUDIO.stopMusic(1500); // ⬅️ обрываем музыку при поражении
         return; 
     }
     if (state.step >= qData.length) { startFinal(); return; }
@@ -473,6 +716,7 @@
     document.getElementById('timer-bar-container').style.display = 'none';
     document.getElementById('hud').style.opacity = '0';
     document.getElementById('round-progress').style.opacity = '0';
+    AUDIO.stopMusic(2000); // ⬅️ плавное затухание музыки за 2 сек
     goToScene('scene-final');
   }
 
