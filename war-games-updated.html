@@ -3272,7 +3272,7 @@ async function runPhase3() {
   document.getElementById('timer-box').style.display = '';
 
   // WAVE 1
-  await runCombatWave(PHASE_3_DATA.wave1, 'WAVE 1 — PHRASAL VERBS');
+  await runCombatWave(PHASE_3_DATA.wave1, 'WAVE 1 — PHRASAL VERBS', 'grammar');
 
   // Mid cutscene
   clearWyverns();
@@ -3287,7 +3287,7 @@ async function runPhase3() {
   await UI.sleep(400);
 
   // WAVE 2
-  await runCombatWave(PHASE_3_DATA.wave2, 'WAVE 2 — TENSES');
+  await runCombatWave(PHASE_3_DATA.wave2, 'WAVE 2 — TENSES', 'grammar');
 
   // End
   clearWyverns();
@@ -3302,7 +3302,7 @@ async function runPhase3() {
   runPhase4();
 }
 
-async function runCombatWave(questions, waveLabel) {
+async function runCombatWave(questions, waveLabel, statKey = 'combat') {
   const taskEl = document.getElementById('phase3-task');
   const waveBlock = document.createElement('div');
   waveBlock.className = 'task-card reveal';
@@ -3318,13 +3318,16 @@ async function runCombatWave(questions, waveLabel) {
   for (let i = 0; i < questions.length; i++) {
     const q = questions[i];
     const result = await askTimedQuestion(q, qContainer, i, questions.length);
-    STATE.stats.combat.total++;
+
+    // 🔧 Учёт по выбранной категории (grammar для Phase 3)
+    STATE.stats[statKey].total++;
+
     if (result.correct) {
-      STATE.stats.combat.correct++;
-      // Vorrath bonus: +1 HP per correct combat
+      STATE.stats[statKey].correct++;
+      // Vorrath bonus: +1 HP per correct combat (оставляем механику)
       if (STATE.dragon === 'vorrath') modifyHP(+1);
     } else if (!result.skipped) {
-      STATE.stats.combat.errors.push({
+      STATE.stats[statKey].errors.push({
         q: q.prompt,
         given: result.chosen >= 0 ? q.options[result.chosen] : '(timed out)',
         correct: q.options[q.correct],
@@ -3575,10 +3578,10 @@ function runJudgmentQuestion(jq, container, idx, total) {
 function calculateVerdict() {
   const hp = STATE.hp;
   const honor = STATE.honor;
-  const total = STATE.stats.reading.total + STATE.stats.listening.total +
-                STATE.stats.grammar.total + STATE.stats.combat.total;
+    const total = STATE.stats.reading.total + STATE.stats.listening.total +
+                STATE.stats.grammar.total;
   const correct = STATE.stats.reading.correct + STATE.stats.listening.correct +
-                  STATE.stats.grammar.correct + STATE.stats.combat.correct;
+                  STATE.stats.grammar.correct;
   const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
 
   if (hp <= 0) {
@@ -3630,10 +3633,10 @@ async function runVerdict() {
 
 /* ===== DOSSIER ===== */
 function runDossier() {
-  const totalQ = STATE.stats.reading.total + STATE.stats.listening.total +
-                 STATE.stats.grammar.total + STATE.stats.combat.total;
+    const totalQ = STATE.stats.reading.total + STATE.stats.listening.total +
+                 STATE.stats.grammar.total;
   const totalC = STATE.stats.reading.correct + STATE.stats.listening.correct +
-                 STATE.stats.grammar.correct + STATE.stats.combat.correct;
+                 STATE.stats.grammar.correct;
   const acc = totalQ > 0 ? Math.round((totalC / totalQ) * 100) : 0;
 
   const elapsed = Math.round((Date.now() - STATE.startTime) / 1000);
@@ -3699,7 +3702,6 @@ function runDossier() {
       ${sectionStat('READING', STATE.stats.reading.correct, STATE.stats.reading.total)}
       ${sectionStat('LISTENING', STATE.stats.listening.correct, STATE.stats.listening.total)}
       ${sectionStat('GRAMMAR', STATE.stats.grammar.correct, STATE.stats.grammar.total)}
-      ${sectionStat('COMBAT', STATE.stats.combat.correct, STATE.stats.combat.total)}
       <div class="stat-row" style="margin-top:16px;border-top:1px solid rgba(201,169,110,.3);padding-top:12px">
         <div class="stat-label" style="color:var(--gold)">⚜ OVERALL</div>
         <div class="stat-bar"><span class="stat-fill" style="width:0%;background:linear-gradient(90deg, var(--gold), var(--gold-bright))" data-target="${acc}"></span></div>
