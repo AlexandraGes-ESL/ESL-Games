@@ -2997,7 +2997,8 @@ async function runPhase2() {
   });
 }
   /* ===== PHASE 3 — COMBAT (Timed Waves) ===== */
-async function runPhase3() document.body.classList.add('combat-active'); {
+async function runPhase3() {
+  document.body.classList.add('combat-active');
   UI.setPhase(3);
   UI.setBackground('sunset');
   AUDIO.playMusic('battle');
@@ -3238,7 +3239,8 @@ function clearWyverns() {
 }
 
 /* ===== PHASE 4 — JUDGMENT (Caeden) ===== */
-async function runPhase4() document.body.classList.remove('combat-active');{
+async function runPhase4() {
+  document.body.classList.remove('combat-active');
   UI.setPhase(4);
   UI.setBackground('dusk');
   AUDIO.playMusic('calm');
