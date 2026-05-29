@@ -2026,48 +2026,55 @@ const DRAGONS = [
   }
 ];
 
+/* ===== SIGNETS (6 canon abilities from Empyrean) ===== */
 const SIGNETS = [
   {
-    id: 'peek',
-    name: 'Truthsight',
-    desc: 'Reveal the correct answer for the next question.',
+    id: 'memory',
+    name: 'MEMORY READING',
+    desc: 'Peek the correct answer for the next question.',
     cost: '-10 Honor',
-    sigil: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>'
+    effect: 'peek',
+    sigil: '<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2"><path d="M30 8 C18 8 12 18 12 28 C12 38 18 50 30 50 C42 50 48 38 48 28 C48 18 42 8 30 8 Z"/><path d="M22 24 Q30 18 38 24 M22 32 Q30 38 38 32"/><circle cx="30" cy="28" r="4" fill="currentColor"/></svg>'
   },
   {
-    id: 'skip',
-    name: 'Pathfinder',
+    id: 'distance',
+    name: 'DISTANCE WIELDING',
     desc: 'Skip the next question without penalty.',
     cost: '-5 HP',
-    sigil: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>'
+    effect: 'skip',
+    sigil: '<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="30" r="4" fill="currentColor"/><path d="M22 30 L42 30 M36 24 L42 30 L36 36"/></svg>'
   },
   {
-    id: 'time',
-    name: 'Stormcaller',
-    desc: 'Slow time — +10 sec on the next timer.',
+    id: 'summoning',
+    name: 'SUMMONING',
+    desc: 'Summon focus — gain +10 seconds on the next timer.',
     cost: '-5 Honor',
-    sigil: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>'
+    effect: 'time',
+    sigil: '<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2"><circle cx="30" cy="30" r="20"/><path d="M30 14 L30 30 L40 36"/></svg>'
   },
   {
-    id: 'shield',
-    name: 'Wardstone',
+    id: 'warding',
+    name: 'WARDING',
     desc: 'Absorb all HP damage from the next wrong answer.',
     cost: '-10 Honor',
-    sigil: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z"/></svg>'
+    effect: 'shield',
+    sigil: '<svg viewBox="0 0 60 60" fill="currentColor"><path d="M30 6 L48 14 L46 36 Q42 48 30 54 Q18 48 14 36 L12 14 Z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M22 28 L28 34 L40 22" stroke="currentColor" stroke-width="3" fill="none"/></svg>'
   },
   {
-    id: 'fifty',
-    name: 'Mindreader',
-    desc: 'Remove two wrong options from the next question.',
+    id: 'shadow',
+    name: 'SHADOW WIELDING',
+    desc: 'Cloak in shadow — eliminate 2 wrong options.',
     cost: '-5 Honor',
-    sigil: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-1 15l-4-4 1.4-1.4 2.6 2.6L16.6 9 18 10.4 11 17z"/></svg>'
+    effect: 'fifty',
+    sigil: '<svg viewBox="0 0 60 60" fill="currentColor"><path d="M30 5 L48 20 L42 50 L18 50 L12 20 Z" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="30" cy="32" r="8"/></svg>'
   },
   {
-    id: 'heal',
-    name: 'Lifebinder',
-    desc: 'Restore 20 HP immediately.',
+    id: 'mending',
+    name: 'MENDING',
+    desc: 'Heal your wounds — restore +15 HP immediately.',
     cost: '-15 Honor',
-    sigil: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+    effect: 'heal',
+    sigil: '<svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2"><path d="M30 12 L30 48 M12 30 L48 30" stroke-width="4"/><circle cx="30" cy="30" r="20"/></svg>'
   }
 ];
 
@@ -2908,24 +2915,25 @@ function invokeSignet(s) {
   AUDIO.play('signetCast');
   UI.screenFlash('white');
 
-  switch (s.id) {
+  // Используем s.effect (а не s.id), чтобы код был независим от имени сигнета
+  switch (s.effect) {
     case 'peek':
       modifyHonor(-10);
       STATE.signetReadyForUse = 'peek';
-      UI.floatFeedback('👁 TRUTH REVEALED');
+      UI.floatFeedback('👁 MEMORY READ');
       hintNextCorrect();
       break;
     case 'skip':
       modifyHP(-5);
       STATE.signetReadyForUse = 'skip';
-      UI.floatFeedback('⏭ PATH FOUND');
+      UI.floatFeedback('⏭ DISTANCE CROSSED');
       skipCurrentQuestion();
       break;
     case 'time':
       modifyHonor(-5);
       STATE.signetReadyForUse = 'time';
       addTimerSeconds(10);
-      UI.floatFeedback('⏳ TIME SLOWED');
+      UI.floatFeedback('⏳ FOCUS SUMMONED');
       break;
     case 'shield':
       modifyHonor(-10);
@@ -2936,15 +2944,16 @@ function invokeSignet(s) {
       modifyHonor(-5);
       STATE.signetReadyForUse = 'fifty';
       eliminateTwoOptions();
-      UI.floatFeedback('🎯 MIND READ');
+      UI.floatFeedback('🌑 SHADOWS REVEAL');
       break;
     case 'heal':
       modifyHonor(-15);
-      modifyHP(+20);
-      UI.floatFeedback('💚 HEALED');
+      modifyHP(+15);
+      UI.floatFeedback('✋ MENDED');
       break;
   }
-    // Disable any signet-bar buttons currently on screen
+
+  // Disable any signet-bar buttons currently on screen
   document.querySelectorAll('.signet-quick-btn').forEach(b => {
     b.disabled = true;
     b.innerHTML = '<span class="signet-icon">✓</span> SIGNET SPENT';
