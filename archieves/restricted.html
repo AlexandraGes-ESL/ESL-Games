@@ -4,11 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Awakening of the Signet — The Archives</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Pontano+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#000}
-body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:none}
+body{font-family:'Pontano Sans','Segoe UI',sans-serif;color:#f4e8c1;user-select:none}
 
 :root{
   --gold:#d4af37; --gold-bright:#f0d878; --gold-dim:#8a7028;
@@ -83,7 +85,7 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 }
 .companion.visible ~ .foot-shadow{opacity:1}
 
-/* ===== DIALOG CARD (iframe-safe flex column) ===== */
+/* ===== DIALOG CARD ===== */
 .card-wrap{
   position:absolute;
   left:50%;
@@ -155,8 +157,6 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .card .corner.tr{top:-1px;right:-1px;border-left:none;border-bottom:none}
 .card .corner.bl{bottom:-1px;left:-1px;border-right:none;border-top:none}
 .card .corner.br{bottom:-1px;right:-1px;border-left:none;border-top:none}
-.card .corner.tc,
-.card .corner.bc{display:none}
 
 .card .corner::after{
   content:'';
@@ -172,11 +172,7 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .card .corner.bl::after{bottom:-2px;left:-2px}
 .card .corner.br::after{bottom:-2px;right:-2px}
 
-/* три зоны карточки */
-.card-header{
-  flex-shrink:0;
-  margin-bottom:14px;
-}
+.card-header{flex-shrink:0;margin-bottom:14px}
 .card-content{
   flex:1 1 auto;
   overflow-y:auto;
@@ -230,7 +226,7 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
   flex:1;
   background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);
 }
-.card .divider span{color:var(--gold);font-size:12px;letter-spacing:3px;text-transform:uppercase}
+.card .divider span{color:var(--gold);font-size:12px;letter-spacing:3px;text-transform:uppercase;font-family:'Cinzel',serif}
 
 .speaker{
   font-family:'Cinzel',serif;
@@ -241,7 +237,7 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
   margin-bottom:8px;
 }
 .speech{
-  font-size:19px;
+  font-size:18px;
   line-height:1.55;
   font-style:italic;
   color:var(--ink);
@@ -269,14 +265,6 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 }
 .btn:disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
 
-.btn-row{
-  flex-shrink:0;
-  margin-top:18px;
-  padding-top:18px;
-  border-top:1px solid var(--gold-dim);
-  text-align:center;
-}
-
 /* ===== COMPANION SELECT (Stage 0) ===== */
 .select-screen{position:absolute;inset:0;z-index:15;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .6s;pointer-events:none}
 .select-screen.visible{opacity:1;pointer-events:auto}
@@ -303,11 +291,8 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .select-card .name{font-family:'Cinzel',serif;font-size:14px;letter-spacing:3px;color:var(--gold-bright);margin-bottom:4px}
 .select-card .desc{font-size:14px;font-style:italic;color:var(--ink-dim);line-height:1.3}
 
-/* ===== STAGE 1 — GAPS (no double-scroll, sticky pronoun bank) ===== */
-.codex-list{
-  padding-right:4px;
-  margin:6px 0 4px;
-}
+/* ===== STAGE 1 — GAPS ===== */
+.codex-list{padding-right:4px;margin:6px 0 4px}
 .signet-block{
   margin-bottom:10px;
   padding:8px 12px;
@@ -322,11 +307,7 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
   margin-bottom:4px;
   text-transform:uppercase;
 }
-.signet-block .sig-line{
-  font-size:15px;
-  line-height:1.6;
-  margin:3px 0;
-}
+.signet-block .sig-line{font-size:15px;line-height:1.6;margin:3px 0}
 .gap{display:inline-block;min-width:80px;padding:1px 8px;margin:0 2px;background:rgba(212,175,55,.08);border-bottom:1px solid var(--gold);color:var(--gold-bright);font-style:normal;text-align:center;cursor:pointer;transition:all .25s;border-radius:2px 2px 0 0}
 .gap:hover{background:rgba(212,175,55,.2)}
 .gap.filled{background:rgba(212,175,55,.18)}
@@ -352,20 +333,17 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .pronoun.dragging{opacity:.4}
 .gap.active-target{box-shadow:0 0 12px var(--gold-bright)}
 
-/* ===== STAGE 2 — CASES (flex-safe) ===== */
+/* ===== STAGE 2 — CASES ===== */
 .case-meta{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--ink-dim);text-align:center;margin-bottom:14px;text-transform:uppercase}
 .case-text{
-  font-size:17px;
-  line-height:1.55;
+  font-size:16px;
+  line-height:1.6;
   color:var(--ink);
-  font-style:italic;
   margin-bottom:14px;
   padding:12px 16px;
   border-left:2px solid var(--gold);
   background:rgba(0,0,0,.2);
 }
-.case-text .blank{display:inline-block;min-width:140px;border-bottom:1px dashed var(--gold);color:var(--gold-bright);text-align:center;padding:0 8px;font-style:normal}
-.case-text .blank.solved{border-bottom-style:solid;color:var(--gold-bright)}
 .case-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
 .case-opt{padding:10px 14px;background:rgba(0,0,0,.25);border:1px solid var(--gold-dim);color:var(--ink);cursor:pointer;font-size:15px;transition:all .25s;text-align:left;font-family:inherit}
 .case-opt:hover{border-color:var(--gold);background:rgba(212,175,55,.08)}
@@ -374,17 +352,12 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 .case-opt:disabled{cursor:not-allowed;opacity:.5}
 .case-nav{display:flex;justify-content:space-between;align-items:center;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--ink-dim)}
 
-/* ===== STAGE 3 — REFLECTION (flex-safe) ===== */
+/* ===== STAGE 3 — REFLECTION ===== */
 .q-counter{font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:var(--gold-dim);text-align:center;margin-bottom:8px}
 .q-cond{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--gold);text-align:center;margin-bottom:14px;text-transform:uppercase}
-.q-text{font-size:20px;line-height:1.45;color:var(--ink);font-style:italic;text-align:center;margin-bottom:16px;padding:0 10px}
-.q-options{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  padding-right:4px;
-}
-.q-opt{padding:11px 16px;background:rgba(0,0,0,.25);border:1px solid var(--gold-dim);color:var(--ink);cursor:pointer;font-size:16px;font-family:inherit;text-align:left;transition:all .25s;line-height:1.4}
+.q-text{font-size:19px;line-height:1.5;color:var(--ink);font-style:italic;text-align:center;margin-bottom:16px;padding:0 10px}
+.q-options{display:flex;flex-direction:column;gap:8px;padding-right:4px}
+.q-opt{padding:11px 16px;background:rgba(0,0,0,.25);border:1px solid var(--gold-dim);color:var(--ink);cursor:pointer;font-size:16px;font-family:inherit;text-align:left;transition:all .25s;line-height:1.45}
 .q-opt:hover{border-color:var(--gold);background:rgba(212,175,55,.1);transform:translateX(4px)}
 .q-opt.selected{border-color:var(--gold-bright);background:rgba(212,175,55,.18);box-shadow:0 0 14px rgba(212,175,55,.25)}
 
@@ -567,9 +540,120 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 }
 .reveal-final.visible{opacity:1}
 
-/* ===== SOUND TOGGLE ===== */
-.sound-toggle{position:absolute;top:18px;right:18px;z-index:30;width:36px;height:36px;background:var(--parch);border:1px solid var(--gold-dim);color:var(--gold);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .3s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.sound-toggle:hover{border-color:var(--gold);box-shadow:0 0 12px rgba(212,175,55,.3)}
+/* ===== AUDIO CONTROLS (как в War Games) ===== */
+#audio-toggle{
+  position:absolute;
+  top:18px; right:18px;
+  z-index:1100;
+  width:44px; height:44px;
+  border-radius:50%;
+  background:rgba(20,15,10,.85);
+  border:1px solid var(--gold-dim);
+  color:var(--gold);
+  cursor:pointer;
+  font-size:18px;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .25s ease;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+#audio-toggle:hover{
+  border-color:var(--gold);
+  background:rgba(212,175,55,.2);
+  color:var(--gold-bright);
+}
+#audio-panel{
+  position:absolute;
+  top:70px; right:18px;
+  z-index:1100;
+  background:linear-gradient(180deg, rgba(20,15,10,.96), rgba(15,10,7,.98));
+  border:1px solid var(--gold);
+  border-radius:4px;
+  padding:18px 20px;
+  width:260px;
+  display:none;
+  box-shadow:0 10px 40px rgba(0,0,0,.7), 0 0 0 1px rgba(212,175,55,.15);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+#audio-panel.open{display:block;animation:panelIn .3s ease}
+@keyframes panelIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.audio-panel-title{
+  font-family:'Cinzel',serif;
+  font-size:12px;
+  letter-spacing:3px;
+  color:var(--gold-bright);
+  text-align:center;
+  margin-bottom:14px;
+  padding-bottom:8px;
+  border-bottom:1px solid rgba(212,175,55,.25);
+}
+.audio-slider-row{margin-bottom:14px}
+.audio-slider-row:last-child{margin-bottom:0}
+.audio-slider-label{
+  display:flex; justify-content:space-between;
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:1.5px;
+  color:var(--gold);
+  margin-bottom:6px;
+}
+.audio-slider-value{color:var(--gold-bright)}
+.audio-slider{
+  width:100%;
+  -webkit-appearance:none;
+  appearance:none;
+  height:4px;
+  background:rgba(212,175,55,.2);
+  border-radius:2px;
+  outline:none;
+  cursor:pointer;
+}
+.audio-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:14px; height:14px;
+  border-radius:50%;
+  background:var(--gold-bright);
+  cursor:pointer;
+  box-shadow:0 0 6px rgba(240,216,120,.6);
+  border:none;
+}
+.audio-slider::-moz-range-thumb{
+  width:14px; height:14px;
+  border-radius:50%;
+  background:var(--gold-bright);
+  cursor:pointer;
+  box-shadow:0 0 6px rgba(240,216,120,.6);
+  border:none;
+}
+.audio-mute-row{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid rgba(212,175,55,.25);
+  display:flex; justify-content:center;
+}
+.audio-mute-btn{
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:2px;
+  background:transparent;
+  border:1px solid var(--gold);
+  color:var(--gold-bright);
+  padding:6px 16px;
+  border-radius:2px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.audio-mute-btn:hover{
+  background:var(--gold);
+  color:var(--dark);
+}
+.audio-mute-btn.muted{
+  background:var(--red);
+  border-color:#c44545;
+  color:#fff;
+}
 
 /* ===== FEEDBACK TOAST ===== */
 .toast{position:absolute;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);z-index:40;padding:10px 24px;background:var(--parch);border:1px solid var(--gold);color:var(--gold-bright);font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;opacity:0;transition:all .4s;pointer-events:none;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
@@ -594,6 +678,8 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
   .select-card .portrait{height:200px}
   .reveal-name{font-size:30px;letter-spacing:6px}
   .case-options{grid-template-columns:1fr}
+  #audio-panel{width:240px;right:10px}
+  #audio-toggle{top:10px;right:10px}
 }
 
 /* draw signet on reveal */
@@ -611,7 +697,31 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
 
 <div class="scene" id="scene">
 
-  <button class="sound-toggle" id="soundToggle" title="Toggle sound">🔊</button>
+  <!-- ===== AUDIO PANEL ===== -->
+  <button id="audio-toggle" title="Audio Settings">🔊</button>
+  <div id="audio-panel">
+    <div class="audio-panel-title">⚙ AUDIO SETTINGS</div>
+
+    <div class="audio-slider-row">
+      <div class="audio-slider-label">
+        <span>🎵 Music</span>
+        <span class="audio-slider-value" id="music-val">40%</span>
+      </div>
+      <input type="range" min="0" max="100" value="40" class="audio-slider" id="music-slider">
+    </div>
+
+    <div class="audio-slider-row">
+      <div class="audio-slider-label">
+        <span>⚔ Sound FX</span>
+        <span class="audio-slider-value" id="sfx-val">50%</span>
+      </div>
+      <input type="range" min="0" max="100" value="50" class="audio-slider" id="sfx-slider">
+    </div>
+
+    <div class="audio-mute-row">
+      <button class="audio-mute-btn" id="mute-btn">🔇 MUTE ALL</button>
+    </div>
+  </div>
 
   <div class="progress" id="progress">
     <span class="step" data-step="1">I · Codex</span>
@@ -666,7 +776,7 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
     </div>
   </div>
 
-   <!-- ===== REVEAL OVERLAY ===== -->
+  <!-- ===== REVEAL OVERLAY ===== -->
   <div class="reveal-overlay" id="reveal">
     <div class="reveal-inner">
       <div class="reveal-sigil" id="revealSigil">✦</div>
@@ -686,6 +796,8 @@ body{font-family:'Cormorant Garamond',Georgia,serif;color:#f4e8c1;user-select:no
       <div class="reveal-final" id="revealFinal">— End of Scene —</div>
     </div>
   </div>
+</div>
+
 <script>
 /* ============================================================
    DATA
@@ -758,7 +870,7 @@ const COMPANIONS = {
   }
 };
 
-/* ===== STAGE 1 — CODEX (B1+, relative pronouns) ===== */
+/* ===== STAGE 1 — CODEX (без изменений) ===== */
 const STAGE1 = {
   intro:"Six signet entries. The relative pronouns have burned off the page — restore them, or the wards stay shut.",
   pronouns:['who','which','whose','that','where','whom'],
@@ -796,12 +908,12 @@ const STAGE1 = {
   ]
 };
 
-/* ===== STAGE 2 — CASE FILES (signet identification) ===== */
+/* ===== STAGE 2 — CASE FILES (УПРОЩЁННЫЕ ТЕКСТЫ B1+) ===== */
 const STAGE2 = [
   {
     file:"FILE 037 · CADET SERETH IRELYN · DECEASED",
-    text:"Sereth was found at the inner gate, untouched. The boundary she'd been holding for six hours had simply ceased to exist — no breach, no struggle, no signs of forced entry. Her last log read: 'The line is steady. I could hold it in my sleep.' Whoever passed her did so as if her defense had never been raised at all.",
-    question:"Which signet failed — or was turned against her?",
+    text:"Sereth was guarding the inner gate. For six hours, her shield kept everyone out. Then someone walked right through it — no fight, no broken lock, nothing. Her last note said: \"The shield is strong. I could hold it in my sleep.\" Whoever passed her did it as if her shield was never there.",
+    question:"Which signet failed — or was used against her?",
     options:[
       {t:"Memory Reading", s:"memory_reading"},
       {t:"Distance Wielding", s:"distance_wielding"},
@@ -811,12 +923,12 @@ const STAGE2 = [
       {t:"Mending", s:"mending"}
     ],
     correct:"warding",
-    hint:"Sereth held a line — a boundary that kept what shouldn't pass, out. Only one signet does that. And only one signet can undo its own work."
+    hint:"Sereth was holding a shield — a wall that stops what shouldn't pass. Only one signet does that. And only one signet can break its own shield."
   },
-  {
+    {
     file:"FILE 102 · LIEUTENANT DORAN VASS · MISSING",
-    text:"Doran was patrolling the eastern ridge at dawn. Two squadmates watched him take one step on the stone — and the next step was nowhere. No flash. No sound. No body. His cloak was found three miles north, folded neatly on a windowsill of a tavern he had never been inside.",
-    question:"What signet did Doran almost certainly carry?",
+    text:"Doran was walking on the east ridge at dawn. Two of his friends saw him take one step on the stone — and then he was gone. No flash. No sound. No body. His coat was found three miles north, folded on a window of a tavern he had never visited.",
+    question:"What signet did Doran almost certainly have?",
     options:[
       {t:"Memory Reading", s:"memory_reading"},
       {t:"Distance Wielding", s:"distance_wielding"},
@@ -826,12 +938,12 @@ const STAGE2 = [
       {t:"Mending", s:"mending"}
     ],
     correct:"distance_wielding",
-    hint:"One step here. The next step impossibly far. A Walker's gift — though something pulled him further than he meant to go."
+    hint:"One step here. The next step very far away. A Walker's gift — though something pulled him further than he wanted to go."
   },
   {
     file:"FILE 168 · CADET VAEL KORRIN · ANOMALY",
-    text:"During the skirmish at Cliffsbane, Vael's name appears in three field reports — all written within the same hour, all by different commanders, all in different quadrants of the battle. Each commander swears he arrived the instant they needed him. The reports cannot all be true. And yet none of them can be wrong.",
-    question:"Which signet stretched beyond its usual limit here?",
+    text:"During the fight at Cliffsbane, Vael's name appears in three reports — all written in the same hour, all by different commanders, all from different parts of the battle. Each one says he came to help them just in time. They can't all be true. But none of them are wrong either.",
+    question:"Which signet was pushed beyond its usual limit here?",
     options:[
       {t:"Memory Reading", s:"memory_reading"},
       {t:"Distance Wielding", s:"distance_wielding"},
@@ -841,12 +953,12 @@ const STAGE2 = [
       {t:"Mending", s:"mending"}
     ],
     correct:"distance_wielding",
-    hint:"Three places. One hour. Only a Walker could be in all of them — and only barely. This file is being studied to learn the true ceiling of the gift."
+    hint:"Three places. One hour. Only a Walker could be in all of them — and only just. The Scribes are studying this case to learn the true limit of the gift."
   },
   {
     file:"FILE 211 · CADET RIGGS HALD · UNCLASSIFIED",
-    text:"Riggs walked out of the smoke at Talven Pass with a broken sword and four men behind him — all four of whom had been pronounced dead by the field healers nineteen minutes earlier. None of them carries a scar. Riggs has not spoken since. His file has been moved to the restricted ledger by order of the Scribes themselves.",
-    question:"What gift did Riggs use — possibly beyond what should be possible?",
+    text:"Riggs walked out of the smoke at Talven Pass with a broken sword and four men behind him. The problem: those four men were called dead by the healers nineteen minutes earlier. None of them has a scar now. Riggs has not spoken since. The Scribes moved his file to the restricted shelf.",
+    question:"What gift did Riggs use — maybe further than it should go?",
     options:[
       {t:"Memory Reading", s:"memory_reading"},
       {t:"Distance Wielding", s:"distance_wielding"},
@@ -856,12 +968,12 @@ const STAGE2 = [
       {t:"Mending", s:"mending"}
     ],
     correct:"mending",
-    hint:"What is broken returns to itself under a Mender's hands. Four men, returned from past the threshold — that is mending pushed to a place no Scribe has dared to name."
+    hint:"What is broken comes back together under a Mender's hands. Four men, returned from death — that is mending pushed to a place no Scribe wants to name."
   },
   {
     file:"FILE 256 · CADET MIREN ASHFOLD · INTERROGATION",
-    text:"Miren was brought before the tribunal for an alleged breach of confidence. Three sealed letters, witnessed only by their authors, had been quoted back to those authors word for word. Miren has no key. No spy network. No way of seeing the letters. She was, however, the squad scribe — and she had touched the wax seals when delivering them.",
-    question:"Which signet would explain Miren's knowledge?",
+    text:"Miren was brought to court for breaking secrets. Three sealed letters — read only by their writers — were repeated back to them, word for word. Miren has no key. No spy. No way to open the letters. But she was the squad scribe, and she did touch the wax seals when she delivered them.",
+    question:"Which signet would explain what Miren knew?",
     options:[
       {t:"Memory Reading", s:"memory_reading"},
       {t:"Distance Wielding", s:"distance_wielding"},
@@ -871,11 +983,11 @@ const STAGE2 = [
       {t:"Mending", s:"mending"}
     ],
     correct:"memory_reading",
-    hint:"Her hand touched the seals. A memory reader doesn't need to open the letter — the wax remembers who pressed it, and what was said over it."
+    hint:"Her hand touched the seals. A memory reader doesn't need to open the letter — the wax remembers who pressed it, and what was said above it."
   },
   {
     file:"FILE 304 · INSTRUCTOR KAERIS VOLLEN · RECLASSIFIED",
-    text:"At the siege of Aretia, an enemy commander was found dead inside his own tent — at the centre of his own camp, surrounded by his own guards, none of whom saw anyone enter or leave. His blade lay on the ground twenty paces from his hand. The hilt was warm, as if it had only just been let go of by someone else.",
+    text:"At the siege of Aretia, an enemy commander was found dead inside his own tent — in the middle of his own camp, with his own guards around him. None of them saw anyone enter or leave. His sword lay on the ground twenty steps from his hand. The handle was still warm, as if someone had just let it go.",
     question:"Which signet best explains the kill?",
     options:[
       {t:"Memory Reading", s:"memory_reading"},
@@ -886,11 +998,11 @@ const STAGE2 = [
       {t:"Mending", s:"mending"}
     ],
     correct:"summoning",
-    hint:"The blade was the commander's own. It crossed twenty paces to a hand that called it. Summoning — quiet, precise, devastating."
+    hint:"The sword was the commander's own. It flew twenty steps to a hand that called it. Summoning — quiet, exact, deadly."
   }
 ];
 
-/* ===== STAGE 3 — REFLECTION (conditionals, inner need) ===== */
+/* ===== STAGE 3 — REFLECTION (без изменений) ===== */
 const STAGE3 = [
   {
     cond:"2nd Conditional · the surface choice",
@@ -941,9 +1053,9 @@ const STAGE3 = [
     ]
   }
 ];
-  /* ===== SIGNET SVG ICONS ===== */
+
+/* ===== SIGNET SVG ICONS ===== */
 const SIGNET_SVG = {
-  // Memory Reading — мозг/глаз внутри круга, лучи
   memory_reading: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="46" class="sig-stroke"/>
@@ -961,7 +1073,6 @@ const SIGNET_SVG = {
       <line x1="24" y1="76" x2="17" y2="83" class="sig-stroke"/>
     </svg>`,
 
-  // Distance Wielding — стрелка/портал, шаг через пространство
   distance_wielding: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="46" class="sig-stroke"/>
@@ -975,15 +1086,12 @@ const SIGNET_SVG = {
       <circle cx="72" cy="50" r="2" class="sig-accent"/>
     </svg>`,
 
-  // Summoning — звезда внутри круга, сходящиеся линии
   summoning: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="46" class="sig-stroke"/>
       <circle cx="50" cy="50" r="36" class="sig-stroke" opacity=".4"/>
-      <polygon points="50,18 56,42 82,42 61,57 69,82 50,67 31,82 39,57 18,42 44,42"
-               class="sig-stroke"/>
-      <polygon points="50,28 54,44 70,44 57,54 62,70 50,61 38,70 43,54 30,44 46,44"
-               class="sig-fill"/>
+      <polygon points="50,18 56,42 82,42 61,57 69,82 50,67 31,82 39,57 18,42 44,42" class="sig-stroke"/>
+      <polygon points="50,28 54,44 70,44 57,54 62,70 50,61 38,70 43,54 30,44 46,44" class="sig-fill"/>
       <circle cx="50" cy="50" r="4" class="sig-accent"/>
       <line x1="50" y1="50" x2="20" y2="20" class="sig-stroke" opacity=".4" stroke-dasharray="1 3"/>
       <line x1="50" y1="50" x2="80" y2="20" class="sig-stroke" opacity=".4" stroke-dasharray="1 3"/>
@@ -991,7 +1099,6 @@ const SIGNET_SVG = {
       <line x1="50" y1="50" x2="80" y2="80" class="sig-stroke" opacity=".4" stroke-dasharray="1 3"/>
     </svg>`,
 
-  // Warding — щит/гексаграмма, защитная печать
   warding: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="46" class="sig-stroke"/>
@@ -1003,7 +1110,6 @@ const SIGNET_SVG = {
       <line x1="42" y1="50" x2="58" y2="50" class="sig-stroke" opacity=".5"/>
     </svg>`,
 
-  // Shadow Wielding — луна/затмение, изогнутые линии
   shadow_wielding: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="46" class="sig-stroke"/>
@@ -1016,7 +1122,6 @@ const SIGNET_SVG = {
       <circle cx="50" cy="50" r="44" class="sig-stroke" opacity=".3" stroke-dasharray="2 4"/>
     </svg>`,
 
-  // Mending — две руки/узел, замкнутая петля
   mending: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <circle cx="50" cy="50" r="46" class="sig-stroke"/>
@@ -1090,53 +1195,105 @@ const CAEDEN_CAMEO = {
 };
 
 /* ============================================================
-   AUDIO — real MP3 files from CDN, pooled
+   AUDIO ENGINE (с регулировкой громкости как в War Games)
 ============================================================ */
-let soundOn = true;
+const AUDIO = {
+  sfx: {},
+  volumes: { music: 0.40, sfx: 0.50 },
+  muted: false,
 
-const SOUNDS = {
-  footsteps: 'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/freesound_community-indoor-footsteps-6385.mp3',
-  pageTurn:  'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/page-turn.mp3',
-  correct:   'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/gentle-bell.mp3',
-  wrong:     'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/low-thud.mp3',
-  reveal:    'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/magical-reveal.mp3',
-  hover:     'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/hover-bell.mp3'
+  files: {
+    footsteps: 'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/freesound_community-indoor-footsteps-6385.mp3',
+    pageTurn:  'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/page-turn.mp3',
+    correct:   'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/gentle-bell.mp3',
+    wrong:     'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/low-thud.mp3',
+    reveal:    'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/magical-reveal.mp3',
+    hover:     'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/hover-bell.mp3'
+  },
+
+  init() {
+    // Audio pool — несколько копий каждого звука
+    const POOL_SIZE = 3;
+    Object.entries(this.files).forEach(([key, url]) => {
+      this.sfx[key] = [];
+      for (let i = 0; i < POOL_SIZE; i++) {
+        const a = new Audio(url);
+        a.preload = 'auto';
+        a.volume = this.volumes.sfx;
+        this.sfx[key].push(a);
+      }
+    });
+    this.poolIdx = {};
+    this.bindControls();
+  },
+
+  bindControls() {
+    const toggle = document.getElementById('audio-toggle');
+    const panel = document.getElementById('audio-panel');
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      panel.classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+      if (!panel.contains(e.target) && e.target !== toggle) {
+        panel.classList.remove('open');
+      }
+    });
+
+    const bindSlider = (id, valId, key) => {
+      const slider = document.getElementById(id);
+      const valEl = document.getElementById(valId);
+      slider.addEventListener('input', (e) => {
+        const v = parseInt(e.target.value, 10) / 100;
+        this.volumes[key] = v;
+        valEl.textContent = e.target.value + '%';
+        this.applyVolumes();
+      });
+    };
+    bindSlider('music-slider', 'music-val', 'music');
+    bindSlider('sfx-slider', 'sfx-val', 'sfx');
+
+    document.getElementById('mute-btn').addEventListener('click', () => {
+      this.muted = !this.muted;
+      const btn = document.getElementById('mute-btn');
+      btn.classList.toggle('muted', this.muted);
+      btn.innerHTML = this.muted ? '🔇 UNMUTE' : '🔇 MUTE ALL';
+      this.applyVolumes();
+      // Sync the toggle icon
+      document.getElementById('audio-toggle').textContent = this.muted ? '🔇' : '🔊';
+    });
+  },
+
+  applyVolumes() {
+    Object.values(this.sfx).forEach(pool => {
+      pool.forEach(a => {
+        a.volume = this.muted ? 0 : this.volumes.sfx;
+      });
+    });
+  },
+
+    play(key, volMultiplier = 1) {
+    if (!this.sfx[key] || this.muted) return;
+    this.poolIdx[key] = this.poolIdx[key] || 0;
+    const audio = this.sfx[key][this.poolIdx[key]];
+    this.poolIdx[key] = (this.poolIdx[key] + 1) % this.sfx[key].length;
+    try {
+      audio.currentTime = 0;
+      audio.volume = Math.min(1, this.volumes.sfx * volMultiplier);
+      const p = audio.play();
+      if (p && p.catch) p.catch(() => {});
+    } catch (e) {}
+  }
 };
 
-// Audio pool — несколько копий каждого звука, чтобы можно было проигрывать с наложением
-const POOL_SIZE = 3;
-const audioPool = {};
-for(const key in SOUNDS){
-  audioPool[key] = [];
-  for(let i=0;i<POOL_SIZE;i++){
-    const a = new Audio(SOUNDS[key]);
-    a.preload = 'auto';
-    a.volume = 0.5;
-    audioPool[key].push(a);
-  }
-}
-
-let poolIdx = {};
-function playSound(key, vol=0.5){
-  if(!soundOn) return;
-  if(!audioPool[key]) return;
-  poolIdx[key] = (poolIdx[key]||0);
-  const audio = audioPool[key][poolIdx[key]];
-  poolIdx[key] = (poolIdx[key]+1) % POOL_SIZE;
-  try{
-    audio.currentTime = 0;
-    audio.volume = vol;
-    audio.play().catch(()=>{});
-  }catch(e){}
-}
-
+/* ===== SFX shortcuts ===== */
 const SFX = {
-  click:   ()=>playSound('hover', 0.35),
-  correct: ()=>playSound('correct', 0.45),
-  wrong:   ()=>playSound('wrong', 0.4),
-  reveal:  ()=>playSound('reveal', 0.55),
-  page:    ()=>playSound('pageTurn', 0.4),
-  footsteps:()=>playSound('footsteps', 0.5)
+  click:     () => AUDIO.play('hover', 0.7),
+  correct:   () => AUDIO.play('correct', 0.9),
+  wrong:     () => AUDIO.play('wrong', 0.8),
+  reveal:    () => AUDIO.play('reveal', 1.1),
+  page:      () => AUDIO.play('pageTurn', 0.8),
+  footsteps: () => AUDIO.play('footsteps', 1)
 };
 
 /* ============================================================
@@ -1184,7 +1341,6 @@ function fadeCard(htmlBuilder){
     htmlBuilder();
     cardWrap.classList.add('visible');
     cardWrap.style.opacity = '';
-    // перезапуск анимации входа карточки
     const card = $('#card');
     card.style.animation = 'none';
     void card.offsetWidth;
@@ -1231,7 +1387,6 @@ function showIntro(){
     $('#goStage1').addEventListener('click',()=>{SFX.page(); startStage1();});
   });
 }
-
 
 /* ============================================================
    STAGE 1 — CODEX (drag/click pronouns into gaps)
@@ -1313,10 +1468,10 @@ function startStage1(){
           SFX.correct();
           state.stage1Progress++;
           if(state.stage1Progress >= state.stage1Total){
-  $('#goStage2').disabled = false;
-  $('#goStage2').removeAttribute('disabled');
-  showToast('Wards restored');
-}
+            $('#goStage2').disabled = false;
+            $('#goStage2').removeAttribute('disabled');
+            showToast('Wards restored');
+          }
         } else {
           g.textContent = selected;
           g.classList.add('wrong');
@@ -1352,8 +1507,9 @@ function startStage1(){
     $('#goStage2').addEventListener('click',()=>{SFX.page(); startStage2();});
   });
 }
+
 /* ============================================================
-   STAGE 2 — STARTER
+   STAGE 2 — CASE FILES
 ============================================================ */
 function startStage2(){
   state.stage = 2;
@@ -1361,9 +1517,7 @@ function startStage2(){
   state.stage2Index = 0;
   renderCase();
 }
-/* ============================================================
-   STAGE 2 — CASE FILES
-============================================================ */
+
 function renderCase(){
   const c = STAGE2[state.stage2Index];
   fadeCard(()=>{
@@ -1386,7 +1540,6 @@ function renderCase(){
     `;
 
     const optsEl = $('#caseOpts');
-    // shuffle so the correct one isn't always in the same place
     const shuffled = c.options.map((o,i)=>({o,i})).sort(()=>Math.random()-0.5);
     shuffled.forEach(({o})=>{
       const b = document.createElement('button');
@@ -1398,7 +1551,6 @@ function renderCase(){
           b.classList.add('correct');
           SFX.correct();
           $('#hintLine').textContent = c.hint;
-          // give the player a small signet score bonus — they identified it correctly
           state.signetScores[c.correct] += 0.5;
           optsEl.querySelectorAll('button').forEach(x=>x.disabled=true);
           setTimeout(()=>{
@@ -1422,8 +1574,9 @@ function renderCase(){
     });
   });
 }
+
 /* ============================================================
-   STAGE 3 — STARTER
+   STAGE 3 — REFLECTION
 ============================================================ */
 function startStage3(){
   state.stage = 3;
@@ -1431,9 +1584,7 @@ function startStage3(){
   state.stage3Index = 0;
   renderQuestion();
 }
-/* ============================================================
-   STAGE 3 — REFLECTION
-============================================================ */
+
 function renderQuestion(){
   const q = STAGE3[state.stage3Index];
   fadeCard(()=>{
@@ -1482,7 +1633,6 @@ function renderQuestion(){
 function doReveal(){
   setProgress(4);
 
-  // FLASH BURST
   const flash = document.createElement('div');
   flash.className = 'flash';
   document.body.appendChild(flash);
@@ -1541,6 +1691,13 @@ function showCameo(){
   $('#cameo').classList.add('visible');
   SFX.page();
 }
+
+/* ============================================================
+   BOOTSTRAP
+============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  AUDIO.init();
+});
 </script>
 </body>
 </html>
