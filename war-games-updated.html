@@ -2409,22 +2409,28 @@ const AUDIO = {
     });
   },
 
-  applyVolumes() {
+    applyVolumes() {
     Object.values(this.music).forEach(a => {
       if (!a) return;
-      const target = (a === this.currentMusic && !this.muted) ? this.volumes.music : 0;
-      a.volume = target;
+      if (a === this.currentMusic) {
+        a.volume = this.muted ? 0 : this.volumes.music;
+      }
     });
     Object.values(this.sfx).forEach(a => {
       if (a) a.volume = this.muted ? 0 : this.volumes.sfx;
     });
   },
 
-  playMusic(key) {
+    playMusic(key) {
     const next = this.music[key];
-    if (!next || next === this.currentMusic) return;
+    if (!next) {
+      console.warn('[AUDIO] Music key not found:', key);
+      return;
+    }
+    if (next === this.currentMusic && !next.paused) return;
+
     // Fade out current
-    if (this.currentMusic) {
+    if (this.currentMusic && this.currentMusic !== next) {
       const old = this.currentMusic;
       const startVol = old.volume;
       let step = 0;
@@ -2434,19 +2440,26 @@ const AUDIO = {
         if (step >= 20) { clearInterval(fade); old.pause(); }
       }, 50);
     }
+
     this.currentMusic = next;
-    next.currentTime = 0;
     next.volume = 0;
-    const p = next.play();
-    if (p && p.catch) p.catch(() => {});
-    if (!this.muted) {
-      let step = 0;
-      const target = this.volumes.music;
-      const fade = setInterval(() => {
-        step++;
-        next.volume = target * (step / 20);
-        if (step >= 20) clearInterval(fade);
-      }, 50);
+
+    const playPromise = next.play();
+    if (playPromise && playPromise.then) {
+      playPromise
+        .then(() => {
+          if (this.muted) return;
+          let step = 0;
+          const target = this.volumes.music;
+          const fade = setInterval(() => {
+            step++;
+            next.volume = target * (step / 20);
+            if (step >= 20) clearInterval(fade);
+          }, 50);
+        })
+        .catch(err => {
+          console.warn('[AUDIO] Music play failed for', key, ':', err.message);
+        });
     }
   },
 
