@@ -3037,7 +3037,7 @@ async function runPhase3() {
   spawnWyverns(2);
 
   // Mid line
-  const panel2 = UI.buildCommsPanel(PHASE_3_DATA.speaker, '', true, false);
+  const panel2 = UI.buildCommsPanel(PHASE_3_DATA.speakerViolet, '', true, false);
   commsContainer.appendChild(panel2);
   const textEl2 = panel2.querySelector('.comms-text');
   await UI.typewriter(textEl2, PHASE_3_DATA.midLine, 18);
@@ -3051,7 +3051,7 @@ async function runPhase3() {
   document.getElementById('timer-box').style.display = 'none';
   await UI.cutscene(PHASE_3_DATA.endCutscene, 2200);
 
-  const panel3 = UI.buildCommsPanel(PHASE_3_DATA.speaker, '');
+  const panel3 = UI.buildCommsPanel(PHASE_3_DATA.speakerViolet, '');
   commsContainer.appendChild(panel3);
   await UI.typewriter(panel3.querySelector('.comms-text'), PHASE_3_DATA.endLine, 18);
   await UI.sleep(900);
