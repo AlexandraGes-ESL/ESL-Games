@@ -448,6 +448,17 @@ h2.phase-title{
   0%, 100%{box-shadow:0 0 8px rgba(232,201,137,.4)}
   50%{box-shadow:0 0 20px rgba(232,201,137,.8)}
 }
+   .option-key{
+  display:inline-block;
+  min-width:22px;
+  margin-right:10px;
+  font-family:var(--font-heading);
+  font-weight:700;
+  color:var(--gold);
+  letter-spacing:1px;
+}
+.option-btn.correct .option-key{color:#a8e0a8}
+.option-btn.wrong .option-key{color:#ffb8b8}
 
 /* Listening (gap selects) */
 .listening-text{
@@ -1367,6 +1378,62 @@ body.screen-shake{animation:screenShake .3s ease-in-out}
   margin:30px auto 20px;
   max-width:760px;
   flex-wrap:wrap;
+}
+   /* Errors list (Lessons from the Sky) */
+.errors-list{
+  max-width:760px;
+  margin:0 auto 24px;
+}
+.error-item{
+  padding:14px 18px;
+  margin:10px 0;
+  background:rgba(139,44,44,.1);
+  border-left:3px solid var(--red);
+  border-radius:2px;
+  font-family:var(--font-body);
+}
+.error-q{
+  font-style:italic;
+  margin-bottom:8px;
+  color:var(--parch);
+  font-size:14px;
+}
+.error-pair{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  font-size:13px;
+  margin:6px 0;
+}
+.error-pair .given{
+  color:#ff8888;
+  font-weight:600;
+}
+.error-pair .arrow{
+  color:var(--gold);
+  font-family:var(--font-heading);
+}
+.error-pair .correct{
+  color:#88dd88;
+  font-weight:600;
+}
+.error-explain{
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px solid rgba(201,169,110,.15);
+  opacity:.85;
+  font-size:13px;
+  font-style:italic;
+  color:var(--parch-dark);
+}
+
+/* Dossier footer (Continue button container) */
+.dossier-footer{
+  display:flex;
+  justify-content:center;
+  margin:30px auto 20px;
+  max-width:760px;
 }
 
 /* ===== 21. FINAL CARD ===== */
