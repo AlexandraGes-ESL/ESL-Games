@@ -1202,7 +1202,7 @@ const AUDIO = {
   volumes: { music: 0.40, sfx: 0.50 },
   muted: false,
 
-  files: {
+    files: {
     footsteps: 'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/freesound_community-indoor-footsteps-6385.mp3',
     pageTurn:  'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/page-turn.mp3',
     correct:   'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/gentle-bell.mp3',
@@ -1210,8 +1210,10 @@ const AUDIO = {
     reveal:    'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/magical-reveal.mp3',
     hover:     'https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/hover-bell.mp3'
   },
+  music: null,  // ⬅️ ДОБАВИТЬ
+  musicStarted: false,  // ⬅️ ДОБАВИТЬ
 
-  init() {
+    init() {
     // Audio pool — несколько копий каждого звука
     const POOL_SIZE = 3;
     Object.entries(this.files).forEach(([key, url]) => {
@@ -1224,7 +1226,40 @@ const AUDIO = {
       }
     });
     this.poolIdx = {};
+
+    // ⬇️ ФОНОВАЯ МУЗЫКА
+    this.music = new Audio('https://cdn.jsdelivr.net/gh/AlexandraGes-ESL/Sounds@main/archives.mp3');
+    this.music.loop = true;
+    this.music.volume = 0; // стартуем с 0, потом fade-in
+    this.music.preload = 'auto';
+
     this.bindControls();
+
+    // Запуск музыки при первом клике (политика браузеров)
+    const startMusic = () => {
+      if (this.musicStarted || this.muted) return;
+      this.musicStarted = true;
+      this.music.play().then(() => {
+        this.fadeMusic(this.volumes.music, 2500);
+      }).catch(() => {
+        this.musicStarted = false;
+      });
+      document.removeEventListener('click', startMusic);
+    };
+    document.addEventListener('click', startMusic);
+  },
+
+  // ⬇️ ПЛАВНОЕ ИЗМЕНЕНИЕ ГРОМКОСТИ МУЗЫКИ
+  fadeMusic(targetVol, duration = 1000) {
+    if (!this.music) return;
+    const startVol = this.music.volume;
+    const startTime = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - startTime) / duration);
+      this.music.volume = startVol + (targetVol - startVol) * t;
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   },
 
   bindControls() {
@@ -1264,12 +1299,16 @@ const AUDIO = {
     });
   },
 
-  applyVolumes() {
+    applyVolumes() {
     Object.values(this.sfx).forEach(pool => {
       pool.forEach(a => {
         a.volume = this.muted ? 0 : this.volumes.sfx;
       });
     });
+    // ⬇️ Применяем громкость к музыке
+    if (this.music && this.musicStarted) {
+      this.music.volume = this.muted ? 0 : this.volumes.music;
+    }
   },
 
     play(key, volMultiplier = 1) {
