@@ -216,40 +216,195 @@
         }
 
         #sound-toggle {
-            position: absolute;
-            top: 20px; right: 20px;
-            z-index: 100;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--primary-gold);
-            color: var(--primary-gold);
-            font-size: 1.4rem;
-            width: 45px; height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        #sound-toggle:hover {
-            background: rgba(212,175,55,0.2);
-            box-shadow: 0 0 15px var(--primary-gold);
-        }
+    position: absolute;
+    top: 20px; right: 20px;
+    z-index: 100;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--primary-gold);
+    color: var(--primary-gold);
+    font-size: 1.4rem;
+    width: 45px; height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+#sound-toggle:hover {
+    background: rgba(212,175,55,0.2);
+    box-shadow: 0 0 15px var(--primary-gold);
+}
 
-        #game-container::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%);
-            pointer-events: none;
-            z-index: 1;
-        }
+/* ===== AUDIO PANEL ===== */
+#audio-panel {
+    position: absolute;
+    top: 75px;
+    right: 20px;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(15,15,20,0.96), rgba(10,10,15,0.98));
+    border: 1px solid var(--primary-gold);
+    border-radius: 10px;
+    padding: 18px 20px;
+    width: 240px;
+    display: none;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(212,175,55,0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+#audio-panel.open {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+.audio-panel-title {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--primary-gold);
+    text-align: center;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(212,175,55,0.25);
+}
+.audio-slider-row { margin-bottom: 14px; }
+.audio-slider-row:last-of-type { margin-bottom: 0; }
+.audio-slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--primary-gold);
+    margin-bottom: 6px;
+}
+.audio-slider-value { color: #ffd966; }
+.audio-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: rgba(212,175,55,0.2);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+.audio-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #ffd966;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(212,175,55,0.6);
+    border: none;
+}
+.audio-slider::-moz-range-thumb {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #ffd966;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(212,175,55,0.6);
+    border: none;
+}
+.audio-mute-row {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(212,175,55,0.25);
+    display: flex;
+    justify-content: center;
+}
+.audio-mute-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    background: transparent;
+    border: 1px solid var(--primary-gold);
+    color: var(--primary-gold);
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.audio-mute-btn:hover {
+    background: var(--primary-gold);
+    color: #1a1410;
+}
+.audio-mute-btn.muted {
+    background: #8b2c2c;
+    border-color: #c44545;
+    color: #fff;
+}
+
+/* 4-column grammar layout */
+.grammar-grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+.grammar-grid-4 .grammar-btn {
+    width: 100%;
+    margin: 0;
+    padding: 14px 12px;
+    font-size: 1rem;
+}
+.grammar-grid-4 .grammar-btn small {
+    font-size: 0.7rem;
+}
+.grammar-progress {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 12px 0;
+}
+.grammar-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid var(--primary-gold);
+}
+.grammar-dot.done { background: var(--primary-gold); }
+.grammar-dot.current {
+    background: var(--primary-gold);
+    box-shadow: 0 0 8px var(--primary-gold);
+}
     </style>
 </head>
 <body>
 <div id="game-container">
 
-    <button id="sound-toggle" onclick="toggleSound()" title="Toggle sound">🔊</button>
+    <button id="sound-toggle" title="Audio Settings">🔊</button>
+<div id="audio-panel">
+    <div class="audio-panel-title">⚙ AUDIO SETTINGS</div>
+
+    <div class="audio-slider-row">
+        <div class="audio-slider-label">
+            <span>🎵 Music</span>
+            <span class="audio-slider-value" id="music-val">20%</span>
+        </div>
+        <input type="range" min="0" max="100" value="20" class="audio-slider" id="music-slider">
+    </div>
+
+    <div class="audio-slider-row">
+        <div class="audio-slider-label">
+            <span>⚔ Sound FX</span>
+            <span class="audio-slider-value" id="sfx-val">60%</span>
+        </div>
+        <input type="range" min="0" max="100" value="60" class="audio-slider" id="sfx-slider">
+    </div>
+
+    <div class="audio-slider-row">
+        <div class="audio-slider-label">
+            <span>🗣 Voices</span>
+            <span class="audio-slider-value" id="voice-val">90%</span>
+        </div>
+        <input type="range" min="0" max="100" value="90" class="audio-slider" id="voice-slider">
+    </div>
+
+    <div class="audio-mute-row">
+        <button class="audio-mute-btn" id="mute-btn">🔇 MUTE ALL</button>
+    </div>
+</div>
     <img id="dragon-on-arena" src="" alt="">
 
     <div id="screen-intro" class="screen active">
@@ -268,17 +423,13 @@
     </div>
 
     <div id="screen-warmup" class="screen">
-        <h2>Dragon's Mind</h2>
-        <p>A deep voice echoes in your mind. Focus your thoughts to break the mental barrier!</p>
-        <p style="color: var(--primary-gold); font-style: italic; font-size: 1.3rem;" id="grammar-quote">"I have watched a thousand riders fall."</p>
-        <div>
-            <button class="grammar-btn" onclick="checkGrammar('Past Simple', this)">
-                Past Simple<br><small>Finished action</small>
-            </button>
-            <button class="grammar-btn" onclick="checkGrammar('Present Perfect', this)">
-                Present Perfect<br><small>Life experience</small>
-            </button>
-        </div>
+    <h2>Dragon's Mind</h2>
+    <p>A deep voice echoes in your mind. Each thought carries a different shape of time. <strong style="color: var(--primary-gold);">Name the tense — break the barrier.</strong></p>
+    <div class="grammar-progress" id="grammar-progress"></div>
+    <p style="color: var(--primary-gold); font-style: italic; font-size: 1.25rem; min-height: 3em;" id="grammar-quote">"..."</p>
+    <p style="font-size: 0.9rem; opacity: 0.7; font-style: italic; margin-bottom: 10px;" id="grammar-hint"></p>
+    <div class="grammar-grid-4" id="grammar-options"></div>
+</div>
     </div>
 
     <div id="screen-test" class="screen">
@@ -321,47 +472,168 @@
     const SOUNDS_BASE = 'https://raw.githubusercontent.com/AlexandraGes-ESL/Sounds/main/';
 
     const SOUNDS = {
-        roar:    SOUNDS_BASE + 'dragon-studio-dragon-growl-364483.mp3',
-        whoosh:  SOUNDS_BASE + 'dragon-studio-dragon-flapping-wings-364476.mp3',
-        // монологи
-        black:   SOUNDS_BASE + 'black.mp3',
-        blue:    SOUNDS_BASE + 'blue.mp3',
-        red:     SOUNDS_BASE + 'red.mp3',
-        green:   SOUNDS_BASE + 'green.mp3'
+    roar:    SOUNDS_BASE + 'dragon-studio-dragon-growl-364483.mp3',
+    whoosh:  SOUNDS_BASE + 'dragon-studio-dragon-flapping-wings-364476.mp3',
+    // монологи
+    black:   SOUNDS_BASE + 'black.mp3',
+    blue:    SOUNDS_BASE + 'blue.mp3',
+    red:     SOUNDS_BASE + 'red.mp3',
+    green:   SOUNDS_BASE + 'green.mp3',
+    // фоновая музыка
+    ambient: SOUNDS_BASE + 'threshing-background.mp3'
+};
+
+            let monologueAudio = null;
+    const audioCache = {};
+
+    // ==========================================
+    // AUDIO MODULE (с регулировкой громкости)
+    // ==========================================
+    const AudioModule = {
+        music: null,
+        volumes: { music: 0.20, sfx: 0.60, voice: 0.90 },
+        muted: false,
+        musicStarted: false,
+
+        init() {
+            // Загружаем SFX
+            ['roar', 'whoosh'].forEach(key => {
+                try {
+                    const a = new Audio(SOUNDS[key]);
+                    a.preload = 'auto';
+                    audioCache[key] = a;
+                } catch(e) {}
+            });
+
+            // Загружаем фоновую музыку
+            try {
+                this.music = new Audio(SOUNDS.ambient);
+                this.music.loop = true;
+                this.music.volume = 0;
+                this.music.preload = 'auto';
+            } catch(e) {}
+
+            this.bindControls();
+
+            // Автозапуск музыки на первом клике
+            const startMusic = () => {
+                if (this.musicStarted) return;
+                this.musicStarted = true;
+                this.startMusic();
+            };
+            document.addEventListener('click', startMusic, { once: true });
+            document.addEventListener('keydown', startMusic, { once: true });
+        },
+
+        bindControls() {
+            const toggle = document.getElementById('sound-toggle');
+            const panel = document.getElementById('audio-panel');
+
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                panel.classList.toggle('open');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!panel.contains(e.target) && e.target !== toggle) {
+                    panel.classList.remove('open');
+                }
+            });
+
+            const bindSlider = (id, valId, key) => {
+                const slider = document.getElementById(id);
+                const valEl = document.getElementById(valId);
+                slider.value = Math.round(this.volumes[key] * 100);
+                valEl.textContent = slider.value + '%';
+                slider.addEventListener('input', (e) => {
+                    const v = parseInt(e.target.value, 10) / 100;
+                    this.volumes[key] = v;
+                    valEl.textContent = e.target.value + '%';
+                    this.applyVolumes();
+                });
+            };
+            bindSlider('music-slider', 'music-val', 'music');
+            bindSlider('sfx-slider', 'sfx-val', 'sfx');
+            bindSlider('voice-slider', 'voice-val', 'voice');
+
+            const muteBtn = document.getElementById('mute-btn');
+            muteBtn.addEventListener('click', () => {
+                this.muted = !this.muted;
+                muteBtn.classList.toggle('muted', this.muted);
+                muteBtn.innerHTML = this.muted ? '🔇 UNMUTE' : '🔇 MUTE ALL';
+                this.applyVolumes();
+                toggle.innerText = this.muted ? '🔇' : '🔊';
+                if (this.muted) stopMonologue();
+            });
+        },
+
+        applyVolumes() {
+            if (this.music) {
+                this.music.volume = this.muted ? 0 : this.volumes.music;
+            }
+            if (monologueAudio) {
+                monologueAudio.volume = this.muted ? 0 : this.volumes.voice;
+            }
+        },
+
+        startMusic() {
+            if (!this.music || this.muted) return;
+            this.music.currentTime = 0;
+            const p = this.music.play();
+            if (p && p.catch) p.catch(() => {});
+            let step = 0;
+            const target = this.volumes.music;
+            const fade = setInterval(() => {
+                step++;
+                this.music.volume = target * (step / 30);
+                if (step >= 30) clearInterval(fade);
+            }, 60);
+        },
+
+        duckMusic(level = 0.05) {
+            if (!this.music) return;
+            const start = this.music.volume;
+            const target = this.muted ? 0 : this.volumes.music * level;
+            let step = 0;
+            const fade = setInterval(() => {
+                step++;
+                this.music.volume = start + (target - start) * (step / 15);
+                if (step >= 15) clearInterval(fade);
+            }, 40);
+        },
+
+        unduckMusic() {
+            if (!this.music) return;
+            const start = this.music.volume;
+            const target = this.muted ? 0 : this.volumes.music;
+            let step = 0;
+            const fade = setInterval(() => {
+                step++;
+                this.music.volume = start + (target - start) * (step / 15);
+                if (step >= 15) clearInterval(fade);
+            }, 40);
+        }
     };
 
-    let soundEnabled = true;
-    let ambientAudio = null;
-    let monologueAudio = null;
-
-    const audioCache = {};
-    function preloadSounds() {
-        // Предзагружаем только служебные звуки (не монологи — они большие)
-        ['roar', 'whoosh'].forEach(key => {
-            try {
-                const a = new Audio(SOUNDS[key]);
-                a.preload = 'auto';
-                audioCache[key] = a;
-            } catch(e) {}
-        });
-    }
-
-    function playSound(name, volume = 0.6) {
-        if (!soundEnabled || !audioCache[name]) return;
+    function playSound(name, volume = null) {
+        if (AudioModule.muted || !audioCache[name]) return;
         try {
             const sfx = audioCache[name].cloneNode();
-            sfx.volume = volume;
+            sfx.volume = volume !== null ? volume : AudioModule.volumes.sfx;
             sfx.play().catch(() => {});
         } catch(e) {}
     }
 
-    // Монолог — отдельный аудио-объект (можно остановить)
     function playMonologue(dragonColor) {
-        if (!soundEnabled) return;
+        if (AudioModule.muted) return;
         stopMonologue();
         try {
             monologueAudio = new Audio(SOUNDS[dragonColor]);
-            monologueAudio.volume = 0.9;
+            monologueAudio.volume = AudioModule.volumes.voice;
+            AudioModule.duckMusic(0.05);
+            monologueAudio.addEventListener('ended', () => {
+                AudioModule.unduckMusic();
+            });
             monologueAudio.play().catch(() => {});
         } catch(e) {}
     }
@@ -371,30 +643,57 @@
             monologueAudio.pause();
             monologueAudio.currentTime = 0;
             monologueAudio = null;
+            AudioModule.unduckMusic();
         }
     }
 
-    function toggleSound() {
-        soundEnabled = !soundEnabled;
-        document.getElementById('sound-toggle').innerText = soundEnabled ? '🔊' : '🔇';
-        if (!soundEnabled) {
-            stopMonologue();
-        }
+    AudioModule.init();
+
+    // ==========================================
+// ДАННЫЕ — грамматика (микс времён)
+// ==========================================
+const grammarTasks = [
+    {
+        quote: '"I have watched a thousand riders fall on these stones."',
+        hint: 'Life experience — unspecified time, result felt now',
+        answer: 'Present Perfect'
+    },
+    {
+        quote: '"Yesterday, a cadet bled where you now stand."',
+        hint: '"Yesterday" — specific finished moment',
+        answer: 'Past Simple'
+    },
+    {
+        quote: '"The wind is whispering your name through the rocks."',
+        hint: 'Action happening RIGHT NOW',
+        answer: 'Present Continuous'
+    },
+    {
+        quote: '"I have been waiting for you since the last moon."',
+        hint: '"Since" — ongoing action that started in the past',
+        answer: 'Present Perfect Continuous'
+    },
+    {
+        quote: '"Three winters ago, the Empyrean banned this ritual."',
+        hint: '"Three winters ago" — finished time marker',
+        answer: 'Past Simple'
+    },
+    {
+        quote: '"While you were climbing, I was studying your steps."',
+        hint: 'Two long parallel actions in the past',
+        answer: 'Past Continuous'
     }
+];
 
-    preloadSounds();
+const grammarOptions = [
+    { label: 'Past Simple',                desc: 'Finished action' },
+    { label: 'Past Continuous',            desc: 'Was happening' },
+    { label: 'Present Continuous',         desc: 'Happening now' },
+    { label: 'Present Perfect',            desc: 'Life experience' },
+    { label: 'Present Perfect Continuous', desc: 'Since / for' }
+];
 
-    // ==========================================
-    // ДАННЫЕ — грамматика
-    // ==========================================
-    const grammarTasks = [
-        { quote: '"I have watched a thousand riders fall."',   answer: 'Present Perfect' },
-        { quote: '"Yesterday, a cadet bled on these stones."', answer: 'Past Simple'      },
-        { quote: '"Have you ever broken a sacred rule?"',      answer: 'Present Perfect' },
-        { quote: '"I fought in the great war ten years ago."', answer: 'Past Simple'      }
-    ];
-    let currentTask = 0;
-
+let currentTask = 0;
     // ==========================================
     // ВОПРОСЫ
     // ==========================================
@@ -524,23 +823,62 @@
         updateGrammarTask();
     }
 
-    function updateGrammarTask() {
-        if (currentTask < grammarTasks.length) {
-            document.getElementById('grammar-quote').innerText = grammarTasks[currentTask].quote;
-        } else {
-            switchScreen('screen-warmup', 'screen-bridge');
-        }
+function renderGrammarProgress() {
+    const wrap = document.getElementById('grammar-progress');
+    wrap.innerHTML = '';
+    for (let i = 0; i < grammarTasks.length; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'grammar-dot';
+        if (i < currentTask) dot.classList.add('done');
+        else if (i === currentTask) dot.classList.add('current');
+        wrap.appendChild(dot);
     }
+}
 
-    function checkGrammar(answer, btnElement) {
-        if (answer === grammarTasks[currentTask].answer) {
+function updateGrammarTask() {
+    if (currentTask < grammarTasks.length) {
+        const task = grammarTasks[currentTask];
+        document.getElementById('grammar-quote').innerText = task.quote;
+        document.getElementById('grammar-hint').innerText = '💭 ' + task.hint;
+        renderGrammarProgress();
+
+        // Рендерим 4 случайные опции (правильный + 3 неправильных)
+        const correct = task.answer;
+        const wrongs = grammarOptions
+            .filter(o => o.label !== correct)
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 3);
+        const all = [...wrongs, grammarOptions.find(o => o.label === correct)]
+            .sort(() => Math.random() - 0.5);
+
+        const container = document.getElementById('grammar-options');
+        container.innerHTML = '';
+        all.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'grammar-btn';
+            btn.innerHTML = `${opt.label}<br><small>${opt.desc}</small>`;
+            btn.onclick = () => checkGrammar(opt.label, btn);
+            container.appendChild(btn);
+        });
+    } else {
+        switchScreen('screen-warmup', 'screen-bridge');
+    }
+}
+
+function checkGrammar(answer, btnElement) {
+    if (answer === grammarTasks[currentTask].answer) {
+        btnElement.style.background = 'linear-gradient(135deg, rgba(74,124,78,0.8), rgba(40,80,40,0.9))';
+        btnElement.style.borderColor = '#4a7c4e';
+        btnElement.style.color = '#a8e0a8';
+        setTimeout(() => {
             currentTask++;
             updateGrammarTask();
-        } else {
-            btnElement.classList.add('wrong');
-            setTimeout(() => btnElement.classList.remove('wrong'), 400);
-        }
+        }, 600);
+    } else {
+        btnElement.classList.add('wrong');
+        setTimeout(() => btnElement.classList.remove('wrong'), 400);
     }
+}
 
     function goToArena() {
         playSound('whoosh');
@@ -661,9 +999,6 @@
         stopMonologue();
         // Ничего больше — квиз завершён
     }
-</script>
-</body>
-</html>
 </script>
 </body>
 </html>
