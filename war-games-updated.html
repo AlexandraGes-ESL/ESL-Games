@@ -1543,7 +1543,170 @@ body.screen-shake{animation:screenShake .3s ease-in-out}
   font-family:var(--font-heading);
   color:var(--parch-dark);
 }
+/* ===== 21B. FINAL SEQUENCE (Illustration + Reflection + Farewell) ===== */
+.final-sequence{
+  position:fixed; inset:0;
+  background:linear-gradient(180deg, #0d0805 0%, #1a0f08 100%);
+  z-index:900;
+  overflow-y:auto;
+  opacity:0;
+  transition:opacity 1.2s ease;
+  padding:0 0 60px;
+}
+.final-sequence.visible{opacity:1}
 
+.final-illustration{
+  width:100%;
+  position:relative;
+  margin-bottom:40px;
+  box-shadow:0 20px 60px rgba(0,0,0,.7);
+}
+.final-illustration img{
+  width:100%;
+  max-height:75vh;
+  object-fit:cover;
+  display:block;
+}
+.final-illustration::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, transparent 0%, transparent 70%, #0d0805 100%);
+  pointer-events:none;
+}
+.final-caption{
+  text-align:center;
+  font-family:var(--font-heading);
+  font-style:italic;
+  color:var(--gold);
+  font-size:clamp(14px, 1.8vw, 17px);
+  letter-spacing:2px;
+  margin:-30px auto 40px;
+  max-width:700px;
+  padding:0 20px;
+  position:relative;
+  z-index:2;
+}
+
+.final-reflection{
+  max-width:780px;
+  margin:0 auto 40px;
+  padding:0 24px;
+}
+.reflection-header{
+  text-align:center;
+  font-family:var(--font-heading);
+  color:var(--gold-bright);
+  font-size:clamp(20px, 2.4vw, 26px);
+  letter-spacing:4px;
+  margin-bottom:6px;
+  text-shadow:0 0 20px rgba(232,201,137,.4);
+}
+.reflection-subheader{
+  text-align:center;
+  color:var(--parch-dark);
+  font-style:italic;
+  font-family:var(--font-body);
+  font-size:15px;
+  margin-bottom:28px;
+  opacity:.85;
+}
+.reflection-card{
+  display:flex;
+  gap:18px;
+  padding:20px 22px;
+  background:linear-gradient(180deg, rgba(244,232,208,.05), rgba(244,232,208,.02));
+  border:1px solid rgba(201,169,110,.25);
+  border-left:3px solid var(--gold);
+  border-radius:3px;
+  margin-bottom:16px;
+  animation:reveal .6s ease backwards;
+}
+.reflection-card:nth-child(2){animation-delay:.2s}
+.reflection-card:nth-child(3){animation-delay:.4s}
+.reflection-card:nth-child(4){animation-delay:.6s}
+.reflection-num{
+  width:38px; height:38px;
+  flex-shrink:0;
+  background:linear-gradient(180deg, var(--gold-bright), var(--gold));
+  color:var(--ink);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-heading);
+  font-weight:700;
+  font-size:16px;
+  box-shadow:0 0 14px rgba(232,201,137,.4);
+}
+.reflection-body{flex:1; min-width:0}
+.reflection-title{
+  font-family:var(--font-heading);
+  color:var(--gold);
+  font-size:12px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.reflection-question{
+  font-family:var(--font-body);
+  color:var(--parch);
+  font-size:16px;
+  line-height:1.55;
+  margin-bottom:10px;
+  font-style:italic;
+}
+.reflection-hint{
+  font-family:var(--font-body);
+  color:var(--gold-dark);
+  font-size:13px;
+  font-style:italic;
+  opacity:.9;
+}
+
+.final-farewell{
+  max-width:680px;
+  margin:0 auto 30px;
+  padding:28px 24px;
+  text-align:center;
+  background:linear-gradient(180deg, rgba(201,169,110,.08), transparent);
+  border-top:1px solid rgba(201,169,110,.3);
+  border-bottom:1px solid rgba(201,169,110,.3);
+}
+.farewell-portrait{
+  width:90px; height:90px;
+  border-radius:50%;
+  object-fit:cover; object-position:center top;
+  border:2px solid var(--gold);
+  margin:0 auto 10px;
+  display:block;
+  box-shadow:0 0 20px rgba(201,169,110,.4);
+}
+.farewell-name{
+  font-family:var(--font-heading);
+  color:var(--gold-bright);
+  font-size:13px;
+  letter-spacing:3px;
+  margin-bottom:16px;
+}
+.farewell-narrator{
+  font-family:var(--font-heading);
+  color:var(--gold-dark);
+  font-style:italic;
+  font-size:13px;
+  letter-spacing:3px;
+  margin-bottom:16px;
+}
+.farewell-line{
+  font-family:var(--font-body);
+  color:var(--parch);
+  font-size:clamp(16px, 2vw, 19px);
+  font-style:italic;
+  line-height:1.6;
+}
+
+.final-cta{
+  text-align:center;
+  margin-top:30px;
+}
 /* ===== 22. SIGNET QUICK BAR (Phase 3) ===== */
 .signet-bar{
   display:flex;
@@ -1768,6 +1931,12 @@ const CONFIG = {
   ridoc:    'https://i.yapx.ru/du3F2.png',
   caeden:   'https://i.yapx.ru/du3F8.png'
 },
+     FINAL_ART: {
+    promise: 'https://i.yapx.ru/dvVq0.jpg',  // Caeden romance
+    wing:    'https://i.yapx.ru/dvVq2.jpg',  // Full squad
+    road:    'https://i.yapx.ru/dvVqw.jpg',  // Rhiannon survivor
+    empty:   'https://i.yapx.ru/dvVqu.jpg'   // Fallen
+  },
 
   TYPING_SPEED: 22,
 INTRO_TYPING_SPEED: 50,
@@ -2115,6 +2284,67 @@ const PHASE_4_DATA = {
     }
   ]
 };
+   /* ===== FINAL SEQUENCE DATA ===== */
+const FINAL_DATA = {
+  illustrations: {
+    promise: { src: CONFIG.FINAL_ART.promise, caption: 'Sunset over Basgiath. A promise made without words.' },
+    wing:    { src: CONFIG.FINAL_ART.wing,    caption: 'The Fourth Wing stands. And you stand with them.' },
+    road:    { src: CONFIG.FINAL_ART.road,    caption: 'Dawn after the storm. Some bonds are forged in silence.' },
+    empty:   { src: CONFIG.FINAL_ART.empty,   caption: 'The sky remembers every rider who falls beneath it.' }
+  },
+
+  farewells: {
+    promise: {
+      speaker: 'CAEDEN',
+      portrait: CONFIG.NPC.caeden,
+      line: "Fly safe, rider. And when the sky calls again — I'll be the one waiting at the launch ledge."
+    },
+    wing: {
+      speaker: 'CAEDEN',
+      portrait: CONFIG.NPC.caeden,
+      line: "You wear the Fourth Wing's colors well. The sky remembers those who flew it with honor — and so will I."
+    },
+    road: {
+      speaker: 'RHIANNON',
+      portrait: CONFIG.NPC.rhiannon,
+      line: "We made it through. That's not nothing, rider. That's everything. Walk with me — the day is young."
+    },
+    empty: {
+      speaker: null,
+      portrait: null,
+      line: "The wind carries your name across the peaks. Somewhere, a dragon mourns. Somewhere, a wing flies on without you."
+    }
+  },
+
+  reflection: [
+    {
+      icon: '🐉',
+      title: 'About your dragon and signet',
+      question: "Your dragon chose you. Your signet revealed itself. Do you think they matched who you really are — or would you have picked something different?",
+      hint: "Talk it through with your tutor."
+    },
+    {
+      icon: '✨',
+      title: 'About the story',
+      question: "Which part of the trial did you enjoy the most? A scene, a choice, a character, a line — anything that stayed with you.",
+      hint: "Share with your tutor."
+    },
+    {
+      icon: '💭',
+      title: 'About you',
+      question: "If you could step into Basgiath for real — would you want to be a rider? Why, or why not?",
+      hint: "Discuss freely."
+    }
+  ]
+};
+
+function pickFinalKey() {
+  const tier = STATE.verdict?.tier;
+  if (tier === 'fallen' || tier === 'disgraced') return 'empty';
+  if (tier === 'survivor') return 'road';
+  // paragon / honored
+  return STATE.romanceFlag ? 'promise' : 'wing';
+}
 
 /* ===== AUDIO ENGINE ===== */
 const AUDIO = {
@@ -3509,37 +3739,66 @@ function runDossier() {
   }, { once: true });
 }
 
-/* ===== FINAL CARD ===== */
+/* ===== FINAL SEQUENCE (Illustration → Reflection → Farewell) ===== */
 function runFinalCard() {
   AUDIO.stopMusic();
   AUDIO.playMusic('calm');
 
-  const v = STATE.verdict;
-  const dragon = DRAGONS.find(d => d.id === STATE.dragon);
+  // Hide POV and main card behind the overlay
+  UI.hidePOV();
+  document.getElementById('main').style.display = 'none';
+
+  const key = pickFinalKey();
+  const art = FINAL_DATA.illustrations[key];
+  const farewell = FINAL_DATA.farewells[key];
 
   const overlay = document.createElement('div');
-  overlay.className = 'verdict-overlay';
-  overlay.style.borderColor = v.color;
+  overlay.className = 'final-sequence';
   overlay.innerHTML = `
-    <div class="verdict-icon" style="color:${v.color}">⚜</div>
-    <div class="verdict-subtitle">— THE TRIAL IS COMPLETE —</div>
-    <div class="verdict-title" style="color:${v.color};font-size:42px">${v.title}</div>
-    <div class="verdict-caeden" style="font-size:16px">
-      The wind carries you home as the sun bleeds gold across the cliffs of Basgiath.<br><br>
-      ${dragon ? dragon.name : 'Your dragon'} hums beneath you — a low, steady note that means
-      <em>"well flown, rider."</em><br><br>
-      Tonight you will sleep in the barracks. Tomorrow, the next trial begins.<br><br>
-      <strong style="color:${v.color};font-family:var(--font-heading);letter-spacing:2px">
-        ⚜ THE SKY REMEMBERS ⚜
-      </strong>
-      ${STATE.romanceFlag ? '<br><br><em style="color:#ff9ec5">...and a certain Squad Leader will be watching the next flight roster very, very carefully.</em>' : ''}
+
+    <!-- 1. HERO ILLUSTRATION -->
+    <div class="final-illustration">
+      <img src="${art.src}" alt="${art.caption}">
     </div>
-    <button class="verdict-btn" id="final-restart">⚔ FLY AGAIN ⚔</button>
+    <div class="final-caption">"${art.caption}"</div>
+
+    <!-- 2. REFLECTION -->
+    <div class="final-reflection">
+      <div class="reflection-header">☕ A MOMENT TO BREATHE</div>
+      <div class="reflection-subheader">Step out of the saddle. Let's talk.</div>
+
+      ${FINAL_DATA.reflection.map((q, i) => `
+        <div class="reflection-card">
+          <div class="reflection-num">${i + 1}</div>
+          <div class="reflection-body">
+            <div class="reflection-title">${q.icon} ${q.title}</div>
+            <div class="reflection-question">"${q.question}"</div>
+            <div class="reflection-hint">💬 ${q.hint}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- 3. FAREWELL LINE -->
+    <div class="final-farewell">
+      ${farewell.portrait ? `
+        <img src="${farewell.portrait}" alt="${farewell.speaker}" class="farewell-portrait">
+        <div class="farewell-name">— ${farewell.speaker} —</div>
+      ` : `
+        <div class="farewell-narrator">— THE WIND SPEAKS —</div>
+      `}
+      <div class="farewell-line">"${farewell.line}"</div>
+    </div>
+
+    <!-- 4. FLY AGAIN -->
+    <div class="final-cta">
+      <button class="verdict-btn" id="final-restart">⚔ FLY AGAIN ⚔</button>
+    </div>
   `;
   document.body.appendChild(overlay);
 
-  setTimeout(() => overlay.classList.add('visible'), 50);
   AUDIO.play('gong');
+  setTimeout(() => overlay.classList.add('visible'), 50);
 
   document.getElementById('final-restart').addEventListener('click', () => {
     location.reload();
