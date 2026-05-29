@@ -1694,12 +1694,12 @@ const CONFIG = {
   },
 
   NPC: {
-    imogen:   'https://i.yapx.ru/dpvst.png',
-    rhiannon: 'https://i.yapx.ru/dpvss.png',
-    violet:   'https://i.yapx.ru/dpvsu.png',
-    ridoc:    'https://i.yapx.ru/dpvsv.png',
-    caeden:   'https://i.yapx.ru/dpvsw.png'
-  },
+  imogen:   'https://i.yapx.ru/du3F1.png',
+  rhiannon: 'https://i.yapx.ru/du3F4.png',
+  violet:   'https://i.yapx.ru/du3F6.png',
+  ridoc:    'https://i.yapx.ru/du3F2.png',
+  caeden:   'https://i.yapx.ru/du3F8.png'
+},
 
   TYPING_SPEED: 22,
   PHASE_3_TIME_PER_Q: 12,
@@ -2426,7 +2426,7 @@ async function runIntro() {
   AUDIO.playMusic('calm');
 
   for (const t of introTexts) {
-    await UI.typewriter(introTextEl, t, 30);
+    await UI.typewriter(introTextEl, t, 20);
     await UI.sleep(900);
   }
 
