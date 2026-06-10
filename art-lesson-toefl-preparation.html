@@ -160,6 +160,37 @@ strong{font-weight:600;}
 .artwork__img{cursor:zoom-in;transition:transform .2s;}
 .artwork__img:hover{transform:scale(1.02);}
 .text-box{background:var(--bg-alt);padding:1.5rem;border-left:4px solid var(--ultramarine);font-size:1.125rem;}
+  /* Gallery support: hedged interpretation builder */
+.interp-steps { display:flex; flex-direction:column; gap:1rem; margin:1.75rem 0; }
+.interp-step { display:flex; gap:1rem; align-items:flex-start; }
+.interp-step__num {
+  flex:none; width:34px; height:34px; border-radius:50%;
+  background:var(--ultramarine); color:#fff; font-weight:700;
+  display:flex; align-items:center; justify-content:center; font-size:0.95rem;
+}
+.interp-step__label {
+  font-weight:700; font-size:0.78rem; letter-spacing:0.06em;
+  text-transform:uppercase; color:var(--ultramarine); margin:0 0 0.2rem;
+}
+.interp-step__phrase { margin:0; font-style:italic; color:var(--text-color); }
+.interp-model {
+  background:var(--bg-color); border-left:3px solid var(--vermilion);
+  padding:1.25rem 1.5rem; border-radius:0 8px 8px 0;
+}
+.interp-model__tag {
+  display:inline-block; font-size:0.72rem; letter-spacing:0.08em;
+  text-transform:uppercase; font-weight:700; color:var(--vermilion); margin-bottom:0.5rem;
+}
+.interp-model__text { margin:0; line-height:1.7; }
+.interp-model__text u { text-decoration-color:var(--vermilion); text-underline-offset:3px; }
+
+/* Gallery 4-in-a-row collapses on smaller screens */
+@media (max-width:900px) {
+  .rank-grid[style*="repeat(4"] { grid-template-columns:repeat(2,1fr) !important; }
+}
+@media (max-width:520px) {
+  .rank-grid[style*="repeat(4"] { grid-template-columns:1fr !important; }
+}
 </style>
 </head>
 <body>
@@ -660,45 +691,86 @@ strong{font-weight:600;}
       <p class="chapter__dek">Four works. Click any image to zoom in. For each, give a <strong>hedged interpretation</strong> using a phrase from Chapter 04. Then assign your own red dot — your personal #1.</p>
     </header>
     <div class="block">
-      <div class="rank-grid">
-        <figure class="rank-card">
-          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B1A.jpg" alt="Van Gogh, Wheat Field with Cypresses"></div>
-          <figcaption class="etiquette" style="margin-top:0.6rem;">
-            <span class="etiquette__artist">Vincent van Gogh</span>
-            <span class="etiquette__title"><em>Wheat Field with Cypresses</em>, 1889</span>
-          </figcaption>
-          <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:70px;" placeholder="It seems to convey…"></textarea>
-        </figure>
-        <figure class="rank-card">
-          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B09.jpg" alt="Cézanne, Still Life with Apples"></div>
-          <figcaption class="etiquette" style="margin-top:0.6rem;">
-            <span class="etiquette__artist">Paul Cézanne</span>
-            <span class="etiquette__title"><em>Still Life with Apples</em>, c. 1890</span>
-          </figcaption>
-          <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:70px;" placeholder="One reading could be…"></textarea>
-        </figure>
-        <figure class="rank-card">
-          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B08.jpg" alt="Vermeer, Young Woman with a Water Pitcher"></div>
-          <figcaption class="etiquette" style="margin-top:0.6rem;">
-            <span class="etiquette__artist">Johannes Vermeer</span>
-            <span class="etiquette__title"><em>Young Woman with a Water Pitcher</em>, c. 1662</span>
-          </figcaption>
-          <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:70px;" placeholder="It might…"></textarea>
-        </figure>
-        <figure class="rank-card">
-          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B07.jpg" alt="Jackson Pollock, Autumn Rhythm"></div>
-          <figcaption class="etiquette" style="margin-top:0.6rem;">
-            <span class="etiquette__artist">Jackson Pollock</span>
-            <span class="etiquette__title"><em>Autumn Rhythm</em> (Number 30), 1950</span>
-          </figcaption>
-          <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:70px;" placeholder="I suppose it could…"></textarea>
-        </figure>
+  <div class="rank-grid" style="grid-template-columns:repeat(4,1fr);">
+    <figure class="rank-card">
+      <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B1A.jpg" alt="Van Gogh, Wheat Field with Cypresses"></div>
+      <figcaption class="etiquette" style="margin-top:0.6rem;">
+        <span class="etiquette__artist">Vincent van Gogh</span>
+        <span class="etiquette__title"><em>Wheat Field with Cypresses</em>, 1889</span>
+      </figcaption>
+      <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:90px;" placeholder="At first glance… It seems to convey… One reading could be…"></textarea>
+    </figure>
+    <figure class="rank-card">
+      <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B09.jpg" alt="Cézanne, Still Life with Apples"></div>
+      <figcaption class="etiquette" style="margin-top:0.6rem;">
+        <span class="etiquette__artist">Paul Cézanne</span>
+        <span class="etiquette__title"><em>Still Life with Apples</em>, c. 1890</span>
+      </figcaption>
+      <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:90px;" placeholder="At first glance… It seems to convey… One reading could be…"></textarea>
+    </figure>
+    <figure class="rank-card">
+      <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B08.jpg" alt="Vermeer, Young Woman with a Water Pitcher"></div>
+      <figcaption class="etiquette" style="margin-top:0.6rem;">
+        <span class="etiquette__artist">Johannes Vermeer</span>
+        <span class="etiquette__title"><em>Young Woman with a Water Pitcher</em>, c. 1662</span>
+      </figcaption>
+      <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:90px;" placeholder="At first glance… It seems to convey… One reading could be…"></textarea>
+    </figure>
+    <figure class="rank-card">
+      <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B07.jpg" alt="Jackson Pollock, Autumn Rhythm"></div>
+      <figcaption class="etiquette" style="margin-top:0.6rem;">
+        <span class="etiquette__artist">Jackson Pollock</span>
+        <span class="etiquette__title"><em>Autumn Rhythm</em> (Number 30), 1950</span>
+      </figcaption>
+      <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:90px;" placeholder="At first glance… It seems to convey… One reading could be…"></textarea>
+    </figure>
+  </div>
+
+  <!-- SUPPORT: how to build a hedged interpretation -->
+  <div class="vocab-drop" style="margin-top:2.5rem;">
+    <span class="vocab-drop__kicker">Your Support · How to Build a Hedged Interpretation</span>
+    <h3 class="vocab-drop__title">Three Steps + One Model</h3>
+    <p class="vocab-drop__lede">Don't say "I like it." Build a real interpretation in three moves. Follow this skeleton for every painting above.</p>
+
+    <div class="interp-steps">
+      <div class="interp-step">
+        <span class="interp-step__num">1</span>
+        <div>
+          <p class="interp-step__label">DESCRIBE — what you literally see</p>
+          <p class="interp-step__phrase">"At first glance, I notice… / The painting shows… / What stands out is…"</p>
+        </div>
       </div>
-      <div class="prompt" style="margin-top:2.5rem;">
-        <p>Award the <span class="callback__dot" style="display:inline-block;vertical-align:middle;"></span> <strong>red dot</strong> to your personal #1. Speak for 45 seconds: <em>why this one, and what does it convey that the others do not?</em></p>
+      <div class="interp-step">
+        <span class="interp-step__num">2</span>
+        <div>
+          <p class="interp-step__label">INTERPRET (with a hedge) — what it might mean</p>
+          <p class="interp-step__phrase">"It seems to convey… / One reading could be… / It might be a comment on…"</p>
+        </div>
+      </div>
+      <div class="interp-step">
+        <span class="interp-step__num">3</span>
+        <div>
+          <p class="interp-step__label">JUSTIFY — point back to the painting</p>
+          <p class="interp-step__phrase">"…because of the [colour / lines / light / composition]."</p>
+        </div>
       </div>
     </div>
+
+    <div class="interp-model">
+      <span class="interp-model__tag">Full model · Van Gogh</span>
+      <p class="interp-model__text">
+        "<u>At first glance, I notice</u> the swirling sky and the dark, flame-like cypress tree.
+        <u>It seems to convey</u> a sense of restless energy — almost anxiety —
+        <u>because of</u> the thick, curling brushstrokes and the way the tree cuts vertically through the calm field.
+        <u>One reading could be</u> that it shows nature as something alive and emotional, not peaceful."
+      </p>
+    </div>
   </div>
+
+  <div class="prompt" style="margin-top:2.5rem;">
+    <p>Award the <span class="callback__dot" style="display:inline-block;vertical-align:middle;"></span> <strong>red dot</strong> to your personal #1. Speak for 45 seconds using all three steps: <em>describe → interpret with a hedge → justify.</em></p>
+  </div>
+</div>
 </section>
 
 <!-- ═══════════════ CHAPTER 06 — THE DEFENSE ═══════════════ -->
