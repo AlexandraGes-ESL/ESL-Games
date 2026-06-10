@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<title>TOEFL Editorial · Issue 04 · The Curator</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gallery-white:#F2EFE8;--linen:#E8E2D5;--shadow-wall:#D9D2C2;
+  --ink-deep:#1C1A17;--ink-soft:#4A453E;--ink-whisper:#8B8579;
+  --ultramarine:#1B3A6B;--terre-verte:#5C6F4E;--ochre:#B8843A;--vermilion:#C8392B;
+  --gallery-night:#14223A;--linen-night:#1F3050;--ochre-glow:#D4A24C;
+  --bg-color:var(--gallery-white);--text-color:var(--ink-deep);--text-muted:var(--ink-soft);
+  --accent-red:var(--vermilion);--border-color:var(--shadow-wall);--bg-alt:var(--linen);
+  --night-bg:var(--gallery-night);--night-text:var(--gallery-white);--night-border:var(--ultramarine);--night-muted:#99aabb;
+  --font-serif:'Fraunces',serif;--font-sans:'Inter',sans-serif;--font-ui:'JetBrains Mono',monospace;
+  --space-md:2rem;--space-lg:4rem;--space-xl:6rem;
+  --max-shell:1280px;--gutter:clamp(1.5rem,4vw,4rem);
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{margin:0;background:var(--bg-color);color:var(--text-color);font-family:var(--font-sans);line-height:1.6;-webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4,p,ul,ol,figure{margin:0;padding:0;}
+ul,ol{list-style:none;}
+a{color:inherit;text-decoration:none;}
+button{background:none;border:none;font:inherit;cursor:pointer;color:inherit;}
+img{max-width:100%;display:block;}
+em{font-family:var(--font-serif);font-style:italic;font-weight:400;}
+strong{font-weight:600;}
+.shell{max-width:var(--max-shell);margin:0 auto;padding:0 var(--gutter);width:100%;}
+.passepartout{background:var(--linen);padding:clamp(0.75rem,1.5vw,1.5rem);border:1px solid var(--shadow-wall);}
+.passepartout .artwork__img{width:100%;height:100%;object-fit:contain;display:block;}
+.passepartout--square{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;}
+.sold-dot,.callback__dot,.nav__dot{display:inline-block;width:12px;height:12px;background:var(--accent-red);border-radius:50%;}
+.nav{position:fixed;top:0;width:100%;background:rgba(242,239,232,0.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--border-color);z-index:100;font-family:var(--font-ui);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;}
+.nav__inner{max-width:var(--max-shell);margin:0 auto;padding:0.85rem var(--gutter);display:flex;justify-content:space-between;align-items:center;gap:1rem;}
+.nav__brand{display:flex;align-items:center;gap:0.5rem;font-weight:600;white-space:nowrap;}
+.nav__list{display:flex;gap:1.1rem;flex-wrap:wrap;}
+.nav__link{color:var(--text-muted);transition:color .2s;white-space:nowrap;}
+.nav__link:hover{color:var(--text-color);}
+.nav__mute{font-size:1rem;}
+.nav__mute-off{display:none;}
+.nav__mute.is-muted .nav__mute-on{display:none;}
+.nav__mute.is-muted .nav__mute-off{display:inline;}
+@media(max-width:1024px){.nav__list{display:none;}}
+.cover{min-height:100vh;display:flex;align-items:center;padding:7rem 0 3rem;}
+.cover__inner{max-width:var(--max-shell);margin:0 auto;padding:0 var(--gutter);width:100%;display:grid;grid-template-columns:1.1fr 0.9fr;gap:clamp(2rem,5vw,5rem);align-items:center;}
+.cover__text-stack{display:flex;flex-direction:column;gap:1.5rem;}
+.cover__meta{display:flex;gap:0.75rem;flex-wrap:wrap;}
+.meta-strip{font-family:var(--font-ui);font-size:0.7rem;text-transform:uppercase;padding:0.25rem 0.75rem;border:1px solid var(--border-color);border-radius:20px;}
+.cover__title{font-family:var(--font-serif);font-size:clamp(3rem,6vw,6rem);line-height:0.9;font-weight:300;color:var(--ultramarine);}
+.cover__subtitle{font-size:clamp(1.25rem,2vw,1.5rem);color:var(--text-muted);}
+.cover__pullquote{font-family:var(--font-serif);font-size:1.35rem;font-style:italic;border-left:2px solid var(--ochre);padding-left:1.5rem;margin-top:1rem;}
+.cover__callback{display:flex;gap:1rem;font-size:0.875rem;color:var(--text-muted);padding:1.5rem;background:var(--bg-alt);border:1px solid var(--border-color);margin-top:1rem;}
+.callback__label{display:block;font-family:var(--font-ui);font-weight:600;text-transform:uppercase;font-size:0.7rem;margin-bottom:0.25rem;color:var(--text-color);}
+.cover__hero{margin:0;}
+.cover__hero .passepartout{aspect-ratio:4/5;display:flex;}
+.cover__hero .artwork__img{object-fit:cover;}
+.etiquette{margin-top:0.75rem;font-family:var(--font-ui);font-size:0.75rem;color:var(--text-muted);display:flex;flex-direction:column;line-height:1.4;}
+.etiquette__artist{font-weight:600;color:var(--text-color);text-transform:uppercase;}
+.chapter,.interlude,.homework{padding:var(--space-xl) 0;border-top:1px solid var(--border-color);}
+.chapter__inner,.interlude__inner,.homework__inner{max-width:var(--max-shell);margin:0 auto;padding:0 var(--gutter);width:100%;}
+.chapter__head{max-width:760px;margin:0 auto var(--space-lg);text-align:center;}
+.chapter__num,.interlude__kicker{display:block;font-family:var(--font-ui);font-size:0.75rem;text-transform:uppercase;color:var(--ultramarine);margin-bottom:1rem;}
+.chapter__title,.interlude__title{font-family:var(--font-serif);font-size:clamp(2rem,5vw,3.5rem);font-weight:300;margin-bottom:1.5rem;}
+.chapter__dek,.interlude__lede{font-size:1.25rem;color:var(--text-muted);}
+.block{margin-bottom:var(--space-xl);}
+.block__title{font-family:var(--font-serif);font-size:2rem;margin-bottom:0.5rem;font-weight:400;}
+.block__instruction{font-size:1rem;color:var(--text-muted);margin-bottom:var(--space-md);}
+.prompt{background:white;border:1px solid var(--ultramarine);padding:1.5rem;font-family:var(--font-serif);font-size:1.25rem;font-style:italic;margin-top:var(--space-md);}
+.split-layout{display:grid;grid-template-columns:2fr 1fr;gap:3rem;align-items:start;}
+@media(max-width:900px){.split-layout{grid-template-columns:1fr;}}
+.split-sidebar{position:sticky;top:5rem;}
+.rank-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.75rem;margin-bottom:var(--space-md);}
+@media(max-width:1100px){.rank-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.rank-grid{grid-template-columns:1fr;}}
+.rank-card .passepartout{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;}
+.rank-card__input{width:100%;padding:0.5rem;text-align:center;font-family:var(--font-ui);border:1px solid var(--border-color);background:white;margin-top:0.5rem;}
+.rank-card__input-wrap{margin-top:0.5rem;}
+.rank-card .etiquette{align-items:center;}
+.confession{display:flex;flex-direction:column;gap:1rem;}
+.confession__item{display:flex;gap:1rem;font-size:1.05rem;cursor:pointer;}
+.confession__item input{width:1.25rem;height:1.25rem;accent-color:var(--ultramarine);flex-shrink:0;}
+.vocab-drop{background:var(--terre-verte);color:white;padding:var(--space-md);}
+.vocab-drop__kicker{font-family:var(--font-ui);font-size:0.75rem;color:var(--gallery-white);}
+.vocab-drop__title{font-family:var(--font-serif);font-size:2rem;margin:0.5rem 0;font-weight:300;}
+.vocab-drop__lede{color:var(--linen);margin-bottom:1.5rem;}
+.vocab-drop__list{display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem;}
+.vocab-drop__list li{font-size:0.95rem;}
+.vocab-drop__list strong{color:var(--ochre-glow);font-family:var(--font-sans);}
+.vocab-drop__drill{background:rgba(0,0,0,0.2);padding:1.5rem;border:1px solid rgba(255,255,255,0.1);}
+.drill{display:flex;flex-direction:column;gap:1rem;}
+.blank{background:transparent;border:none;border-bottom:2px solid white;font-family:var(--font-serif);font-size:1rem;color:white;padding:0 0.25rem;text-align:center;}
+.blank:focus{outline:none;border-bottom-color:var(--ochre-glow);}
+.blank.is-correct{border-bottom-color:#a7c957;color:#a7c957;}
+.blank.is-wrong{border-bottom-color:var(--vermilion);color:var(--vermilion);}
+.btn{font-family:var(--font-ui);font-size:0.8rem;text-transform:uppercase;padding:0.5rem 1rem;border:1px solid white;background:transparent;color:white;transition:.2s;}
+.btn:hover{background:white;color:var(--terre-verte);}
+.drill__controls{margin-top:1.5rem;display:flex;justify-content:space-between;align-items:center;}
+.drill__score{font-family:var(--font-ui);}
+.interlude{background:var(--bg-alt);text-align:center;}
+.caption-input{width:100%;margin-top:1rem;padding:0.5rem;background:transparent;border:none;border-bottom:1px solid var(--text-muted);font-family:var(--font-serif);font-style:italic;text-align:center;font-size:1.05rem;}
+.caption-input:focus{outline:none;border-bottom-color:var(--text-color);}
+.video-block__frame{position:relative;padding-bottom:56.25%;height:0;background:#000;}
+.video-block__frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+.video-seg{background:white;border:1px solid var(--border-color);padding:1.25rem 1.5rem;margin-bottom:1rem;display:flex;gap:1rem;align-items:flex-start;}
+.video-seg__time{font-family:var(--font-ui);font-size:0.8rem;color:var(--ultramarine);font-weight:600;white-space:nowrap;padding-top:0.15rem;}
+.video-seg__q{font-family:var(--font-serif);font-style:italic;font-size:1.05rem;}
+.note-grid{display:flex;flex-direction:column;border:1px solid var(--border-color);background:white;}
+.note-grid__row{display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid var(--border-color);}
+.note-grid__row--head{background:var(--bg-color);font-family:var(--font-ui);font-size:0.72rem;text-transform:uppercase;font-weight:600;}
+.note-grid__cell{padding:1rem;border-right:1px solid var(--border-color);}
+.note-grid__cell--label{font-weight:600;}
+.note-grid__input{width:100%;min-height:60px;border:none;background:transparent;resize:vertical;font-family:var(--font-sans);}
+.note-grid__input:focus{outline:none;}
+@media(max-width:700px){.note-grid__row{grid-template-columns:1fr;}}
+.mcq__q{margin-bottom:1.5rem;}
+.mcq__stem{font-weight:600;margin-bottom:0.5rem;}
+.mcq__num{color:var(--ultramarine);font-family:var(--font-ui);}
+.mcq__options label{display:block;padding:0.75rem;border:1px solid var(--border-color);background:white;cursor:pointer;margin-bottom:0.5rem;transition:.15s;}
+.mcq__options label:hover{border-color:var(--ultramarine);}
+.mcq__options input{margin-right:0.5rem;accent-color:var(--ultramarine);}
+.mcq__options label.is-correct{background:#e6f4ea;border-color:#2a9d8f;}
+.mcq__options label.is-wrong{background:#fbe9e7;border-color:var(--vermilion);}
+.ch03-lr{display:flex;flex-direction:column;gap:1rem;}
+.lr-item{display:grid;grid-template-columns:3rem 1fr;gap:1rem;align-items:start;background:white;border:1px solid var(--border-color);padding:1.25rem 1.5rem;}
+.lr-item__num{font-family:var(--font-ui);font-size:1.25rem;font-weight:600;color:var(--ultramarine);padding-top:0.2rem;}
+.lr-item__body{display:flex;flex-direction:column;gap:0.4rem;}
+.lr-item__text{font-family:var(--font-serif);font-size:1.15rem;font-style:italic;color:var(--ink-deep);}
+.lr-item__focus{font-family:var(--font-ui);font-size:0.72rem;color:var(--ink-whisper);text-transform:uppercase;letter-spacing:0.04em;}
+.lr-item__audio{margin-top:0.5rem;width:100%;height:36px;accent-color:var(--ultramarine);}
+.lr-item__reveal{align-self:flex-start;border:1px solid var(--ultramarine);color:var(--ultramarine);background:white;padding:0.4rem 1rem;font-family:var(--font-ui);font-size:0.72rem;text-transform:uppercase;border-radius:999px;transition:.15s;}
+.lr-item__reveal:hover{background:var(--ultramarine);color:white;}
+.speak-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+@media(max-width:900px){.speak-grid{grid-template-columns:1fr;}}
+.speak-card{background:white;border:1px solid var(--border-color);padding:1.5rem;display:flex;flex-direction:column;gap:0.75rem;}
+.speak-card__tag{font-family:var(--font-ui);font-size:0.7rem;text-transform:uppercase;color:var(--ultramarine);letter-spacing:0.05em;}
+.speak-card__q{font-family:var(--font-serif);font-size:1.1rem;font-style:italic;flex:1;}
+.speak-card__hint{font-size:0.85rem;color:var(--ink-whisper);border-top:1px solid var(--border-color);padding-top:0.75rem;line-height:1.7;}
+.hedge-table{width:100%;border-collapse:collapse;font-size:0.95rem;}
+.hedge-table th{font-family:var(--font-ui);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;background:var(--bg-color);padding:0.75rem 1rem;border:1px solid var(--border-color);text-align:left;}
+.hedge-table td{padding:0.75rem 1rem;border:1px solid var(--border-color);vertical-align:top;}
+.hedge-table tr:nth-child(even) td{background:var(--bg-alt);}
+.hedge-table__input{width:100%;border:none;background:transparent;font-family:var(--font-serif);font-style:italic;font-size:0.95rem;color:var(--ink-deep);}
+.hedge-table__input:focus{outline:none;border-bottom:1px solid var(--ultramarine);}
+.defense-area{width:100%;min-height:160px;padding:1rem;border:1px solid var(--border-color);font-family:var(--font-serif);font-size:1rem;line-height:1.7;resize:vertical;background:white;}
+.defense-area:focus{outline:none;border-color:var(--ultramarine);}
+.safe-note{background:#eef3f9;border-left:4px solid var(--ultramarine);padding:1.25rem 1.5rem;font-size:1rem;color:var(--ink-soft);margin-top:var(--space-md);}
+.safe-note strong{color:var(--ultramarine);}
+.footer{background:var(--night-bg);color:white;padding:4rem 0;font-family:var(--font-ui);}
+.footer__inner{max-width:var(--max-shell);margin:0 auto;padding:0 var(--gutter);text-align:center;opacity:0.8;}
+.footer__brand{font-weight:600;}
+.footer__issue{display:block;margin-top:0.5rem;font-size:0.8rem;color:var(--night-muted);}
+.zoom-modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);backdrop-filter:blur(5px);opacity:0;transition:opacity .3s ease;}
+.zoom-modal.is-active{display:flex;align-items:center;justify-content:center;opacity:1;}
+.zoom-modal__content{margin:auto;display:block;max-width:90%;max-height:85vh;box-shadow:0 0 20px rgba(0,0,0,0.5);border:10px solid var(--linen);}
+.zoom-modal__close{position:absolute;top:20px;right:35px;color:#f1f1f1;font-size:40px;font-weight:bold;cursor:pointer;font-family:var(--font-ui);}
+.artwork__img{cursor:zoom-in;transition:transform .2s;}
+.artwork__img:hover{transform:scale(1.02);}
+.text-box{background:var(--bg-alt);padding:1.5rem;border-left:4px solid var(--ultramarine);font-size:1.125rem;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <div class="nav__brand"><span class="nav__dot"></span> TOEFL EDITORIAL</div>
+    <ul class="nav__list">
+      <li><a href="#ch00" class="nav__link">00. Lead-in</a></li>
+      <li><a href="#ch01" class="nav__link">01. Confession</a></li>
+      <li><a href="#ch02" class="nav__link">02. Video</a></li>
+      <li><a href="#ch03" class="nav__link">03. Speaking</a></li>
+      <li><a href="#ch04" class="nav__link">04. Hedge</a></li>
+      <li><a href="#ch05" class="nav__link">05. Gallery</a></li>
+      <li><a href="#ch06" class="nav__link">06. Defense</a></li>
+    </ul>
+    <button class="nav__mute" data-action="toggle-mute" aria-label="Toggle sound">
+      <span class="nav__mute-on">🔊</span><span class="nav__mute-off">🔇</span>
+    </button>
+  </div>
+</nav>
+
+<header class="cover" id="cover">
+  <div class="cover__inner">
+    <div class="cover__text-stack">
+      <div class="cover__meta">
+        <span class="meta-strip">TOEFL Editorial</span>
+        <span class="meta-strip">Issue 04</span>
+        <span class="meta-strip">B2&ndash;C1 Speaking</span>
+      </div>
+      <h1 class="cover__title">The Curator<br><em>Issue</em></h1>
+      <p class="cover__subtitle">on intention, interpretation, and the red dot.</p>
+      <blockquote class="cover__pullquote">&ldquo;Pigments that outlived empires. Every viewer ranks. Every ranking is a curatorial act.&rdquo;</blockquote>
+      <div class="cover__callback">
+        <span class="callback__dot"></span>
+        <div><span class="callback__label">From the Sleep Issue</span>You learned to read what the body half-says.<br>Now: what the work half-says.</div>
+      </div>
+    </div>
+        <figure class="cover__hero">
+      <div class="passepartout">
+        <img class="artwork__img"
+          src="https://collectionapi.metmuseum.org/api/collection/v1/iiif/45434/134438/main-image"
+          alt="Hokusai Wave Detail">
+      </div>
+      <figcaption class="etiquette">
+        <span class="etiquette__artist">Katsushika Hokusai</span>
+        <span class="etiquette__title"><em>Under the Wave off Kanagawa</em> (detail), c. 1831</span>
+      </figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="zoom-modal" id="zoomModal">
+  <span class="zoom-modal__close">&times;</span>
+  <img class="zoom-modal__content" id="zoomImg" alt="Zoomed artwork">
+</div>
+
+<!-- ═══════════════ CHAPTER 00 — LEAD-IN ═══════════════ -->
+<section class="chapter" id="ch00">
+  <div class="chapter__inner">
+    <header class="chapter__head">
+      <span class="chapter__num">Chapter 00 · Lead-in</span>
+      <h2 class="chapter__title">The Hierarchy</h2>
+      <p class="chapter__dek">Six things people call "art." Rank them from MOST art (1) to LEAST art (6). Be ready to defend your #1 and your #6.</p>
+    </header>
+    <div class="block">
+      <div class="rank-grid">
+        <figure class="rank-card">
+          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/dz9g6.jpg" alt="Film still"></div>
+          <div class="rank-card__input-wrap"><input type="number" min="1" max="6" class="rank-card__input" placeholder="#"></div>
+          <figcaption class="etiquette" style="text-align:center;margin-top:0.5rem;">A film still <em>(The Grand Budapest Hotel)</em></figcaption>
+        </figure>
+        <figure class="rank-card">
+          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/dz9j5.png" alt="Tattoo"></div>
+          <div class="rank-card__input-wrap"><input type="number" min="1" max="6" class="rank-card__input" placeholder="#"></div>
+          <figcaption class="etiquette" style="text-align:center;margin-top:0.5rem;">A tattoo</figcaption>
+        </figure>
+        <figure class="rank-card">
+          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/dz9j6.png" alt="Plated dish"></div>
+          <div class="rank-card__input-wrap"><input type="number" min="1" max="6" class="rank-card__input" placeholder="#"></div>
+          <figcaption class="etiquette" style="text-align:center;margin-top:0.5rem;">A plated restaurant dish</figcaption>
+        </figure>
+        <figure class="rank-card">
+          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/dz9j7.png" alt="Meme"></div>
+          <div class="rank-card__input-wrap"><input type="number" min="1" max="6" class="rank-card__input" placeholder="#"></div>
+          <figcaption class="etiquette" style="text-align:center;margin-top:0.5rem;">An internet meme</figcaption>
+        </figure>
+        <figure class="rank-card">
+          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/dz9j9.png" alt="iPhone design"></div>
+          <div class="rank-card__input-wrap"><input type="number" min="1" max="6" class="rank-card__input" placeholder="#"></div>
+          <figcaption class="etiquette" style="text-align:center;margin-top:0.5rem;">A smartphone design</figcaption>
+        </figure>
+        <figure class="rank-card">
+          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/dz9j8.png" alt="Child's drawing"></div>
+          <div class="rank-card__input-wrap"><input type="number" min="1" max="6" class="rank-card__input" placeholder="#"></div>
+          <figcaption class="etiquette" style="text-align:center;margin-top:0.5rem;">A child's drawing</figcaption>
+        </figure>
+      </div>
+      <div class="prompt">
+        <p>Defend your <strong>#1</strong> and your <strong>#6</strong>. <em>What criteria did you use — skill, beauty, emotion, intention, price?</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ INTERLUDE — CAPTION THAT ═══════════════ -->
+<section class="interlude">
+  <div class="interlude__inner">
+    <span class="interlude__kicker">Interlude · Caption That</span>
+    <h2 class="interlude__title">Three Titles, One Painting</h2>
+    <p class="interlude__lede">Give this painting three different titles: one <em>serious</em>, one <em>funny</em>, one <em>mysterious</em>.</p>
+    <figure style="max-width:600px;margin:3rem auto 0;">
+      <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0BoJ.jpg" alt="Hopper Nighthawks"></div>
+      <figcaption class="etiquette" style="text-align:center;">Edward Hopper, <em>Nighthawks</em> (1942)</figcaption>
+    </figure>
+    <div style="display:flex;flex-direction:column;max-width:600px;margin:2rem auto 0;gap:1rem;">
+      <input type="text" class="caption-input" placeholder="Serious title…">
+      <input type="text" class="caption-input" placeholder="Funny title…">
+      <input type="text" class="caption-input" placeholder="Mysterious title…">
+    </div>
+    <div class="prompt" style="max-width:600px;margin:3rem auto 0;">
+      <p><strong>Bridge:</strong> You just made three meanings from one image. <em>Every viewer is a curator.</em></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CHAPTER 01 — THE CONFESSION ═══════════════ -->
+<section class="chapter" id="ch01">
+  <div class="chapter__inner">
+    <header class="chapter__head">
+      <span class="chapter__num">Chapter 01 · Reading</span>
+      <h2 class="chapter__title">A Critic Confesses</h2>
+      <p class="chapter__dek">Read once for the main idea. Read again and notice the <strong>bold</strong> words — they reappear in everything that follows today.</p>
+    </header>
+    <div class="split-layout">
+      <div>
+        <div class="text-box" style="margin-bottom:2.5rem;line-height:1.85;">
+          <p style="margin-bottom:1rem;">I have a confession. For years I told visitors what each painting <strong>meant</strong> — confidently, as if the artist had whispered it in my ear. People assume a critic walks into a gallery and instantly knows. The truth is messier.</p>
+          <p style="margin-bottom:1rem;">A young couple once stopped beside me at a large red canvas. "It is about anger," the man said with total <strong>confidence</strong>. His partner disagreed: for her, the red was <strong>clearly</strong> a symbol of love. They were both certain. They could not both be right — or could they?</p>
+          <p style="margin-bottom:1rem;">For years I believed my job was to recover the artist's <strong>intention</strong> — to dig up the "correct" meaning like an archaeologist. But the artists we study are no longer living. I cannot phone them. So whose <strong>interpretation</strong> wins: theirs, mine, or the couple's at the red canvas?</p>
+          <p>That question is far more <strong>complex</strong> than I once admitted. And admitting it, strangely, made me a better critic — not a worse one.</p>
+        </div>
+        <div class="block">
+          <h3 class="block__title">Tick every statement you secretly agree with</h3>
+          <p class="block__instruction">No one is judging your taste — yet. Pick one box and explain it in 2–3 sentences.</p>
+          <div class="confession">
+            <label class="confession__item"><input type="checkbox"><span>A painting can mean whatever I feel — the artist does not get the final word.</span></label>
+            <label class="confession__item"><input type="checkbox"><span>If I do not know what the artist intended, I cannot truly understand the work.</span></label>
+            <label class="confession__item"><input type="checkbox"><span>A beautiful object made by accident is still art.</span></label>
+            <label class="confession__item"><input type="checkbox"><span>Most "deep" interpretations are just people showing off.</span></label>
+            <label class="confession__item"><input type="checkbox"><span>The price of a work tells me nothing about its value as art.</span></label>
+          </div>
+          <div class="prompt" style="margin-top:1.5rem;"><p><em>Choose one box you ticked. Speak for 30 seconds: what made you tick it?</em></p></div>
+        </div>
+        <div class="block" style="margin-bottom:0;">
+          <h3 class="block__title">Word Formation · Drill</h3>
+          <p class="block__instruction">Change the word in CAPITALS to the correct form. This is a core TOEFL Reading skill.</p>
+          <div class="vocab-drop">
+            <span class="vocab-drop__kicker">Drill 01 · Word Formation</span>
+            <h4 class="vocab-drop__title" style="font-size:1.4rem;margin-bottom:0.5rem;">From One Root, Many Words</h4>
+            <p class="vocab-drop__lede">All six words come from the text above. Form → meaning → use.</p>
+            <div class="vocab-drop__drill">
+              <div class="drill">
+                <p>1. The man spoke with great <input class="blank" type="text" data-answer="confidence" size="12" placeholder="CONFIDENT →"> about the painting.</p>
+                <p>2. For her, the red was <input class="blank" type="text" data-answer="clearly" size="9" placeholder="CLEAR →"> a symbol of love.</p>
+                <p>3. The critic tried to recover the artist's <input class="blank" type="text" data-answer="intention" size="11" placeholder="INTEND →">.</p>
+                <p>4. Their two readings of the work were completely <input class="blank" type="text" data-answer="different" size="11" placeholder="DIFFER →">.</p>
+                <p>5. The question turned out to be far more <input class="blank" type="text" data-answer="complex" size="9" placeholder="COMPLEXITY →"> than he thought.</p>
+                <p>6. Honest <input class="blank" type="text" data-answer="uncertainty" size="13" placeholder="UNCERTAIN →"> can make a critic better, not worse.</p>
+                <div class="drill__controls">
+                  <button class="btn" data-action="check">Check</button>
+                  <span class="drill__score">— / 6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="split-sidebar">
+        <div class="vocab-drop">
+          <span class="vocab-drop__kicker">Glossary · Issue 04</span>
+          <h3 class="vocab-drop__title">Key Words</h3>
+          <p class="vocab-drop__lede">Carry these into your speaking today. Aim to use each one at least once.</p>
+          <ul class="vocab-drop__list">
+            <li><strong>intention</strong> — what the artist wanted to express or achieve.</li>
+            <li><strong>interpretation</strong> — the meaning a viewer gives to a work.</li>
+            <li><strong>to convey</strong> — to communicate a feeling or idea through form.</li>
+            <li><strong>ambiguous</strong> — open to more than one reading; deliberately unclear.</li>
+            <li><strong>to advocate (for)</strong> — to argue publicly in support of an idea.</li>
+            <li><strong>complex</strong> — made of many connected parts; not simple.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+<!-- ═══════════════ CHAPTER 02 — THE VIDEO ═══════════════ -->
+<section class="chapter" id="ch02">
+  <div class="chapter__inner">
+    <header class="chapter__head">
+      <span class="chapter__num">Chapter 02 · Listening</span>
+      <h2 class="chapter__title">Who Decides?</h2>
+      <p class="chapter__dek">We will watch in <strong>three short segments</strong>, not all at once. Before each segment you get <strong>one question</strong> to listen for. Stop, answer, then continue.</p>
+    </header>
+
+    <!-- Pre-watch glossary -->
+    <div class="block">
+      <div class="vocab-drop">
+        <span class="vocab-drop__kicker">Before You Watch · Video Glossary</span>
+        <h3 class="vocab-drop__title">Six Words from the Video</h3>
+        <p class="vocab-drop__lede">These come up in the talk. Read them first — listening becomes 80% easier when the key words are already in your head.</p>
+        <ul class="vocab-drop__list">
+          <li><strong>fallacy</strong> — a belief that seems true but is logically wrong.</li>
+          <li><strong>the Intentional Fallacy</strong> — the idea that the artist's intention should <em>not</em> decide a work's meaning.</li>
+          <li><strong>to interpret / interpretation</strong> — to decide what something means.</li>
+          <li><strong>analogy</strong> — a comparison used to explain an idea (e.g. art is <em>like</em> a pudding).</li>
+          <li><strong>flavour / to taste</strong> — used in the pudding example: the experience, not the recipe.</li>
+          <li><strong>a definitive answer</strong> — one final, certain answer that ends all doubt.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- The video -->
+    <div class="block">
+      <div class="video-block__frame">
+        <iframe src="https://www.youtube.com/embed/HoXyw909Qu0"
+          title="Who decides what art means? — TED-Ed"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+      <p class="block__instruction" style="margin-top:1rem;">
+        Tip: you can set timestamps by clicking on the video timeline. Pause at each marker below and answer before moving on.
+      </p>
+    </div>
+
+    <!-- Segmented listening -->
+    <div class="block">
+      <h3 class="block__title">Watch in Segments</h3>
+      <p class="block__instruction">One focus question per segment. You only need a short answer — a phrase, not an essay.</p>
+
+      <div class="video-seg">
+        <span class="video-seg__time">Seg 1<br>0:00–1:00</span>
+        <div>
+          <p class="video-seg__q">What problem does the speaker start with? <em>(Why is "what does this artwork mean?" so hard to answer?)</em></p>
+          <textarea class="note-grid__input" placeholder="Your short answer…"></textarea>
+        </div>
+      </div>
+
+      <div class="video-seg">
+        <span class="video-seg__time">Seg 2<br>1:00–2:30</span>
+        <div>
+          <p class="video-seg__q">What is the <strong>Intentional Fallacy</strong>, in your own words? And what does the <strong>pudding</strong> example show?</p>
+          <textarea class="note-grid__input" placeholder="Intentional Fallacy = … / Pudding shows that…"></textarea>
+        </div>
+      </div>
+
+      <div class="video-seg">
+        <span class="video-seg__time">Seg 3<br>2:30–end</span>
+        <div>
+          <p class="video-seg__q">What is the speaker's final position? Is there <strong>one correct meaning</strong>, or not?</p>
+          <textarea class="note-grid__input" placeholder="In the end, the speaker thinks…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehension check -->
+    <div class="block">
+      <h3 class="block__title">Comprehension Check</h3>
+      <p class="block__instruction">Now confirm you caught the three big ideas. Choose one answer per question, then press Check.</p>
+      <div class="mcq">
+        <div class="mcq__q">
+          <p class="mcq__stem"><span class="mcq__num">Q1.</span> The Intentional Fallacy claims that…</p>
+          <div class="mcq__options">
+            <label><input type="radio" name="v1"> the artist's biography is the only key to meaning.</label>
+            <label><input type="radio" name="v1" data-correct="true"> the artist's intention should not be the standard for judging a work.</label>
+            <label><input type="radio" name="v1"> all art is fundamentally meaningless.</label>
+          </div>
+        </div>
+        <div class="mcq__q">
+          <p class="mcq__stem"><span class="mcq__num">Q2.</span> The pudding example shows that…</p>
+          <div class="mcq__options">
+            <label><input type="radio" name="v2"> cooking is a higher art form than painting.</label>
+            <label><input type="radio" name="v2"> intentions always improve the final result.</label>
+            <label><input type="radio" name="v2" data-correct="true"> the experience of the result matters more than the maker's plan.</label>
+          </div>
+        </div>
+        <div class="mcq__q">
+          <p class="mcq__stem"><span class="mcq__num">Q3.</span> The video's overall conclusion about interpretation is that…</p>
+          <div class="mcq__options">
+            <label><input type="radio" name="v3"> there is always one correct reading.</label>
+            <label><input type="radio" name="v3" data-correct="true"> it is complex and will probably never give one definitive answer.</label>
+            <label><input type="radio" name="v3"> only trained critics may interpret art.</label>
+          </div>
+        </div>
+        <button class="btn" style="margin-top:1rem;border-color:var(--ultramarine);color:var(--ultramarine);" data-action="check-mcq">Check answers</button>
+      </div>
+    </div>
+
+    <!-- Bridge to speaking: low-pressure warm-up -->
+    <div class="block" style="margin-bottom:0;">
+      <h3 class="block__title">Warm-Up · Easy In</h3>
+      <p class="block__instruction">Before the big questions, just react. No "right" answers here — one sentence each is enough. This is your bridge into speaking.</p>
+      <div class="safe-note">
+        <strong>How this works:</strong> you can't get these wrong. They only ask what <em>you</em> think and feel — a soft landing before the harder cards in Chapter 03.
+      </div>
+      <div class="confession" style="margin-top:1.5rem;">
+        <label class="confession__item"><input type="checkbox"><span>Do you agree with the video — or did something annoy you? Say it in one sentence.</span></label>
+        <label class="confession__item"><input type="checkbox"><span>The pudding example: clever, or too simple? Why?</span></label>
+        <label class="confession__item"><input type="checkbox"><span>When you look at art, do you usually wonder what the artist <em>meant</em> — or just how it makes <em>you</em> feel?</span></label>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ═══════════════ CHAPTER 03 — SPEAKING LAB ═══════════════ -->
+<section class="chapter" id="ch03">
+  <div class="chapter__inner">
+    <header class="chapter__head">
+      <span class="chapter__num">Chapter 03 · Speaking Lab</span>
+      <h2 class="chapter__title">The Voice</h2>
+      <p class="chapter__dek">First, train the mouth — Listen &amp; Repeat. Then, train the mind — three speaking cards of rising challenge, always with support.</p>
+    </header>
+
+    <div class="block">
+      <h3 class="block__title">A · Listen &amp; Repeat</h3>
+      <p class="block__instruction">
+        Two passes. <strong>Pass 1:</strong> listen and read along — get the rhythm. <strong>Pass 2:</strong> hide the text and repeat from memory.
+        There is no penalty for peeking — accuracy first, memory second.
+        <em>In class: 1–3 together. Full set → homework.</em>
+      </p>
+      <div class="ch03-lr">
+        <div class="lr-item">
+          <div class="lr-item__num">01</div>
+          <div class="lr-item__body">
+            <audio class="lr-item__audio" controls preload="none"><source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Sounds/main/1.mp3" type="audio/mpeg"></audio>
+            <button class="lr-item__reveal" type="button">Reveal text</button>
+            <div class="lr-item__answer" hidden>
+              <p class="lr-item__text">A striking painting catches your eye.</p>
+              <p class="lr-item__focus">Pronunciation: /str/ cluster · /tʃ/ in "catches" · 5 words</p>
+            </div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-item__num">02</div>
+          <div class="lr-item__body">
+            <audio class="lr-item__audio" controls preload="none"><source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Sounds/main/2.mp3" type="audio/mpeg"></audio>
+            <button class="lr-item__reveal" type="button">Reveal text</button>
+            <div class="lr-item__answer" hidden>
+              <p class="lr-item__text">Red was her favorite color, and the silver dots are fairies.</p>
+              <p class="lr-item__focus">Pronunciation: listing rhythm · pause at comma · 9 words</p>
+            </div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-item__num">03</div>
+          <div class="lr-item__body">
+            <audio class="lr-item__audio" controls preload="none"><source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Sounds/main/3.mp3" type="audio/mpeg"></audio>
+            <button class="lr-item__reveal" type="button">Reveal text</button>
+            <div class="lr-item__answer" hidden>
+              <p class="lr-item__text">They called this the Intentional Fallacy.</p>
+              <p class="lr-item__focus">Stress: in&#8209;<strong>TEN</strong>&#8209;tion&#8209;al &nbsp; fa&#8209;<strong>LLA</strong>&#8209;cy · 6 words</p>
+            </div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-item__num">04</div>
+          <div class="lr-item__body">
+            <audio class="lr-item__audio" controls preload="none"><source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Sounds/main/4.mp3" type="audio/mpeg"></audio>
+            <button class="lr-item__reveal" type="button">Reveal text</button>
+            <div class="lr-item__answer" hidden>
+              <p class="lr-item__text">The artists we study are no longer living.</p>
+              <p class="lr-item__focus">Weak forms: "we" /wɪ/ · "are" /ə/ · linking · 7 words</p>
+            </div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-item__num">05</div>
+          <div class="lr-item__body">
+            <audio class="lr-item__audio" controls preload="none"><source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Sounds/main/5.mp3" type="audio/mpeg"></audio>
+            <button class="lr-item__reveal" type="button">Reveal text</button>
+            <div class="lr-item__answer" hidden>
+              <p class="lr-item__text">When you taste a pudding, the chef's intentions don't affect its flavor.</p>
+              <p class="lr-item__focus">Chunking: pause at comma · contraction "don't" · 11 words</p>
+            </div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-item__num">06</div>
+          <div class="lr-item__body">
+            <audio class="lr-item__audio" controls preload="none"><source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Sounds/main/6.mp3" type="audio/mpeg"></audio>
+            <button class="lr-item__reveal" type="button">Reveal text</button>
+            <div class="lr-item__answer" hidden>
+              <p class="lr-item__text">An intentional creator is what makes the poem subject to understanding.</p>
+              <p class="lr-item__focus">Abstract vocab · stress on key nouns · 11 words</p>
+            </div>
+          </div>
+        </div>
+        <div class="lr-item">
+          <div class="lr-item__num">07</div>
+          <div class="lr-item__body">
+            <audio class="lr-item__audio" controls preload="none"><source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Sounds/main/7.mp3" type="audio/mpeg"></audio>
+            <button class="lr-item__reveal" type="button">Reveal text</button>
+            <div class="lr-item__answer" hidden>
+              <p class="lr-item__text">Artistic interpretation is a complex web that will probably never offer a definitive answer.</p>
+              <p class="lr-item__focus">Challenge: chunk into 4 groups · keep rhythm steady · 16 words</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h3 class="block__title">B · The Interview</h3>
+      <p class="block__instruction">
+        Three cards, rising challenge. <strong>30 seconds</strong> to plan, <strong>45 seconds</strong> to speak.
+        Use at least one Glossary word per answer. Notes are your friend — the goal is rich ideas, not a tightrope walk.
+      </p>
+      <div class="speak-grid">
+        <div class="speak-card">
+          <span class="speak-card__tag">Card 1 · Warm-up</span>
+          <p class="speak-card__q">Describe a work of art (any kind) that you cannot forget. What does it <em>convey</em> to you?</p>
+          <p class="speak-card__hint">Use: <strong>to convey</strong>, <strong>interpretation</strong>.<br>Structure: name it → describe it → say why it stuck.</p>
+        </div>
+        <div class="speak-card">
+          <span class="speak-card__tag">Card 2 · Opinion</span>
+          <p class="speak-card__q">"The artist's intention is the only thing that matters." Do you agree?</p>
+          <p class="speak-card__hint">Use: <strong>intention</strong>, <strong>to advocate</strong>, <strong>ambiguous</strong>.<br>Take a side, then admit one weakness in it.</p>
+        </div>
+        <div class="speak-card">
+          <span class="speak-card__tag">Card 3 · The Hard One</span>
+          <p class="speak-card__q">A child's drawing sells for $1 million. Is it art, a joke, or a scam? Defend your view.</p>
+          <p class="speak-card__hint">Use: <strong>complex</strong>, <strong>value</strong>, one <strong>hedge</strong> from Ch.04.<br><strong>Starters:</strong> "At first glance it seems… / One could argue… / On balance, I'd say…"<br>Take 30 sec to plan. Notes allowed — fluency beats perfection.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CHAPTER 04 — THE HEDGE ═══════════════ -->
+<section class="chapter" id="ch04">
+  <div class="chapter__inner">
+    <header class="chapter__head">
+      <span class="chapter__num">Chapter 04 · Language Tools</span>
+      <h2 class="chapter__title">The Art of the Hedge</h2>
+      <p class="chapter__dek">Confident speakers are not always certain — they are precise about <em>how</em> certain they are. Learn to soften, qualify, and signal doubt without sounding weak.</p>
+    </header>
+
+    <div class="block">
+      <h3 class="block__title">The Certainty Scale</h3>
+      <p class="block__instruction">From "100% sure" to "just a guess." Notice how the grammar changes as confidence drops.</p>
+      <table class="hedge-table">
+        <thead><tr><th style="width:18%;">Certainty</th><th style="width:42%;">Phrase</th><th style="width:40%;">Example (about a painting)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>High</strong> · 90–100%</td><td>It is clearly… / There is no doubt that…</td><td><em>It is clearly a portrait of grief.</em></td></tr>
+          <tr><td><strong>Mid</strong> · 60–80%</td><td>It seems to… / It appears that… / I'd say…</td><td><em>It seems to convey loneliness.</em></td></tr>
+          <tr><td><strong>Low</strong> · 30–50%</td><td>It might… / Perhaps… / One reading could be…</td><td><em>It might be a comment on time.</em></td></tr>
+          <tr><td><strong>Very low</strong> · &lt;30%</td><td>I suppose… / It's hard to say, but… / If anything…</td><td><em>I suppose the red could be anger — it's hard to say.</em></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="block">
+      <h3 class="block__title">Rescue Phrases · Buy Yourself Time</h3>
+      <p class="block__instruction">C1 speakers don't avoid pauses — they fill them gracefully. Memorise three. Use them instead of going silent.</p>
+      <table class="hedge-table">
+        <thead><tr><th style="width:50%;">When you need a second to think</th><th style="width:50%;">When you can't find a word</th></tr></thead>
+        <tbody>
+          <tr><td><em>That's a really interesting question…</em></td><td><em>How can I put this…</em></td></tr>
+          <tr><td><em>Let me think about that for a moment.</em></td><td><em>It's hard to explain, but…</em></td></tr>
+          <tr><td><em>There are a few ways to look at this.</em></td><td><em>The word escapes me — basically, it means…</em></td></tr>
+        </tbody>
+      </table>
+      <div class="safe-note"><strong>Why this matters:</strong> the difference between B2 and C1 is often not vocabulary — it's never going fully silent. A graceful filler keeps you in control.</div>
+    </div>
+
+    <div class="block">
+      <h3 class="block__title">Drill · Soften the Statement</h3>
+      <p class="block__instruction">These statements are too blunt for TOEFL Speaking. Rewrite each one with a hedge from the scale above.</p>
+      <table class="hedge-table">
+        <thead><tr><th style="width:50%;">Too blunt</th><th style="width:50%;">Your hedged version</th></tr></thead>
+        <tbody>
+          <tr><td>The artist was depressed when he painted this.</td><td><input class="hedge-table__input" type="text" placeholder="The artist may have been…"></td></tr>
+          <tr><td>This is the best painting in the museum.</td><td><input class="hedge-table__input" type="text" placeholder="I'd say this is one of…"></td></tr>
+          <tr><td>Everyone hates modern art.</td><td><input class="hedge-table__input" type="text" placeholder="It seems that many people…"></td></tr>
+          <tr><td>The red means anger.</td><td><input class="hedge-table__input" type="text" placeholder="The red might…"></td></tr>
+        </tbody>
+      </table>
+      <div class="prompt" style="margin-top:1.5rem;"><p><em>Now read your four hedged sentences aloud. Do they sound more thoughtful — or just less sure? Discuss the difference.</em></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CHAPTER 05 — THE GALLERY ═══════════════ -->
+<section class="chapter" id="ch05">
+  <div class="chapter__inner">
+    <header class="chapter__head">
+      <span class="chapter__num">Chapter 05 · Application</span>
+      <h2 class="chapter__title">The Gallery</h2>
+      <p class="chapter__dek">Four works. Click any image to zoom in. For each, give a <strong>hedged interpretation</strong> using a phrase from Chapter 04. Then assign your own red dot — your personal #1.</p>
+    </header>
+    <div class="block">
+      <div class="rank-grid">
+        <figure class="rank-card">
+          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B1A.jpg" alt="Van Gogh, Wheat Field with Cypresses"></div>
+          <figcaption class="etiquette" style="margin-top:0.6rem;">
+            <span class="etiquette__artist">Vincent van Gogh</span>
+            <span class="etiquette__title"><em>Wheat Field with Cypresses</em>, 1889</span>
+          </figcaption>
+          <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:70px;" placeholder="It seems to convey…"></textarea>
+        </figure>
+        <figure class="rank-card">
+          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B09.jpg" alt="Cézanne, Still Life with Apples"></div>
+          <figcaption class="etiquette" style="margin-top:0.6rem;">
+            <span class="etiquette__artist">Paul Cézanne</span>
+            <span class="etiquette__title"><em>Still Life with Apples</em>, c. 1890</span>
+          </figcaption>
+          <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:70px;" placeholder="One reading could be…"></textarea>
+        </figure>
+        <figure class="rank-card">
+          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B08.jpg" alt="Vermeer, Young Woman with a Water Pitcher"></div>
+          <figcaption class="etiquette" style="margin-top:0.6rem;">
+            <span class="etiquette__artist">Johannes Vermeer</span>
+            <span class="etiquette__title"><em>Young Woman with a Water Pitcher</em>, c. 1662</span>
+          </figcaption>
+          <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:70px;" placeholder="It might…"></textarea>
+        </figure>
+        <figure class="rank-card">
+          <div class="passepartout"><img class="artwork__img" src="https://i.yapx.ru/d0B07.jpg" alt="Jackson Pollock, Autumn Rhythm"></div>
+          <figcaption class="etiquette" style="margin-top:0.6rem;">
+            <span class="etiquette__artist">Jackson Pollock</span>
+            <span class="etiquette__title"><em>Autumn Rhythm</em> (Number 30), 1950</span>
+          </figcaption>
+          <textarea class="note-grid__input" style="margin-top:0.6rem;min-height:70px;" placeholder="I suppose it could…"></textarea>
+        </figure>
+      </div>
+      <div class="prompt" style="margin-top:2.5rem;">
+        <p>Award the <span class="callback__dot" style="display:inline-block;vertical-align:middle;"></span> <strong>red dot</strong> to your personal #1. Speak for 45 seconds: <em>why this one, and what does it convey that the others do not?</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CHAPTER 06 — THE DEFENSE ═══════════════ -->
+<section class="chapter" id="ch06">
+  <div class="chapter__inner">
+    <header class="chapter__head">
+      <span class="chapter__num">Chapter 06 · Output</span>
+      <h2 class="chapter__title">The Defense</h2>
+      <p class="chapter__dek">The full TOEFL-style task. Read the prompt, plan for 60 seconds, then write — or record yourself speaking — a structured 2-minute response.</p>
+    </header>
+    <div class="split-layout">
+      <div>
+        <div class="prompt" style="margin-bottom:2rem;">
+          <p style="font-size:1.15rem;"><strong>Prompt.</strong> Some people believe a work of art means only what the artist intended. Others believe meaning belongs to the viewer. Which position do you find more convincing, and why?</p>
+        </div>
+        <h3 class="block__title">Your Response</h3>
+        <p class="block__instruction">Aim for: a clear position → two reasons with examples → one hedge acknowledging the other side → a confident close.</p>
+        <textarea class="defense-area" placeholder="In my view, … &#10;&#10;The first reason is that… For example, … &#10;&#10;That said, it might be argued that… &#10;&#10;On balance, however, I would say…"></textarea>
+      </div>
+      <aside class="split-sidebar">
+        <div class="vocab-drop">
+          <span class="vocab-drop__kicker">Self-Check · Rubric</span>
+          <h3 class="vocab-drop__title">Did you…</h3>
+          <ul class="vocab-drop__list">
+            <li>state a <strong>clear position</strong> in the first sentence?</li>
+            <li>give <strong>two reasons</strong>, each with an example?</li>
+            <li>use at least <strong>three Glossary words</strong>?</li>
+            <li>include <strong>one hedge</strong> from the Certainty Scale?</li>
+            <li>acknowledge the <strong>other side</strong> before closing?</li>
+            <li>finish with a <strong>confident final line</strong>?</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ HOMEWORK ═══════════════ -->
+<section class="chapter" id="homework" style="background:var(--bg-alt);">
+  <div class="chapter__inner">
+    <header class="chapter__head">
+      <span class="chapter__num">After the Issue · Homework</span>
+      <h2 class="chapter__title">Take It Home</h2>
+      <p class="chapter__dek">Three tasks to consolidate today's curating, hedging, and speaking. Keep them short — done beats perfect.</p>
+    </header>
+    <div class="block">
+      <div class="confession">
+        <label class="confession__item"><input type="checkbox"><span><strong>Pronunciation.</strong> Record yourself doing Listen &amp; Repeat sentences 1–5 (6–7 optional — extra challenge). Send the audio.</span></label>
+        <label class="confession__item"><input type="checkbox"><span><strong>Curator's note.</strong> Pick any artwork online. Write <em>80–100 words</em> interpreting it, using <em>two</em> Glossary words and <em>one</em> hedge from the Certainty Scale.</span></label>
+        <label class="confession__item"><input type="checkbox"><span><strong>Speaking.</strong> Record your answer to Card 3 once. Aim for 45 seconds and one hedge. <em>First attempt counts — don't re-record ten times.</em></span></label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand"><span class="nav__dot"></span> TOEFL EDITORIAL</div>
+    <span class="footer__issue">Issue 04 · The Curator — on intention, interpretation, and the red dot.</span>
+    <span class="footer__issue">Images courtesy of The Metropolitan Museum of Art (Open Access) · Wikimedia Commons.</span>
+    <span class="footer__issue"><em>Next issue: The Witness — on memory, testimony, and the unreliable narrator.</em></span>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // 1. ZOOM MODAL
+  const modal = document.getElementById('zoomModal');
+  const modalImg = document.getElementById('zoomImg');
+  const modalClose = document.querySelector('.zoom-modal__close');
+  if (modal && modalImg) {
+    document.querySelectorAll('.artwork__img').forEach(img => {
+      img.addEventListener('click', () => {
+        modal.classList.add('is-active');
+        modalImg.src = img.src;
+      });
+    });
+    const closeModal = () => modal.classList.remove('is-active');
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  }
+
+  // 2. MUTE TOGGLE
+  const muteBtn = document.querySelector('.nav__mute');
+  if (muteBtn) muteBtn.addEventListener('click', () => muteBtn.classList.toggle('is-muted'));
+
+  // 3. VOCAB DRILL
+  document.querySelectorAll('.drill').forEach(drill => {
+    const blanks = drill.querySelectorAll('.blank');
+    const checkBtn = drill.querySelector('[data-action="check"]');
+    const scoreEl = drill.closest('.vocab-drop__drill')?.querySelector('.drill__score');
+    if (checkBtn) {
+      checkBtn.addEventListener('click', () => {
+        let correct = 0;
+        blanks.forEach(blank => {
+          const answer = (blank.dataset.answer || '').trim().toLowerCase();
+          const value = blank.value.trim().toLowerCase();
+          blank.classList.remove('is-correct', 'is-wrong');
+          if (value === answer && value !== '') { blank.classList.add('is-correct'); correct++; }
+          else blank.classList.add('is-wrong');
+        });
+        if (scoreEl) scoreEl.textContent = `${correct} / ${blanks.length}`;
+      });
+    }
+  });
+
+    // 4. MCQ
+  document.querySelectorAll('[data-action="check-mcq"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mcq = btn.closest('.mcq');
+      if (!mcq) return;
+      mcq.querySelectorAll('.mcq__options').forEach(group => {
+        const labels = group.querySelectorAll('label');
+        labels.forEach(label => {
+          label.classList.remove('is-correct', 'is-wrong');
+          const input = label.querySelector('input');
+          const isCorrect = input.dataset.correct === 'true';
+          if (input.checked && isCorrect) label.classList.add('is-correct');
+          else if (input.checked && !isCorrect) label.classList.add('is-wrong');
+          else if (isCorrect) label.classList.add('is-correct');
+        });
+      });
+    });
+  });
+
+  // 5. LISTEN & REPEAT — REVEAL
+  document.querySelectorAll('.lr-item__reveal').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const answer = btn.parentElement.querySelector('.lr-item__answer');
+      if (!answer) return;
+      const isHidden = answer.hasAttribute('hidden');
+      if (isHidden) { answer.removeAttribute('hidden'); btn.textContent = 'Hide text'; }
+      else { answer.setAttribute('hidden', ''); btn.textContent = 'Reveal text'; }
+    });
+  });
+
+  // 6. RANKING — warn on duplicate numbers (Chapter 00)
+  document.querySelectorAll('.rank-grid').forEach(grid => {
+    const inputs = grid.querySelectorAll('.rank-card__input');
+    const validate = () => {
+      const seen = {};
+      inputs.forEach(i => { if (i.value) seen[i.value] = (seen[i.value] || 0) + 1; });
+      inputs.forEach(i => {
+        i.style.borderColor = (i.value && seen[i.value] > 1) ? 'var(--vermilion)' : 'var(--border-color)';
+      });
+    };
+    inputs.forEach(i => i.addEventListener('input', validate));
+  });
+
+  // 7. SMOOTH NAV — close nothing, just highlight current section
+  const navLinks = document.querySelectorAll('.nav__link');
+  const sections = [...navLinks].map(l => document.querySelector(l.getAttribute('href'))).filter(Boolean);
+  if ('IntersectionObserver' in window && sections.length) {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const id = '#' + e.target.id;
+          navLinks.forEach(l => {
+            l.style.color = (l.getAttribute('href') === id) ? 'var(--text-color)' : 'var(--text-muted)';
+          });
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(s => obs.observe(s));
+  }
+
+  // 8. AUTOSAVE — keep learner's text on refresh (localStorage)
+  const STORAGE_KEY = 'toefl-issue04';
+  const fields = document.querySelectorAll(
+    'textarea, input[type="text"], input[type="number"], input[type="checkbox"]'
+  );
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { saved = {}; }
+
+  fields.forEach((field, i) => {
+    const key = 'f' + i;
+    if (saved[key] !== undefined) {
+      if (field.type === 'checkbox') field.checked = saved[key];
+      else field.value = saved[key];
+    }
+    const handler = () => {
+      saved[key] = (field.type === 'checkbox') ? field.checked : field.value;
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); } catch (e) {}
+    };
+    field.addEventListener('input', handler);
+    field.addEventListener('change', handler);
+  });
+
+});
+</script>
+
+</body>
+</html>
