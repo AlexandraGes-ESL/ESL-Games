@@ -2,1846 +2,736 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TOEFL Lesson — Cat Edition 🐾</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  /* ========== RESET & BASE ========== */
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* ========== ПАЛИТРА И БАЗА ========== */
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; }
   
   :root {
-    --coral: #FF6B6B;
-    --peach: #FFB347;
-    --mint: #6BCB77;
-    --blue: #4D96FF;
-    --lavender: #C77DFF;
-    --dark: #2D2D2D;
-    --light: #FAFAFA;
-    --card-bg: #FFFFFF;
-    --shadow: 0 4px 20px rgba(0,0,0,0.08);
-    --radius: 16px;
+    /* Основные */
+    --cream:        #FAF6F0;   /* фон кота, бежевый */
+    --warm-white:   #FDFAF6;   /* основной фон страницы */
+    --parchment:    #F2EBE0;   /* карточки */
+    
+    /* Акценты */
+    --sage:         #8FAF8A;   /* ноутбук кота, листья */
+    --sage-light:   #C8DBC7;   /* одеяло, светлые зоны */
+    --dusty-blue:   #9BB5C8;   /* дым, клетка одеяла */
+    --blush:        #E8A598;   /* ушки, герань */
+    --warm-peach:   #EDCBA8;   /* шёрстка, тёплый акцент */
+    --amber:        #C8903A;   /* чай, лампа */
+    
+    /* Текст */
+    --text-dark:    #3D3228;
+    --text-mid:     #7A6558;
+    --text-light:   #A89880;
+
+    --shadow: 0 8px 24px rgba(122, 101, 88, 0.08);
+    --shadow-hover: 0 12px 32px rgba(122, 101, 88, 0.15);
+    --radius: 20px;
   }
 
   body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: #F5F3FF;
-    color: var(--dark);
+    background: var(--warm-white);
+    color: var(--text-dark);
     min-height: 100vh;
+    padding-bottom: 90px; /* Место под навигацию */
   }
 
-  /* ========== SLIDES SYSTEM ========== */
+  /* ========== СИСТЕМА СЛАЙДОВ ========== */
   .slide {
     display: none;
     min-height: 100vh;
-    padding: 40px 20px;
-    animation: fadeIn 0.4s ease;
+    padding: 30px 20px;
+    animation: fadeIn 0.5s ease;
   }
   .slide.active { display: block; }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(16px); }
+    from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   .slide-inner {
-    max-width: 860px;
+    max-width: 800px;
     margin: 0 auto;
   }
 
-  /* ========== NAV ========== */
+  /* ========== НАВИГАЦИЯ (ФИКС ДЛЯ МОБИЛОК) ========== */
   .nav {
     position: fixed;
-    bottom: 24px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 12px;
-    background: white;
-    padding: 10px 20px;
+    align-items: center;
+    gap: 16px;
+    background: rgba(253, 250, 246, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 12px 24px;
     border-radius: 50px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    box-shadow: 0 10px 40px rgba(122, 101, 88, 0.15);
+    border: 1px solid var(--parchment);
     z-index: 100;
   }
 
   .nav button {
     background: none;
     border: none;
-    font-size: 22px;
+    font-size: 20px;
+    color: var(--text-mid);
     cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 8px;
-    transition: background 0.2s;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
   }
-  .nav button:hover { background: #f0f0f0; }
+  .nav button:hover { background: var(--cream); color: var(--text-dark); }
+  .nav button:disabled { opacity: 0.3; cursor: default; }
 
-  .nav .progress-dots {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .nav .dot {
+  .nav-dots { display: flex; gap: 8px; }
+  .dot {
     width: 8px; height: 8px;
     border-radius: 50%;
-    background: #ddd;
+    background: var(--sage-light);
     transition: all 0.3s;
+    cursor: pointer;
   }
-  .nav .dot.active {
-    background: var(--lavender);
-    width: 20px;
-    border-radius: 4px;
+  .dot.active { background: var(--sage); width: 24px; border-radius: 4px; }
+
+  /* ========== ТИПОГРАФИКА ========== */
+  h1, h2, .passage-title {
+    font-family: 'Lora', serif;
+    color: var(--text-dark);
   }
 
-  /* ========== TYPOGRAPHY ========== */
   .slide-label {
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 800;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--lavender);
-    margin-bottom: 8px;
-  }
-
-  h1 {
-    font-size: clamp(28px, 5vw, 42px);
-    font-weight: 800;
-    line-height: 1.2;
+    color: var(--dusty-blue);
     margin-bottom: 12px;
   }
 
-  h2 {
-    font-size: clamp(20px, 3vw, 28px);
-    font-weight: 700;
-    margin-bottom: 16px;
-  }
+  h1 { font-size: clamp(32px, 6vw, 46px); line-height: 1.2; margin-bottom: 16px; }
+  h2 { font-size: clamp(24px, 4vw, 32px); margin-bottom: 20px; }
+  h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: var(--text-dark); }
+  p { line-height: 1.7; font-size: 16px; margin-bottom: 16px; color: var(--text-mid); }
 
-  h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-
-  p { line-height: 1.7; margin-bottom: 12px; }
-
-  /* ========== CARDS ========== */
-  .card {
-    background: var(--card-bg);
+  /* ========== ИЗОБРАЖЕНИЯ И ДЕКОР ========== */
+  .cover-img-wrap {
     border-radius: var(--radius);
-    padding: 24px;
+    overflow: hidden;
+    margin: 0 auto 30px;
     box-shadow: var(--shadow);
-    margin-bottom: 20px;
+    border: 4px solid white;
+  }
+  .cover-img-wrap img { width: 100%; display: block; }
+  
+  .decor-img { display: block; margin: 0 auto 20px; height: 80px; object-fit: contain; }
+  .divider { display: block; margin: 40px auto; height: 30px; opacity: 0.7; }
+
+  /* ========== КАРТОЧКИ И КНОПКИ ========== */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    border: 1px solid var(--cream);
   }
 
-  /* ========== BUTTONS ========== */
   .btn {
-    display: inline-block;
-    padding: 12px 28px;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 14px 32px;
     border-radius: 50px;
     border: none;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 16px; font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
+    font-family: 'Nunito', sans-serif;
   }
-  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
   .btn:active { transform: translateY(0); }
 
-  .btn-primary { background: var(--lavender); color: white; }
-  .btn-coral { background: var(--coral); color: white; }
-  .btn-mint { background: var(--mint); color: white; }
-  .btn-blue { background: var(--blue); color: white; }
-  .btn-outline {
-    background: transparent;
-    border: 2px solid var(--lavender);
-    color: var(--lavender);
-  }
+  .btn-primary { background: var(--sage); color: white; }
+  .btn-accent { background: var(--blush); color: white; }
+  .btn-outline { background: transparent; border: 2px solid var(--dusty-blue); color: var(--dusty-blue); }
 
-  /* ========== SLIDE 1: LEAD-IN ========== */
-  #slide1 {
-    background: linear-gradient(135deg, #F5F3FF 0%, #EEF2FF 100%);
-  }
-
-  .lead-header {
-    text-align: center;
-    padding: 20px 0 32px;
-  }
-
-  .lead-header .emoji-big {
-    font-size: 56px;
-    display: block;
-    margin-bottom: 12px;
-  }
-
+  /* ========== SLIDE 1: КОТИКИ-НАСТРОЕНИЯ ========== */
   .cats-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 30px;
   }
+
+  @media (max-width: 500px) { .cats-grid { grid-template-columns: 1fr; } }
 
   .cat-card {
     background: white;
-    border-radius: 20px;
-    padding: 24px 20px;
+    border-radius: var(--radius);
+    padding: 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.25s;
-    border: 3px solid transparent;
+    border: 3px solid var(--cream);
     box-shadow: var(--shadow);
   }
-  .cat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-  }
-  .cat-card.selected {
-    border-color: var(--lavender);
-    background: #FAF5FF;
-  }
+  .cat-card:hover { border-color: var(--sage-light); transform: translateY(-4px); }
+  .cat-card.selected { border-color: var(--sage); background: #F8FCF8; }
 
-  .cat-emoji { font-size: 52px; display: block; margin-bottom: 10px; }
-  .cat-name { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-  .cat-adj { font-size: 13px; color: #888; font-style: italic; }
+  .cat-card img {
+    width: 90px; height: 90px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 12px;
+    border: 3px solid var(--parchment);
+  }
+  .cat-name { font-size: 18px; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
+  .cat-adj { font-size: 14px; color: var(--text-light); }
 
   .cat-response {
     display: none;
     background: white;
-    border-radius: 20px;
-    padding: 28px;
+    border-radius: var(--radius);
+    padding: 30px;
     text-align: center;
     box-shadow: var(--shadow);
+    border: 2px solid var(--sage-light);
     margin-bottom: 20px;
     animation: fadeIn 0.4s ease;
   }
   .cat-response.show { display: block; }
-  .cat-response .response-emoji { font-size: 48px; display: block; margin-bottom: 12px; }
-  .cat-response h3 { color: var(--lavender); margin-bottom: 8px; }
-  .cat-response p { color: #555; margin-bottom: 16px; }
+  .cat-response img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 16px; }
 
   /* ========== SLIDE 2: VOCABULARY ========== */
-  #slide2 { background: linear-gradient(135deg, #FFF9F0 0%, #FFF3E0 100%); }
-
-  .vocab-stage { display: none; }
-  .vocab-stage.active { display: block; animation: fadeIn 0.4s ease; }
-
-  .confession-card {
-    background: white;
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: var(--shadow);
-    margin-bottom: 24px;
-    position: relative;
-  }
-
   .confession-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 16px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid #f0f0f0;
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 20px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--cream);
   }
-
-  .confession-avatar {
-    font-size: 40px;
-    background: #FFF3E0;
-    border-radius: 50%;
-    width: 56px; height: 56px;
-    display: flex; align-items: center; justify-content: center;
+  .confession-avatar img {
+    width: 60px; height: 60px;
+    border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--sage-light);
   }
+  .confession-meta strong { font-size: 16px; color: var(--text-dark); display: block; }
+  .confession-meta span { font-size: 13px; color: var(--text-light); }
+  .confession-text { font-size: 16px; color: var(--text-mid); font-style: italic; margin-bottom: 20px; }
 
-  .confession-meta strong { display: block; font-size: 16px; }
-  .confession-meta span { font-size: 13px; color: #aaa; }
-
-  .confession-text {
-    font-size: 16px;
-    line-height: 1.7;
-    color: #333;
-    margin-bottom: 20px;
-  }
-
-  .adj-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
+  .adj-options { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
   .adj-chip {
-    padding: 8px 18px;
-    border-radius: 50px;
-    border: 2px solid #e0e0e0;
-    background: white;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 500;
-  }
-  .adj-chip:hover { border-color: var(--peach); color: var(--peach); }
-  .adj-chip.selected { background: var(--peach); border-color: var(--peach); color: white; }
-  .adj-chip.correct { background: var(--mint); border-color: var(--mint); color: white; }
-  .adj-chip.wrong { background: var(--coral); border-color: var(--coral); color: white; opacity: 0.7; }
-
-  .check-btn-wrap { text-align: center; }
-
-  .feedback-box {
-    display: none;
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin-top: 16px;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-  .feedback-box.show { display: block; animation: fadeIn 0.3s ease; }
-  .feedback-box.good { background: #E8F5E9; border-left: 4px solid var(--mint); }
-  .feedback-box.info { background: #E3F2FD; border-left: 4px solid var(--blue); }
-
-  /* Sort the Cat */
-  .sort-question {
-    background: white;
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-  }
-
-  .sort-scene {
-    font-size: 36px;
-    margin-bottom: 12px;
-  }
-
-  .sort-story {
-    font-size: 15px;
-    line-height: 1.7;
-    color: #444;
-    margin-bottom: 20px;
-    padding: 14px 18px;
-    background: #FAFAFA;
-    border-radius: 12px;
-  }
-
-  .sort-options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-
-  .sort-option {
-    padding: 12px 16px;
-    border-radius: 12px;
-    border: 2px solid #e8e8e8;
-    background: white;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
-    transition: all 0.2s;
-  }
-  .sort-option:hover { border-color: var(--blue); color: var(--blue); }
-  .sort-option.selected-sort { border-color: var(--blue); background: #E3F2FD; color: var(--blue); }
-  .sort-option.correct-sort { border-color: var(--mint); background: #E8F5E9; color: #2E7D32; }
-  .sort-option.wrong-sort { border-color: var(--coral); background: #FFEBEE; color: #C62828; }
-
-  /* Vocab stats */
-  .vocab-stats {
-    text-align: center;
-    padding: 40px 20px;
-  }
-  .stats-circle {
-    width: 140px; height: 140px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--lavender), var(--blue));
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    margin: 0 auto 24px;
-    color: white;
-    box-shadow: 0 8px 32px rgba(199,125,255,0.4);
-  }
-  .stats-circle .big-num { font-size: 42px; font-weight: 800; }
-  .stats-circle .small-txt { font-size: 13px; opacity: 0.9; }
-
-  /* ========== SLIDE 3: READING ========== */
-  #slide3 { background: linear-gradient(135deg, #F0FFF4 0%, #E8F5E9 100%); }
-
-  .reading-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    align-items: start;
-  }
-
-  @media (max-width: 680px) {
-    .reading-layout { grid-template-columns: 1fr; }
-    .cats-grid { grid-template-columns: 1fr; }
-    .sort-options { grid-template-columns: 1fr; }
-  }
-
-  .reading-text {
-    background: white;
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: var(--shadow);
-    line-height: 1.9;
-    font-size: 15px;
-  }
-
-  .reading-text .passage-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    color: var(--dark);
-  }
-
-  .reading-text .highlight-if {
-    background: #FFF3E0;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 600;
-    color: #E65100;
-  }
-
-  .reading-text .highlight-adj {
-    background: #E8F5E9;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 600;
-    color: #2E7D32;
-  }
-
-  .questions-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .question-card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-  }
-
-  .question-card .q-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--mint);
-    margin-bottom: 8px;
-  }
-
-  .question-card p { font-size: 14px; margin-bottom: 12px; }
-
-  .q-options { display: flex; flex-direction: column; gap: 8px; }
-
-  .q-option {
-    padding: 10px 14px;
-    border-radius: 10px;
-    border: 2px solid #eee;
-    background: white;
-    font-size: 13px;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.2s;
-  }
-  .q-option:hover { border-color: var(--mint); }
-  .q-option.correct-q { border-color: var(--mint); background: #E8F5E9; color: #1B5E20; }
-  .q-option.wrong-q { border-color: var(--coral); background: #FFEBEE; color: #B71C1C; }
-
-  .q-explain {
-    display: none;
-    margin-top: 10px;
-    padding: 10px 14px;
-    background: #F3E5F5;
-    border-radius: 10px;
-    font-size: 13px;
-    color: #4A148C;
-    line-height: 1.6;
-  }
-  .q-explain.show { display: block; animation: fadeIn 0.3s ease; }
-
-  /* ========== SLIDE 4: GRAMMAR ========== */
-  #slide4 { background: linear-gradient(135deg, #EEF2FF 0%, #E8EAF6 100%); }
-
-  .grammar-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    margin-bottom: 24px;
-  }
-
-  .grammar-table th {
-    background: var(--lavender);
-    color: white;
-    padding: 14px 16px;
-    text-align: left;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-  }
-
-  .grammar-table td {
-    padding: 14px 16px;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 14px;
-    vertical-align: top;
-  }
-
-  .grammar-table tr:last-child td { border-bottom: none; }
-  .grammar-table tr:nth-child(even) td { background: #FAFAFA; }
-
-  .grammar-table .type-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .badge-zero { background: #E8F5E9; color: #2E7D32; }
-  .badge-first { background: #E3F2FD; color: #1565C0; }
-  .badge-second { background: #F3E5F5; color: #6A1B9A; }
-
-  .formula-box {
-    background: #F8F9FF;
-    border: 2px solid #E8EAFF;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-family: monospace;
-    font-size: 14px;
-    color: #333;
-    margin: 4px 0;
-  }
-
-  /* Grammar exercises */
-  .grammar-ex {
-    background: white;
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-  }
-
-  .ex-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .ex-num {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: var(--lavender);
-    color: white;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .gap-sentence {
-    font-size: 15px;
-    line-height: 2;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .gap-input {
-    border: none;
-    border-bottom: 2px solid var(--lavender);
-    background: transparent;
-    font-size: 15px;
-    padding: 2px 8px;
-    min-width: 120px;
-    outline: none;
-    color: var(--dark);
-    font-family: inherit;
-  }
-  .gap-input:focus { border-bottom-color: var(--coral); }
-  .gap-input.correct-input { border-bottom-color: var(--mint); color: #2E7D32; }
-  .gap-input.wrong-input { border-bottom-color: var(--coral); color: #C62828; }
-
-  .match-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .match-left, .match-right {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .match-item {
-    padding: 12px 16px;
-    border-radius: 12px;
-    border: 2px solid #e8e8e8;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: white;
-  }
-  .match-item:hover { border-color: var(--lavender); }
-  .match-item.match-selected { border-color: var(--lavender); background: #FAF5FF; }
-  .match-item.match-correct { border-color: var(--mint); background: #E8F5E9; }
-  .match-item.match-wrong { border-color: var(--coral); background: #FFEBEE; }
-
-  /* ========== SLIDE 5: SPEAKING ========== */
-  #slide5 { background: linear-gradient(135deg, #FFF0F5 0%, #FFE4EE 100%); }
-
-  .speaking-intro {
-    text-align: center;
-    padding: 20px 0 32px;
-  }
-
-  .speaking-card {
-    background: white;
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-  }
-
-  .speaking-q-num {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--coral);
-    margin-bottom: 10px;
-  }
-
-  .speaking-question {
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 1.5;
-    margin-bottom: 16px;
-    color: var(--dark);
-  }
-
-  .speaking-hints {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-
-  .hint-chip {
-    padding: 6px 14px;
-    border-radius: 50px;
-    font-size: 13px;
-    font-weight: 500;
-  }
-
-  .hint-adj { background: #E8F5E9; color: #2E7D32; }
-  .hint-if { background: #FFF3E0; color: #E65100; }
-  .hint-vocab { background: #E3F2FD; color: #1565C0; }
-
-  .timer-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     padding: 10px 20px;
     border-radius: 50px;
-    border: 2px solid #f0f0f0;
+    border: 2px solid var(--cream);
     background: white;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    color: #666;
-    transition: all 0.2s;
+    font-size: 15px; font-weight: 600; color: var(--text-mid);
+    cursor: pointer; transition: all 0.2s;
   }
-  .timer-btn:hover { border-color: var(--coral); color: var(--coral); }
-  .timer-btn.running { border-color: var(--coral); color: var(--coral); background: #FFF0F5; }
+  .adj-chip:hover { border-color: var(--dusty-blue); color: var(--dusty-blue); }
+  .adj-chip.selected { background: var(--dusty-blue); border-color: var(--dusty-blue); color: white; }
+  .adj-chip.correct { background: var(--sage); border-color: var(--sage); color: white; }
+  .adj-chip.wrong { background: var(--blush); border-color: var(--blush); color: white; opacity: 0.8; }
 
-  .timer-display {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--coral);
-    text-align: center;
-    display: none;
-    margin: 12px 0;
+  .feedback-box {
+    display: none; border-radius: 12px; padding: 16px 20px;
+    margin-top: 16px; font-size: 15px; line-height: 1.6;
   }
-  .timer-display.show { display: block; }
+  .feedback-box.show { display: block; animation: fadeIn 0.3s ease; }
+  .feedback-box.good { background: #F2F8F2; border-left: 4px solid var(--sage); color: var(--text-dark); }
+  .feedback-box.info { background: #F4F8FA; border-left: 4px solid var(--dusty-blue); color: var(--text-dark); }
 
-  /* ========== HOMEWORK ========== */
-  #slide6 { background: linear-gradient(135deg, #F5F5F5 0%, #ECEFF1 100%); }
-
-  .hw-card {
-    background: white;
-    border-radius: 20px;
-    padding: 28px;
-    box-shadow: var(--shadow);
-    margin-bottom: 16px;
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
+  /* Sort the Cat */
+  .sort-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media(max-width:500px){ .sort-options { grid-template-columns: 1fr; } }
+  
+  .sort-option {
+    padding: 14px; border-radius: 16px; border: 2px solid var(--cream);
+    background: white; cursor: pointer; font-size: 15px; font-weight: 600;
+    text-align: center; color: var(--text-mid); transition: all 0.2s;
   }
+  .sort-option:hover { border-color: var(--dusty-blue); }
+  .sort-option.correct-sort { border-color: var(--sage); background: #F2F8F2; color: var(--sage); }
+  .sort-option.wrong-sort { border-color: var(--blush); background: #FCF4F2; color: var(--blush); }
 
-  .hw-icon {
-    font-size: 32px;
-    flex-shrink: 0;
+  /* ========== SLIDE 3: READING ========== */
+  .reading-layout { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  .reading-hero { border-radius: var(--radius); width: 100%; display: block; margin-bottom: 20px; box-shadow: var(--shadow); }
+  
+  .highlight-adj { background: var(--sage-light); padding: 2px 6px; border-radius: 6px; font-weight: 700; color: #3A5A3A; }
+  .highlight-if { background: var(--warm-peach); padding: 2px 6px; border-radius: 6px; font-weight: 700; color: #8A5A2A; }
+
+  .q-option {
+    padding: 14px; border-radius: 12px; border: 2px solid var(--cream);
+    background: white; font-size: 15px; cursor: pointer; text-align: left; transition: all 0.2s;
+    margin-bottom: 8px; color: var(--text-mid); font-weight: 600;
   }
+  .q-option.correct-q { border-color: var(--sage); background: #F2F8F2; color: var(--sage); }
+  .q-option.wrong-q { border-color: var(--blush); background: #FCF4F2; color: var(--blush); opacity: 0.6; }
 
-  .hw-card h3 { font-size: 16px; margin-bottom: 6px; }
-  .hw-card p { font-size: 14px; color: #666; margin: 0; }
+  /* ========== SLIDE 4: GRAMMAR ========== */
+  .grammar-table {
+    width: 100%; border-collapse: collapse; background: white;
+    border-radius: 16px; overflow: hidden; box-shadow: var(--shadow);
+  }
+  .grammar-table th { background: var(--dusty-blue); color: white; padding: 16px; text-align: left; font-family: 'Lora'; font-size: 18px; }
+  .grammar-table td { padding: 16px; border-bottom: 1px solid var(--cream); font-size: 15px; color: var(--text-mid); }
+  .grammar-table .badge { display: inline-block; padding: 6px 12px; border-radius: 50px; font-size: 13px; font-weight: 800; }
+  .bg-zero { background: var(--sage-light); color: #3A5A3A; }
+  .bg-first { background: var(--warm-peach); color: #8A5A2A; }
+  .bg-second { background: var(--blush); color: #5A2A2A; }
 
-  /* ========== UTILS ========== */
-  .hidden { display: none !important; }
+  .gap-input {
+    border: none; border-bottom: 2px solid var(--dusty-blue);
+    background: transparent; font-size: 16px; padding: 4px 8px;
+    outline: none; color: var(--text-dark); font-weight: 700; font-family: 'Nunito';
+    text-align: center; width: 140px;
+  }
+  .gap-input.correct-input { border-color: var(--sage); color: var(--sage); }
+  .gap-input.wrong-input { border-color: var(--blush); color: var(--blush); }
+
+  /* ========== SLIDE 5: SPEAKING ========== */
+  .timer-box { text-align: center; padding: 30px; background: white; border-radius: var(--radius); box-shadow: var(--shadow); }
+  .timer-display { font-family: 'Nunito'; font-size: 48px; font-weight: 800; color: var(--blush); margin: 20px 0; }
+  
+  /* Utils */
   .text-center { text-align: center; }
-  .mt-16 { margin-top: 16px; }
-  .mt-24 { margin-top: 24px; }
-  .mb-8 { margin-bottom: 8px; }
+  .mt-20 { margin-top: 20px; }
+  .hidden { display: none !important; }
 
-  .progress-bar-wrap {
-    background: #eee;
-    border-radius: 50px;
-    height: 6px;
-    margin-bottom: 24px;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    border-radius: 50px;
-    background: linear-gradient(90deg, var(--lavender), var(--blue));
-    transition: width 0.4s ease;
-  }
-
-  .divider {
-    border: none;
-    border-top: 1px solid #eee;
-    margin: 20px 0;
-  }
-
-  .next-section-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 16px;
-    border-radius: 16px;
-    border: 2px dashed #ddd;
-    background: transparent;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    color: #888;
-    transition: all 0.2s;
-    margin-top: 8px;
-  }
-  .next-section-btn:hover {
-    border-color: var(--lavender);
-    color: var(--lavender);
-    background: #FAF5FF;
-  }
-
-  .tag {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .tag-grammar { background: #F3E5F5; color: #6A1B9A; }
-  .tag-vocab { background: #E8F5E9; color: #2E7D32; }
-
-  /* Confetti */
-  .confetti-wrap {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 999;
-  }
-  .confetti-piece {
-    position: absolute;
-    width: 10px; height: 10px;
-    border-radius: 2px;
-    animation: confettiFall 3s ease-in forwards;
-  }
-  @keyframes confettiFall {
-    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-  }
+  /* ProgressBar */
+  .pb-wrap { background: var(--cream); border-radius: 50px; height: 8px; margin-bottom: 24px; overflow: hidden; }
+  .pb-fill { height: 100%; background: var(--sage); transition: width 0.4s ease; width: 0%; }
 </style>
 </head>
 <body>
 
-<!-- ==================== SLIDE 1: LEAD-IN ==================== -->
-<div id="slide1" class="slide active">
-  <div class="slide-inner">
-    <div class="lead-header">
-      <span class="emoji-big">🐱</span>
-      <div class="slide-label">Lead-in</div>
-      <h1>Which cat are you today?</h1>
-      <p style="color:#888; font-size:15px;">Pick the one that feels most like you right now</p>
-    </div>
+<!-- SLIDES CONTAINER -->
+<div id="slides-container">
 
-    <div class="cats-grid">
-      <div class="cat-card" onclick="selectCat(0)">
-        <span class="cat-emoji">😴</span>
-        <div class="cat-name">Luna</div>
-        <div class="cat-adj">laid-back · calm · patient</div>
+  <!-- ==================== SLIDE 1: LEAD-IN ==================== -->
+  <div id="slide1" class="slide active">
+    <div class="slide-inner">
+      <div class="cover-img-wrap">
+        <img src="https://yapx.ru/i/d1ALN.jpg" alt="Сердитый кот за ноутом">
       </div>
-      <div class="cat-card" onclick="selectCat(1)">
-        <span class="cat-emoji">🔥</span>
-        <div class="cat-name">Mochi</div>
-        <div class="cat-adj">enthusiastic · outgoing · passionate</div>
+      
+      <div class="text-center">
+        <img src="https://yapx.ru/i/d1AJY.png" alt="Чай" class="decor-img">
+        <div class="slide-label">Lead-in</div>
+        <h1>Which cat are you today?</h1>
+        <p>Pick the one that feels most like you right now. Don't think too much!</p>
       </div>
-      <div class="cat-card" onclick="selectCat(2)">
-        <span class="cat-emoji">🤔</span>
-        <div class="cat-name">Professor</div>
-        <div class="cat-adj">thoughtful · cautious · serious</div>
-      </div>
-      <div class="cat-card" onclick="selectCat(3)">
-        <span class="cat-emoji">🫣</span>
-        <div class="cat-name">Pixel</div>
-        <div class="cat-adj">shy · sensitive · careful</div>
-      </div>
-    </div>
 
-    <div id="cat-response" class="cat-response">
-      <span class="response-emoji" id="resp-emoji"></span>
-      <h3 id="resp-title"></h3>
-      <p id="resp-text"></p>
-      <button class="btn btn-primary" onclick="goToSlide(2)">Let's start the lesson! 🐾</button>
-    </div>
+      <div class="cats-grid mt-20">
+        <div class="cat-card" onclick="selectCat(0)">
+          <img src="https://yapx.ru/i/d1AJc.png" alt="Serious Cat">
+          <div class="cat-name">Luna</div>
+          <div class="cat-adj">calm · thoughtful · serious</div>
+        </div>
+        <div class="cat-card" onclick="selectCat(1)">
+          <img src="https://yapx.ru/i/d1AJe.png" alt="Confident Cat">
+          <div class="cat-name">Mochi</div>
+          <div class="cat-adj">confident · outgoing · bold</div>
+        </div>
+        <div class="cat-card" onclick="selectCat(2)">
+          <img src="https://yapx.ru/i/d1AJd.png" alt="Shy Cat">
+          <div class="cat-name">Pixel</div>
+          <div class="cat-adj">shy · cautious · observant</div>
+        </div>
+        <div class="cat-card" onclick="selectCat(3)">
+          <img src="https://yapx.ru/i/d1AJv.png" alt="Playful Cat">
+          <div class="cat-name">Mango</div>
+          <div class="cat-adj">enthusiastic · impulsive · playful</div>
+        </div>
+      </div>
 
-    <div class="text-center mt-16" id="lead-skip">
-      <button class="btn btn-outline" onclick="goToSlide(2)">Skip →</button>
+      <div id="cat-response" class="cat-response">
+        <img id="resp-img" src="" alt="Cat">
+        <h3 id="resp-title"></h3>
+        <p id="resp-text"></p>
+        <button class="btn btn-primary" onclick="goToSlide(2)">Let's start! 🐾</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ==================== SLIDE 2: VOCABULARY ==================== -->
-<div id="slide2" class="slide">
-  <div class="slide-inner">
-    <div class="slide-label">Vocabulary</div>
-    <h2>Personality Adjectives</h2>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar-fill" id="vocab-progress" style="width:0%"></div>
-    </div>
+  <!-- ==================== SLIDE 2: VOCABULARY ==================== -->
+  <div id="slide2" class="slide">
+    <div class="slide-inner">
+      <div class="slide-label">Vocabulary</div>
+      <h2>Cat Confessions</h2>
+      <div class="pb-wrap"><div class="pb-fill" id="vocab-pb"></div></div>
+      <p>Read each cat's post and select <strong>all</strong> the adjectives that describe their personality.</p>
 
-    <!-- STAGE 1: Cat Confessions -->
-    <div class="vocab-stage active" id="vocab-stage1">
-      <div class="card" style="background:#FFF8E1; border-left:4px solid var(--peach);">
-        <strong>🐾 Cat Confessions</strong> — Read each cat's post and choose all the adjectives that describe them. There can be more than one right answer!
-      </div>
-
-      <!-- Confession 1 -->
-      <div class="confession-card" id="conf1">
+      <!-- Conf 1 -->
+      <div class="card" id="conf1">
         <div class="confession-header">
-          <div class="confession-avatar">😼</div>
+          <div class="confession-avatar"><img src="https://yapx.ru/i/d1AJe.png" alt="Mochi"></div>
           <div class="confession-meta">
-            <strong>Oliver_TheCat</strong>
-            <span>2 minutes ago</span>
+            <strong>Mochi_TheBoss</strong>
+            <span>2 mins ago</span>
           </div>
         </div>
         <div class="confession-text">
-          "Okay so today I walked up to EVERY person in the park and demanded attention. 
-          All of them. Even the ones who were on the phone. I don't see the problem honestly. 
-          I just love meeting new people and I always assume everyone is going to like me. 
-          Life is too short to be worried about what might go wrong! 🐾"
+          "I walked up to EVERY person in the park and demanded attention. I just love meeting new people and assume everyone likes me. Life is too short to worry!"
         </div>
         <div class="adj-options" id="conf1-options">
-          <button class="adj-chip" onclick="toggleAdj(this,'conf1')">outgoing</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf1')">confident</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf1')">shy</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf1')">optimistic</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf1')">cautious</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf1')">friendly</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf1')">secretive</button>
+          <button class="adj-chip" onclick="toggleAdj(this)">outgoing</button>
+          <button class="adj-chip" onclick="toggleAdj(this)">confident</button>
+          <button class="adj-chip" onclick="toggleAdj(this)">shy</button>
+          <button class="adj-chip" onclick="toggleAdj(this)">cautious</button>
+          <button class="adj-chip" onclick="toggleAdj(this)">friendly</button>
         </div>
-        <div class="check-btn-wrap">
-          <button class="btn btn-primary" onclick="checkConf('conf1', ['outgoing','confident','optimistic','friendly'])">Check ✓</button>
+        <div class="text-center">
+          <button class="btn btn-outline" onclick="checkConf('conf1', ['outgoing','confident','friendly'])">Check</button>
         </div>
         <div class="feedback-box" id="conf1-feedback"></div>
       </div>
 
-      <!-- Confession 2 -->
-      <div class="confession-card" id="conf2">
-        <div class="confession-header">
-          <div class="confession-avatar">🙀</div>
-          <div class="confession-meta">
-            <strong>Duchess_Meow</strong>
-            <span>15 minutes ago</span>
-          </div>
-        </div>
-        <div class="confession-text">
-          "I have been sitting in the same sunny spot for six hours. Someone offered me 
-          a different spot — apparently 'with better cushions' — and I said no thank you. 
-          I know what I like. I take my time with decisions. Rushing is for dogs. 🌿"
-        </div>
-        <div class="adj-options" id="conf2-options">
-          <button class="adj-chip" onclick="toggleAdj(this,'conf2')">impulsive</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf2')">patient</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf2')">laid-back</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf2')">cautious</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf2')">nervous</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf2')">calm</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf2')">impatient</button>
-        </div>
-        <div class="check-btn-wrap">
-          <button class="btn btn-primary" onclick="checkConf('conf2', ['patient','laid-back','cautious','calm'])">Check ✓</button>
-        </div>
-        <div class="feedback-box" id="conf2-feedback"></div>
-      </div>
+      <img src="https://yapx.ru/i/d1AJa.png" class="divider">
 
-      <!-- Confession 3 -->
-      <div class="confession-card" id="conf3">
+      <!-- Conf 2 -->
+      <div class="card" id="conf2">
         <div class="confession-header">
-          <div class="confession-avatar">😤</div>
+          <div class="confession-avatar"><img src="https://yapx.ru/i/d1AJq.png" alt="Luna"></div>
           <div class="confession-meta">
-            <strong>Sir_Fluffington</strong>
+            <strong>Luna_Sleeps</strong>
             <span>1 hour ago</span>
           </div>
         </div>
         <div class="confession-text">
-          "My human gave me the WRONG flavour again. I flipped the bowl. 
-          I don't feel bad about it. I know exactly what I want and I make 
-          sure I get it. Some call it demanding. I call it having standards. 
-          Also I knocked their coffee off the table. It was in my way. 😤"
+          "I've been in the same sun patch for six hours. Someone offered me a better spot and I said no. I take my time. Rushing is for dogs."
         </div>
-        <div class="adj-options" id="conf3-options">
-          <button class="adj-chip" onclick="toggleAdj(this,'conf3')">assertive</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf3')">selfish</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf3')">considerate</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf3')">impulsive</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf3')">thoughtless</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf3')">tactful</button>
-          <button class="adj-chip" onclick="toggleAdj(this,'conf3')">careless</button>
+        <div class="adj-options" id="conf2-options">
+          <button class="adj-chip" onclick="toggleAdj(this)">impulsive</button>
+          <button class="adj-chip" onclick="toggleAdj(this)">patient</button>
+          <button class="adj-chip" onclick="toggleAdj(this)">laid-back</button>
+          <button class="adj-chip" onclick="toggleAdj(this)">calm</button>
+          <button class="adj-chip" onclick="toggleAdj(this)">nervous</button>
         </div>
-        <div class="check-btn-wrap">
-          <button class="btn btn-primary" onclick="checkConf('conf3', ['assertive','selfish','impulsive','thoughtless','careless'])">Check ✓</button>
+        <div class="text-center">
+          <button class="btn btn-outline" onclick="checkConf('conf2', ['patient','laid-back','calm'])">Check</button>
         </div>
-        <div class="feedback-box" id="conf3-feedback"></div>
+        <div class="feedback-box" id="conf2-feedback"></div>
       </div>
 
-      <button class="next-section-btn" onclick="goToVocabStage2()">
-        Next: Sort the Cat →
-      </button>
-    </div>
-
-    <!-- STAGE 2: Sort the Cat -->
-    <div class="vocab-stage" id="vocab-stage2">
-      <div class="card" style="background:#E8F5E9; border-left:4px solid var(--mint);">
-        <strong>🐾 Sort the Cat</strong> — Read the situation and choose the MOST precise word.
-      </div>
-
-      <!-- Sort Q1 -->
-      <div class="sort-question" id="sort1">
-        <div class="sort-scene">🎁</div>
-        <div class="sort-story">
-          Biscuit always remembers when his friends are having a hard time. 
-          Last week he shared his favourite blanket with a cold kitten he'd 
-          only just met. He never thinks about himself first.
-        </div>
-        <div class="sort-options">
-          <button class="sort-option" onclick="checkSort('sort1', this, true)">generous</button>
-          <button class="sort-option" onclick="checkSort('sort1', this, false)">friendly</button>
-          <button class="sort-option" onclick="checkSort('sort1', this, false)">brave</button>
-          <button class="sort-option" onclick="checkSort('sort1', this, false)">talkative</button>
-        </div>
-        <div class="feedback-box" id="sort1-feedback"></div>
-      </div>
-
-      <!-- Sort Q2 -->
-      <div class="sort-question" id="sort2">
-        <div class="sort-scene">😬</div>
-        <div class="sort-story">
-          Noodle never says anything mean, even when he disagrees. 
-          He always finds a kind way to give feedback. When his friend's 
-          haircut looked terrible, he said "it really shows your personality!"
-        </div>
-        <div class="sort-options">
-          <button class="sort-option" onclick="checkSort('sort2', this, true)">tactful</button>
-          <button class="sort-option" onclick="checkSort('sort2', this, false)">honest</button>
-          <button class="sort-option" onclick="checkSort('sort2', this, false)">supportive</button>
-          <button class="sort-option" onclick="checkSort('sort2', this, false)">polite</button>
-        </div>
-        <div class="feedback-box" id="sort2-feedback"></div>
-      </div>
-
-      <!-- Sort Q3 -->
-      <div class="sort-question" id="sort3">
-        <div class="sort-scene">🧪</div>
-        <div class="sort-story">
-          Professor Whiskers wears a different hat every day, talks to his 
-          plants like they're students, and once spent three weeks studying 
-          the aerodynamics of falling toast. His friends never know what 
-          he'll do next.
-        </div>
-        <div class="sort-options">
-          <button class="sort-option" onclick="checkSort('sort3', this, false)">immature</button>
-          <button class="sort-option" onclick="checkSort('sort3', this, true)">eccentric</button>
-          <button class="sort-option" onclick="checkSort('sort3', this, false)">silly</button>
-          <button class="sort-option" onclick="checkSort('sort3', this, false)">nervous</button>
-        </div>
-        <div class="feedback-box" id="sort3-feedback"></div>
-      </div>
-
-      <!-- Sort Q4 -->
-      <div class="sort-question" id="sort4">
-        <div class="sort-scene">💪</div>
-        <div class="sort-story">
-          When the neighbourhood dog showed up growling, every other cat 
-          ran away. But Cleo stood her ground, walked slowly forward, and 
-          stared him down until he left. Her paws were shaking — but she 
-          didn't move.
-        </div>
-        <div class="sort-options">
-          <button class="sort-option" onclick="checkSort('sort4', this, false)">confident</button>
-          <button class="sort-option" onclick="checkSort('sort4', this, false)">fearless</button>
-          <button class="sort-option" onclick="checkSort('sort4', this, true)">brave</button>
-          <button class="sort-option" onclick="checkSort('sort4', this, false)">assertive</button>
-        </div>
-        <div class="feedback-box" id="sort4-feedback"></div>
-      </div>
-
-      <!-- Sort Q5 -->
-      <div class="sort-question" id="sort5">
-        <div class="sort-scene">📅</div>
-        <div class="sort-story">
-          Mango said he'd meet his friend at 3pm every Tuesday for the past 
-          month. He has been there every single time — five minutes early, 
-          with snacks. You always know where you stand with Mango.
-        </div>
-        <div class="sort-options">
-          <button class="sort-option" onclick="checkSort('sort5', this, false)">responsible</button>
-          <button class="sort-option" onclick="checkSort('sort5', this, false)">loyal</button>
-          <button class="sort-option" onclick="checkSort('sort5', this, true)">reliable</button>
-          <button class="sort-option" onclick="checkSort('sort5', this, false)">consistent</button>
-        </div>
-        <div class="feedback-box" id="sort5-feedback"></div>
-      </div>
-
-      <button class="next-section-btn" onclick="goToVocabStats()">
-        See your vocabulary score! 🎉
-      </button>
-    </div>
-
-    <!-- STAGE 3: Stats -->
-    <div class="vocab-stage" id="vocab-stage3">
-      <div class="vocab-stats">
-        <div class="stats-circle">
-          <span class="big-num">72</span>
-          <span class="small-txt">words active</span>
-        </div>
-        <h2>You already know 72 personality adjectives! 🎉</h2>
-        <p style="color:#888; max-width:400px; margin:0 auto 24px;">
-          That's an impressive active vocabulary. Today we're going to make 
-          another 20+ feel completely natural.
-        </p>
-        <button class="btn btn-mint" onclick="goToSlide(3)">
-          On to Reading! 📖
-        </button>
+      <div class="text-center mt-20">
+        <button class="btn btn-primary" onclick="goToSlide(3)">To the Reading! 📖</button>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ==================== SLIDE 3: READING ==================== -->
-<div id="slide3" class="slide">
-  <div class="slide-inner">
-    <div class="slide-label">Reading</div>
-    <h2>Read & Explore</h2>
-    <p style="color:#666; margin-bottom:20px;">
-      Read the passage carefully — notice the <span style="background:#FFF3E0; 
-      padding:2px 6px; border-radius:4px; font-weight:600; color:#E65100;">
-      highlighted grammar</span> and 
-      <span style="background:#E8F5E9; padding:2px 6px; border-radius:4px; 
-      font-weight:600; color:#2E7D32;">vocabulary</span> as you go.
-    </p>
+  <!-- ==================== SLIDE 3: READING ==================== -->
+  <div id="slide3" class="slide">
+    <div class="slide-inner">
+      <div class="slide-label">Reading</div>
+      <h2>The Personality Problem</h2>
+      
+      <img src="https://yapx.ru/i/d1ALP.jpg" class="reading-hero" alt="Кот у окна">
+      
+      <div class="card" style="background: var(--warm-white);">
+        <p>The staff at Paws & Co. had twelve cats, twelve very different personalities, and a waiting list of families who all wanted "a nice, <span class="highlight-adj">friendly</span> cat." The trouble was that not every cat agreed on what "nice" meant.</p>
 
-    <div class="reading-layout">
-      <!-- TEXT -->
-      <div class="reading-text">
-        <div class="passage-title">The Personality Problem at Paws & Co.</div>
-        
-        <p>The staff at Paws & Co. Animal Shelter had a problem. They had twelve cats, 
-        twelve very different personalities, and a waiting list of families who all 
-        wanted "a nice, <span class="highlight-adj">friendly</span> cat." The trouble 
-        was that not every cat agreed on what "nice" meant.</p>
+        <p>Take Cleo. She was <span class="highlight-adj">assertive</span> — she knew what she wanted. <span class="highlight-if">If you opened a tin of tuna, she appeared within seconds.</span></p>
 
-        <p>Take Cleo. She was what the staff called 
-        <span class="highlight-adj">assertive</span> — she knew exactly what 
-        she wanted and she made sure she got it. 
-        <span class="highlight-if">If you opened a tin of tuna anywhere in the 
-        building, she appeared within seconds.</span> Some families loved her energy. 
-        Others were less sure.</p>
+        <p>Then there was Biscuit — <span class="highlight-adj">generous</span> and <span class="highlight-adj">reliable</span>. <span class="highlight-if">If a new kitten arrived feeling frightened, Biscuit would always sit beside them.</span></p>
 
-        <p>Then there was Biscuit — <span class="highlight-adj">generous</span>, 
-        <span class="highlight-adj">patient</span>, and completely 
-        <span class="highlight-adj">reliable</span>. 
-        <span class="highlight-if">If a new kitten arrived at the shelter feeling 
-        frightened, Biscuit would always be the first to sit beside them.</span> 
-        He never pushed. He never rushed. He simply waited until they were ready.</p>
-
-        <p>The most <span class="highlight-adj">eccentric</span> resident was 
-        undoubtedly Professor Whiskers. He had developed a system for predicting 
-        the weather by watching which way the dust moved near the radiator. 
-        <span class="highlight-if">If the dust moved left, he would hide under 
-        the sofa — which, according to his records, meant rain was coming.</span> 
-        He was wrong approximately eighty percent of the time, but this did not 
-        seem to bother him.</p>
-
-        <p>The newest arrival, a small <span class="highlight-adj">shy</span> 
-        tabby named Pixel, had not left her box in three days. The staff were 
-        <span class="highlight-adj">thoughtful</span> about her needs — they 
-        kept the lights low and spoke quietly near her space. 
-        <span class="highlight-if">If they had rushed her, she would have become 
-        even more anxious.</span> Instead, on the fourth day, she walked out on 
-        her own and sat in a patch of sunlight for exactly eleven minutes.</p>
-
-        <p>By the end of the month, all twelve cats had found homes. The families 
-        who adopted them were not always the ones who had asked for "friendly." 
-        Sometimes the most <span class="highlight-adj">impulsive</span> families 
-        chose the most <span class="highlight-adj">laid-back</span> cats, and 
-        somehow it worked perfectly.</p>
+        <p>The newest arrival, a <span class="highlight-adj">shy</span> tabby named Pixel, had not left her box in three days. The staff were thoughtful. <span class="highlight-if">If they had rushed her, she would have become more anxious.</span> Instead, she came out on her own terms.</p>
       </div>
 
-      <!-- QUESTIONS -->
-      <div class="questions-panel">
-
-        <div class="question-card">
-          <div class="q-label">Inference</div>
-          <p>Why does the author most likely mention that Professor Whiskers 
-          was "wrong approximately eighty percent of the time"?</p>
-          <div class="q-options">
-            <button class="q-option" onclick="checkQ(this,'q1',false)">
-              A) To show that cats are not very intelligent
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q1',false)">
-              B) To suggest the shelter staff found him annoying
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q1',true)">
-              C) To emphasise how his confidence was unaffected by failure
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q1',false)">
-              D) To prove that weather prediction is impossible
-            </button>
-          </div>
-          <div class="q-explain" id="q1-explain">
-            ✅ <strong>C is correct.</strong> The detail about being wrong 80% 
-            of the time immediately followed by "this did not seem to bother him" 
-            highlights that Professor Whiskers is undisturbed by failure — 
-            which is exactly what makes him <em>eccentric</em> rather than just wrong.
-          </div>
-        </div>
-
-        <div class="question-card">
-          <div class="q-label">Vocabulary in Context</div>
-          <p>The word <strong>"assertive"</strong> in paragraph 2 is closest 
-          in meaning to:</p>
-          <div class="q-options">
-            <button class="q-option" onclick="checkQ(this,'q2',false)">
-              A) aggressive and unkind
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q2',true)">
-              B) confidently self-directed
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q2',false)">
-              C) outgoing and talkative
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q2',false)">
-              D) impatient and careless
-            </button>
-          </div>
-          <div class="q-explain" id="q2-explain">
-            ✅ <strong>B is correct.</strong> "She knew exactly what she wanted 
-            and made sure she got it" — this describes someone who is directed 
-            by their own clear goals and acts on them confidently. 
-            <em>Assertive</em> ≠ aggressive: the text says some families 
-            "loved her energy."
-          </div>
-        </div>
-
-        <div class="question-card">
-          <div class="q-label">Inference</div>
-          <p>What can be inferred about Pixel from the final detail — 
-          that she sat in sunlight for "exactly eleven minutes"?</p>
-          <div class="q-options">
-            <button class="q-option" onclick="checkQ(this,'q3',false)">
-              A) She was fully comfortable and no longer shy
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q3',false)">
-              B) She was testing the staff to see their reaction
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q3',true)">
-              C) She was making progress but still on her own careful terms
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q3',false)">
-              D) She had decided the shelter was not right for her
-            </button>
-          </div>
-          <div class="q-explain" id="q3-explain">
-            ✅ <strong>C is correct.</strong> "Exactly eleven minutes" suggests 
-            precision and control — she came out, but on her own schedule. 
-            This is consistent with a <em>shy</em>, <em>cautious</em> personality 
-            that needs to feel safe before taking steps forward.
-          </div>
-        </div>
-
-        <div class="question-card">
-          <div class="q-label">Main Idea</div>
-          <p>What is the central idea of this passage?</p>
-          <div class="q-options">
-            <button class="q-option" onclick="checkQ(this,'q4',false)">
-              A) Animal shelters struggle to find homes for difficult cats
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q4',false)">
-              B) Friendly cats are always the easiest to adopt
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q4',true)">
-              C) Different personalities have value, and the right match matters more than a label
-            </button>
-            <button class="q-option" onclick="checkQ(this,'q4',false)">
-              D) Staff behaviour is the main factor in a cat's wellbeing
-            </button>
-          </div>
-          <div class="q-explain" id="q4-explain">
-            ✅ <strong>C is correct.</strong> The text opens with families 
-            wanting "friendly" cats, but ends with the observation that 
-            "sometimes the most impulsive families chose the most laid-back cats, 
-            and somehow it worked perfectly" — suggesting personality fit is more 
-            nuanced than a single label.
-          </div>
-        </div>
-
+      <h3>Quick Quiz</h3>
+      <div class="card">
+        <p><strong>1. The word "assertive" describes someone who is:</strong></p>
+        <button class="q-option" onclick="checkQ(this, 'q1', false)">A) Aggressive and angry</button>
+        <button class="q-option" onclick="checkQ(this, 'q1', true)">B) Confidently self-directed</button>
+        <button class="q-option" onclick="checkQ(this, 'q1', false)">C) Shy and quiet</button>
+        <div class="feedback-box" id="q1-explain">✅ <strong>B is correct.</strong> Assertive means knowing what you want and asking for it confidently.</div>
       </div>
-    </div>
 
-    <div class="text-center mt-24">
-      <button class="btn btn-primary" onclick="goToSlide(4)">
-        Now let's look at the grammar! 🔍
-      </button>
+      <div class="text-center">
+        <button class="btn btn-primary" onclick="goToSlide(4)">Grammar Time 🔍</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ==================== SLIDE 4: GRAMMAR ==================== -->
-<div id="slide4" class="slide">
-  <div class="slide-inner">
-    <div class="slide-label">Grammar</div>
-    <h2>IF Conditionals</h2>
-    <p style="color:#666; margin-bottom:20px;">
-      You already saw these in the text — now let's see the system behind them.
-    </p>
+  <!-- ==================== SLIDE 4: GRAMMAR ==================== -->
+  <div id="slide4" class="slide">
+    <div class="slide-inner">
+      <div class="slide-label">Grammar</div>
+      <h2>IF Conditionals</h2>
+      
+      <img src="https://yapx.ru/i/d1ALR.jpg" class="reading-hero" style="max-height: 200px; object-fit: cover;">
 
-    <!-- Theory Table -->
-    <div class="card">
-      <h3 style="margin-bottom:16px;">The Three Conditionals</h3>
-      <table class="grammar-table">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>When to use</th>
-            <th>Formula</th>
-            <th>From the text</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="type-badge badge-zero">Zero</span></td>
-            <td>Always true facts, habits, general truths</td>
-            <td>
-              <div class="formula-box">If + Present Simple, Present Simple</div>
-            </td>
-            <td><em>"If you open a tin of tuna, she appears within seconds."</em></td>
-          </tr>
-          <tr>
-            <td><span class="type-badge badge-first">First</span></td>
-            <td>Real possibility in the future</td>
-            <td>
-              <div class="formula-box">If + Present Simple, will + verb</div>
-            </td>
-            <td><em>"If a new kitten arrives, Biscuit will sit beside them."</em></td>
-          </tr>
-          <tr>
-            <td><span class="type-badge badge-second">Second</span></td>
-            <td>Imaginary / hypothetical present or future</td>
-            <td>
-              <div class="formula-box">If + Past Simple, would + verb</div>
-            </td>
-            <td><em>"If they had rushed her, she would have become anxious."*</em></td>
-          </tr>
-        </tbody>
+      <table class="grammar-table mt-20">
+        <tr>
+          <th>Type</th>
+          <th>Usage</th>
+          <th>Example</th>
+        </tr>
+        <tr>
+          <td><span class="badge bg-zero">Zero</span></td>
+          <td>Always true facts / habits</td>
+          <td>If you open tuna, she appears.</td>
+        </tr>
+        <tr>
+          <td><span class="badge bg-first">First</span></td>
+          <td>Real future possibility</td>
+          <td>If a kitten arrives, Biscuit will sit with them.</td>
+        </tr>
+        <tr>
+          <td><span class="badge bg-second">Second</span></td>
+          <td>Imaginary present/future</td>
+          <td>If I were a cat, I would sleep all day.</td>
+        </tr>
       </table>
-      <p style="font-size:13px; color:#999; margin:0;">
-        * The text uses Third Conditional here — we'll cover that in a future lesson. 
-        For now, focus on Zero, First and Second.
-      </p>
-    </div>
 
-    <!-- Key differences card -->
-    <div class="card" style="background:#FFF8E1; border-left: 4px solid var(--peach);">
-      <h3>⚠️ Easy to confuse</h3>
-      <p style="margin-bottom:8px;">
-        <strong>Zero vs First:</strong> "If I heat water, it boils." (always true) 
-        vs "If I study tonight, I'll pass the test." (this specific situation)
-      </p>
-      <p style="margin-bottom:0;">
-        <strong>First vs Second:</strong> "If she calls, I'll answer." (realistic) 
-        vs "If she called, I would answer." (imaginary — she probably won't call)
-      </p>
-    </div>
+      <img src="https://yapx.ru/i/d1AJa.png" class="divider">
 
-    <!-- EXERCISE 1: Choose the type -->
-    <div class="grammar-ex">
-      <div class="ex-title">
-        <div class="ex-num">1</div>
-        <div>
-          <h3 style="margin:0">What type?</h3>
-          <p style="font-size:13px; color:#888; margin:4px 0 0;">
-            Read each sentence and choose: Zero / First / Second
-          </p>
+      <h3>Gap Fill</h3>
+      <div class="card">
+        <p style="margin-bottom: 20px;">1. If Biscuit <input class="gap-input" id="g1" placeholder="(see)"> a sad kitten, he always goes to them. <span style="font-size:12px;color:var(--dusty-blue)">(Zero)</span></p>
+        <p style="margin-bottom: 20px;">2. If I <input class="gap-input" id="g2" placeholder="(be)"> a cat, I would ignore everyone. <span style="font-size:12px;color:var(--dusty-blue)">(Second)</span></p>
+        <p>3. If she posts a photo, someone <input class="gap-input" id="g3" placeholder="(adopt)"> her tomorrow! <span style="font-size:12px;color:var(--dusty-blue)">(First)</span></p>
+        
+        <div class="text-center mt-20">
+          <button class="btn btn-outline" onclick="checkGaps()">Check answers</button>
         </div>
+        <div class="feedback-box" id="gap-feedback"></div>
       </div>
 
-      <div id="ex1-items">
-        <!-- item 1 -->
-        <div class="sort-question" id="ex1-q1" style="margin-bottom:14px;">
-          <div class="sort-story">
-            "If Mochi <strong>gets</strong> nervous, she <strong>hides</strong> 
-            under the sofa immediately."
-          </div>
-          <div class="sort-options">
-            <button class="sort-option" onclick="checkSort('ex1-q1',this,true)">Zero</button>
-            <button class="sort-option" onclick="checkSort('ex1-q1',this,false)">First</button>
-            <button class="sort-option" onclick="checkSort('ex1-q1',this,false)">Second</button>
-          </div>
-          <div class="feedback-box" id="ex1-q1-feedback"></div>
-        </div>
-
-        <!-- item 2 -->
-        <div class="sort-question" id="ex1-q2" style="margin-bottom:14px;">
-          <div class="sort-story">
-            "If Pixel <strong>feels</strong> safe enough tomorrow, 
-            she <strong>will come</strong> out for longer."
-          </div>
-          <div class="sort-options">
-            <button class="sort-option" onclick="checkSort('ex1-q2',this,false)">Zero</button>
-            <button class="sort-option" onclick="checkSort('ex1-q2',this,true)">First</button>
-            <button class="sort-option" onclick="checkSort('ex1-q2',this,false)">Second</button>
-          </div>
-          <div class="feedback-box" id="ex1-q2-feedback"></div>
-        </div>
-
-        <!-- item 3 -->
-        <div class="sort-question" id="ex1-q3" style="margin-bottom:14px;">
-          <div class="sort-story">
-            "If I <strong>were</strong> more like Biscuit, 
-            I <strong>would be</strong> a much better friend."
-          </div>
-          <div class="sort-options">
-            <button class="sort-option" onclick="checkSort('ex1-q3',this,false)">Zero</button>
-            <button class="sort-option" onclick="checkSort('ex1-q3',this,false)">First</button>
-            <button class="sort-option" onclick="checkSort('ex1-q3',this,true)">Second</button>
-          </div>
-          <div class="feedback-box" id="ex1-q3-feedback"></div>
-        </div>
-
-        <!-- item 4 -->
-        <div class="sort-question" id="ex1-q4" style="margin-bottom:14px;">
-          <div class="sort-story">
-            "If you <strong>leave</strong> food on the counter, 
-            Sir Fluffington <strong>knocks</strong> it off. Every time."
-          </div>
-          <div class="sort-options">
-            <button class="sort-option" onclick="checkSort('ex1-q4',this,true)">Zero</button>
-            <button class="sort-option" onclick="checkSort('ex1-q4',this,false)">First</button>
-            <button class="sort-option" onclick="checkSort('ex1-q4',this,false)">Second</button>
-          </div>
-          <div class="feedback-box" id="ex1-q4-feedback"></div>
-        </div>
-
-        <!-- item 5 -->
-        <div class="sort-question" id="ex1-q5">
-          <div class="sort-story">
-            "If I <strong>had</strong> Cleo's confidence, 
-            I <strong>would walk</strong> into every room like I own it."
-          </div>
-          <div class="sort-options">
-            <button class="sort-option" onclick="checkSort('ex1-q5',this,false)">Zero</button>
-            <button class="sort-option" onclick="checkSort('ex1-q5',this,false)">First</button>
-            <button class="sort-option" onclick="checkSort('ex1-q5',this,true)">Second</button>
-          </div>
-          <div class="feedback-box" id="ex1-q5-feedback"></div>
-        </div>
+      <div class="text-center mt-20">
+        <img src="https://yapx.ru/i/d1ALO.jpg" class="reading-hero" style="max-height: 150px; object-fit: cover;">
+        <button class="btn btn-accent" onclick="goToSlide(5)">Speaking Challenge 🎤</button>
       </div>
-    </div>
-
-    <!-- EXERCISE 2: Complete the sentence -->
-    <div class="grammar-ex">
-      <div class="ex-title">
-        <div class="ex-num">2</div>
-        <div>
-          <h3 style="margin:0">Complete the sentence</h3>
-          <p style="font-size:13px; color:#888; margin:4px 0 0;">
-            Put the verb in brackets into the correct form
-          </p>
-        </div>
-      </div>
-
-      <div class="gap-sentence">
-        1. If Biscuit <input class="gap-input" id="g1" placeholder="(see)"> 
-        a sad kitten, he always goes to sit with them. 
-        <span style="font-size:13px; color:#aaa;">(Zero)</span>
-      </div>
-
-      <div class="gap-sentence">
-        2. If the shelter <input class="gap-input" id="g2" placeholder="(post)"> 
-        Pixel's photos online, more people will want to adopt her. 
-        <span style="font-size:13px; color:#aaa;">(First)</span>
-      </div>
-
-      <div class="gap-sentence">
-        3. If I <input class="gap-input" id="g3" placeholder="(be)"> 
-        as <em>patient</em> as Biscuit, I would never get stressed in traffic.
-        <span style="font-size:13px; color:#aaa;">(Second)</span>
-      </div>
-
-      <div class="gap-sentence">
-        4. Professor Whiskers <input class="gap-input" id="g4" placeholder="(hide)"> 
-        under the sofa if the dust moves left. 
-        <span style="font-size:13px; color:#aaa;">(Zero)</span>
-      </div>
-
-      <div class="gap-sentence">
-        5. If Cleo <input class="gap-input" id="g5" placeholder="(not get)"> 
-        what she wants, she ________________ (flip) the bowl.
-        <span style="font-size:13px; color:#aaa;">(Zero)</span>
-      </div>
-
-      <div class="gap-sentence">
-        6. If I <input class="gap-input" id="g6" placeholder="(adopt)"> 
-        a cat tomorrow, I <input class="gap-input" id="g6b" placeholder="(choose)"> 
-        someone like Luna.
-        <span style="font-size:13px; color:#aaa;">(First)</span>
-      </div>
-
-      <div class="check-btn-wrap mt-16">
-        <button class="btn btn-primary" onclick="checkGapFill()">Check answers ✓</button>
-      </div>
-      <div class="feedback-      box" id="gap-feedback"></div>
-    </div>
-
-    <!-- EXERCISE 3: Speaking warm-up -->
-    <div class="grammar-ex">
-      <div class="ex-title">
-        <div class="ex-num">3</div>
-        <div>
-          <h3 style="margin:0">Your turn — finish the sentence</h3>
-          <p style="font-size:13px; color:#888; margin:4px 0 0;">
-            Complete each sentence about yourself. Say it out loud!
-          </p>
-        </div>
-      </div>
-
-      <div style="display:flex; flex-direction:column; gap:16px;">
-
-        <div style="background:#F8F9FF; border-radius:14px; padding:18px 20px;">
-          <div style="font-size:13px; font-weight:700; color:var(--lavender); 
-          margin-bottom:8px;">ZERO CONDITIONAL</div>
-          <p style="font-size:16px; margin:0;">
-            "If I feel <span style="color:#888;">________________</span>, 
-            I usually <span style="color:#888;">________________</span>."
-          </p>
-          <p style="font-size:13px; color:#aaa; margin:8px 0 0;">
-            💡 Use a personality adjective: <em>nervous, impatient, laid-back...</em>
-          </p>
-        </div>
-
-        <div style="background:#F0FFF4; border-radius:14px; padding:18px 20px;">
-          <div style="font-size:13px; font-weight:700; color:var(--mint); 
-          margin-bottom:8px;">FIRST CONDITIONAL</div>
-          <p style="font-size:16px; margin:0;">
-            "If I have free time this week, I will <span style="color:#888;">________________</span>."
-          </p>
-          <p style="font-size:13px; color:#aaa; margin:8px 0 0;">
-            💡 Make it real — something you might actually do!
-          </p>
-        </div>
-
-        <div style="background:#FFF3E0; border-radius:14px; padding:18px 20px;">
-          <div style="font-size:13px; font-weight:700; color:var(--peach); 
-          margin-bottom:8px;">SECOND CONDITIONAL</div>
-          <p style="font-size:16px; margin:0;">
-            "If I were more <span style="color:#888;">________________</span>, 
-            I would <span style="color:#888;">________________</span>."
-          </p>
-          <p style="font-size:13px; color:#aaa; margin:8px 0 0;">
-            💡 Use an adjective from today: <em>confident, patient, generous...</em>
-          </p>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="text-center mt-24">
-      <button class="btn btn-coral" onclick="goToSlide(5)">
-        Final challenge: Speaking! 🎤
-      </button>
     </div>
   </div>
-</div>
 
-<!-- ==================== SLIDE 5: SPEAKING ==================== -->
-<div id="slide5" class="slide">
-  <div class="slide-inner">
-
-    <div class="speaking-intro">
-      <span style="font-size:52px; display:block; margin-bottom:12px;">🎤</span>
+  <!-- ==================== SLIDE 5: SPEAKING ==================== -->
+  <div id="slide5" class="slide">
+    <div class="slide-inner">
       <div class="slide-label">Speaking</div>
       <h2>Cat Talk</h2>
-      <p style="color:#888; max-width:480px; margin:0 auto;">
-        Use your personality adjectives <span class="tag tag-vocab">vocabulary</span> 
-        and all three conditionals <span class="tag tag-grammar">grammar</span>. 
-        Press the timer, think for 10 seconds, then speak for 60 seconds!
-      </p>
+      
+      <div class="card" style="border-left: 6px solid var(--blush);">
+        <h3>Which cat from the story are you most similar to?</h3>
+        <p style="color: var(--text-mid); font-size: 14px;">Use adjectives from today and at least one conditional sentence. You have 60 seconds!</p>
+      </div>
+
+      <div class="timer-box">
+        <div class="timer-display" id="timer">1:00</div>
+        <button class="btn btn-accent" id="timer-btn" onclick="startTimer()">⏱ Start Timer</button>
+      </div>
+
+      <div class="text-center mt-20" style="padding-top: 40px;">
+        <button class="btn btn-primary" onclick="goToSlide(6)">Finish Lesson 🎉</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Speaking Q1 -->
-    <div class="speaking-card">
-      <div class="speaking-q-num">Question 1 of 4</div>
-      <div class="speaking-question">
-        "Which cat from the passage are you most similar to — 
-        and which would you least like to be? Why?"
+  <!-- ==================== SLIDE 6: HOMEWORK ==================== -->
+  <div id="slide6" class="slide">
+    <div class="slide-inner text-center">
+      <div class="slide-label">Homework</div>
+      <h2>Great Job Today!</h2>
+      
+      <div class="cover-img-wrap" style="max-width: 400px;">
+        <img src="https://yapx.ru/i/d1ALL.png" alt="Cat with backpack">
       </div>
-      <div class="speaking-hints">
-        <span class="hint-chip hint-adj">assertive</span>
-        <span class="hint-chip hint-adj">generous</span>
-        <span class="hint-chip hint-adj">eccentric</span>
-        <span class="hint-chip hint-adj">shy</span>
-        <span class="hint-chip hint-adj">laid-back</span>
-        <span class="hint-chip hint-if">If I were... I would...</span>
+
+      <div class="card" style="text-align: left;">
+        <h3>Your Mission:</h3>
+        <p>Write a short paragraph (50-80 words) describing your best friend or family member using at least <strong>3 personality adjectives</strong> and <strong>1 conditional sentence</strong>.</p>
       </div>
-      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-        <button class="timer-btn" id="timer-btn-1" onclick="startTimer(1)">
-          ⏱ Start timer
-        </button>
-        <div class="timer-display" id="timer-display-1">1:00</div>
-      </div>
-      <div style="margin-top:14px; padding:14px 18px; background:#FFF0F5; 
-      border-radius:12px; font-size:13px; color:#888; line-height:1.7;">
-        💬 <strong>Sample opener:</strong> "I think I'm most similar to Pixel, 
-        because I tend to be quite <em>cautious</em> in new situations. 
-        If I were as <em>confidentToSlide(n) {
-  document.getElementById('slide' + currentSlide).classList.remove('active');
-  currentSlide = n;
-  document.getElementById('slide' + currentSlide).classList.add('active');
-  buildDots();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
 
-function nextSlide() {
-  if (currentSlide < totalSlides) goToSlide(currentSlide + 1);
-}
+      <img src="https://yapx.ru/i/d1ALM.jpg" class="reading-hero mt-20" style="max-height: 200px; object-fit: cover;">
+    </div>
+  </div>
 
-function prevSlide() {
-  if (currentSlide > 1) goToSlide(currentSlide - 1);
-}
+</div>
 
-buildDots();
+<!-- НАВИГАЦИЯ -->
+<div class="nav">
+  <button onclick="prevSlide()">◀</button>
+  <div class="nav-dots" id="dots"></div>
+  <button onclick="nextSlide()">▶</button>
+</div>
 
-// ========== LEAD-IN ==========
-const catData = [
-  {
-    emoji: '😴',
-    title: 'You\'re Luna today',
-    text: 'Calm, patient, and completely unbothered. You know what matters and what doesn\'t. Today\'s lesson will suit you perfectly — take it at your own pace.'
-  },
-  {
-    emoji: '🔥',
-    title: 'You\'re Mochi today',
-    text: 'Enthusiastic and ready to go! You\'ll absorb vocabulary fast and probably want to do the speaking exercises twice. Channel that energy!'
-  },
-  {
-    emoji: '🤔',
-    title: 'You\'re Professor today',
-    text: 'Thoughtful and analytical. You\'ll love the grammar table and the TOEFL questions. Take your time with the inference questions — they\'re made for you.'
-  },
-  {
-    emoji: '🫣',
-    title: 'You\'re Pixel today',
-    text: 'Sensitive and careful — and that\'s a real strength. You notice things others miss. Today\'s reading passage has a character just like you. 🐾'
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+  // Навигация
+  let currentSlide = 1;
+  const totalSlides = 6;
+  
+  function initDots() {
+    const dotsContainer = document.getElementById('dots');
+    dotsContainer.innerHTML = '';
+    for(let i=1; i<=totalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.className = `dot ${i === currentSlide ? 'active' : ''}`;
+      dot.onclick = () => goToSlide(i);
+      dotsContainer.appendChild(dot);
+    }
   }
-];
 
-function selectCat(index) {
-  // Update card styles
-  document.querySelectorAll('.cat-card').forEach((c, i) => {
-    c.classList.toggle('selected', i === index);
-  });
+  function goToSlide(n) {
+    if(n < 1 || n > totalSlides) return;
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.getElementById(`slide${n}`).classList.add('active');
+    currentSlide = n;
+    initDots();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if(n === 6) launchConfetti();
+  }
 
-  // Show response
-  const data = catData[index];
-  document.getElementById('resp-emoji').textContent = data.emoji;
-  document.getElementById('resp-title').textContent = data.title;
-  document.getElementById('resp-text').textContent = data.text;
-  
-  const resp = document.getElementById('cat-response');
-  resp.classList.add('show');
-  document.getElementById('lead-skip').style.display = 'none';
-  
-  resp.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
+  function nextSlide() { goToSlide(currentSlide + 1); }
+  function prevSlide() { goToSlide(currentSlide - 1); }
 
-// ========== VOCABULARY: CAT CONFESSIONS ==========
-function toggleAdj(btn, confId) {
-  // Only allow toggle if not yet checked
-  if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
-  btn.classList.toggle('selected');
-}
+  initDots();
 
-function checkConf(confId, correctAnswers) {
-  const options = document.querySelectorAll(`#${confId}-options .adj-chip`);
-  const feedback = document.getElementById(`${confId}-feedback`);
-  
-  let selected = [];
-  options.forEach(btn => {
-    if (btn.classList.contains('selected')) selected.push(btn.textContent.trim());
-  });
+  // Логика Lead-in
+  const catData = [
+    { img: 'd1AJc.png', title: "You're Luna!", text: "Calm, thoughtful, and unbothered. You take things at your own pace." },
+    { img: 'd1AJe.png', title: "You're Mochi!", text: "Confident and bold! You're ready to tackle the speaking exercises today." },
+    { img: 'd1AJd.png', title: "You're Pixel!", text: "Cautious but observant. You'll do amazing on the reading details." },
+    { img: 'd1AJv.png', title: "You're Mango!", text: "Enthusiastic and playful! Let's bring that energy to the grammar section." }
+  ];
 
-  // Mark each button
-  options.forEach(btn => {
-    const word = btn.textContent.trim();
-    const isCorrect = correctAnswers.includes(word);
-    const isSelected = btn.classList.contains('selected');
+  function selectCat(index) {
+    document.querySelectorAll('.cat-card').forEach((c, i) => {
+      c.classList.toggle('selected', i === index);
+    });
+    const data = catData[index];
+    document.getElementById('resp-img').src = `https://yapx.ru/i/${data.img}`;
+    document.getElementById('resp-title').textContent = data.title;
+    document.getElementById('resp-text').textContent = data.text;
     
-    if (isCorrect) {
-      btn.classList.remove('selected');
-      btn.classList.add('correct');
-    } else if (isSelected) {
-      btn.classList.remove('selected');
-      btn.classList.add('wrong');
-    }
-    btn.onclick = null; // disable
-  });
-
-  // Feedback
-  const missed = correctAnswers.filter(w => !selected.includes(w));
-  const hasWrong = selected.some(w => !correctAnswers.includes(w));
-
-  if (missed.length === 0 && !hasWrong) {
-    feedback.className = 'feedback-box good show';
-    feedback.innerHTML = '✅ <strong>Perfect!</strong> You found all the right adjectives.';
-  } else {
-    feedback.className = 'feedback-box info show';
-    let msg = '';
-    if (missed.length > 0) {
-      msg += `💡 You missed: <strong>${missed.join(', ')}</strong>. `;
-    }
-    if (hasWrong) {
-      msg += `Some selections don\'t quite fit this personality. `;
-    }
-    msg += 'Look at the green highlights above!';
-    feedback.innerHTML = msg;
+    const resp = document.getElementById('cat-response');
+    resp.classList.add('show');
+    setTimeout(() => resp.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
   }
 
-  updateVocabProgress();
-}
+  // Логика Vocab
+  function toggleAdj(btn) {
+    if(btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+    btn.classList.toggle('selected');
+  }
 
-// ========== VOCABULARY: SORT THE CAT ==========
-let sortDone = {};
+  function checkConf(confId, answers) {
+    const container = document.getElementById(confId);
+    const btns = container.querySelectorAll('.adj-chip');
+    let selected = [];
+    
+    btns.forEach(b => {
+      if(b.classList.contains('selected')) selected.push(b.textContent);
+    });
 
-function checkSort(questionId, btn, isCorrect) {
-  if (sortDone[questionId]) return;
-  sortDone[questionId] = true;
+    btns.forEach(b => {
+      const isCorrect = answers.includes(b.textContent);
+      const isSelected = b.classList.contains('selected');
+      if(isCorrect) { b.className = 'adj-chip correct'; }
+      else if(isSelected) { b.className = 'adj-chip wrong'; }
+      b.onclick = null;
+    });
 
-  const container = document.getElementById(questionId);
-  const allBtns = container.querySelectorAll('.sort-option');
-  const feedback = document.getElementById(`${questionId}-feedback`);
+    const feedback = document.getElementById(`${confId}-feedback`);
+    const missed = answers.filter(w => !selected.includes(w));
+    const hasWrong = selected.some(w => !answers.includes(w));
 
-  allBtns.forEach(b => b.onclick = null);
-
-  if (isCorrect) {
-    btn.classList.add('correct-sort');
-    if (feedback) {
+    if(missed.length === 0 && !hasWrong) {
       feedback.className = 'feedback-box good show';
-      feedback.innerHTML = '✅ <strong>Exactly right!</strong> That\'s the most precise word for this situation.';
-    }
-  } else {
-    btn.classList.add('wrong-sort');
-    // Find and highlight correct
-    allBtns.forEach(b => {
-      if (b.onclick === null && !b.classList.contains('wrong-sort')) {
-        // can't rely on onclick, use data
-      }
-    });
-    if (feedback) {
-      feedback.className = 'feedback-box info show';
-      feedback.innerHTML = '💡 Not quite — look at the green option above. Think about what makes this word more specific than the others.';
-    }
-  }
-  updateVocabProgress();
-}
-
-function updateVocabProgress() {
-  const total = 8; // 3 confessions + 5 sorts
-  const done = Object.keys(sortDone).length + 
-    document.querySelectorAll('.adj-chip.correct, .adj-chip.wrong').length > 0 ? 1 : 0;
-  // Simple approximation
-  const confDone = document.querySelectorAll('.feedback-box.show').length;
-  const pct = Math.min(100, Math.round((confDone / 8) * 100));
-  const bar = document.getElementById('vocab-progress');
-  if (bar) bar.style.width = pct + '%';
-}
-
-function goToVocabStage2() {
-  document.getElementById('vocab-stage1').classList.remove('active');
-  document.getElementById('vocab-stage2').classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function goToVocabStats() {
-  document.getElementById('vocab-stage2').classList.remove('active');
-  document.getElementById('vocab-stage3').classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  launchConfetti();
-}
-
-// ========== READING QUESTIONS ==========
-let qDone = {};
-
-function checkQ(btn, qId, isCorrect) {
-  if (qDone[qId]) return;
-  qDone[qId] = true;
-
-  const card = btn.closest('.question-card');
-  const allBtns = card.querySelectorAll('.q-option');
-  allBtns.forEach(b => b.onclick = null);
-
-  const explain = document.getElementById(`${qId}-explain`);
-
-  if (isCorrect) {
-    btn.classList.add('correct-q');
-    if (explain) explain.classList.add('show');
-  } else {
-    btn.classList.add('wrong-q');
-    // Show correct
-    allBtns.forEach(b => {
-      if (!b.classList.contains('wrong-q')) {
-        // We can't easily find correct without data attr, so just show explain
-      }
-    });
-    if (explain) explain.classList.add('show');
-  }
-}
-
-// ========== GRAMMAR: GAP FILL ==========
-const gapAnswers = {
-  g1: ['sees'],
-  g2: ['posts'],
-  g3: ['were', 'was'],
-  g4: ['hides'],
-  g5: ["doesn't get", "does not get"],
-  g6: ['adopt'],
-  g6b: ['will choose', "i'll choose", "i will choose", 'would choose']
-};
-
-function checkGapFill() {
-  let allCorrect = true;
-  const feedback = document.getElementById('gap-feedback');
-  let wrongList = [];
-
-  Object.keys(gapAnswers).forEach(id => {
-    const input = document.getElementById(id);
-    if (!input) return;
-    
-    const val = input.value.trim().toLowerCase();
-    const correct = gapAnswers[id].map(a => a.toLowerCase());
-    
-    if (correct.includes(val)) {
-      input.classList.remove('wrong-input');
-      input.classList.add('correct-input');
+      feedback.innerHTML = '✅ Perfect match!';
     } else {
-      input.classList.remove('correct-input');
-      input.classList.add('wrong-input');
-      allCorrect = false;
-      wrongList.push(`<strong>${id.replace('b','')}</strong>: correct → <em>${gapAnswers[id][0]}</em>`);
+      feedback.className = 'feedback-box info show';
+      feedback.innerHTML = `💡 Good try! The best answers are: <strong>${answers.join(', ')}</strong>`;
     }
-  });
-
-  feedback.className = 'feedback-box show ' + (allCorrect ? 'good' : 'info');
-  if (allCorrect) {
-    feedback.innerHTML = '✅ <strong>All correct!</strong> You nailed the conditionals.';
-    launchConfetti();
-  } else {
-    feedback.innerHTML = '💡 A few to review:<br>' + wrongList.join('<br>');
-  }
-}
-
-// ========== TIMERS ==========
-let timers = {};
-
-function startTimer(n) {
-  const btn = document.getElementById(`timer-btn-${n}`);
-  const display = document.getElementById(`timer-display-${n}`);
-  
-  if (timers[n]) {
-    clearInterval(timers[n]);
-    delete timers[n];
-    btn.classList.remove('running');
-    btn.textContent = '⏱ Start timer';
-    display.classList.remove('show');
-    display.textContent = '1:00';
-    return;
+    document.getElementById('vocab-pb').style.width = '100%';
   }
 
-  let seconds = 60;
-  display.classList.add('show');
-  btn.classList.add('running');
-  btn.textContent = '⏹ Stop';
-  display.textContent = '1:00';
+  // Логика Quiz
+  function checkQ(btn, qId, isCorrect) {
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.q-option').forEach(b => b.onclick = null);
+    btn.classList.add(isCorrect ? 'correct-q' : 'wrong-q');
+    document.getElementById(`${qId}-explain`).classList.add('show');
+  }
 
-  timers[n] = setInterval(() => {
-    seconds--;
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    display.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+  // Логика Grammar
+  function checkGaps() {
+    const ans = { g1: 'sees', g2: 'were', g3: 'will adopt' };
+    let allGood = true;
     
-    if (seconds <= 0) {
-      clearInterval(timers[n]);
-      delete timers[n];
-      btn.classList.remove('running');
-      btn.textContent = '✅ Time\'s up!';
-      display.textContent = '0:00';
+    for(let id in ans) {
+      const input = document.getElementById(id);
+      if(input.value.toLowerCase().trim() === ans[id]) {
+        input.className = 'gap-input correct-input';
+      } else {
+        input.className = 'gap-input wrong-input';
+        allGood = false;
+      }
     }
-  }, 1000);
-}
-
-// ========== CONFETTI ==========
-function launchConfetti() {
-  const wrap = document.createElement('div');
-  wrap.className = 'confetti-wrap';
-  document.body.appendChild(wrap);
-
-  const colors = ['#FF6B6B','#FFB347','#6BCB77','#4D96FF','#C77DFF','#FFD93D'];
-  
-  for (let i = 0; i < 60; i++) {
-    const piece = document.createElement('div');
-    piece.className = 'confetti-piece';
-    piece.style.cssText = `
-      left: ${Math.random() * 100}vw;
-      top: -20px;
-      background: ${colors[Math.floor(Math.random() * colors.length)]};
-      animation-delay: ${Math.random() * 1.5}s;
-      animation-duration: ${2 + Math.random() * 2}s;
-      width: ${6 + Math.random() * 8}px;
-      height: ${6 + Math.random() * 8}px;
-      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
-    `;
-    wrap.appendChild(piece);
+    const fb = document.getElementById('gap-feedback');
+    fb.className = `feedback-box ${allGood ? 'good' : 'info'} show`;
+    fb.innerHTML = allGood ? '✅ Amazing grammar!' : '💡 Correct answers: 1. sees, 2. were, 3. will adopt';
   }
 
-  setTimeout(() => wrap.remove(), 4000);
-}
+  // Таймер
+  let timerInterval;
+  function startTimer() {
+    const display = document.getElementById('timer');
+    const btn = document.getElementById('timer-btn');
+    clearInterval(timerInterval);
+    
+    let timeLeft = 60;
+    btn.textContent = '⏹ Stop';
+    btn.onclick = () => {
+      clearInterval(timerInterval);
+      btn.textContent = '⏱ Start Timer';
+      display.textContent = '1:00';
+      btn.onclick = startTimer;
+    };
 
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      let m = Math.floor(timeLeft/60);
+      let s = timeLeft % 60;
+      display.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+      if(timeLeft <= 0) {
+        clearInterval(timerInterval);
+        btn.textContent = '⏱ Start Timer';
+        btn.onclick = startTimer;
+        display.textContent = '0:00';
+      }
+    }, 1000);
+  }
+
+  // Конфетти
+  function launchConfetti() {
+    const colors = ['#8FAF8A', '#E8A598', '#9BB5C8', '#EDCBA8'];
+    for(let i=0; i<50; i++) {
+      let div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.left = Math.random() * 100 + 'vw';
+      div.style.top = '-20px';
+      div.style.width = '10px';
+      div.style.height = '10px';
+      div.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      div.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      div.style.zIndex = '9999';
+      div.style.transition = 'transform 3s linear, opacity 3s';
+      document.body.appendChild(div);
+      
+      setTimeout(() => {
+        div.style.transform = `translateY(100vh) rotate(${Math.random()*720}deg)`;
+        div.style.opacity = '0';
+      }, 50);
+      
+      setTimeout(() => div.remove(), 3000);
+    }
+  }
 </script>
 </body>
 </html>
