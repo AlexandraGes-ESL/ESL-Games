@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:100%; height:100vh; overflow:hidden; font-family:'Cinzel',serif; background:transparent; color:#fff; }
+  #game { position:relative; width:100%; height:100vh; }
+
+  #lives { position:absolute; top:18px; right:25px; z-index:30; display:flex; gap:8px; }
+  #lives img { width:38px; height:38px; filter:drop-shadow(0 0 6px rgba(232,197,71,.6)); }
+  #progress { position:absolute; top:22px; left:25px; z-index:30; font-size:17px; font-weight:600; color:#E8C547; letter-spacing:3px; text-shadow:0 0 8px rgba(0,0,0,.9); }
+  #progress .mark { font-size:14px; opacity:.85; }
+
+  .star { position:absolute; width:60px; height:60px; cursor:default; transform:translate(-50%,-50%); transition:all .4s ease; filter:drop-shadow(0 0 4px rgba(0,0,0,.5)); }
+  .star.available { cursor:pointer; animation:pulse 1.4s infinite ease-in-out; filter:drop-shadow(0 0 14px rgba(255,180,60,.9)); }
+  .star.completed { filter:drop-shadow(0 0 18px rgba(255,220,120,1)); }
+  @keyframes pulse { 0%,100%{transform:translate(-50%,-50%) scale(1);} 50%{transform:translate(-50%,-50%) scale(1.18);} }
+
+  #lines { position:absolute; inset:0; z-index:1; pointer-events:none; }
+  #lines line { stroke:rgba(232,197,71,.35); stroke-width:1.5; stroke-dasharray:4 4; }
+  #lines line.lit { stroke:rgba(255,215,0,.9); stroke-dasharray:none; filter:drop-shadow(0 0 5px gold); transition:all .8s ease; }
+
+  #scroll { position:absolute; bottom:14px; left:50%; transform:translateX(-50%); width:min(640px,90%); z-index:20; background:linear-gradient(180deg,#f3e2bd,#e6cfa0); border:3px solid #b8945a; border-radius:18px; padding:14px 28px 18px; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,.5); color:#3a2c14; }
+  #ornament { font-size:20px; color:#b8945a; letter-spacing:6px; margin-bottom:4px; opacity:.8; }
+  #question { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:600; margin-bottom:14px; line-height:1.3; }
+  #question .gap { color:#9c6f10; font-weight:700; border-bottom:2px dashed #b8860b; padding:0 30px; }
+  #options { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .opt { font-family:'Cinzel',serif; font-size:15px; font-weight:600; padding:11px 20px; border:2px solid #b8945a; border-radius:12px; background:#fff7e6; color:#3a2c14; cursor:pointer; transition:all .2s; min-width:120px; }
+  .opt:hover { background:#E8C547; transform:translateY(-2px); }
+  .opt.correct { background:#7bc47f; color:#fff; border-color:#5aa85f; }
+  .opt.wrong { background:#d9534f; color:#fff; border-color:#b52b27; animation:shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+  #gamayun { position:absolute; bottom:30px; left:25px; z-index:25; width:120px; opacity:.9; }
+  #speech { position:absolute; bottom:165px; left:20px; z-index:25; background:rgba(18,20,38,.9); border:1px solid rgba(232,197,71,.4); border-radius:14px; padding:12px 16px; max-width:230px; font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:20px; line-height:1.3; color:#f3e8c8; opacity:0; transition:opacity .4s; }
+  #speech.show { opacity:1; }
+
+  #final { position:absolute; inset:0; z-index:50; display:none; flex-direction:column; align-items:center; justify-content:center; background:rgba(10,12,25,.6); backdrop-filter:blur(8px); text-align:center; }
+  #finalCard { background:rgba(18,20,38,.9); backdrop-filter:blur(20px); border:1px solid rgba(232,197,71,.35); border-radius:22px; padding:36px 46px; max-width:580px; box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 40px rgba(232,197,71,.12); display:flex; flex-direction:column; align-items:center; gap:16px; }
+  #finalCard h1 { font-family:'Cinzel',serif; font-size:32px; font-weight:700; color:#E8C547; text-shadow:0 0 20px rgba(232,197,71,.6); line-height:1.2; letter-spacing:2px; }
+  #finalCard p { font-family:'Cormorant Garamond',serif; font-size:21px; font-weight:500; color:#e8e4f0; max-width:460px; line-height:1.5; }
+  #finalCard p em { color:#E8C547; font-style:italic; font-weight:600; font-size:23px; }
+  .firebird { width:120px; animation:pulse 2s infinite; filter:drop-shadow(0 0 20px rgba(255,200,80,.8)); }
+  #retry { font-family:'Cinzel',serif; font-size:16px; padding:13px 32px; letter-spacing:1px; background:linear-gradient(135deg,#E8C547,#c9a431); color:#1B2A4A; border:none; border-radius:30px; cursor:pointer; font-weight:600; margin-top:6px; box-shadow:0 5px 15px rgba(0,0,0,.4); transition:all .2s; }
+  #retry:hover { transform:scale(1.05); filter:brightness(1.1); }
+</style>
+</head>
+<body>
+<div id="game">
+  <div id="progress"><span class="mark">✦</span> 0 / 10</div>
+  <div id="lives"></div>
+  <svg id="lines"></svg>
+  <img id="gamayun" src="https://i.yapx.ru/d10fF.png" alt="Gamayun">
+  <div id="speech"></div>
+  <div id="scroll">
+    <div id="ornament">❦</div>
+    <div id="question">Click the first star to begin</div>
+    <div id="options"></div>
+  </div>
+  <div id="final">
+    <div id="finalCard">
+      <img class="firebird" src="https://i.yapx.ru/d10fF.png">
+      <h1 id="finalTitle">THE PATH IS OPEN</h1>
+      <p id="finalText"></p>
+      <button id="retry">Walk the path again ›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== ЗВУК (Web Audio API, без файлов) ===== */
+let AC=null;
+function ac(){ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); return AC; }
+function tone(freq,start,dur,type='sine',vol=0.18){
+  const c=ac(), o=c.createOscillator(), g=c.createGain();
+  o.type=type; o.frequency.value=freq;
+  o.connect(g); g.connect(c.destination);
+  const t=c.currentTime+start;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(vol,t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.start(t); o.stop(t+dur+0.02);
+}
+const SFX={
+  click(){ tone(880,0,0.12,'triangle',0.12); },
+  correct(){ [523,659,784].forEach((f,i)=>tone(f,i*0.09,0.25,'sine',0.16)); },
+  wrong(){ tone(180,0,0.35,'sawtooth',0.14); tone(120,0.05,0.35,'square',0.10); },
+  light(){ tone(1046,0,0.3,'sine',0.10); tone(1568,0.04,0.3,'sine',0.07); },
+  win(){ [523,659,784,1046,1318].forEach((f,i)=>tone(f,i*0.13,0.5,'sine',0.16)); },
+  lose(){ [440,392,330,262].forEach((f,i)=>tone(f,i*0.18,0.5,'triangle',0.15)); }
+};
+
+const IMG={ inactive:"https://i.yapx.ru/d10fE.png", available:"https://i.yapx.ru/d10fC.png", completed:"https://i.yapx.ru/d10fF.png", lifeFull:"https://i.yapx.ru/d10fD.png", lifeLost:"https://i.yapx.ru/d10fE.png" };
+
+const POS=[ {x:14,y:64},{x:23,y:57},{x:32,y:51},{x:41,y:46},{x:50,y:40}, {x:59,y:34},{x:68,y:27},{x:60,y:20},{x:49,y:17},{x:38,y:21} ];
+
+const QUESTIONS=[
+  { q:'Look at those black clouds over the forest — it ___ rain.', opts:['will rain','is going to rain','rains'], correct:1, hint:'Evidence you can see → going to' },
+  { q:"Brr, the fire died! — Don't move, I ___ it again.", opts:["'ll light","'m going to light",'light'], correct:0, hint:'A decision made right now → will' },
+  { q:'Careful! That branch is cracking — you ___!', opts:['will fall','are going to fall','fall'], correct:1, hint:'You can see it coming → going to' },
+  { q:'Why are you packing? — I ___ for the Firebird.', opts:["'ll search","'m going to search",'search'], correct:1, hint:'A plan decided before → going to' },
+  { q:'Take this ring. I ___ for you, I swear.', opts:["'ll return","'m going to return",'return'], correct:0, hint:'A promise → will' },
+  { q:'That sack looks so heavy! — I ___ it for you.', opts:["'m going to carry","'ll carry",'carry'], correct:1, hint:'An offer to help → will' },
+  { q:"It's stuck! The enchanted door ___ open!", opts:["won't","isn't going to",'doesn’t'], correct:0, hint:'The object refuses → won’t' },
+  { q:'I think the Firebird ___ appear at midnight.', opts:['will appear','is going to appear','appears'], correct:0, hint:'A prediction (I think…) → will' },
+  { q:"I've pulled and pulled, but the magic horse ___ move!", opts:["won't","isn't going to",'doesn’t'], correct:0, hint:'A refusal → won’t' },
+  { q:'Look — the witch has lit her stove. She ___ cook something.', opts:['will cook','is going to cook','cooks'], correct:1, hint:'A sign you can see → going to' }
+];
+
+let current=0, lives=3, locked=false;
+const game=document.getElementById('game'), livesBox=document.getElementById('lives'), progress=document.getElementById('progress'), speech=document.getElementById('speech');
+const scroll=document.getElementById('scroll'), gamayun=document.getElementById('gamayun');
+const stars=[];
+
+POS.forEach((p,i)=>{
+  const s=document.createElement('img');
+  s.className='star'; s.src=IMG.inactive;
+  s.style.left=p.x+'%'; s.style.top=p.y+'%'; s.dataset.i=i;
+  s.onclick=()=>{ if(i===current && !locked){ SFX.click(); showQuestion(); } };
+  game.appendChild(s); stars.push(s);
+});
+drawLines(); renderLives(); updateStars();
+
+function drawLines(){
+  const svg=document.getElementById('lines'); let html='';
+  for(let i=0;i<POS.length-1;i++){ const a=POS[i],b=POS[i+1]; html+=`<line id="ln${i}" x1="${a.x}%" y1="${a.y}%" x2="${b.x}%" y2="${b.y}%"/>`; }
+  svg.innerHTML=html;
+}
+function renderLives(){ livesBox.innerHTML=''; for(let i=0;i<3;i++){ const img=document.createElement('img'); img.src=i<lives?IMG.lifeFull:IMG.lifeLost; livesBox.appendChild(img); } }
+function updateStars(){
+  stars.forEach((s,i)=>{ s.className='star';
+    if(i<current){ s.src=IMG.completed; s.classList.add('completed'); }
+    else if(i===current){ s.src=IMG.available; s.classList.add('available'); }
+    else { s.src=IMG.inactive; } });
+  progress.innerHTML='<span class="mark">✦</span> '+current+' / 10';
+}
+function showQuestion(){
+  const data=QUESTIONS[current];
+  document.getElementById('ornament').textContent='❦';
+  document.getElementById('question').innerHTML=data.q.replace('___','<span class="gap">?</span>');
+  const box=document.getElementById('options'); box.innerHTML='';
+  data.opts.forEach((o,idx)=>{ const b=document.createElement('button'); b.className='opt'; b.textContent=o; b.onclick=()=>answer(idx,b,data); box.appendChild(b); });
+}
+function answer(idx,btn,data){
+  if(locked) return; locked=true;
+  const allOpts=document.querySelectorAll('.opt');
+  if(idx===data.correct){
+    btn.classList.add('correct'); SFX.correct(); say(data.hint);
+    setTimeout(()=>{ const ln=document.getElementById('ln'+current); if(ln){ln.classList.add('lit'); SFX.light();}
+      current++;
+      if(current>=10){ win(); } else { updateStars(); resetScroll(); locked=false; } },1100);
+  } else {
+    btn.classList.add('wrong'); allOpts[data.correct].classList.add('correct');
+    lives--; renderLives(); SFX.wrong(); say(data.hint);
+    setTimeout(()=>{ if(lives<=0){ lose(); } else { showQuestion(); locked=false; } },1800);
+  }
+}
+function resetScroll(){ document.getElementById('ornament').textContent='✦ ✦ ✦'; document.getElementById('question').innerHTML='Click the next star'; document.getElementById('options').innerHTML=''; }
+function say(t){ speech.textContent=t; speech.classList.add('show'); setTimeout(()=>speech.classList.remove('show'),1700); }
+
+function win(){
+  updateStars();
+  scroll.style.display='none'; gamayun.style.display='none'; speech.classList.remove('show');
+  SFX.win();
+  document.getElementById('final').style.display='flex';
+  document.getElementById('finalTitle').textContent='THE PATH IS OPEN';
+  document.getElementById('finalText').innerHTML='All seven stars blaze with light. The Firebird spreads its wings across the night sky.<br><br><em>“Your path to the Three Sisters is open, traveller.”</em>';
+}
+function lose(){
+  scroll.style.display='none'; gamayun.style.display='none'; speech.classList.remove('show');
+  SFX.lose();
+  document.getElementById('final').style.display='flex';
+  document.getElementById('finalTitle').textContent='THE STARS FADED';
+  document.querySelector('.firebird').style.filter='grayscale(1) drop-shadow(0 0 10px rgba(150,150,150,.5))';
+  document.getElementById('finalText').innerHTML='The night swallowed the path.<br><br><em>“Do not despair — walk the path again, traveller.”</em>';
+}
+document.getElementById('retry').onclick=()=>{
+  SFX.click();
+  current=0; lives=3; locked=false;
+  scroll.style.display=''; gamayun.style.display='';
+  document.querySelector('.firebird').style.filter='';
+  document.querySelectorAll('#lines line').forEach(l=>l.classList.remove('lit'));
+  renderLives(); updateStars(); resetScroll();
+  document.getElementById('final').style.display='none';
+};
+</script>
+</body>
+</html>
