@@ -23,7 +23,6 @@
   #lines line { stroke:rgba(232,197,71,.35); stroke-width:1.5; stroke-dasharray:4 4; }
   #lines line.lit { stroke:rgba(255,215,0,.9); stroke-dasharray:none; filter:drop-shadow(0 0 5px gold); transition:all .8s ease; }
 
-  /* СВИТОК — поднят выше */
   #scroll { position:absolute; bottom:60px; left:50%; transform:translateX(-50%); width:min(640px,90%); z-index:20; background:linear-gradient(180deg,#f3e2bd,#e6cfa0); border:3px solid #b8945a; border-radius:18px; padding:14px 28px 18px; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,.5); color:#3a2c14; }
   #ornament { font-size:20px; color:#b8945a; letter-spacing:6px; margin-bottom:4px; opacity:.8; }
   #question { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:600; margin-bottom:14px; line-height:1.3; }
@@ -36,11 +35,9 @@
   @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
 
   #gamayun { position:absolute; bottom:30px; left:25px; z-index:25; width:120px; opacity:.9; }
-  /* ПОДСКАЗКА — поднята выше */
   #speech { position:absolute; bottom:215px; left:20px; z-index:25; background:rgba(18,20,38,.9); border:1px solid rgba(232,197,71,.4); border-radius:14px; padding:12px 16px; max-width:230px; font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:20px; line-height:1.3; color:#f3e8c8; opacity:0; transition:opacity .4s; }
   #speech.show { opacity:1; }
 
-  /* ФИНАЛ */
   #final { position:absolute; inset:0; z-index:50; display:none; align-items:center; justify-content:center; background:rgba(10,12,25,.62); backdrop-filter:blur(8px); text-align:center; }
   #finalCard { position:relative; background:rgba(18,20,38,.92); backdrop-filter:blur(20px); border:1px solid rgba(232,197,71,.35); border-radius:24px; padding:34px 44px 40px; max-width:600px; box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 50px rgba(232,197,71,.14); display:flex; flex-direction:column; align-items:center; gap:14px; }
   #finalCard.win  { border-color:rgba(232,197,71,.5); box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 60px rgba(255,200,80,.25); }
@@ -62,7 +59,7 @@
   #finalCard.lose .fdivider { color:#8a93b8; }
   #retry { font-family:'Cinzel',serif; font-size:16px; padding:13px 34px; letter-spacing:1px; border:none; border-radius:30px; cursor:pointer; font-weight:600; margin-top:8px; box-shadow:0 5px 15px rgba(0,0,0,.4); transition:all .2s; }
   #finalCard.win  #retry { background:linear-gradient(135deg,#E8C547,#c9a431); color:#1B2A4A; }
-  #finalCard.lose #retry { background:linear-gradient(135deg,#5b6punkt,#48507a); background:linear-gradient(135deg,#6b74a0,#48507a); color:#f0f2ff; }
+  #finalCard.lose #retry { background:linear-gradient(135deg,#6b74a0,#48507a); color:#f0f2ff; }
   #retry:hover { transform:scale(1.05); filter:brightness(1.1); }
 </style>
 </head>
@@ -90,10 +87,8 @@
 </div>
 
 <script>
-/* ===== СКАЗОЧНЫЙ ЗВУК (Web Audio API) ===== */
 let AC=null;
 function ac(){ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); return AC; }
-// мягкая колокольчиковая нота с лёгкими обертонами
 function bell(freq,start,dur,vol=0.14){
   const c=ac(), t=c.currentTime+start;
   [[1,vol],[2,vol*0.35],[3,vol*0.12]].forEach(([mult,v])=>{
@@ -106,7 +101,6 @@ function bell(freq,start,dur,vol=0.14){
     o.start(t); o.stop(t+dur+0.05);
   });
 }
-// мерцающий «звёздный» призвук
 function sparkle(start){
   const c=ac(), t=c.currentTime+start;
   const o=c.createOscillator(), g=c.createGain();
@@ -119,12 +113,12 @@ function sparkle(start){
   o.start(t); o.stop(t+0.3);
 }
 const SFX={
-  click(){ bell(987.77,0,0.5,0.10); sparkle(0); },                          // нежный звон
-  correct(){ [659.25,783.99,1046.5].forEach((f,i)=>bell(f,i*0.11,0.7,0.13)); sparkle(0.05); }, // арфа вверх
-  wrong(){ bell(311.13,0,0.6,0.12); bell(293.66,0.08,0.6,0.10); },           // мягкий минорный
-  light(){ bell(1318.5,0,0.6,0.10); sparkle(0); sparkle(0.12); },            // зажглась звезда
-  win(){ [523.25,659.25,783.99,1046.5,1318.5,1567.98].forEach((f,i)=>bell(f,i*0.14,1.1,0.14)); [0,0.3,0.6,0.9].forEach(s=>sparkle(s)); }, // волшебные фанфары
-  lose(){ [587.33,523.25,440,392].forEach((f,i)=>bell(f,i*0.22,1.0,0.13)); } // грустно тает
+  click(){ bell(987.77,0,0.5,0.10); sparkle(0); },
+  correct(){ [659.25,783.99,1046.5].forEach((f,i)=>bell(f,i*0.11,0.7,0.13)); sparkle(0.05); },
+  wrong(){ bell(311.13,0,0.6,0.12); bell(293.66,0.08,0.6,0.10); },
+  light(){ bell(1318.5,0,0.6,0.10); sparkle(0); sparkle(0.12); },
+  win(){ [523.25,659.25,783.99,1046.5,1318.5,1567.98].forEach((f,i)=>bell(f,i*0.14,1.1,0.14)); [0,0.3,0.6,0.9].forEach(s=>sparkle(s)); },
+  lose(){ [587.33,523.25,440,392].forEach((f,i)=>bell(f,i*0.22,1.0,0.13)); }
 };
 
 const IMG={ inactive:"https://i.yapx.ru/d10fE.png", available:"https://i.yapx.ru/d10fC.png", completed:"https://i.yapx.ru/d10fF.png", lifeFull:"https://i.yapx.ru/d10fD.png", lifeLost:"https://i.yapx.ru/d10fE.png" };
@@ -137,11 +131,11 @@ const QUESTIONS=[
   { q:'Look at those black clouds over the forest — it ___ rain.', opts:['will rain','is going to rain','rains'], correct:1, hint:'Evidence you can see → going to' },
   { q:"Brr, the fire died! — Don't move, I ___ it again.", opts:["'ll light","'m going to light",'light'], correct:0, hint:'A decision made right now → will' },
   { q:'Careful! That branch is cracking — you ___!', opts:['will fall','are going to fall','fall'], correct:1, hint:'You can see it coming → going to' },
-  { q:'Why are you packing? — I ___ for the Firebird.', opts:["'ll search","'m going to search",'search'], correct:1, hint:'A plan decided before → going to' },
+  { q:'Why are you packing? — I ___ for the Three Dawns.', opts:["'ll search","'m going to search",'search'], correct:1, hint:'A plan decided before → going to' },
   { q:'Take this ring. I ___ for you, I swear.', opts:["'ll return","'m going to return",'return'], correct:0, hint:'A promise → will' },
   { q:'That sack looks so heavy! — I ___ it for you.', opts:["'m going to carry","'ll carry",'carry'], correct:1, hint:'An offer to help → will' },
   { q:"It's stuck! The enchanted door ___ open!", opts:["won't","isn't going to",'doesn’t'], correct:0, hint:'The object refuses → won’t' },
-  { q:'I think the Firebird ___ appear at midnight.', opts:['will appear','is going to appear','appears'], correct:0, hint:'A prediction (I think…) → will' },
+  { q:'I think Gamayun ___ appear at midnight.', opts:['will appear','is going to appear','appears'], correct:0, hint:'A prediction (I think…) → will' },
   { q:"I've pulled and pulled, but the magic horse ___ move!", opts:["won't","isn't going to",'doesn’t'], correct:0, hint:'A refusal → won’t' },
   { q:'Look — the witch has lit her stove. She ___ cook something.', opts:['will cook','is going to cook','cooks'], correct:1, hint:'A sign you can see → going to' }
 ];
@@ -205,7 +199,7 @@ function win(){
   finalCard.className='win';
   document.getElementById('finalGamayun').src=GAMAYUN_HAPPY;
   document.getElementById('finalTitle').textContent='THE PATH IS OPEN';
-  document.getElementById('finalText').innerHTML='All ten stars blaze with light, and the Firebird spreads its wings across the night sky.<br><br><em>“Your path to the Three Sisters is open, traveller.”</em>';
+  document.getElementById('finalText').innerHTML='All ten stars blaze with light, and Gamayun spreads her wings across the night sky.<br><br><em>“You speak true words of tomorrow. The path to the Three Dawns is open, traveller.”</em>';
   document.getElementById('final').style.display='flex';
 }
 function lose(){
@@ -214,7 +208,7 @@ function lose(){
   finalCard.className='lose';
   document.getElementById('finalGamayun').src=GAMAYUN_SAD;
   document.getElementById('finalTitle').textContent='THE STARS FADED';
-  document.getElementById('finalText').innerHTML='The night swallowed the path, and the stars dimmed one by one.<br><br><em>“Do not despair — walk the path again, traveller.”</em>';
+  document.getElementById('finalText').innerHTML='The night swallowed the path, and the stars dimmed one by one.<br><br><em>“He who speaks falsely loses his way. Listen closely, and try again.”</em>';
   document.getElementById('final').style.display='flex';
 }
 document.getElementById('retry').onclick=()=>{
