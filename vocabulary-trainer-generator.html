@@ -1353,21 +1353,7 @@ $('btnGapsAI')?.addEventListener('click',()=>{
 });
 
 // ============ INIT — первичный рендер всех вкладок ============
-function renderAll(){
-  renderSections();
-  renderGaps();
-  renderMatch();
-  renderSpeak();
-  refreshExportSummary();
-}
-
-// если данные пустые — создаём стартовую секцию
-if(!state.sections || !state.sections.length){
-  state.sections=[{title:'Новая секция',emoji:'📚',words:[{word:'',ipa:'',def:'',tr:''}]}];
-}
-if(!state.gaps) state.gaps=[];
-if(!state.speak) state.speak=[];
-if(!state.match) state.match={mode:'def',pairs:4};
+renderAll();
 
 $('btnClearAll').addEventListener('click',()=>{
   if(confirm('Удалить все данные тренажёра?\n\nЭто действие нельзя отменить!')){
