@@ -849,24 +849,31 @@ function bindSectionEvents(){
 }
 
 async function fetchDictionary(word){
-  const url=`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.trim())}`;
-  const res=await fetch(url);
-  if(!res.ok) throw new Error('notfound');
-  const data=await res.json();
-  const entry=data[0];
-  let ipa='';
-  if(entry.phonetics){ const p=entry.phonetics.find(x=>x.text); if(p) ipa=p.text; }
-  if(!ipa && entry.phonetic) ipa=entry.phonetic;
-  let def='';
-  if(entry.meanings && entry.meanings[0] && entry.meanings[0].definitions[0]){ def=entry.meanings[0].definitions[0].definition; }
-  return {ipa,def};
+  // dictionaryapi.dev часто заблокирован — пробуем, но не критично
+  try{
+    const url=`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.trim())}`;
+    const res=await fetch(url);
+    if(res.ok){
+      const data=await res.json();
+      const entry=data[0];
+      let ipa='';
+      if(entry.phonetics){ const p=entry.phonetics.find(x=>x.text); if(p) ipa=p.text; }
+      if(!ipa && entry.phonetic) ipa=entry.phonetic;
+      let def='';
+      if(entry.meanings && entry.meanings[0] && entry.meanings[0].definitions[0]){ def=entry.meanings[0].definitions[0].definition; }
+      return {ipa,def};
+    }
+  }catch(e){}
+  // если словарь недоступен — возвращаем пусто (не ошибка!)
+  return {ipa:'', def:''};
 }
 async function fetchTranslation(word){
-  const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word.trim())}&langpair=en|ru`;
+  const url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t&q=${encodeURIComponent(word.trim())}`;
   const res=await fetch(url);
   if(!res.ok) throw new Error('tr-fail');
   const data=await res.json();
-  return (data.responseData && data.responseData.translatedText) ? data.responseData.translatedText : '';
+  if(data && data[0] && data[0][0] && data[0][0][0]) return data[0][0][0];
+  return '';
 }
 async function fillWord(si,wi,btn){
   const w=state.sections[si].words[wi];
@@ -879,7 +886,10 @@ async function fillWord(si,wi,btn){
   try{ const d=await fetchDictionary(word); if(d.ipa){ w.ipa=d.ipa; ipaInp.value=d.ipa; found=true; } if(d.def){ w.def=d.def; defInp.value=d.def; found=true; } }catch(e){}
   if(state.showTranslation){ try{ const t=await fetchTranslation(word); if(t){ w.tr=t; if(trInp) trInp.value=t; } }catch(e){} }
   btn.disabled=false; btn.classList.remove('loading');
-  if(!found){ row.querySelector('.w-word').classList.add('not-found'); showToast(`«${word}» не найдено в словаре`); }
+    // перевод даже если словарь не ответил
+  if(state.showTranslation){ try{ const t=await fetchTranslation(word); if(t){ w.tr=t; if(trInp) trInp.value=t; found=true; } }catch(e){} }
+  btn.disabled=false; btn.classList.remove('loading');
+  if(!found){ row.querySelector('.w-word').classList.add('not-found'); showToast(`«${word}» — ничего не найдено`); }
   else{ autoSave(); }
 }
 async function fillSection(si,btn){
