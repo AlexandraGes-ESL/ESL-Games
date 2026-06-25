@@ -692,6 +692,672 @@ $('btnImportJSON').addEventListener('click',()=>{
         state.screens=Object.assign({}, defaultState.screens, state.screens||{});
         ['sections','gaps','speak'].forEach(k=>{ if(!Array.isArray(state[k])) state[k]=[]; });
         state.match = Object.assign({mode:'tr',pairs:6}, state.match||{});
+        // ============ PART 2 — VOCAB EDITOR ============
+const EMOJI_SET = [
+  "📚","💼","⚡","🎓","🏫","✏️","📝","🧠","💡","🔬","🌍","🗣️","💬","🏠","🍎","🚗",
+  "✈️","💻","📱","⏰","💰","❤️","🎨","🎵","⚽","🍕","🌿","☀️","🌙","⭐","🔥","🎯"
+];
+let openEmojiPop = null;
+
+function countWords(){ return state.sections.reduce((n,s)=>n+(s.words?s.words.length:0),0); }
+function updateVocabStats(){
+  const ss=$('statSections'), sw=$('statWords');
+  if(ss) ss.textContent = state.sections.length + ' секц.';
+  if(sw) sw.textContent = countWords() + ' слов';
+}
+
+$('btnAddSection').addEventListener('click',()=>{
+  state.sections.push({title:'Новая секция',emoji:'📚',words:[{word:'',ipa:'',def:''}]});
+  renderSections(); autoSave();
+  setTimeout(()=>{
+    const inputs=$('sectionsList').querySelectorAll('.section-title-input');
+    if(inputs.length){ const last=inputs[inputs.length-1]; last.focus(); last.select(); }
+  },50);
+});
+
+function moveSection(si,dir){
+  const ni=si+dir;
+  if(ni<0||ni>=state.sections.length) return;
+  [state.sections[si],state.sections[ni]]=[state.sections[ni],state.sections[si]];
+  renderSections(); autoSave();
+}
+
+function openEmojiPicker(btn, si){
+  closeEmojiPicker();
+  const pop=document.createElement('div');
+  pop.className='emoji-pop';
+  pop.innerHTML=EMOJI_SET.map(e=>`<button data-e="${e}">${e}</button>`).join('');
+  document.body.appendChild(pop);
+  const r=btn.getBoundingClientRect();
+  pop.style.top=(r.bottom+window.scrollY+6)+'px';
+  pop.style.left=(r.left+window.scrollX)+'px';
+  const pw=pop.offsetWidth;
+  if(r.left+pw>window.innerWidth-10){ pop.style.left=(window.innerWidth-pw-10+window.scrollX)+'px'; }
+  pop.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click',()=>{ state.sections[si].emoji=b.dataset.e; renderSections(); autoSave(); closeEmojiPicker(); });
+  });
+  openEmojiPop=pop;
+  setTimeout(()=>document.addEventListener('click',closeEmojiPickerOutside),0);
+}
+function closeEmojiPicker(){ if(openEmojiPop){ openEmojiPop.remove(); openEmojiPop=null; } document.removeEventListener('click',closeEmojiPickerOutside); }
+function closeEmojiPickerOutside(e){ if(openEmojiPop && !openEmojiPop.contains(e.target)) closeEmojiPicker(); }
+
+// тумблер перевода
+if(typeof state.showTranslation === 'undefined') state.showTranslation = false;
+$('toggleTranslation').addEventListener('click', e=>{
+  state.showTranslation = !state.showTranslation;
+  e.currentTarget.dataset.on = state.showTranslation ? 'true':'false';
+  renderSections(); autoSave();
+});
+(function(){ const t=$('toggleTranslation'); if(t) t.dataset.on = state.showTranslation ? 'true':'false'; })();
+
+function renderSections(){
+  const list=$('sectionsList');
+  if(!list) return;
+  updateVocabStats();
+  const tr = state.showTranslation;
+  const wcls = tr ? 'with-tr' : '';
+  if(state.sections.length===0){
+    list.innerHTML=`<div class="card vocab-empty">
+      <div class="vocab-empty-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+      <p class="muted">Пока нет ни одной секции.<br>Добавь первую, чтобы начать!</p></div>`;
+    return;
+  }
+  list.innerHTML = state.sections.map((sec,si)=>{
+    const wordsRows = (sec.words||[]).map((w,wi)=>`
+      <div class="word-row ${wcls}" data-si="${si}" data-wi="${wi}">
+        <input class="w-word" placeholder="word" maxlength="60" value="${escapeAttr(w.word)}">
+        <input class="w-ipa ipa" placeholder="/ipa/" maxlength="60" value="${escapeAttr(w.ipa)}">
+        <input class="w-def def" placeholder="definition" maxlength="200" value="${escapeAttr(w.def)}">
+        <input class="w-tr" placeholder="перевод" maxlength="120" value="${escapeAttr(w.tr||'')}">
+        <button class="w-fill" title="Заполнить из словаря"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/></svg></button>
+        <button class="mini-btn danger w-del" title="Удалить"><svg class="ic" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>`).join('');
+    return `<div class="section-card" data-si="${si}">
+      <div class="section-bar">
+        <button class="section-emoji-btn" data-si="${si}" title="Эмодзи">${sec.emoji||'📚'}</button>
+        <input class="section-title-input" data-si="${si}" placeholder="Название секции" value="${escapeAttr(sec.title)}">
+        <span class="section-count">${(sec.words||[]).length} сл.</span>
+        <div class="section-actions">
+          <button class="mini-btn s-up" data-si="${si}" ${si===0?'disabled':''}><svg class="ic" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></button>
+          <button class="mini-btn s-down" data-si="${si}" ${si===state.sections.length-1?'disabled':''}><svg class="ic" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <button class="mini-btn danger s-del" data-si="${si}"><svg class="ic" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="words-head ${wcls}"><span>Слово</span><span>IPA</span><span>Definition</span>${tr?'<span>Перевод</span>':''}<span></span><span></span></div>
+        ${wordsRows}
+        <div style="display:flex;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-sm section-add-word" data-si="${si}"><svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Слово</button>
+          <button class="btn btn-sm fill-section-btn" data-si="${si}"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/></svg>Заполнить секцию</button>
+          <span class="fill-progress" data-prog="${si}"></span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  bindSectionEvents();
+}
+
+function bindSectionEvents(){
+  const list=$('sectionsList');
+  list.querySelectorAll('.section-title-input').forEach(inp=>{
+    inp.addEventListener('input',()=>{ state.sections[+inp.dataset.si].title=inp.value; autoSave(); });
+  });
+  list.querySelectorAll('.section-emoji-btn').forEach(btn=>{
+    btn.addEventListener('click',e=>{ e.stopPropagation(); openEmojiPicker(btn,+btn.dataset.si); });
+  });
+  list.querySelectorAll('.s-up').forEach(b=>b.addEventListener('click',()=>moveSection(+b.dataset.si,-1)));
+  list.querySelectorAll('.s-down').forEach(b=>b.addEventListener('click',()=>moveSection(+b.dataset.si,1)));
+  list.querySelectorAll('.s-del').forEach(b=>b.addEventListener('click',()=>{
+    const si=+b.dataset.si;
+    if(confirm(`Удалить секцию «${state.sections[si].title||'без названия'}»?`)){
+      state.sections.splice(si,1); renderSections(); autoSave(); showToast('Секция удалена');
+    }
+  }));
+  list.querySelectorAll('.section-add-word').forEach(b=>b.addEventListener('click',()=>{
+    const si=+b.dataset.si;
+    state.sections[si].words.push({word:'',ipa:'',def:'',tr:''});
+    renderSections(); autoSave();
+    setTimeout(()=>{ const rows=$('sectionsList').querySelectorAll(`.section-card[data-si="${si}"] .w-word`); if(rows.length) rows[rows.length-1].focus(); },50);
+  }));
+  list.querySelectorAll('.fill-section-btn').forEach(b=>b.addEventListener('click',()=>fillSection(+b.dataset.si,b)));
+  list.querySelectorAll('.word-row').forEach(row=>{
+    const si=+row.dataset.si, wi=+row.dataset.wi;
+    row.querySelector('.w-word').addEventListener('input',e=>{ state.sections[si].words[wi].word=e.target.value; e.target.classList.remove('not-found'); autoSave(); });
+    row.querySelector('.w-ipa').addEventListener('input',e=>{ state.sections[si].words[wi].ipa=e.target.value; autoSave(); });
+    row.querySelector('.w-def').addEventListener('input',e=>{ state.sections[si].words[wi].def=e.target.value; autoSave(); });
+    const trInp=row.querySelector('.w-tr');
+    if(trInp) trInp.addEventListener('input',e=>{ state.sections[si].words[wi].tr=e.target.value; autoSave(); });
+    row.querySelector('.w-fill').addEventListener('click',e=>fillWord(si,wi,e.currentTarget));
+    row.querySelector('.w-del').addEventListener('click',()=>{
+      if(state.sections[si].words.length<=1){ showToast('Должно быть ≥1 слова'); return; }
+      state.sections[si].words.splice(wi,1); renderSections(); autoSave();
+    });
+  });
+}
+
+async function fetchDictionary(word){
+  const url=`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.trim())}`;
+  const res=await fetch(url);
+  if(!res.ok) throw new Error('notfound');
+  const data=await res.json();
+  const entry=data[0];
+  let ipa='';
+  if(entry.phonetics){ const p=entry.phonetics.find(x=>x.text); if(p) ipa=p.text; }
+  if(!ipa && entry.phonetic) ipa=entry.phonetic;
+  let def='';
+  if(entry.meanings && entry.meanings[0] && entry.meanings[0].definitions[0]){ def=entry.meanings[0].definitions[0].definition; }
+  return {ipa,def};
+}
+async function fetchTranslation(word){
+  const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word.trim())}&langpair=en|ru`;
+  const res=await fetch(url);
+  if(!res.ok) throw new Error('tr-fail');
+  const data=await res.json();
+  return (data.responseData && data.responseData.translatedText) ? data.responseData.translatedText : '';
+}
+async function fillWord(si,wi,btn){
+  const w=state.sections[si].words[wi];
+  const word=(w.word||'').trim();
+  if(!word){ showToast('Сначала впиши слово'); return; }
+  btn.disabled=true; btn.classList.add('loading');
+  const row=btn.closest('.word-row');
+  const ipaInp=row.querySelector('.w-ipa'), defInp=row.querySelector('.w-def'), trInp=row.querySelector('.w-tr');
+  let found=false;
+  try{ const d=await fetchDictionary(word); if(d.ipa){ w.ipa=d.ipa; ipaInp.value=d.ipa; found=true; } if(d.def){ w.def=d.def; defInp.value=d.def; found=true; } }catch(e){}
+  if(state.showTranslation){ try{ const t=await fetchTranslation(word); if(t){ w.tr=t; if(trInp) trInp.value=t; } }catch(e){} }
+  btn.disabled=false; btn.classList.remove('loading');
+  if(!found){ row.querySelector('.w-word').classList.add('not-found'); showToast(`«${word}» не найдено в словаре`); }
+  else{ autoSave(); }
+}
+async function fillSection(si,btn){
+  const words=state.sections[si].words;
+  const prog=$('sectionsList').querySelector(`.fill-progress[data-prog="${si}"]`);
+  btn.disabled=true;
+  let done=0, total=words.filter(w=>(w.word||'').trim()).length;
+  for(let wi=0; wi<words.length; wi++){
+    const w=words[wi];
+    if(!(w.word||'').trim()) continue;
+    done++;
+    if(prog) prog.textContent=`${done}/${total}…`;
+    try{ const d=await fetchDictionary(w.word.trim()); if(d.ipa) w.ipa=d.ipa; if(d.def) w.def=d.def; }catch(e){}
+    if(state.showTranslation){ try{ const t=await fetchTranslation(w.word.trim()); if(t) w.tr=t; }catch(e){} }
+    await new Promise(r=>setTimeout(r,400));
+  }
+  if(prog) prog.textContent='Готово';
+  btn.disabled=false; renderSections(); autoSave();
+  setTimeout(()=>{ const p=$('sectionsList').querySelector(`.fill-progress[data-prog="${si}"]`); if(p) p.textContent=''; },2000);
+}
+        // ============ PART 3 — GAPS + MATCH ============
+
+// ---------- GAPS ----------
+function updateGapsStats(){ const s=$('statGaps'); if(s) s.textContent = state.gaps.length + ' предл.'; }
+function parseGap(text){
+  const m = (text||'').match(/\{([^}]+)\}/);
+  if(!m) return {valid:false, answer:'', preview:text||''};
+  const answer = m[1].trim();
+  const preview = (text||'').replace(/\{[^}]+\}/, '<span class="blank">'+escapeHtml(answer)+'</span>');
+  return {valid: !!answer, answer, preview};
+}
+
+$('btnAddGap').addEventListener('click',()=>{
+  state.gaps.push({text:''});
+  renderGaps(); autoSave();
+  setTimeout(()=>{ const a=$('gapsList').querySelectorAll('.gap-sentence'); if(a.length) a[a.length-1].focus(); },50);
+});
+
+function renderGaps(){
+  const list=$('gapsList'); if(!list) return;
+  updateGapsStats();
+  if(state.gaps.length===0){
+    list.innerHTML=`<div class="card gaps-empty">
+      <div class="gaps-empty-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div>
+      <p class="muted">Нет предложений с пропусками.<br>Добавь первое — или возьми примеры из словаря/ИИ!</p></div>`;
+    return;
+  }
+  list.innerHTML = state.gaps.map((g,gi)=>{
+    const p=parseGap(g.text);
+    const prevCls = g.text && !p.valid ? 'gap-preview invalid' : 'gap-preview';
+    const prevTxt = !g.text ? '' : (p.valid ? p.preview : '⚠ оберни слово в {фигурные скобки}');
+    return `<div class="gap-card" data-gi="${gi}">
+      <div class="gap-num">${gi+1}</div>
+      <div class="gap-body">
+        <textarea class="gap-sentence" placeholder="I want to {apply} for this job.">${escapeHtml(g.text)}</textarea>
+        <div class="${prevCls}">${prevTxt}</div>
+      </div>
+      <div class="gap-actions">
+        <button class="mini-btn g-up" ${gi===0?'disabled':''}><svg class="ic" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></button>
+        <button class="mini-btn g-down" ${gi===state.gaps.length-1?'disabled':''}><svg class="ic" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button class="mini-btn danger g-del"><svg class="ic" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.gap-card').forEach(card=>{
+    const gi=+card.dataset.gi;
+    const ta=card.querySelector('.gap-sentence');
+    ta.addEventListener('input',()=>{
+      state.gaps[gi].text=ta.value;
+      const p=parseGap(ta.value);
+      const prev=card.querySelector('.gap-preview');
+      prev.className = ta.value && !p.valid ? 'gap-preview invalid':'gap-preview';
+      prev.innerHTML = !ta.value ? '' : (p.valid ? p.preview : '⚠ оберни слово в {фигурные скобки}');
+      autoSave();
+    });
+    card.querySelector('.g-up').addEventListener('click',()=>{ if(gi>0){ [state.gaps[gi],state.gaps[gi-1]]=[state.gaps[gi-1],state.gaps[gi]]; renderGaps(); autoSave(); }});
+    card.querySelector('.g-down').addEventListener('click',()=>{ if(gi<state.gaps.length-1){ [state.gaps[gi],state.gaps[gi+1]]=[state.gaps[gi+1],state.gaps[gi]]; renderGaps(); autoSave(); }});
+    card.querySelector('.g-del').addEventListener('click',()=>{ state.gaps.splice(gi,1); renderGaps(); autoSave(); });
+  });
+}
+
+// «Взять из лексики» — переключатель: добавляет каркасы из слов
+$('btnGapsFromVocab').addEventListener('click',()=>{
+  const allWords=[];
+  state.sections.forEach(s=>(s.words||[]).forEach(w=>{ if((w.word||'').trim()) allWords.push(w.word.trim()); }));
+  if(!allWords.length){ showToast('Сначала добавь слова в лексику'); return; }
+  let added=0;
+  allWords.forEach(w=>{
+    const exists=state.gaps.some(g=>(g.text||'').includes('{'+w+'}'));
+    if(!exists){ state.gaps.push({text:`______ {${w}} ______`}); added++; }
+  });
+  renderGaps(); autoSave();
+  showToast(added? `Добавлено ${added} каркасов — допиши предложения`:'Все слова уже есть');
+});
+
+// «Примеры из словаря» — тянет example из dictionaryapi
+$('btnGapsAutoExamples').addEventListener('click',async()=>{
+  const btn=$('btnGapsAutoExamples');
+  const allWords=[];
+  state.sections.forEach(s=>(s.words||[]).forEach(w=>{ if((w.word||'').trim()) allWords.push(w.word.trim()); }));
+  if(!allWords.length){ showToast('Сначала добавь слова в лексику'); return; }
+  btn.disabled=true; const orig=btn.innerHTML; let done=0, added=0;
+  for(const word of allWords){
+    done++; btn.textContent=`Ищу… ${done}/${allWords.length}`;
+    if(state.gaps.some(g=>(g.text||'').includes('{'+word+'}'))) continue;
+    try{
+      const res=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+      if(res.ok){
+        const data=await res.json();
+        let ex='';
+        outer: for(const m of (data[0].meanings||[])){
+          for(const d of (m.definitions||[])){ if(d.example){ ex=d.example; break outer; } }
+        }
+        if(ex){
+          const re=new RegExp('\\b'+word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i');
+          if(re.test(ex)){ state.gaps.push({text: ex.replace(re,'{'+word+'}')}); added++; }
+        }
+      }
+    }catch(e){}
+    await new Promise(r=>setTimeout(r,350));
+  }
+  btn.disabled=false; btn.innerHTML=orig;
+  renderGaps(); autoSave();
+  showToast(added? `Добавлено ${added} примеров из словаря`:'Примеры не найдены');
+});
+
+// ---------- MATCH ----------
+$('matchModeOptions').querySelectorAll('.option-card').forEach(c=>{
+  c.addEventListener('click',()=>{
+    $('matchModeOptions').querySelectorAll('.option-card').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); state.match.mode=c.dataset.value; renderMatch(); autoSave();
+  });
+});
+$('matchPairsOptions').querySelectorAll('.option-card').forEach(c=>{
+  c.addEventListener('click',()=>{
+    $('matchPairsOptions').querySelectorAll('.option-card').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); state.match.pairs=+c.dataset.value; autoSave();
+  });
+});
+function syncMatchUI(){
+  $('matchModeOptions').querySelectorAll('.option-card').forEach(c=>c.classList.toggle('active',c.dataset.value===state.match.mode));
+  $('matchPairsOptions').querySelectorAll('.option-card').forEach(c=>c.classList.toggle('active',+c.dataset.value===state.match.pairs));
+}
+function getMatchPairs(){
+  const pairs=[];
+  const mode=state.match.mode;
+  state.sections.forEach(s=>(s.words||[]).forEach(w=>{
+    const left=(w.word||'').trim();
+    const right=mode==='def' ? (w.def||'').trim() : (w.tr||'').trim();
+    if(left && right) pairs.push({left,right});
+  }));
+  return pairs;
+}
+function renderMatch(){
+  syncMatchUI();
+  const prev=$('matchPreview'); if(!prev) return;
+  const pairs=getMatchPairs();
+  const cnt=$('matchCount'); if(cnt) cnt.textContent=pairs.length;
+  if(!pairs.length){
+    prev.innerHTML=`<p class="muted">Нет подходящих пар.<br>${state.match.mode==='def'?'Заполни поле <b>Definition</b>':'Включи <b>Перевод</b> и заполни его'} в лексике.</p>`;
+    return;
+  }
+  prev.innerHTML=`<div class="words-head"><span>Слово</span><span>${state.match.mode==='def'?'Definition':'Перевод'}</span></div>`+
+    pairs.slice(0,30).map(p=>`<div class="word-row" style="grid-template-columns:1fr 2fr;cursor:default">
+      <input value="${escapeAttr(p.left)}" readonly style="background:var(--acc-soft);font-weight:600">
+      <input value="${escapeAttr(p.right)}" readonly></div>`).join('')+
+    (pairs.length>30?`<p class="muted" style="margin-top:8px">…и ещё ${pairs.length-30}</p>`:'');
+}
+        // ============ PART 4 — SPEAKING ============
+function updateSpeakStats(){ const s=$('statSpeak'); if(s) s.textContent = state.speak.length + ' заданий'; }
+
+$('btnAddSpeak').addEventListener('click',()=>{
+  state.speak.push({q:'',hint:''});
+  renderSpeak(); autoSave();
+  setTimeout(()=>{ const a=$('speakList').querySelectorAll('.speak-q'); if(a.length) a[a.length-1].focus(); },50);
+});
+
+function renderSpeak(){
+  const list=$('speakList'); if(!list) return;
+  updateSpeakStats();
+  if(state.speak.length===0){
+    list.innerHTML=`<div class="card gaps-empty">
+      <div class="gaps-empty-icon"><svg class="ic" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+      <p class="muted">Нет заданий для говорения.<br>Добавь первый вопрос!</p></div>`;
+    return;
+  }
+  list.innerHTML = state.speak.map((sp,i)=>`
+    <div class="speak-card" data-i="${i}">
+      <div class="gap-num">${i+1}</div>
+      <div class="gap-body">
+        <textarea class="speak-q" placeholder="What did you do last weekend?">${escapeHtml(sp.q)}</textarea>
+        <input class="speak-hint" placeholder="Подсказка (опц.): went, visited, stayed at home…" value="${escapeAttr(sp.hint||'')}">
+      </div>
+      <div class="gap-actions">
+        <button class="mini-btn sp-up" ${i===0?'disabled':''}><svg class="ic" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></button>
+        <button class="mini-btn sp-down" ${i===state.speak.length-1?'disabled':''}><svg class="ic" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button class="mini-btn danger sp-del"><svg class="ic" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>`).join('');
+  list.querySelectorAll('.speak-card').forEach(card=>{
+    const i=+card.dataset.i;
+    card.querySelector('.speak-q').addEventListener('input',e=>{ state.speak[i].q=e.target.value; autoSave(); });
+    card.querySelector('.speak-hint').addEventListener('input',e=>{ state.speak[i].hint=e.target.value; autoSave(); });
+    card.querySelector('.sp-up').addEventListener('click',()=>{ if(i>0){ [state.speak[i],state.speak[i-1]]=[state.speak[i-1],state.speak[i]]; renderSpeak(); autoSave(); }});
+    card.querySelector('.sp-down').addEventListener('click',()=>{ if(i<state.speak.length-1){ [state.speak[i],state.speak[i+1]]=[state.speak[i+1],state.speak[i]]; renderSpeak(); autoSave(); }});
+    card.querySelector('.sp-del').addEventListener('click',()=>{ state.speak.splice(i,1); renderSpeak(); autoSave(); });
+  });
+}
+
+// ============ PART 6 — BULK MODAL ============
+$('btnBulkAdd').addEventListener('click',()=>{ $('bulkModal').classList.add('open'); $('bulkSectionName').focus(); });
+$('bulkClose').addEventListener('click',()=>$('bulkModal').classList.remove('open'));
+$('bulkCancel').addEventListener('click',()=>$('bulkModal').classList.remove('open'));
+$('bulkModal').addEventListener('click',e=>{ if(e.target===$('bulkModal')) $('bulkModal').classList.remove('open'); });
+
+function parseBulkLine(line){
+  const seps=/\s*[-–—=:\t]\s*/;
+  const parts=line.split(seps);
+  if(parts.length>=2){
+    const word=parts[0].trim();
+    const tr=parts.slice(1).join(' ').trim();
+    return {word, tr};
+  }
+  return {word:line.trim(), tr:''};
+}
+
+$('bulkConfirm').addEventListener('click',async()=>{
+  const name=$('bulkSectionName').value.trim() || 'Новая секция';
+  const raw=$('bulkText').value.trim();
+  if(!raw){ showToast('Вставь хотя бы одно слово'); return; }
+  const autoFill=$('bulkAutoFill').checked;
+  // разделители: новая строка ИЛИ запятая
+  let lines=[];
+  raw.split(/\n/).forEach(ln=>{
+    if(ln.includes(',') && !/[-–—=:\t]/.test(ln)){
+      ln.split(',').forEach(p=>{ if(p.trim()) lines.push(p.trim()); });
+    } else if(ln.trim()){ lines.push(ln.trim()); }
+  });
+  const words=lines.map(parseBulkLine).filter(w=>w.word);
+  if(!words.length){ showToast('Не удалось распознать слова'); return; }
+  const section={title:name,emoji:'📚',words:words.map(w=>({word:w.word,ipa:'',def:'',tr:w.tr}))};
+  state.sections.push(section);
+  const si=state.sections.length-1;
+  $('bulkModal').classList.remove('open');
+  $('bulkText').value=''; $('bulkSectionName').value='';
+  renderSections(); autoSave();
+  showToast(`Добавлено ${words.length} слов`);
+
+  if(autoFill){
+    const btn=$('sectionsList').querySelector(`.fill-section-btn[data-si="${si}"]`);
+    if(btn){ $$('.tab').forEach(t=>{ if(t.dataset.tab==='vocab') t.click(); }); setTimeout(()=>fillSection(si,btn),300); }
+  }
+});
+        // ============ PART 5 — EXPORT + TRAINER GENERATOR ============
+function refreshExportSummary(){
+  const box=$('exportSummary'); if(!box) return;
+  const words=countWords();
+  const matchPairs=getMatchPairs().length;
+  const items=[
+    {on:words>0, icon:'📚', label:'Лексика', val:`${state.sections.length} секц. · ${words} слов`},
+    {on:state.gaps.filter(g=>parseGap(g.text).valid).length>0, icon:'📝', label:'Пропуски', val:`${state.gaps.filter(g=>parseGap(g.text).valid).length} предл.`},
+    {on:matchPairs>0, icon:'🔗', label:'Соотнесение', val:`${matchPairs} пар`},
+    {on:state.speak.filter(s=>(s.q||'').trim()).length>0, icon:'🗣️', label:'Говорение', val:`${state.speak.filter(s=>(s.q||'').trim()).length} заданий`}
+  ];
+  box.innerHTML=items.map(it=>`<div class="summary-item ${it.on?'on':'off'}">
+    <span class="summary-icon">${it.icon}</span>
+    <div><div class="summary-label">${it.label}</div><div class="summary-val">${it.on?it.val:'не используется'}</div></div>
+    <span class="summary-dot">${it.on?'✓':'—'}</span></div>`).join('');
+  const title=$('trainerTitle')?$('trainerTitle').value.trim():'';
+  const ready = words>0 || items.some(i=>i.on);
+  const hint=$('exportHint');
+  if(hint) hint.textContent = ready ? 'Готово к экспорту 🎉' : 'Добавь хотя бы немного контента';
+}
+
+function buildTrainerHTML(){
+  const title = ($('trainerTitle')?.value.trim()) || 'Лексический тренажёр';
+  const theme = state.theme || 'indigo';
+  const data = {
+    title,
+    theme,
+    sections: state.sections.map(s=>({title:s.title,emoji:s.emoji,words:(s.words||[]).filter(w=>(w.word||'').trim())})),
+    gaps: state.gaps.filter(g=>parseGap(g.text).valid).map(g=>{ const p=parseGap(g.text); return {text:g.text,answer:p.answer}; }),
+    match: {mode:state.match.mode, pairs:getMatchPairs()},
+    speak: state.speak.filter(s=>(s.q||'').trim())
+  };
+  const json = JSON.stringify(data).replace(/<\/script>/g,'<\\/script>');
+
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeHtml(title)}</title>
+<style>
+:root{--acc:#6366f1;--acc-d:#4f46e5;--bg:#f1f5f9;--card:#fff;--tx:#1e293b;--mut:#64748b;--ok:#16a34a;--bad:#dc2626;--bd:#e2e8f0}
+[data-theme=emerald]{--acc:#10b981;--acc-d:#059669}
+[data-theme=rose]{--acc:#f43f5e;--acc-d:#e11d48}
+[data-theme=amber]{--acc:#f59e0b;--acc-d:#d97706}
+[data-theme=sky]{--acc:#0ea5e9;--acc-d:#0284c7}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5;padding:16px}
+.wrap{max-width:820px;margin:0 auto}
+header{text-align:center;padding:24px 16px}
+header h1{font-size:1.9rem;background:linear-gradient(135deg,var(--acc),var(--acc-d));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:18px 0}
+.tab{padding:10px 18px;border:2px solid var(--bd);border-radius:12px;background:var(--card);cursor:pointer;font-weight:600;font-size:.95rem;transition:.2s}
+.tab.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+.panel{display:none}.panel.active{display:block;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.sec-h{display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:700;margin-bottom:14px}
+.word{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1px solid var(--bd);margin-bottom:8px;flex-wrap:wrap}
+.word .w{font-weight:700;font-size:1.1rem;color:var(--acc-d)}
+.word .ipa{color:var(--mut);font-style:italic}
+.word .d{flex:1;min-width:140px;color:var(--mut)}
+.word .tr{color:var(--tx);font-weight:500}
+.play{background:var(--acc);color:#fff;border:0;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:1rem;flex-shrink:0}
+.play:hover{background:var(--acc-d)}
+.gap{margin-bottom:14px;padding:14px;border:1px solid var(--bd);border-radius:12px}
+.gap .q{font-size:1.05rem;margin-bottom:8px}
+.gap input{padding:8px 12px;border:2px solid var(--bd);border-radius:8px;font-size:1rem;width:200px;max-width:100%}
+.gap input.ok{border-color:var(--ok);background:#f0fdf4}
+.gap input.bad{border-color:var(--bad);background:#fef2f2}
+.gap .fb{margin-left:8px;font-weight:600}
+.gap .fb.ok{color:var(--ok)}.gap .fb.bad{color:var(--bad)}
+.btn{padding:11px 22px;border:0;border-radius:12px;background:var(--acc);color:#fff;font-weight:700;cursor:pointer;font-size:1rem;transition:.2s}
+.btn:hover{background:var(--acc-d)}.btn.sm{padding:7px 14px;font-size:.9rem}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.col h4{margin-bottom:10px;color:var(--mut);font-size:.85rem;text-transform:uppercase;letter-spacing:.5px}
+.mitem{padding:12px 14px;border:2px solid var(--bd);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:.15s;background:var(--card)}
+.mitem:hover{border-color:var(--acc)}
+.mitem.sel{border-color:var(--acc);background:var(--acc);color:#fff}
+.mitem.done{border-color:var(--ok);background:#f0fdf4;color:var(--ok);cursor:default;pointer-events:none}
+.speak-q{padding:16px;border:1px solid var(--bd);border-radius:12px;margin-bottom:10px}
+.speak-q .qq{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+.speak-q .hint{color:var(--mut);font-size:.9rem}
+.rec{display:flex;align-items:center;gap:10px;margin-top:10px}
+.score{text-align:center;font-size:1.3rem;font-weight:700;margin:16px 0;color:var(--acc-d)}
+.mut{color:var(--mut)}
+.row-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+</style></head>
+<body data-theme="${theme}">
+<div class="wrap">
+<header><h1>${escapeHtml(title)}</h1></header>
+<div class="tabs" id="tabs"></div>
+<div id="content"></div>
+</div>
+<script>
+const DATA=${json};
+const $=id=>document.getElementById(id);
+function speak(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.9;speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}}
+function norm(s){return (s||'').trim().toLowerCase().replace(/[.,!?;:'"]/g,'');}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+const TABS=[];
+if(DATA.sections.length) TABS.push({id:'vocab',label:'📚 Лексика'});
+if(DATA.gaps.length) TABS.push({id:'gaps',label:'📝 Пропуски'});
+if(DATA.match.pairs.length) TABS.push({id:'match',label:'🔗 Соотнесение'});
+if(DATA.speak.length) TABS.push({id:'speak',label:'🗣️ Говорение'});
+
+function renderTabs(){
+  $('tabs').innerHTML=TABS.map((t,i)=>'<button class="tab'+(i===0?' active':'')+'" data-t="'+t.id+'">'+t.label+'</button>').join('');
+  $('tabs').querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+    $('tabs').querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');show(b.dataset.t);
+  });
+}
+function show(id){
+  if(id==='vocab')renderVocab();
+  else if(id==='gaps')renderGaps();
+  else if(id==='match')renderMatch();
+  else if(id==='speak')renderSpeak();
+}
+function renderVocab(){
+  $('content').innerHTML=DATA.sections.map(s=>'<div class="card"><div class="sec-h">'+(s.emoji||'📚')+' '+esc(s.title)+'</div>'+
+    s.words.map(w=>'<div class="word"><button class="play" onclick="speak(\\''+esc(w.word).replace(/'/g,"\\\\'")+'\\')">🔊</button><span class="w">'+esc(w.word)+'</span>'+
+    (w.ipa?'<span class="ipa">'+esc(w.ipa)+'</span>':'')+(w.def?'<span class="d">'+esc(w.def)+'</span>':'')+
+    (w.tr?'<span class="tr">'+esc(w.tr)+'</span>':'')+'</div>').join('')+'</div>').join('');
+}
+function renderGaps(){
+  $('content').innerHTML='<div class="card"><div class="sec-h">📝 Заполни пропуски</div>'+
+    DATA.gaps.map((g,i)=>{const html=esc(g.text).replace(/\\{[^}]+\\}/,'<input data-i="'+i+'" placeholder="..."> <span class="fb" data-fb="'+i+'"></span>');
+    return '<div class="gap"><div class="q">'+(i+1)+'. '+html+'</div></div>';}).join('')+
+    '<div class="row-btns"><button class="btn" onclick="checkGaps()">Проверить</button></div><div class="score" id="gapScore"></div></div>';
+}
+function checkGaps(){let ok=0;DATA.gaps.forEach((g,i)=>{const inp=document.querySelector('input[data-i="'+i+'"]');const fb=document.querySelector('[data-fb="'+i+'"]');if(!inp)return;if(norm(inp.value)===norm(g.answer)){inp.className='ok';fb.className='fb ok';fb.textContent='✓';ok++;}else{inp.className='bad';fb.className='fb bad';fb.textContent='✗ '+g.answer;}});$('gapScore').textContent='Результат: '+ok+' / '+DATA.gaps.length;}
+let mSel=null;
+function renderMatch(){
+  const pairs=DATA.match.pairs;const L=shuffle(pairs),R=shuffle(pairs);
+  $('content').innerHTML='<div class="card"><div class="sec-h">🔗 Соедини пары</div><div class="match-grid"><div class="col"><h4>Слово</h4>'+
+    L.map(p=>'<div class="mitem" data-l="'+esc(p.left)+'">'+esc(p.left)+'</div>').join('')+'</div><div class="col"><h4>'+(DATA.match.mode==='def'?'Definition':'Перевод')+'</h4>'+
+    R.map(p=>'<div class="mitem" data-r="'+esc(p.left)+'">'+esc(p.right)+'</div>').join('')+'</div></div><div class="score" id="mScore"></div></div>';
+  mSel=null;
+  $('content').querySelectorAll('.mitem').forEach(it=>it.onclick=()=>matchClick(it));
+}
+function matchClick(it){
+  if(!mSel){if(it.dataset.l){mSel=it;it.classList.add('sel');}return;}
+  if(it.dataset.r){const ok=mSel.dataset.l===it.dataset.r;if(ok){mSel.classList.remove('sel');mSel.classList.add('done');it.classList.add('done');mSel=null;chkMatch();}else{const m=mSel;mSel.classList.add('bad');it.classList.add('bad');setTimeout(()=>{m.classList.remove('sel','bad');it.classList.remove('bad');},600);mSel=null;}}
+  else{mSel.classList.remove('sel');mSel=it.dataset.l?it:null;if(mSel)mSel.classList.add('sel');}
+}
+function chkMatch(){const done=$('content').querySelectorAll('.mitem.done[data-l]').length;if(done===DATA.match.pairs.length)$('mScore').textContent='🎉 Все пары найдены!';}
+function renderSpeak(){
+  $('content').innerHTML='<div class="card"><div class="sec-h">🗣️ Говорение</div>'+
+    DATA.speak.map((s,i)=>'<div class="speak-q"><div class="qq">'+(i+1)+'. '+esc(s.q)+'</div>'+(s.hint?'<div class="hint">💡 '+esc(s.hint)+'</div>':'')+'<div class="rec"><button class="btn sm" onclick="rec(this,'+i+')">🎤 Записать ответ</button><span class="mut" id="rs'+i+'"></span></div></div>').join('')+'</div>';
+}
+function rec(btn,i){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){$('rs'+i).textContent='Распознавание не поддерживается браузером';return;}
+  const r=new SR();r.lang='en-US';r.interimResults=false;
+  btn.textContent='🔴 Слушаю…';btn.disabled=true;
+  r.onresult=e=>{$('rs'+i).textContent='Вы сказали: "'+e.results[0][0].transcript+'"';};
+  r.onerror=()=>{$('rs'+i).textContent='Ошибка записи';};
+  r.onend=()=>{btn.textContent='🎤 Записать ответ';btn.disabled=false;};
+  r.start();
+}
+function esc(s){const d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
+renderTabs();if(TABS.length)show(TABS[0].id);
+<\/script>
+</body></html>`;
+}
+
+// ---- кнопки экспорта ----
+if($('trainerTitle')) $('trainerTitle').addEventListener('input',refreshExportSummary);
+
+$('btnPreview')?.addEventListener('click',()=>{
+  const html=buildTrainerHTML();
+  const w=window.open('','_blank');
+  w.document.open(); w.document.write(html); w.document.close();
+});
+$('btnDownload')?.addEventListener('click',()=>{
+  const html=buildTrainerHTML();
+  const title=($('trainerTitle')?.value.trim())||'trainer';
+  const fname=title.toLowerCase().replace(/[^a-z0-9а-яё]+/gi,'-').replace(/^-|-$/g,'')+'.html';
+  const blob=new Blob([html],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=fname; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  showToast('Файл скачан 📥');
+});
+$('btnCopyHtml')?.addEventListener('click',async()=>{
+  try{ await navigator.clipboard.writeText(buildTrainerHTML()); showToast('HTML скопирован 📋'); }
+  catch(e){ showToast('Не удалось скопировать'); }
+});
+        // ============ PART 8 — AI STUB (генерация пропусков) ============
+// Простой офлайн-генератор: делает предложения-каркасы из слов лексики.
+// Реальный ИИ можно подключить позже (OpenAI и т.п.) — здесь шаблонная заглушка.
+
+const GAP_TEMPLATES = [
+  w => `I need to {${w}} this task today.`,
+  w => `Could you please {${w}} the document?`,
+  w => `She decided to {${w}} after the meeting.`,
+  w => `They will {${w}} it next week.`,
+  w => `We should {${w}} before the deadline.`,
+  w => `He wants to {${w}} every morning.`,
+  w => `Don't forget to {${w}} the report.`,
+  w => `It's important to {${w}} carefully.`
+];
+
+$('btnGapsAI')?.addEventListener('click',()=>{
+  const allWords=[];
+  state.sections.forEach(s=>(s.words||[]).forEach(w=>{ if((w.word||'').trim()) allWords.push(w.word.trim()); }));
+  if(!allWords.length){ showToast('Сначала добавь слова в лексику'); return; }
+
+  let added=0;
+  allWords.forEach((w,idx)=>{
+    if(state.gaps.some(g=>(g.text||'').includes('{'+w+'}'))) return;
+    const tpl=GAP_TEMPLATES[idx % GAP_TEMPLATES.length];
+    state.gaps.push({text: tpl(w)});
+    added++;
+  });
+  renderGaps(); autoSave();
+  showToast(added? `Сгенерировано ${added} предложений ✨`:'Все слова уже использованы');
+});
+
+// ============ INIT — первичный рендер всех вкладок ============
+function renderAll(){
+  renderSections();
+  renderGaps();
+  renderMatch();
+  renderSpeak();
+  refreshExportSummary();
+}
+
+// если данные пустые — создаём стартовую секцию
+if(!state.sections || !state.sections.length){
+  state.sections=[{title:'Новая секция',emoji:'📚',words:[{word:'',ipa:'',def:'',tr:''}]}];
+}
+if(!state.gaps) state.gaps=[];
+if(!state.speak) state.speak=[];
+if(!state.match) state.match={mode:'def',pairs:4};
+
+renderAll();
         syncSettingsUI();
         if(typeof renderSections==='function') renderSections();
         if(typeof renderGaps==='function') renderGaps();
