@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vocabulary Trainer Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#faf8f5; --card:#ffffff;
+  --ink:#2a221d; --ink-soft:#8a7d73; --ink-faint:#bdb3a8;
+  --acc:#1d7d75; --acc-dark:#15625b; --acc-soft:#e6f2f0; --acc-glow:rgba(29,125,117,.18);
+  --sage:#9ca06f; --rose:#d98b8b; --lava:#b0322f;
+  --amber-bd:#e8d3a0; --amber-bg:#fdf6e8; --amber-ink:#8a6f3f;
+  --line:#ece5dc; --line2:#f4eee6;
+  --r:18px; --r-sm:12px; --r-xs:9px;
+  --sh-sm:0 1px 2px rgba(60,40,25,.04), 0 2px 8px rgba(60,40,25,.04);
+  --sh:0 2px 4px rgba(60,40,25,.03), 0 8px 24px rgba(60,40,25,.06), 0 1px 0 rgba(255,255,255,.6) inset;
+  --sh-lg:0 4px 8px rgba(60,40,25,.05), 0 20px 50px rgba(60,40,25,.10);
+  --ease:cubic-bezier(.16,1,.3,1);
+  --font:'Plus Jakarta Sans',system-ui,sans-serif;
+  --font-head:'Fraunces',serif;
+}
+
+body{
+  font-family:var(--font); color:var(--ink); min-height:100vh; line-height:1.55; letter-spacing:-.01em;
+  background:
+    radial-gradient(ellipse 80% 60% at 0% 0%, #fff5ee 0%, transparent 55%),
+    radial-gradient(ellipse 70% 55% at 100% 15%, var(--acc-soft) 0%, transparent 50%),
+    var(--bg);
+  background-attachment:fixed; -webkit-font-smoothing:antialiased;
+}
+.app{max-width:920px;margin:0 auto;padding:32px 20px 70px}
+
+/* icon base */
+.ic{width:18px;height:18px;flex-shrink:0;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+
+/* HEADER */
+.app-header{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:20px 26px;margin-bottom:20px;box-shadow:var(--sh);
+}
+.app-logo{display:flex;align-items:center;gap:16px}
+.app-logo-icon{
+  width:52px;height:52px;border-radius:15px;flex-shrink:0;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,var(--acc),var(--acc-dark));
+  box-shadow:0 6px 16px var(--acc-glow), 0 1px 0 rgba(255,255,255,.4) inset;
+}
+.app-logo-icon .ic{width:26px;height:26px;stroke-width:1.6}
+.app-title{font-family:var(--font-head);font-size:23px;font-weight:600;letter-spacing:-.4px;line-height:1.1}
+.app-desc{font-size:13px;color:var(--ink-soft);margin-top:4px;font-weight:450}
+.save-status{
+  font-size:12px;color:var(--acc-dark);font-weight:600;background:var(--acc-soft);
+  border:1px solid #cce6e2;padding:7px 14px;border-radius:30px;white-space:nowrap;transition:.3s;
+}
+
+/* TABS */
+.tabs{
+  display:flex;gap:3px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r);padding:6px;margin-bottom:20px;box-shadow:var(--sh);
+  overflow-x:auto;scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex:1;min-width:max-content;padding:11px 15px;border:none;background:transparent;
+  border-radius:var(--r-sm);color:var(--ink-soft);font-size:13.5px;font-weight:600;
+  font-family:inherit;cursor:pointer;transition:.25s var(--ease);white-space:nowrap;
+  letter-spacing:-.01em;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+}
+.tab .ic{width:16px;height:16px}
+.tab:hover{color:var(--ink);background:var(--line2)}
+.tab.active{
+  background:linear-gradient(145deg,var(--acc),var(--acc-dark));color:#fff;
+  box-shadow:0 4px 14px var(--acc-glow), 0 1px 0 rgba(255,255,255,.3) inset;
+}
+
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block;animation:fadein .35s var(--ease)}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* CARDS */
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:24px 26px;margin-bottom:16px;box-shadow:var(--sh);
+}
+.card-title{
+  font-family:var(--font-head);font-size:18px;font-weight:600;margin-bottom:18px;
+  letter-spacing:-.2px;display:flex;align-items:center;gap:10px;
+}
+.card-title .ic{width:20px;height:20px;color:var(--acc)}
+.card-badge{
+  font-family:var(--font);font-size:10px;font-weight:700;padding:3px 10px;border-radius:30px;
+  background:#fbeded;color:var(--lava);border:1px solid #f3d5d4;
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.muted{color:var(--ink-soft);font-size:13.5px}
+
+/* FIELDS */
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field label{
+  display:block;font-size:11px;font-weight:700;color:var(--ink-soft);
+  margin-bottom:8px;text-transform:uppercase;letter-spacing:.7px;
+}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 15px;background:#fcfaf7;border:1.5px solid var(--line);
+  border-radius:var(--r-sm);color:var(--ink);font-size:14.5px;font-family:inherit;
+  outline:none;transition:.25s var(--ease);letter-spacing:-.01em;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--acc);background:#fff;box-shadow:0 0 0 4px var(--acc-glow);
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink-faint)}
+.field-row{display:flex;gap:14px}
+.field-row .field{flex:1}
+
+/* OPTION CARDS */
+.option-cards{display:flex;gap:12px;flex-wrap:wrap}
+.option-card{
+  flex:1;min-width:100px;display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:15px 12px;background:#fcfaf7;border:1.5px solid var(--line);border-radius:var(--r-sm);
+  cursor:pointer;transition:.25s var(--ease);font-family:inherit;color:var(--ink-soft);
+}
+.option-card:hover{border-color:var(--acc);transform:translateY(-2px);color:var(--ink);box-shadow:var(--sh)}
+.option-card.active{border-color:var(--acc);background:var(--acc-soft);color:var(--acc-dark);box-shadow:0 4px 14px var(--acc-glow)}
+.option-card-swatch{width:50px;height:32px;border-radius:9px;border:1px solid rgba(0,0,0,.05);box-shadow:var(--sh-sm)}
+.option-card-label{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+
+/* TOGGLES */
+.toggles{display:flex;flex-direction:column;gap:4px}
+.toggle-line{
+  display:flex;align-items:center;justify-content:space-between;padding:11px 14px;
+  border-radius:var(--r-sm);font-size:14.5px;font-weight:500;cursor:pointer;transition:.2s var(--ease);
+}
+.toggle-line:hover{background:var(--line2)}
+.toggle-line span{display:inline-flex;align-items:center;gap:11px}
+.toggle-line .ic{width:18px;height:18px;color:var(--ink-soft)}
+.toggle-btn{position:relative;width:48px;height:27px;border-radius:14px;border:none;background:#e2dace;cursor:pointer;transition:.3s var(--ease);flex-shrink:0;padding:0}
+.toggle-btn[data-on="true"]{background:linear-gradient(145deg,var(--acc),var(--acc-dark))}
+.toggle-knob{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.3s var(--ease);box-shadow:0 2px 5px rgba(0,0,0,.2)}
+.toggle-btn[data-on="true"] .toggle-knob{left:24px}
+
+/* BUTTONS */
+.btn{
+  padding:11px 18px;border-radius:var(--r-sm);border:1.5px solid var(--line);
+  background:#fcfaf7;color:var(--ink);font-size:13.5px;font-weight:600;font-family:inherit;
+  cursor:pointer;transition:.2s var(--ease);display:inline-flex;align-items:center;gap:8px;letter-spacing:-.01em;
+}
+.btn .ic{width:16px;height:16px}
+.btn:hover{border-color:var(--acc);background:#fff;transform:translateY(-2px);box-shadow:var(--sh)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:linear-gradient(145deg,var(--acc),var(--acc-dark));color:#fff;border-color:transparent;box-shadow:0 4px 14px var(--acc-glow)}
+.btn-primary:hover{box-shadow:0 7px 22px var(--acc-glow)}
+.btn-danger{background:#fbeded;color:var(--lava);border-color:#f3d5d4}
+.btn-danger:hover{background:#f7e0df;border-color:var(--lava)}
+.btn-sm{padding:8px 14px;font-size:12.5px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--ink);color:#fff;padding:12px 24px;border-radius:30px;
+  font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.35s var(--ease);
+  z-index:2000;box-shadow:0 8px 24px rgba(0,0,0,.2);white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-faint)}
+
+/* RESPONSIVE base */
+@media(max-width:680px){
+  .app{padding:16px 12px 44px}
+  .app-header{flex-direction:column;align-items:flex-start;gap:12px}
+  .field-row{flex-direction:column;gap:16px}
+  .btn-row .btn{flex:1;justify-content:center}
+}
+
+/* ===== VOCAB EDITOR ===== */
+.vocab-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.vocab-stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat-pill{font-size:12px;font-weight:700;padding:6px 14px;border-radius:30px;background:var(--acc-soft);color:var(--acc-dark);border:1px solid #cce6e2}
+.vocab-head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+.section-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:14px;box-shadow:var(--sh);overflow:hidden}
+.section-bar{display:flex;align-items:center;gap:10px;padding:13px 15px;background:linear-gradient(145deg,#fff,#fcf8f2);border-bottom:1px solid var(--line)}
+.section-emoji-btn{width:42px;height:42px;border-radius:12px;border:1.5px solid var(--line);background:#fcfaf7;font-size:21px;cursor:pointer;transition:.2s var(--ease);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.section-emoji-btn:hover{border-color:var(--acc);transform:scale(1.05)}
+.section-title-input{flex:1;min-width:0;padding:9px 13px;border:1.5px solid var(--line);border-radius:var(--r-sm);font-size:15px;font-weight:700;font-family:var(--font-head);color:var(--ink);background:#fcfaf7;outline:none;transition:.2s var(--ease)}
+.section-title-input:focus{border-color:var(--acc);background:#fff;box-shadow:0 0 0 4px var(--acc-glow)}
+.section-count{font-size:11px;font-weight:600;color:var(--ink-faint);white-space:nowrap}
+.section-actions{display:flex;gap:5px;flex-shrink:0}
+.mini-btn{width:32px;height:32px;border-radius:var(--r-xs);border:1.5px solid var(--line);background:#fcfaf7;cursor:pointer;transition:.2s var(--ease);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:14px}
+.mini-btn .ic{width:15px;height:15px}
+.mini-btn:hover{border-color:var(--acc);color:var(--acc);transform:translateY(-1px)}
+.mini-btn.danger:hover{border-color:var(--lava);color:var(--lava);background:#fbeded}
+.mini-btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
+
+.section-body{padding:13px 15px}
+.words-head{display:grid;grid-template-columns:1.3fr 1fr 2fr 36px;gap:8px;padding:0 4px 7px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);border-bottom:1px solid var(--line2);margin-bottom:9px}
+.word-row{display:grid;grid-template-columns:1.3fr 1fr 2fr 36px;gap:8px;align-items:center;margin-bottom:7px}
+.word-row input{width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:var(--r-xs);font-size:13px;font-family:inherit;color:var(--ink);background:#fcfaf7;outline:none;transition:.2s var(--ease)}
+.word-row input:focus{border-color:var(--acc);background:#fff;box-shadow:0 0 0 3px var(--acc-glow)}
+.word-row input.ipa{font-style:italic;color:var(--ink-soft)}
+.word-row .mini-btn{width:32px;height:32px}
+.section-add-word{margin-top:8px}
+
+.w-fill{width:32px;height:32px;border-radius:var(--r-xs);border:1.5px solid var(--amber-bd);background:var(--amber-bg);cursor:pointer;transition:.2s var(--ease);display:flex;align-items:center;justify-content:center;color:var(--amber-ink)}
+.w-fill .ic{width:15px;height:15px}
+.w-fill:hover{border-color:#d9b96a;background:#fbeecb;transform:translateY(-1px)}
+.w-fill:disabled{opacity:.4;cursor:wait}
+.w-fill.loading .ic{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.word-row.with-tr{grid-template-columns:1.1fr .9fr 1.6fr 1.1fr 36px 36px}
+.words-head.with-tr{grid-template-columns:1.1fr .9fr 1.6fr 1.1fr 36px 36px}
+.w-tr{display:none}
+.with-tr .w-tr{display:block}
+input.not-found{border-color:var(--lava)!important;background:#fbeded!important}
+
+.fill-section-btn{margin-top:8px;margin-left:8px;border:1.5px solid var(--amber-bd);background:var(--amber-bg);color:var(--amber-ink)}
+.fill-section-btn:hover{background:#fbeecb;border-color:#d9b96a}
+.fill-progress{font-size:11px;font-weight:600;color:var(--ink-faint);margin-left:8px}
+
+.emoji-pop{position:absolute;z-index:500;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:var(--sh-lg);display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-width:300px}
+.emoji-pop button{width:30px;height:30px;border:none;background:transparent;font-size:19px;cursor:pointer;border-radius:8px;transition:.15s}
+.emoji-pop button:hover{background:var(--acc-soft);transform:scale(1.2)}
+
+.vocab-empty{text-align:center;padding:50px 20px;color:var(--ink-faint)}
+.vocab-empty-icon{display:flex;justify-content:center;margin-bottom:14px;color:var(--ink-faint)}
+.vocab-empty-icon .ic{width:44px;height:44px;stroke-width:1.4}
+
+/* TR TOGGLE */
+.tr-toggle{display:inline-flex;align-items:center;gap:7px;padding:11px 16px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:#fcfaf7;color:var(--ink-soft);font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;transition:.2s var(--ease);white-space:nowrap}
+.tr-toggle .ic{width:16px;height:16px}
+.tr-toggle:hover{border-color:var(--acc);background:var(--acc-soft);color:var(--ink);transform:translateY(-1px)}
+.tr-toggle[data-on="true"]{background:linear-gradient(145deg,var(--acc),var(--acc-dark));border-color:transparent;color:#fff;box-shadow:0 4px 14px var(--acc-glow)}
+
+@media(max-width:680px){
+  .words-head,.word-row{grid-template-columns:1fr 36px}
+  .words-head span:nth-child(2),.words-head span:nth-child(3){display:none}
+  .word-row input.ipa,.word-row input.def{grid-column:1/2}
+  .words-head.with-tr,.word-row.with-tr{grid-template-columns:1fr 36px 36px}
+  .word-row .w-ipa,.word-row .w-def,.word-row .w-tr{grid-column:1/2}
+}
+
+/* ===== MATCH PREVIEW ===== */
+.match-pair{display:flex;align-items:center;gap:12px;padding:11px 14px;background:#fcfaf7;border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:7px}
+.m-left{font-weight:700;color:var(--ink)}
+.m-arrow{color:var(--acc);font-weight:700}
+.m-right{color:var(--ink-soft);flex:1}
+.match-warn{margin-top:10px;padding:11px 14px;background:var(--amber-bg);border:1px solid var(--amber-bd);border-radius:var(--r-sm);font-size:13px;color:var(--amber-ink)}
+.match-empty{text-align:center;padding:40px 20px}
+.match-empty-icon{display:flex;justify-content:center;margin-bottom:12px;color:var(--ink-faint)}
+.match-empty-icon .ic{width:40px;height:40px;stroke-width:1.4}
+
+/* ===== GAPS EDITOR ===== */
+.gaps-hint{padding:16px 20px}
+.gaps-hint code{background:var(--acc-soft);padding:2px 8px;border-radius:6px;font-size:13px;color:var(--acc-dark);font-weight:600}
+.gap-card{background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);padding:15px 17px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start;transition:.2s var(--ease)}
+.gap-card:hover{border-color:var(--acc);box-shadow:var(--sh)}
+.gap-num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--acc-soft);color:var(--acc-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;margin-top:4px}
+.gap-body{flex:1;display:flex;flex-direction:column;gap:8px}
+.gap-sentence{width:100%;font-family:inherit;font-size:14px;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;resize:vertical;min-height:46px;color:var(--ink);background:#fcfaf7;transition:.2s var(--ease)}
+.gap-sentence:focus{outline:none;border-color:var(--acc);background:#fff;box-shadow:0 0 0 3px var(--acc-glow)}
+.gap-preview{font-size:13px;color:var(--ink-soft);padding:0 2px;min-height:18px}
+.gap-preview .blank{display:inline-block;border-bottom:2px solid var(--acc-dark);min-width:50px;text-align:center;color:var(--acc-dark);font-weight:700}
+.gap-preview.invalid{color:var(--lava)}
+.gap-actions{flex:none;display:flex;flex-direction:column;gap:6px}
+.gaps-empty{text-align:center;padding:40px 20px}
+.gaps-empty-icon{display:flex;justify-content:center;margin-bottom:12px;color:var(--ink-faint)}
+.gaps-empty-icon .ic{width:40px;height:40px;stroke-width:1.4}
+
+/* ===== SPEAKING EDITOR ===== */
+.speak-card{background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);padding:15px 17px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-start;transition:.2s var(--ease)}
+.speak-card:hover{border-color:var(--acc);box-shadow:var(--sh)}
+.speak-num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--acc-soft);color:var(--acc-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;margin-top:4px}
+.speak-body{flex:1;display:flex;flex-direction:column;gap:8px}
+.speak-q,.speak-tip{width:100%;font-family:inherit;font-size:14px;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;resize:vertical;color:var(--ink);background:#fcfaf7;transition:.2s var(--ease)}
+.speak-q{min-height:46px;font-weight:500}
+.speak-tip{min-height:38px;font-size:13px;background:var(--acc-soft)}
+.speak-q:focus,.speak-tip:focus{outline:none;border-color:var(--acc);background:#fff;box-shadow:0 0 0 3px var(--acc-glow)}
+.speak-tip-label{font-size:12px;color:var(--ink-faint);margin-bottom:-4px}
+.speak-actions{flex:none;display:flex;flex-direction:column;gap:6px}
+.speak-empty{text-align:center;padding:40px 20px}
+.speak-empty-icon{display:flex;justify-content:center;margin-bottom:12px;color:var(--ink-faint)}
+.speak-empty-icon .ic{width:40px;height:40px;stroke-width:1.4}
+.speak-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px;min-height:4px}
+.speak-chip{font-size:12px;padding:4px 11px;border-radius:30px;background:var(--acc-soft);color:var(--acc-dark);font-weight:600;border:1px solid transparent}
+.speak-chips-label{font-size:12px;color:var(--ink-faint);margin-bottom:-2px}
+
+/* ===== EXPORT ===== */
+.export-summary{display:flex;flex-direction:column;gap:8px}
+.export-row{display:flex;align-items:center;gap:12px;padding:11px 15px;background:var(--acc-soft);border-radius:10px;font-size:14px}
+.export-row .er-icon{display:flex;color:var(--acc-dark)}
+.export-row .er-icon .ic{width:18px;height:18px}
+.export-row .er-label{flex:1;font-weight:600;color:var(--ink)}
+.export-row .er-val{color:var(--ink-soft);font-weight:600}
+.export-row.off{opacity:.5;background:#f6f1ea}
+.export-row.off .er-val{color:var(--lava)}
+.export-row.off .er-icon{color:var(--ink-faint)}
+.warn-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.warn-list li{padding:11px 15px;background:var(--amber-bg);border:1px solid var(--amber-bd);border-radius:10px;font-size:13px;color:var(--amber-ink);display:flex;align-items:flex-start;gap:8px}
+.warn-list li .ic{width:16px;height:16px;flex-shrink:0;margin-top:2px}
+
+/* ===== BULK MODAL ===== */
+.bulk-modal{position:fixed;inset:0;z-index:9000;background:rgba(42,34,29,.45);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.bulk-modal.open{display:flex;animation:fadein .25s ease}
+.bulk-box{background:var(--card);border-radius:var(--r);width:100%;max-width:520px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(42,34,29,.3);overflow:hidden}
+.bulk-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line);background:linear-gradient(145deg,#fff,#fcf8f2)}
+.bulk-title{font-family:var(--font-head);font-weight:600;font-size:17px;display:flex;align-items:center;gap:9px}
+.bulk-title .ic{width:19px;height:19px;color:var(--acc)}
+.bulk-x{width:34px;height:34px;border:none;background:var(--line2);border-radius:var(--r-xs);cursor:pointer;color:var(--ink-soft);transition:.2s var(--ease);display:flex;align-items:center;justify-content:center}
+.bulk-x .ic{width:16px;height:16px}
+.bulk-x:hover{background:#fbeded;color:var(--lava)}
+.bulk-body{padding:22px;overflow-y:auto}
+.bulk-body textarea{font-family:'Menlo','Consolas',monospace;font-size:13px;line-height:1.6}
+.bulk-check{display:flex;align-items:center;gap:11px;padding:13px 15px;margin:8px 0 12px;background:var(--acc-soft);border-radius:var(--r-sm);cursor:pointer;font-size:13px;font-weight:500;color:var(--ink)}
+.bulk-check input{width:18px;height:18px;accent-color:var(--acc-dark);cursor:pointer}
+.bulk-foot{display:flex;gap:10px;justify-content:flex-end;padding:18px 22px;border-top:1px solid var(--line);background:#fcfaf7}
+.bulk-modal code{background:var(--acc-soft);padding:1px 6px;border-radius:5px;font-size:12px;color:var(--acc-dark);font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="app-logo">
+      <span class="app-logo-icon">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </span>
+      <div>
+        <h1 class="app-title">Vocabulary Trainer Generator</h1>
+        <p class="app-desc">Создай интерактивный тренажёр лексики — без кода</p>
+      </div>
+    </div>
+    <span class="save-status" id="saveStatus">Сохранено</span>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="settings"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Настройки</button>
+    <button class="tab" data-tab="vocab"><svg class="ic" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Лексика</button>
+    <button class="tab" data-tab="match"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Соотнесение</button>
+    <button class="tab" data-tab="gaps"><svg class="ic" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Пропуски</button>
+    <button class="tab" data-tab="speak"><svg class="ic" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/></svg>Speaking</button>
+    <button class="tab" data-tab="export"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Экспорт</button>
+  </nav>
+
+  <!-- ===== SETTINGS ===== -->
+  <div class="panel active" id="panel-settings">
+    <div class="card">
+      <h3 class="card-title"><svg class="ic" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Основное</h3>
+      <div class="field">
+        <label>Заголовок</label>
+        <input type="text" id="setTitle" maxlength="60" placeholder="Study & Work Vocabulary">
+      </div>
+      <div class="field">
+        <label>Подзаголовок / уровень</label>
+        <input type="text" id="setSubtitle" maxlength="60" placeholder="B1–B2 · Unit 3">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Язык озвучки (TTS)</label>
+          <select id="setLanguage">
+            <option value="en-GB">English (UK)</option>
+            <option value="en-US">English (US)</option>
+            <option value="de-DE">German</option>
+            <option value="fr-FR">French</option>
+            <option value="es-ES">Spanish</option>
+            <option value="it-IT">Italian</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title"><svg class="ic" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2a10 10 0 0 0 0 20c1.1 0 2-.9 2-2v-1.5c0-.55.45-1 1-1H17a3 3 0 0 0 3-3 10 10 0 0 0-8-12.5z"/></svg>Тема готового тренажёра</h3>
+      <div class="option-cards" id="themeOptions">
+        <button class="option-card active" data-value="notebook">
+          <span class="option-card-swatch" style="background:linear-gradient(135deg,#f3ead3,#c9a96e)"></span>
+          <span class="option-card-label">Notebook</span>
+        </button>
+        <button class="option-card" data-value="fresh">
+          <span class="option-card-swatch" style="background:linear-gradient(135deg,#e8f5e9,#66bb6a)"></span>
+          <span class="option-card-label">Fresh</span>
+        </button>
+        <button class="option-card" data-value="focus">
+          <span class="option-card-swatch" style="background:linear-gradient(135deg,#2d3142,#4f5d75)"></span>
+          <span class="option-card-label">Focus</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title"><svg class="ic" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Подпись автора <span class="card-badge">optional</span></h3>
+      <div class="field">
+        <label>Ник / имя</label>
+        <input type="text" id="setAuthorNick" maxlength="40" placeholder="@your_nickname">
+      </div>
+      <div class="field">
+        <label>Ссылка (Boosty / Patreon / сайт)</label>
+        <input type="text" id="setAuthorLink" placeholder="https://...">
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title"><svg class="ic" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Какие экраны включить</h3>
+      <div class="toggles" id="screenToggles">
+        <label class="toggle-line"><span><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>Флешкарты</span><button class="toggle-btn" data-screen="flashcards" data-on="true"><span class="toggle-knob"></span></button></label>
+        <label class="toggle-line"><span><svg class="ic" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Match (авто)</span><button class="toggle-btn" data-screen="match" data-on="true"><span class="toggle-knob"></span></button></label>
+        <label class="toggle-line"><span><svg class="ic" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Пропуски</span><button class="toggle-btn" data-screen="gaps" data-on="true"><span class="toggle-knob"></span></button></label>
+        <label class="toggle-line"><span><svg class="ic" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/></svg>Speaking</span><button class="toggle-btn" data-screen="speak" data-on="true"><span class="toggle-knob"></span></button></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title"><svg class="ic" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Резервная копия</h3>
+      <div class="btn-row">
+        <button class="btn" id="btnExportJSON"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Скачать копию</button>
+        <button class="btn" id="btnImportJSON"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Загрузить копию</button>
+        <button class="btn btn-danger" id="btnClearAll"><svg class="ic" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Очистить всё</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== VOCAB ===== -->
+  <div class="panel" id="panel-vocab">
+    <div class="vocab-head card">
+      <div class="vocab-stats">
+        <span class="stat-pill" id="statSections">0 секц.</span>
+        <span class="stat-pill" id="statWords">0 слов</span>
+      </div>
+      <div class="vocab-head-actions">
+        <button class="tr-toggle" id="toggleTranslation" data-on="false"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Перевод</button>
+        <button class="btn" id="btnBulkAdd"><svg class="ic" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Вставить списком</button>
+        <button class="btn btn-primary" id="btnAddSection"><svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Добавить секцию</button>
+      </div>
+    </div>
+    <div id="sectionsList"></div>
+  </div>
+
+  <!-- ===== MATCH ===== -->
+  <div class="panel" id="panel-match">
+    <div class="card">
+      <h3 class="card-title"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Игра «Соедини пары»</h3>
+      <p class="muted" style="margin-bottom:14px">Карточки соберутся автоматически из твоей лексики. Настрой режим — и готово!</p>
+      <div class="field">
+        <label>Что соединять</label>
+        <div class="option-cards" id="matchModeOptions">
+          <button class="option-card active" data-value="tr"><span class="option-card-label">Слово ↔ Перевод</span></button>
+          <button class="option-card" data-value="def"><span class="option-card-label">Слово ↔ Definition</span></button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Пар в одном раунде</label>
+        <div class="option-cards" id="matchPairsOptions">
+                    <button class="option-card" data-value="4"><span class="option-card-label">4</span></button>
+          <button class="option-card active" data-value="6"><span class="option-card-label">6</span></button>
+          <button class="option-card" data-value="8"><span class="option-card-label">8</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="card-title"><svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Превью пар <span class="card-badge" id="matchCount">0</span></h3>
+      <div id="matchPreview"></div>
+    </div>
+  </div>
+
+  <!-- ===== GAPS ===== -->
+  <div class="panel" id="panel-gaps">
+    <div class="vocab-head card">
+      <div class="vocab-stats">
+        <span class="stat-pill" id="statGaps">0 предл.</span>
+      </div>
+      <div class="vocab-head-actions">
+        <button class="tr-toggle" id="btnGapsFromVocab" data-on="false"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>Взять из лексики</button>
+        <button id="btnGapsAutoExamples" class="btn"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Примеры из словаря</button>
+        <button class="btn" id="btnGapsAI"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/><path d="M19 14l.7 1.7 1.8.7-1.8.7-.7 1.7-.7-1.7-1.8-.7 1.8-.7L19 14z"/></svg>Умные примеры (ИИ)</button>
+        <button class="btn btn-primary" id="btnAddGap"><svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Предложение</button>
+      </div>
+    </div>
+    <div class="card gaps-hint">
+      <p class="muted">
+        Оберни нужное слово в фигурные скобки — оно станет пропуском.<br>
+        Пример: <code>I want to {apply} for this job.</code> → ответ: <b>apply</b>
+      </p>
+    </div>
+    <div id="gapsList"></div>
+  </div>
+
+  <!-- ===== SPEAK ===== -->
+  <div class="panel" id="panel-speak">
+    <div class="vocab-head card">
+      <div class="vocab-stats">
+        <span class="stat-pill" id="statSpeak">0 заданий</span>
+      </div>
+      <div class="vocab-head-actions">
+        <button class="btn btn-primary" id="btnAddSpeak"><svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Добавить задание</button>
+      </div>
+    </div>
+    <div class="card gaps-hint">
+      <p class="muted">
+        Добавь вопросы или задания для говорения.<br>
+        Подсказка (опционально) — полезные слова/фразы, которые ученик может использовать.
+      </p>
+    </div>
+    <div id="speakList"></div>
+  </div>
+
+  <!-- ===== EXPORT ===== -->
+  <div class="panel" id="panel-export">
+    <div class="card">
+      <h3 class="card-title"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Готовый тренажёр</h3>
+      <p class="muted" style="margin-bottom:16px">Один HTML-файл — работает офлайн, на любом устройстве. Просто отправь ученику!</p>
+      <div class="export-summary" id="exportSummary"></div>
+      <div class="btn-row" style="margin-top:18px">
+        <button class="btn btn-primary" id="btnPreview"><svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Предпросмотр</button>
+        <button class="btn btn-primary" id="btnDownload"><svg class="ic" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Скачать HTML</button>
+        <button class="btn" id="btnCopy"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Скопировать код</button>
+      </div>
+    </div>
+    <div class="card" id="exportWarnings" style="display:none">
+      <h3 class="card-title"><svg class="ic" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Проверь перед экспортом</h3>
+      <ul class="warn-list" id="warnList"></ul>
+    </div>
+  </div>
+
+  <!-- МОДАЛКА МАССОВОЙ ЗАГРУЗКИ -->
+  <div class="bulk-modal" id="bulkModal">
+    <div class="bulk-box">
+      <div class="bulk-head">
+        <span class="bulk-title"><svg class="ic" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Вставить список слов</span>
+        <button class="bulk-x" id="bulkClose"><svg class="ic" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="bulk-body">
+        <div class="field">
+          <label>Название секции</label>
+          <input type="text" id="bulkSectionName" placeholder="Например: Unit 3 · Work">
+        </div>
+        <div class="field">
+          <label>Слова — по одному на строке или через запятую</label>
+          <textarea id="bulkText" rows="9" placeholder="apply&#10;commute&#10;deadline&#10;get up early&#10;&#10;Можно с переводом:&#10;apply - подавать заявку&#10;deadline – крайний срок"></textarea>
+        </div>
+        <label class="bulk-check">
+          <input type="checkbox" id="bulkAutoFill" checked>
+          <span>Сразу заполнить IPA, definition и перевод из словаря</span>
+        </label>
+        <p class="muted" style="font-size:12px">
+          Поддерживаются разделители: <code>-</code> <code>–</code> <code>—</code> <code>=</code> <code>:</code> <code>таб</code>
+        </p>
+      </div>
+      <div class="bulk-foot">
+        <button class="btn" id="bulkCancel">Отмена</button>
+        <button class="btn btn-primary" id="bulkConfirm">Добавить слова</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============ VOCABULARY TRAINER GENERATOR — PART 1 ============
+
+const SAVE_KEY = 'vocab_trainer_gen_v1';
+
+// ---------- STATE ----------
+function loadState(){
+  try{ const s = localStorage.getItem(SAVE_KEY); if(s) return JSON.parse(s); }catch(e){}
+  return null;
+}
+
+const defaultState = {
+  title: 'Study & Work Vocabulary',
+  subtitle: 'B1–B2',
+  language: 'en-GB',
+  theme: 'notebook',
+  authorNick: '',
+  authorLink: '',
+  screens: { flashcards:true, match:true, gaps:true, speak:true },
+  sections: [],
+  gaps: [],
+  match: { mode:'tr', pairs:6 },
+  speak: []
+};
+
+const state = Object.assign({}, defaultState, loadState() || {});
+state.screens = Object.assign({}, defaultState.screens, state.screens || {});
+['sections','gaps','speak'].forEach(k=>{ if(!Array.isArray(state[k])) state[k]=[]; });
+state.match = Object.assign({mode:'tr',pairs:6}, state.match||{});
+
+// ---------- HELPERS ----------
+const $ = id => document.getElementById(id);
+const $$ = sel => document.querySelectorAll(sel);
+
+let _saveTimer=null;
+function autoSave(){
+  clearTimeout(_saveTimer);
+  const el=$('saveStatus');
+  if(el){ el.textContent='Сохраняю…'; el.style.opacity='.6'; }
+  _saveTimer=setTimeout(()=>{
+    try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){}
+    if(el){ el.textContent='Сохранено'; el.style.opacity='1';
+      setTimeout(()=>{el.style.opacity='.55'},1200); }
+  },400);
+}
+
+function showToast(msg){
+  let t=document.querySelector('.toast');
+  if(!t){ t=document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
+  t.textContent=msg; t.classList.remove('show'); void t.offsetHeight; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+// ---------- TABS ----------
+$$('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    $$('.tab').forEach(t=>t.classList.remove('active'));
+    $$('.panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    $(`panel-${tab.dataset.tab}`).classList.add('active');
+    if(tab.dataset.tab==='vocab' && typeof renderSections==='function') renderSections();
+    if(tab.dataset.tab==='gaps'  && typeof renderGaps==='function') renderGaps();
+    if(tab.dataset.tab==='match' && typeof renderMatch==='function') renderMatch();
+    if(tab.dataset.tab==='speak' && typeof renderSpeak==='function') renderSpeak();
+    if(tab.dataset.tab==='export' && typeof renderExportSummary==='function') renderExportSummary();
+  });
+});
+
+// ---------- SETTINGS: text fields ----------
+$('setTitle').addEventListener('input',e=>{state.title=e.target.value;autoSave();});
+$('setSubtitle').addEventListener('input',e=>{state.subtitle=e.target.value;autoSave();});
+$('setLanguage').addEventListener('change',e=>{state.language=e.target.value;autoSave();});
+$('setAuthorNick').addEventListener('input',e=>{state.authorNick=e.target.value;autoSave();});
+$('setAuthorLink').addEventListener('input',e=>{state.authorLink=e.target.value;autoSave();});
+
+// ---------- THEME ----------
+$('themeOptions').querySelectorAll('.option-card').forEach(card=>{
+  card.addEventListener('click',()=>{
+    $('themeOptions').querySelectorAll('.option-card').forEach(c=>c.classList.remove('active'));
+    card.classList.add('active');
+    state.theme=card.dataset.value;
+    autoSave();
+  });
+});
+
+// ---------- SCREEN TOGGLES ----------
+$('screenToggles').querySelectorAll('.toggle-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const scr=btn.dataset.screen;
+    const on=btn.dataset.on==='true';
+    btn.dataset.on=on?'false':'true';
+    state.screens[scr]=!on;
+    autoSave();
+  });
+});
+
+// ---------- BACKUP ----------
+$('btnExportJSON').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`trainer-backup-${new Date().toISOString().slice(0,10)}.json`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('Копия скачана');
+});
+
+$('btnImportJSON').addEventListener('click',()=>{
+  const inp=document.createElement('input');
+  inp.type='file'; inp.accept='.json';
+  inp.onchange=e=>{
+    const f=e.target.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      try{
+        const imp=JSON.parse(ev.target.result);
+        Object.assign(state, imp);
+        state.screens=Object.assign({}, defaultState.screens, state.screens||{});
+        ['sections','gaps','speak'].forEach(k=>{ if(!Array.isArray(state[k])) state[k]=[]; });
+        state.match = Object.assign({mode:'tr',pairs:6}, state.match||{});
+        syncSettingsUI();
+        if(typeof renderSections==='function') renderSections();
+        if(typeof renderGaps==='function') renderGaps();
+        if(typeof renderMatch==='function') renderMatch();
+        if(typeof renderSpeak==='function') renderSpeak();
+        autoSave();
+        showToast('Копия загружена');
+      }catch(err){
+        showToast('Ошибка чтения файла');
+      }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+});
+
+$('btnClearAll').addEventListener('click',()=>{
+  if(confirm('Удалить все данные тренажёра?\n\nЭто действие нельзя отменить!')){
+    localStorage.removeItem(SAVE_KEY);
+    location.reload();
+  }
+});
+
+// ---------- SYNC SETTINGS UI ----------
+function syncSettingsUI(){
+  $('setTitle').value      = state.title || '';
+  $('setSubtitle').value   = state.subtitle || '';
+  $('setLanguage').value   = state.language || 'en-GB';
+  $('setAuthorNick').value = state.authorNick || '';
+  $('setAuthorLink').value = state.authorLink || '';
+  $('themeOptions').querySelectorAll('.option-card').forEach(c=>{
+    c.classList.toggle('active', c.dataset.value === state.theme);
+  });
+  $('screenToggles').querySelectorAll('.toggle-btn').forEach(btn=>{
+    const scr=btn.dataset.screen;
+    btn.dataset.on = state.screens[scr] ? 'true' : 'false';
+  });
+}
+</script>
+</body>
+</html>
