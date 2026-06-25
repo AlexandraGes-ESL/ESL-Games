@@ -848,25 +848,39 @@ function bindSectionEvents(){
   });
 }
 
+// ---------- API: Wiktionary (IPA + definition) ----------
 async function fetchDictionary(word){
-  // dictionaryapi.dev часто заблокирован — пробуем, но не критично
+  const w=word.trim().toLowerCase();
+  let ipa='', def='';
+  // IPA из wikitext
   try{
-    const url=`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.trim())}`;
-    const res=await fetch(url);
-    if(res.ok){
-      const data=await res.json();
-      const entry=data[0];
-      let ipa='';
-      if(entry.phonetics){ const p=entry.phonetics.find(x=>x.text); if(p) ipa=p.text; }
-      if(!ipa && entry.phonetic) ipa=entry.phonetic;
-      let def='';
-      if(entry.meanings && entry.meanings[0] && entry.meanings[0].definitions[0]){ def=entry.meanings[0].definitions[0].definition; }
-      return {ipa,def};
+    const r=await fetch(`https://en.wiktionary.org/w/api.php?action=parse&page=${encodeURIComponent(w)}&prop=wikitext&format=json&origin=*`);
+    if(r.ok){
+      const d=await r.json();
+      const txt=(d.parse && d.parse.wikitext)? d.parse.wikitext['*'] : '';
+      const m=txt.match(/\{\{IPA\|en\|\/([^\/}|]+)\//);
+      if(m) ipa='/'+m[1]+'/';
     }
   }catch(e){}
-  // если словарь недоступен — возвращаем пусто (не ошибка!)
-  return {ipa:'', def:''};
+  // Definition через REST
+  try{
+    const r2=await fetch(`https://en.wiktionary.org/api/rest_v1/page/definition/${encodeURIComponent(w)}`);
+    if(r2.ok){
+      const d2=await r2.json();
+      if(d2.en && d2.en.length){
+        for(const b of d2.en){
+          if(b.definitions && b.definitions.length){
+            def=b.definitions[0].definition.replace(/<[^>]+>/g,'').trim();
+            if(def) break;
+          }
+        }
+      }
+    }
+  }catch(e){}
+  return {ipa, def};
 }
+
+// ---------- API: Google (перевод) ----------
 async function fetchTranslation(word){
   const url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t&q=${encodeURIComponent(word.trim())}`;
   const res=await fetch(url);
@@ -875,6 +889,8 @@ async function fetchTranslation(word){
   if(data && data[0] && data[0][0] && data[0][0][0]) return data[0][0][0];
   return '';
 }
+
+// ---------- FILL ONE WORD ----------
 async function fillWord(si,wi,btn){
   const w=state.sections[si].words[wi];
   const word=(w.word||'').trim();
@@ -883,15 +899,31 @@ async function fillWord(si,wi,btn){
   const row=btn.closest('.word-row');
   const ipaInp=row.querySelector('.w-ipa'), defInp=row.querySelector('.w-def'), trInp=row.querySelector('.w-tr');
   let found=false;
-  try{ const d=await fetchDictionary(word); if(d.ipa){ w.ipa=d.ipa; ipaInp.value=d.ipa; found=true; } if(d.def){ w.def=d.def; defInp.value=d.def; found=true; } }catch(e){}
-  if(state.showTranslation){ try{ const t=await fetchTranslation(word); if(t){ w.tr=t; if(trInp) trInp.value=t; } }catch(e){} }
+
+  try{
+    const d=await fetchDictionary(word);
+    if(d.ipa){ w.ipa=d.ipa; ipaInp.value=d.ipa; found=true; }
+    if(d.def){ w.def=d.def; defInp.value=d.def; found=true; }
+  }catch(e){}
+
+  if(state.showTranslation){
+    try{
+      const t=await fetchTranslation(word);
+      if(t){ w.tr=t; if(trInp) trInp.value=t; found=true; }
+    }catch(e){}
+  }
+
   btn.disabled=false; btn.classList.remove('loading');
-    // перевод даже если словарь не ответил
-  if(state.showTranslation){ try{ const t=await fetchTranslation(word); if(t){ w.tr=t; if(trInp) trInp.value=t; found=true; } }catch(e){} }
-  btn.disabled=false; btn.classList.remove('loading');
-  if(!found){ row.querySelector('.w-word').classList.add('not-found'); showToast(`«${word}» — ничего не найдено`); }
-  else{ autoSave(); }
+  if(!found){
+    row.querySelector('.w-word').classList.add('not-found');
+    showToast(`«${word}» — ничего не найдено`);
+  }else{
+    row.querySelector('.w-word').classList.remove('not-found');
+    autoSave();
+  }
 }
+
+// ---------- FILL WHOLE SECTION ----------
 async function fillSection(si,btn){
   const words=state.sections[si].words;
   const prog=$('sectionsList').querySelector(`.fill-progress[data-prog="${si}"]`);
@@ -904,7 +936,7 @@ async function fillSection(si,btn){
     if(prog) prog.textContent=`${done}/${total}…`;
     try{ const d=await fetchDictionary(w.word.trim()); if(d.ipa) w.ipa=d.ipa; if(d.def) w.def=d.def; }catch(e){}
     if(state.showTranslation){ try{ const t=await fetchTranslation(w.word.trim()); if(t) w.tr=t; }catch(e){} }
-    await new Promise(r=>setTimeout(r,400));
+    await new Promise(r=>setTimeout(r,300));
   }
   if(prog) prog.textContent='Готово';
   btn.disabled=false; renderSections(); autoSave();
