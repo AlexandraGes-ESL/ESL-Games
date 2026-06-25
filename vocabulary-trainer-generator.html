@@ -1369,23 +1369,6 @@ if(!state.gaps) state.gaps=[];
 if(!state.speak) state.speak=[];
 if(!state.match) state.match={mode:'def',pairs:4};
 
-renderAll();
-        syncSettingsUI();
-        if(typeof renderSections==='function') renderSections();
-        if(typeof renderGaps==='function') renderGaps();
-        if(typeof renderMatch==='function') renderMatch();
-        if(typeof renderSpeak==='function') renderSpeak();
-        autoSave();
-        showToast('Копия загружена');
-      }catch(err){
-        showToast('Ошибка чтения файла');
-      }
-    };
-    r.readAsText(f);
-  };
-  inp.click();
-});
-
 $('btnClearAll').addEventListener('click',()=>{
   if(confirm('Удалить все данные тренажёра?\n\nЭто действие нельзя отменить!')){
     localStorage.removeItem(SAVE_KEY);
