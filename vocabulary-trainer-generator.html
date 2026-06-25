@@ -692,6 +692,18 @@ $('btnImportJSON').addEventListener('click',()=>{
         state.screens=Object.assign({}, defaultState.screens, state.screens||{});
         ['sections','gaps','speak'].forEach(k=>{ if(!Array.isArray(state[k])) state[k]=[]; });
         state.match = Object.assign({mode:'tr',pairs:6}, state.match||{});
+        syncSettingsUI();
+        renderSections(); renderGaps(); renderMatch(); renderSpeak(); refreshExportSummary();
+        autoSave();
+        showToast('Копия загружена');
+      }catch(err){
+        showToast('Ошибка чтения файла');
+      }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+});
         // ============ PART 2 — VOCAB EDITOR ============
 const EMOJI_SET = [
   "📚","💼","⚡","🎓","🏫","✏️","📝","🧠","💡","🔬","🌍","🗣️","💬","🏠","🍎","🚗",
@@ -1297,7 +1309,7 @@ $('btnPreview')?.addEventListener('click',()=>{
 });
 $('btnDownload')?.addEventListener('click',()=>{
   const html=buildTrainerHTML();
-  const title=($('trainerTitle')?.value.trim())||'trainer';
+  const title = ($('setTitle')?.value.trim()) || state.title || 'Лексический тренажёр';
   const fname=title.toLowerCase().replace(/[^a-z0-9а-яё]+/gi,'-').replace(/^-|-$/g,'')+'.html';
   const blob=new Blob([html],{type:'text/html'});
   const a=document.createElement('a');
@@ -1305,7 +1317,7 @@ $('btnDownload')?.addEventListener('click',()=>{
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   showToast('Файл скачан 📥');
 });
-$('btnCopyHtml')?.addEventListener('click',async()=>{
+$('btnCopy')?.addEventListener('click',async()=>{
   try{ await navigator.clipboard.writeText(buildTrainerHTML()); showToast('HTML скопирован 📋'); }
   catch(e){ showToast('Не удалось скопировать'); }
 });
