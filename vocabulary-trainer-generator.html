@@ -504,15 +504,11 @@ input.not-found{border-color:var(--lava)!important;background:#fbeded!important}
   </div>
 
   <!-- ===== SPEAK ===== -->
-  <div class="panel" id="panel-speak">
-    <div class="vocab-head card">
-      <div class="vocab-stats">
-        <span class="stat-pill" id="statSpeak">0 заданий</span>
-      </div>
-      <div class="vocab-head-actions">
+        <div class="vocab-head-actions">
+        <button class="btn" id="btnSpeakAI"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/></svg>Вопросы из лексики (ИИ)</button>
+        <button class="btn" id="btnSpeakHintAI"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>Подсказки (ИИ)</button>
         <button class="btn btn-primary" id="btnAddSpeak"><svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Добавить задание</button>
       </div>
-    </div>
     <div class="card gaps-hint">
       <p class="muted">
         Добавь вопросы или задания для говорения.<br>
@@ -1110,6 +1106,131 @@ function renderSpeak(){
       <p class="muted">Нет заданий для говорения.<br>Добавь первый вопрос!</p></div>`;
     return;
   }
+  // ============ PART 4b — SPEAKING AI (Groq через прокси) ============
+// PROXY_URL и GROQ_MODEL уже объявлены в PART 8
+
+// === Кнопка 1: генерация вопросов из лексики ===
+$('btnSpeakAI')?.addEventListener('click',async()=>{
+  const btn=$('btnSpeakAI');
+
+  // собираем темы + слова
+  const topics=[];
+  state.sections.forEach(s=>{
+    const words=(s.words||[]).map(w=>(w.word||'').trim()).filter(Boolean);
+    if(words.length) topics.push({title:s.title||'General', words});
+  });
+  if(!topics.length){ showToast('Сначала добавь слова в лексику'); return; }
+
+  // плоский список слов для контекста
+  const allWords=[];
+  topics.forEach(t=>t.words.forEach(w=>allWords.push(w)));
+
+  btn.disabled=true; const orig=btn.innerHTML; btn.textContent='ИИ думает…';
+
+  try{
+    const sys = 'You are an English speaking teacher. Create 6 open-ended speaking questions for CEFR level '+(typeof AI_LEVEL!=="undefined"?AI_LEVEL:'B1')+'. '+
+      'Each question must naturally encourage using the given vocabulary. '+
+      'For each question also give a short hint: 3-5 useful words or phrases (comma separated). '+
+      'Questions must be conversational and personal (about the learner). '+
+      'Return ONLY valid JSON: {"items":[{"question":"...","hint":"..."}]}';
+    const user = 'Vocabulary: '+allWords.join(', ');
+
+    const res=await fetch(PROXY_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:GROQ_MODEL, temperature:0.8,
+        messages:[{role:'system',content:sys},{role:'user',content:user}],
+        response_format:{type:'json_object'}
+      })
+    });
+    if(!res.ok){ const t=await res.text().catch(()=> ''); throw new Error('Groq '+res.status+': '+t.slice(0,150)); }
+
+    const data=await res.json();
+    const content=data.choices&&data.choices[0]&&data.choices[0].message?data.choices[0].message.content:'';
+    let parsed; try{ parsed=JSON.parse(content); }catch(e){ const m=content.match(/\[[\s\S]*\]/); parsed=m?JSON.parse(m[0]):{}; }
+    let arr=Array.isArray(parsed)?parsed:(parsed.items||parsed.questions||[]);
+    if(!Array.isArray(arr)) arr=[];
+
+    let added=0;
+    arr.forEach(it=>{
+      const q=(it.question||it.q||'').trim();
+      const hint=(it.hint||'').trim();
+      if(!q) return;
+      if(state.speak.some(s=>(s.q||'').trim().toLowerCase()===q.toLowerCase())) return;
+      state.speak.push({q, hint});
+      added++;
+    });
+
+    btn.disabled=false; btn.innerHTML=orig;
+    renderSpeak(); autoSave();
+    showToast(added? 'Создано '+added+' вопросов ✨':'Новых вопросов нет');
+  }catch(err){
+    console.error(err);
+    btn.disabled=false; btn.innerHTML=orig;
+    showToast('Ошибка ИИ: '+err.message);
+  }
+});
+
+// === Кнопка 2: подсказки к существующим вопросам ===
+$('btnSpeakHintAI')?.addEventListener('click',async()=>{
+  const btn=$('btnSpeakHintAI');
+
+  // берём вопросы без подсказок
+  const targets=[];
+  state.speak.forEach((s,i)=>{
+    if((s.q||'').trim() && !(s.hint||'').trim()) targets.push({i, q:s.q.trim()});
+  });
+  if(!state.speak.some(s=>(s.q||'').trim())){ showToast('Сначала добавь вопросы'); return; }
+  if(!targets.length){ showToast('У всех вопросов уже есть подсказки'); return; }
+
+  btn.disabled=true; const orig=btn.innerHTML; btn.textContent='ИИ думает…';
+
+  try{
+    const sys = 'You are an English speaking teacher for CEFR level '+(typeof AI_LEVEL!=="undefined"?AI_LEVEL:'B1')+'. '+
+      'For each speaking question, give a short hint: 3-5 useful words or phrases (comma separated) the learner could use to answer. '+
+      'Return ONLY valid JSON: {"items":[{"question":"...","hint":"..."}]}';
+    const user = 'Questions:\n'+targets.map((t,n)=>(n+1)+'. '+t.q).join('\n');
+
+    const res=await fetch(PROXY_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:GROQ_MODEL, temperature:0.7,
+        messages:[{role:'system',content:sys},{role:'user',content:user}],
+        response_format:{type:'json_object'}
+      })
+    });
+    if(!res.ok){ const t=await res.text().catch(()=> ''); throw new Error('Groq '+res.status+': '+t.slice(0,150)); }
+
+    const data=await res.json();
+    const content=data.choices&&data.choices[0]&&data.choices[0].message?data.choices[0].message.content:'';
+    let parsed; try{ parsed=JSON.parse(content); }catch(e){ const m=content.match(/\[[\s\S]*\]/); parsed=m?JSON.parse(m[0]):{}; }
+    let arr=Array.isArray(parsed)?parsed:(parsed.items||parsed.hints||[]);
+    if(!Array.isArray(arr)) arr=[];
+
+    let added=0;
+    // сопоставляем по тексту вопроса; если не нашлось — по порядку
+    arr.forEach((it,idx)=>{
+      const q=(it.question||it.q||'').trim().toLowerCase();
+      const hint=(it.hint||'').trim();
+      if(!hint) return;
+      let target = targets.find(t=>t.q.toLowerCase()===q);
+      if(!target && targets[idx]) target = targets[idx];
+      if(target && !(state.speak[target.i].hint||'').trim()){
+        state.speak[target.i].hint=hint; added++;
+      }
+    });
+
+    btn.disabled=false; btn.innerHTML=orig;
+    renderSpeak(); autoSave();
+    showToast(added? 'Добавлено '+added+' подсказок ✨':'Подсказки не добавлены');
+  }catch(err){
+    console.error(err);
+    btn.disabled=false; btn.innerHTML=orig;
+    showToast('Ошибка ИИ: '+err.message);
+  }
+});
   list.innerHTML = state.speak.map((sp,i)=>`
     <div class="speak-card" data-i="${i}">
       <div class="gap-num">${i+1}</div>
