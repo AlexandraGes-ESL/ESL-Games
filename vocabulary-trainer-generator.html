@@ -1724,14 +1724,14 @@ $('btnCopy')?.addEventListener('click',async()=>{
 // Реальный ИИ можно подключить позже (OpenAI и т.п.) — здесь шаблонная заглушка.
 
 const GAP_TEMPLATES = [
-  w => `I need to {${w}} this task today.`,
-  w => `Could you please {${w}} the document?`,
-  w => `She decided to {${w}} after the meeting.`,
-  w => `They will {${w}} it next week.`,
-  w => `We should {${w}} before the deadline.`,
-  w => `He wants to {${w}} every morning.`,
-  w => `Don't forget to {${w}} the report.`,
-  w => `It's important to {${w}} carefully.`
+  w => \`I need to {\${w}} this task today.\`,
+  w => \`Could you please {\${w}} the document?\`,
+  w => \`She decided to {\${w}} after the meeting.\`,
+  w => \`They will {\${w}} it next week.\`,
+  w => \`We should {\${w}} before the deadline.\`,
+  w => \`He wants to {\${w}} every morning.\`,
+  w => \`Don't forget to {\${w}} the report.\`,
+  w => \`It's important to {\${w}} carefully.\`
 ];
 
 $('btnGapsAI')?.addEventListener('click',()=>{
