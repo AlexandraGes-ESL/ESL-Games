@@ -647,7 +647,6 @@ $$('.tab').forEach(tab=>{
 
 // ---------- SETTINGS: text fields ----------
 $('setTitle').addEventListener('input',e=>{state.title=e.target.value;autoSave();});
-$('setSubtitle').addEventListener('input',e=>{state.subtitle=e.target.value;autoSave();});
 $('setLanguage').addEventListener('change',e=>{state.language=e.target.value;autoSave();});
 $('setAuthorNick').addEventListener('input',e=>{state.authorNick=e.target.value;autoSave();});
 $('setAuthorLink').addEventListener('input',e=>{state.authorLink=e.target.value;autoSave();});
@@ -1724,14 +1723,14 @@ $('btnCopy')?.addEventListener('click',async()=>{
 // Реальный ИИ можно подключить позже (OpenAI и т.п.) — здесь шаблонная заглушка.
 
 const GAP_TEMPLATES = [
-  w => \`I need to {\${w}} this task today.\`,
-  w => \`Could you please {\${w}} the document?\`,
-  w => \`She decided to {\${w}} after the meeting.\`,
-  w => \`They will {\${w}} it next week.\`,
-  w => \`We should {\${w}} before the deadline.\`,
-  w => \`He wants to {\${w}} every morning.\`,
-  w => \`Don't forget to {\${w}} the report.\`,
-  w => \`It's important to {\${w}} carefully.\`
+  w => `I need to {${w}} this task today.`,
+  w => `Could you please {${w}} the document?`,
+  w => `She decided to {${w}} after the meeting.`,
+  w => `They will {${w}} it next week.`,
+  w => `We should {${w}} before the deadline.`,
+  w => `He wants to {${w}} every morning.`,
+  w => `Don't forget to {${w}} the report.`,
+  w => `It's important to {${w}} carefully.`
 ];
 
 $('btnGapsAI')?.addEventListener('click',()=>{
@@ -1771,7 +1770,6 @@ $('btnClearAll').addEventListener('click',()=>{
 // ---------- SYNC SETTINGS UI ----------
 function syncSettingsUI(){
   $('setTitle').value      = state.title || '';
-  $('setSubtitle').value   = state.subtitle || '';
   $('setLanguage').value   = state.language || 'en-GB';
   $('setAuthorNick').value = state.authorNick || '';
   $('setAuthorLink').value = state.authorLink || '';
