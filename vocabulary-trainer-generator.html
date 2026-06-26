@@ -503,12 +503,18 @@ input.not-found{border-color:var(--lava)!important;background:#fbeded!important}
     <div id="gapsList"></div>
   </div>
 
-  <!-- ===== SPEAK ===== -->
-        <div class="vocab-head-actions">
+    <!-- ===== SPEAK ===== -->
+  <div class="panel" id="panel-speak">
+    <div class="vocab-head card">
+      <div class="vocab-stats">
+        <span class="stat-pill" id="statSpeak">0 заданий</span>
+      </div>
+      <div class="vocab-head-actions">
         <button class="btn" id="btnSpeakAI"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/></svg>Вопросы из лексики (ИИ)</button>
         <button class="btn" id="btnSpeakHintAI"><svg class="ic" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>Подсказки (ИИ)</button>
         <button class="btn btn-primary" id="btnAddSpeak"><svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Добавить задание</button>
       </div>
+    </div>
     <div id="speakList"></div>
   </div>
 
