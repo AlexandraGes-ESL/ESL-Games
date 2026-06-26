@@ -1717,32 +1717,113 @@ $('btnCopy')?.addEventListener('click',async()=>{
   try{ await navigator.clipboard.writeText(buildTrainerHTML()); showToast('HTML скопирован 📋'); }
   catch(e){ showToast('Не удалось скопировать'); }
 });
-        // ============ PART 8 — AI STUB (генерация пропусков) ============
-const GAP_TEMPLATES = [
-  w => `I need to {${w}} this task today.`,
-  w => `Could you please {${w}} the document?`,
-  w => `She decided to {${w}} after the meeting.`,
-  w => `They will {${w}} it next week.`,
-  w => `We should {${w}} before the deadline.`,
-  w => `He wants to {${w}} every morning.`,
-  w => `Don't forget to {${w}} the report.`,
-  w => `It's important to {${w}} carefully.`
-];
+                // ============ PART 8 — AI (Groq через прокси) ============
+const PROXY_URL = 'https://groq-proxy.denisgospodar341.workers.dev/';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
 
-$('btnGapsAI')?.addEventListener('click',()=>{
+// уровень CEFR (можно менять)
+let AI_LEVEL = 'B1';
+
+// запрос к Groq для партии слов
+async function askGroq(words, level){
+  const sys = 'You are an English teacher creating gap-fill exercises for CEFR level '+level+'. '+
+    'For each target word, write ONE natural example sentence at level '+level+'. '+
+    'Rules: The sentence MUST contain the target word wrapped in curly braces, e.g. {word}. '+
+    'Keep it 6-14 words, simple and clear. No colons or semicolons. '+
+    'Use the EXACT same form of the word as given. '+
+    'Return ONLY valid JSON: {"items":[{"word":"...","sentence":"..."}]}';
+  const user = 'Words: '+words.join(', ');
+
+  const res = await fetch(PROXY_URL, {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      temperature: 0.7,
+      messages:[
+        {role:'system', content: sys},
+        {role:'user',   content: user}
+      ],
+      response_format:{ type:'json_object' }
+    })
+  });
+
+  if(!res.ok){
+    const txt = await res.text().catch(()=> '');
+    throw new Error('Groq '+res.status+': '+txt.slice(0,200));
+  }
+
+  const data = await res.json();
+  const content = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : '';
+
+  let parsed;
+  try{ parsed = JSON.parse(content); }
+  catch(e){
+    const m = content.match(/\[[\s\S]*\]/);
+    if(m) parsed = JSON.parse(m[0]); else throw new Error('Не удалось разобрать ответ ИИ');
+  }
+
+  let arr = Array.isArray(parsed) ? parsed
+    : (parsed.items || parsed.examples || parsed.results || parsed.sentences || parsed.words || []);
+
+  // если ИИ вернул {word:"sentence",...}
+  if(!Array.isArray(arr) && parsed && typeof parsed==='object'){
+    const keys = Object.keys(parsed);
+    if(keys.length && keys.every(k=>typeof parsed[k]==='string')){
+      arr = keys.map(k=>({word:k, sentence:parsed[k]}));
+    }
+  }
+  if(!Array.isArray(arr)) arr=[];
+  return arr;
+}
+
+// убедиться, что слово обёрнуто в {}
+function ensureGap(sentence, word){
+  if(/\{[^}]+\}/.test(sentence)) return sentence;
+  const re = new RegExp('\\b('+word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')\\b','i');
+  if(re.test(sentence)) return sentence.replace(re, '{'+word+'}');
+  return sentence + ' ({'+word+'})';
+}
+
+$('btnGapsAI')?.addEventListener('click',async()=>{
+  const btn=$('btnGapsAI');
   const allWords=[];
   state.sections.forEach(s=>(s.words||[]).forEach(w=>{ if((w.word||'').trim()) allWords.push(w.word.trim()); }));
   if(!allWords.length){ showToast('Сначала добавь слова в лексику'); return; }
 
+  // только новые слова (которых ещё нет в пропусках)
+  const newWords = allWords.filter(w=>!state.gaps.some(g=>(g.text||'').includes('{'+w+'}')));
+  if(!newWords.length){ showToast('Все слова уже использованы'); return; }
+
+  btn.disabled=true;
+  const orig=btn.innerHTML;
   let added=0;
-  allWords.forEach((w,idx)=>{
-    if(state.gaps.some(g=>(g.text||'').includes('{'+w+'}'))) return;
-    const tpl=GAP_TEMPLATES[idx % GAP_TEMPLATES.length];
-    state.gaps.push({text: tpl(w)});
-    added++;
-  });
+
+  try{
+    // разбиваем на партии по 8 слов
+    const BATCH=8;
+    for(let i=0;i<newWords.length;i+=BATCH){
+      const batch=newWords.slice(i,i+BATCH);
+      btn.textContent='ИИ думает… '+Math.min(i+BATCH,newWords.length)+'/'+newWords.length;
+      const arr=await askGroq(batch, AI_LEVEL);
+      arr.forEach(item=>{
+        const word=(item.word||'').trim();
+        let sentence=(item.sentence||'').trim();
+        if(!word || !sentence) return;
+        if(state.gaps.some(g=>(g.text||'').includes('{'+word+'}'))) return;
+        sentence=ensureGap(sentence, word);
+        state.gaps.push({text: sentence});
+        added++;
+      });
+    }
+  }catch(err){
+    console.error(err);
+    showToast('Ошибка ИИ: '+err.message);
+  }
+
+  btn.disabled=false; btn.innerHTML=orig;
   renderGaps(); autoSave();
-  showToast(added? `Сгенерировано ${added} предложений ✨`:'Все слова уже использованы');
+  if(added) showToast('Сгенерировано '+added+' предложений ✨');
 });
 
 // ============ INIT — первичный рендер всех вкладок ============
