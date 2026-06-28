@@ -115,6 +115,43 @@ function chime(){
     o.start(ac.currentTime+i*0.08);o.stop(ac.currentTime+i*0.08+0.9);
   });
 }
+  /* ====== ЗВУК ВЕТРА (финал) ====== */
+function windSound(){
+  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+  if(ac.state==='suspended')ac.resume();
+
+  // генерируем шум
+  const dur=6; // длительность звука в секундах
+  const buf=ac.createBuffer(1,ac.sampleRate*dur,ac.sampleRate);
+  const data=buf.getChannelData(0);
+  for(let i=0;i<data.length;i++) data[i]=Math.random()*2-1; // белый шум
+
+  const src=ac.createBufferSource();
+  src.buffer=buf;
+
+  // фильтр — делает шум похожим на ветер (приглушённый)
+  const filter=ac.createBiquadFilter();
+  filter.type='lowpass';
+  filter.frequency.setValueAtTime(400,ac.currentTime);
+
+  // «порывы» ветра — плавно гуляет частота
+  const lfo=ac.createOscillator();
+  const lfoGain=ac.createGain();
+  lfo.frequency.value=0.3;       // скорость порывов
+  lfoGain.gain.value=250;        // сила порывов
+  lfo.connect(lfoGain);
+  lfoGain.connect(filter.frequency);
+
+  // громкость с плавным появлением и затуханием
+  const g=ac.createGain();
+  g.gain.setValueAtTime(0,ac.currentTime);
+  g.gain.linearRampToValueAtTime(0.25,ac.currentTime+1.5); // нарастание
+  g.gain.linearRampToValueAtTime(0,ac.currentTime+dur);    // затухание
+
+  src.connect(filter);filter.connect(g);g.connect(ac.destination);
+  src.start();lfo.start();
+  src.stop(ac.currentTime+dur);lfo.stop(ac.currentTime+dur);
+}
 
 WISPS.forEach((w,i)=>{
   const el=document.createElement('div');
@@ -178,11 +215,10 @@ function answer(j,w,btn,oc){
     setTimeout(()=>{
       ov.classList.remove('on');
       popWisp(curEl);
-      if(w.link){
-        // ПЕРЕХОД К КИКИМОРЕ (в Genially заменишь на нужный URL слайда)
-        setTimeout(()=>{ window.parent.postMessage('go-kikimora','*');
-          /* или: location.href = 'URL_СЛАЙДА'; */ },800);
-      }
+      if(caught>=WISPS.length){
+    setTimeout(()=>document.getElementById('fog').classList.add('clear'),500);
+    windSound();
+  }
     },800);
   } else {
     btn.classList.add('wrong');bs[w.c].classList.add('correct');
