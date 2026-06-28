@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shattered Memory</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:transparent;
+  font-family:Georgia,serif;color:#eaf6ff;}
+#wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;}
+
+/* ====== КРИСТАЛЛ ====== */
+#crystal{position:relative;max-width:620px;width:92%;padding:38px 40px;
+  background:linear-gradient(160deg,rgba(20,40,70,.55),rgba(40,20,70,.45));
+  border:2px solid #6fb4ff66;border-radius:20px;
+  box-shadow:0 0 40px #1e6cff33,inset 0 0 60px #0a1c3a55;
+  backdrop-filter:blur(4px);
+  clip-path:polygon(8% 0,92% 0,100% 22%,100% 78%,92% 100%,8% 100%,0 78%,0 22%);
+  transition:box-shadow 1.2s,border-color 1.2s,background 1.2s;}
+#crystal.healed{
+  border-color:#9fe0ff;background:linear-gradient(160deg,rgba(40,90,150,.5),rgba(60,40,130,.4));
+  box-shadow:0 0 70px #4fa8ffaa,inset 0 0 80px #4fa8ff44;}
+
+/* трещины */
+.crack{position:absolute;background:rgba(0,0,0,.45);z-index:2;pointer-events:none;
+  box-shadow:0 0 3px #000;transition:opacity 1s;}
+#crystal.healed .crack{opacity:0;}
+.c1{top:0;left:30%;width:2px;height:45%;transform:rotate(12deg);}
+.c2{top:38%;right:22%;width:2px;height:50%;transform:rotate(-18deg);}
+.c3{bottom:0;left:48%;width:2px;height:40%;transform:rotate(8deg);}
+
+#title{text-align:center;font-size:14px;letter-spacing:3px;text-transform:uppercase;
+  color:#8fc4ff;margin-bottom:18px;opacity:.85;}
+#mem{font-size:17px;line-height:2;text-align:center;position:relative;z-index:3;}
+
+/* пропуск-осколок */
+.gap{display:inline-block;min-width:120px;padding:2px 10px;margin:0 3px;
+  border-bottom:2px dashed #6fb4ff;color:#6fb4ff;cursor:pointer;
+  font-style:italic;transition:.25s;border-radius:4px;}
+.gap:hover{background:#4fa8ff22;}
+.gap.filled{border-bottom:2px solid #3fd07a;color:#bfffd9;
+  font-style:normal;background:#3fd07a18;cursor:default;}
+
+/* подсказка-выбор под пропуском */
+#picker{position:fixed;z-index:50;display:none;background:#0a1c2e;
+  border:1px solid #4fa8ff;border-radius:12px;padding:8px;
+  box-shadow:0 6px 24px #000a;max-width:280px;}
+#picker.on{display:block;}
+.pick{display:block;width:100%;text-align:left;background:rgba(80,168,255,.08);
+  border:1px solid #4fa8ff44;border-radius:8px;color:#dff0ff;font-size:14px;
+  padding:9px 14px;margin:4px 0;cursor:pointer;font-family:Georgia,serif;transition:.2s;}
+.pick:hover{background:#4fa8ff22;}
+.pick.wrong{background:#e0503033;border-color:#e05030;animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+
+/* финальное восстановленное воспоминание */
+#restored{display:none;text-align:center;position:relative;z-index:3;}
+#restored.on{display:block;animation:fadeIn 1.5s;}
+@keyframes fadeIn{from{opacity:0;transform:scale(.96);}to{opacity:1;transform:scale(1);}}
+#restored .frag{font-size:13px;letter-spacing:2px;color:#9fe0ff;text-transform:uppercase;margin-bottom:14px;}
+#restored .body{font-size:16px;line-height:1.9;font-style:italic;color:#eaf6ff;}
+#restored .next{margin-top:18px;font-size:15px;color:#ffd98f;line-height:1.7;}
+
+/* вспышка при исцелении */
+#flash{position:fixed;inset:0;z-index:90;background:radial-gradient(circle,#cfeeff,transparent 70%);
+  opacity:0;pointer-events:none;}
+#flash.go{animation:flash 1.4s;}
+@keyframes flash{0%{opacity:0;}30%{opacity:.9;}100%{opacity:0;}}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="crystal">
+    <span class="crack c1"></span><span class="crack c2"></span><span class="crack c3"></span>
+
+    <div id="title">◆ Shattered Memory ◆</div>
+
+    <div id="mem">
+      "I <span class="gap" data-i="0">(1) ?</span> through the dark woods when a thick,
+      unnatural fog suddenly <span class="gap" data-i="1">(2) ?</span> me.
+      While I <span class="gap" data-i="2">(3) ?</span> to find the path to Baba Yaga's hut,
+      a blinding purple light <span class="gap" data-i="3">(4) ?</span> my mind."
+    </div>
+
+    <div id="restored">
+      <div class="frag">💎 Memory Fragment: The Fog</div>
+      <div class="body">"I remember! I <b>was wandering</b> through the dark woods when a thick,
+      unnatural fog suddenly <b>surrounded</b> me. While I <b>was trying</b> to find the path
+      to Baba Yaga's hut, a blinding purple light <b>struck</b> my mind."</div>
+      <div class="next">I was heading to Baba Yaga's hut! But why?<br>
+      The memory is incomplete... I need to find the other missing fragment.</div>
+    </div>
+  </div>
+</div>
+
+<div id="picker"></div>
+<div id="flash"></div>
+
+<script>
+/* данные пропусков: варианты + индекс правильного */
+const GAPS=[
+  {opts:["wandered","was wandering"],correct:1},
+  {opts:["was surrounding","surrounded"],correct:1},
+  {opts:["tried","was trying"],correct:1},
+  {opts:["was striking","struck"],correct:1}
+];
+let filled=0;
+
+/* ====== ЗВУК ====== */
+let ac=null;
+function chime(){
+  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+  if(ac.state==='suspended')ac.resume();
+  [880,1318,1760].forEach((f,i)=>{
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.connect(g);g.connect(ac.destination);o.type='sine';
+    o.frequency.value=f;
+    const t=ac.currentTime+i*0.07;
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(0.15,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001,t+0.8);
+    o.start(t);o.stop(t+0.8);
+  });
+}
+function healSound(){
+  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
+  if(ac.state==='suspended')ac.resume();
+  [523,659,784,1046,1318].forEach((f,i)=>{
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.connect(g);g.connect(ac.destination);o.type='triangle';
+    o.frequency.value=f;
+    const t=ac.currentTime+i*0.12;
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(0.16,t+0.04);
+    g.gain.exponentialRampToValueAtTime(0.001,t+1.4);
+    o.start(t);o.stop(t+1.4);
+  });
+}
+
+/* ====== ЛОГИКА ====== */
+const picker=document.getElementById('picker');
+let curGap=null;
+
+document.querySelectorAll('.gap').forEach(g=>{
+  g.onclick=e=>{
+    if(g.classList.contains('filled'))return;
+    openPicker(g,e);
+  };
+});
+
+function openPicker(gap,e){
+  curGap=gap;
+  const i=+gap.dataset.i;
+  picker.innerHTML='';
+  GAPS[i].opts.forEach((txt,j)=>{
+    const b=document.createElement('button');
+    b.className='pick';b.textContent=txt;
+    b.onclick=ev=>{ev.stopPropagation();choose(j,b);};
+    picker.appendChild(b);
+  });
+  // позиция возле пропуска
+  const r=gap.getBoundingClientRect();
+  picker.classList.add('on');
+  const pw=picker.offsetWidth;
+  let left=r.left+r.width/2-pw/2;
+  left=Math.max(8,Math.min(left,window.innerWidth-pw-8));
+  let top=r.bottom+8;
+  if(top+picker.offsetHeight>window.innerHeight) top=r.top-picker.offsetHeight-8;
+  picker.style.left=left+'px';
+  picker.style.top=top+'px';
+}
+
+function choose(j,btn){
+  const i=+curGap.dataset.i;
+  if(j===GAPS[i].correct){
+    curGap.textContent=GAPS[i].opts[j];
+    curGap.classList.add('filled');
+    picker.classList.remove('on');
+    chime();
+    // лёгкое свечение кристалла
+    const cr=document.getElementById('crystal');
+    cr.style.boxShadow='0 0 70px #4fa8ffaa,inset 0 0 80px #4fa8ff44';
+    setTimeout(()=>{if(!cr.classList.contains('healed'))cr.style.boxShadow='';},600);
+    filled++;
+    if(filled===GAPS.length)setTimeout(restore,600);
+  } else {
+    btn.classList.add('wrong');
+    setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+/* закрыть picker по клику мимо */
+document.addEventListener('click',e=>{
+  if(!picker.contains(e.target)&&!e.target.classList.contains('gap'))
+    picker.classList.remove('on');
+});
+
+/* ====== ФИНАЛ: ИСЦЕЛЕНИЕ ====== */
+function restore(){
+  document.getElementById('flash').classList.add('go');
+  document.getElementById('crystal').classList.add('healed');
+  healSound();
+  setTimeout(()=>{
+    document.getElementById('title').style.display='none';
+    document.getElementById('mem').style.display='none';
+    document.getElementById('restored').classList.add('on');
+  },1000);
+  // сигнал для Genially (переход дальше)
+  setTimeout(()=>window.parent.postMessage('memory-restored','*'),5000);
+}
+</script>
+</body>
+</html>
