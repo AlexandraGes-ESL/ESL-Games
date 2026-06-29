@@ -133,7 +133,7 @@
   <div class="card">
     <h2>Remember the Old Ways</h2>
     <p>The forest whispers... Tap each glowing mushroom and complete the sentence with <b>used to</b> or <b>didn't use to</b> to awaken your lost memories.</p>
-    <button class="btn" onclick="document.getElementById('intro').classList.remove('show')">Begin</button>
+    <button class="btn" onclick="initSound();document.getElementById('intro').classList.remove('show')">Begin</button>
   </div>
 </div>
 
@@ -168,6 +168,70 @@
 </div>
 
 <script>
+/* ====== 🔊 МАГИЧЕСКИЕ ЗВУКИ (Web Audio API) ====== */
+let audioCtx = null;
+function initSound(){
+  if(!audioCtx){
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(e){ console.warn('Audio not supported'); }
+  }
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+// базовый тон
+function tone(freq, start, dur, type='sine', vol=0.25){
+  if(!audioCtx) return;
+  const t = audioCtx.currentTime + start;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t);
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(vol, t + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.05);
+}
+
+// 🔔 открытие вопроса — мягкий «вжух»
+function sndOpen(){
+  initSound();
+  tone(523.25, 0, 0.5, 'triangle', 0.18);
+  tone(784, 0.08, 0.55, 'sine', 0.12);
+}
+
+// ✨ правильно — магическое арпеджио вверх
+function sndCorrect(){
+  initSound();
+  const notes=[523.25, 659.25, 784, 1046.5];
+  notes.forEach((f,i)=> tone(f, i*0.09, 0.6, 'triangle', 0.2));
+  tone(1568, 0.4, 0.7, 'sine', 0.1); // искра
+}
+
+// ❌ неправильно — низкий «бум»
+function sndWrong(){
+  initSound();
+  tone(180, 0, 0.35, 'sawtooth', 0.16);
+  tone(120, 0.05, 0.4, 'sine', 0.18);
+}
+
+// 🌟 финал блока 1 — торжественный аккорд
+function sndFinal(){
+  initSound();
+  [392, 523.25, 659.25].forEach((f)=> tone(f, 0, 1.4, 'triangle', 0.16));
+  tone(784, 0.2, 1.6, 'sine', 0.12);
+  tone(1046.5, 0.4, 1.4, 'sine', 0.08);
+}
+
+// 🎵 завершение всего — длинный магический звон
+function sndComplete(){
+  initSound();
+  const notes=[523.25, 659.25, 784, 1046.5, 1318.5];
+  notes.forEach((f,i)=> tone(f, i*0.12, 1.2, 'triangle', 0.18));
+  tone(2093, 0.7, 1.5, 'sine', 0.07);
+}
+
 /* ====== ССЫЛКИ НА ГРИБЫ ====== */
 const M = {
   1:{off:'https://i.yapx.ru/d5S5J.png', on:'https://i.yapx.ru/d5S5L.png'},
@@ -177,12 +241,12 @@ const M = {
 
 /* ====== ПОЗИЦИИ 6 ГРИБОВ (left/top в %, w в px) ====== */
 const positions = [
-  {left:17, top:80, w:98, pair:1},   // левый большой — опустить
+  {left:13, top:80, w:98, pair:1},   // левый большой — подвинут левее
   {left:38, top:78, w:95,  pair:2},   // нижний слева
-  {left:46, top:62, w:80,  pair:3},   // центр маленький — опустить
-  {left:58, top:78, w:150, pair:1},   // нижний центр — влево + вниз
-  {left:73, top:62, w:110, pair:2},   // правый — опустить
-  {left:87, top:78, w:90,  pair:3},   // дальний правый — опустить
+  {left:46, top:62, w:80,  pair:3},   // центр маленький
+  {left:58, top:78, w:150, pair:1},   // нижний центр
+  {left:73, top:62, w:110, pair:2},   // правый
+  {left:87, top:78, w:90,  pair:3},   // дальний правый
 ];
 
 /* ====== ВОПРОСЫ (грибы) ====== */
@@ -238,6 +302,7 @@ const qOpts=document.getElementById('qOpts');
 const qFb=document.getElementById('qFb');
 
 function openQuestion(i,el){
+  sndOpen();                       // 🔔 звук открытия
   const d=questions[i];
   qText.innerHTML=d.q; qFb.textContent=''; qOpts.innerHTML='';
   d.opts.forEach((opt,idx)=>{
@@ -251,15 +316,20 @@ function openQuestion(i,el){
 
 function checkAnswer(btn,idx,d,el){
   if(idx===d.correct){
+    sndCorrect();                  // ✨ правильно
     btn.classList.add('correct'); qFb.textContent=d.fb;
     [...qOpts.children].forEach(b=>b.disabled=true);
     setTimeout(()=>{
       qOverlay.classList.remove('show');
       el.classList.add('solved'); solved++;
       document.getElementById('counter').textContent=`🍄 ${solved} / 6`;
-      if(solved===6) setTimeout(()=>document.getElementById('final').classList.add('show'),700);
+      if(solved===6) setTimeout(()=>{
+        sndFinal();                // 🌟 финал блока 1
+        document.getElementById('final').classList.add('show');
+      },700);
     },1100);
   } else {
+    sndWrong();                    // ❌ неправильно
     btn.classList.add('wrong'); qFb.textContent='No... that is not how it was. Try again.';
     setTimeout(()=>btn.classList.remove('wrong'),500);
   }
@@ -268,6 +338,7 @@ qOverlay.onclick=e=>{ if(e.target===qOverlay) qOverlay.classList.remove('show');
 
 /* ====== ПЕРЕХОД В БЛОК 2 ====== */
 function openBlock2(){
+  sndOpen();
   document.getElementById('final').classList.remove('show');
   buildTimeline();
   document.getElementById('block2').classList.add('show');
@@ -286,15 +357,18 @@ function buildTimeline(){
       b.onclick=()=>{
         if(b.classList.contains('correct'))return;
         if(idx===d.correct){
+          sndCorrect();            // ✨ правильно
           b.classList.add('correct');
           [...opts.children].forEach(x=>x.disabled=true);
           tlSolved++;
-                    if(tlSolved===timeline.length)
+          if(tlSolved===timeline.length)
             setTimeout(()=>{
+              sndComplete();       // 🎵 завершение всего
               document.getElementById('tlDone').style.display='block';
               window.parent.postMessage('lesson_complete','*'); // сигнал Genially
             },400);
         } else {
+          sndWrong();              // ❌ неправильно
           b.classList.add('wrong');
           setTimeout(()=>b.classList.remove('wrong'),500);
         }
@@ -306,10 +380,7 @@ function buildTimeline(){
 }
 
 function finishAll(){
-  // сообщаем Genially что всё пройдено (для перехода на след. сцену, если нужно)
   window.parent.postMessage('lesson_complete','*');
-  // или раскомментируй для перехода на отдельный файл:
-  // window.location.href='next.html';
   alert('Well done! 🍄✨');
 }
 </script>
