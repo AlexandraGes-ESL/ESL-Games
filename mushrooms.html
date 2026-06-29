@@ -289,8 +289,11 @@ function buildTimeline(){
           b.classList.add('correct');
           [...opts.children].forEach(x=>x.disabled=true);
           tlSolved++;
-          if(tlSolved===timeline.length)
-            setTimeout(()=>document.getElementById('tlDone').style.display='block',400);
+                    if(tlSolved===timeline.length)
+            setTimeout(()=>{
+              document.getElementById('tlDone').style.display='block';
+              window.parent.postMessage('lesson_complete','*'); // сигнал Genially
+            },400);
         } else {
           b.classList.add('wrong');
           setTimeout(()=>b.classList.remove('wrong'),500);
