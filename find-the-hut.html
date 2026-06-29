@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baba Yaga&#39;s Path</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{font-family:sans-serif;overflow:hidden;width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;}
+#game{position:relative;width:100%;height:100%;max-width:calc(100vh * 16 / 9);max-height:calc(100vw * 9 / 16);aspect-ratio:16/9;overflow:hidden;margin:auto;}
+#bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+.totem{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:4;}
+.totem img{width:100%;height:100%;object-fit:contain;transition:filter .3s;}
+.totem.active img{filter:drop-shadow(0 0 16px #f0c040);animation:pulse 2s infinite;}
+.totem.done img{filter:drop-shadow(0 0 12px #f0c040) brightness(1.2);}
+.totem.locked{opacity:.6;cursor:default;}
+@keyframes pulse{0%,100%{filter:drop-shadow(0 0 8px #f0c040);}50%{filter:drop-shadow(0 0 28px #f0c040);}}
+#hero{position:absolute;transform:translate(-50%,-50%);z-index:5;transition:left 1.2s ease,top 1.2s ease,width 1.2s ease,height 1.2s ease;pointer-events:none;}
+#hero img{width:100%;height:100%;object-fit:contain;}
+#hut{position:absolute;transform:translate(-50%,-50%);z-index:3;pointer-events:none;}
+#hut img{width:100%;height:100%;object-fit:contain;}
+#path{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;}
+#hud{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:20px;background:rgba(0,0,0,.6);border:1px solid #f0c040;border-radius:40px;padding:8px 20px;align-items:center;}
+.hud-g{display:flex;gap:5px;align-items:center;}
+.hud-l{color:#f0c040;font-size:12px;}
+.hud-g img{width:22px;height:22px;object-fit:contain;}
+.hud-g img.off{opacity:.2;}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s;backdrop-filter:blur(4px);}
+#overlay.on{opacity:1;pointer-events:all;}
+#modal{background:#0a190f;border:1px solid #f0c040;border-radius:18px;padding:32px;max-width:560px;width:90%;color:#fff;}
+#modal.shake{animation:shake .5s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);}}
+#m-badge{display:inline-block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#0a190f;background:#f0c040;border-radius:20px;padding:3px 12px;margin-bottom:14px;}
+#m-q{font-size:17px;line-height:1.6;margin-bottom:20px;}
+.opt{display:block;width:100%;background:rgba(255,255,255,.05);border:1px solid #f0c04055;border-radius:10px;color:#e8e0c8;font-size:14px;padding:12px 18px;margin-bottom:8px;cursor:pointer;text-align:left;transition:.2s;}
+.opt:hover:not(:disabled){background:#f0c04022;transform:translateX(5px);}
+.opt.correct{background:#4caf7d33;border-color:#4caf7d;}
+.opt.wrong{background:#c0392b33;border-color:#c0392b;}
+.opt:disabled{cursor:default;}
+#m-input{width:100%;background:rgba(255,255,255,.06);border:1px solid #f0c04055;border-radius:10px;color:#fff;font-size:15px;padding:12px 18px;margin-bottom:10px;outline:none;}
+#m-input.correct{border-color:#4caf7d;}
+#m-input.wrong{border-color:#c0392b;}
+.m-hint{font-size:12px;color:rgba(255,255,255,.4);font-style:italic;margin-bottom:10px;}
+.btn-c{background:#f0c04022;border:1px solid #f0c040;border-radius:12px;color:#f0c040;font-size:13px;letter-spacing:1px;padding:10px 24px;cursor:pointer;text-transform:uppercase;}
+.btn-c:hover{background:#f0c04044;}
+#match{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mcol{display:flex;flex-direction:column;gap:8px;}
+.mbtn{background:rgba(255,255,255,.05);border:1px solid #f0c04033;border-radius:8px;color:#e0d8c0;font-size:12px;padding:10px;cursor:pointer;text-align:left;transition:.2s;}
+.mbtn.sel{border-color:#f0c040;background:#f0c04022;}
+.mbtn.ok{border-color:#4caf7d;background:#4caf7d22;pointer-events:none;}
+.mbtn.bad{border-color:#c0392b;background:#c0392b22;}
+#feedback{margin-top:14px;text-align:center;font-size:13px;min-height:18px;}
+#feedback.correct{color:#4caf7d;}
+#feedback.wrong{color:#c0392b;}
+#continue{display:none;margin:18px auto 0;}
+#end{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;text-align:center;}
+#end.on{display:flex;}
+#end-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+#end-ov{position:absolute;inset:0;background:rgba(0,0,0,.65);}
+#end-box{position:relative;z-index:2;background:#0a190f;border:1px solid #f0c040;border-radius:20px;padding:44px;max-width:480px;width:90%;}
+#end-title{font-size:28px;color:#f0c040;margin-bottom:12px;}
+#end-sub{color:rgba(255,255,255,.7);font-size:14px;line-height:1.6;margin-bottom:24px;white-space:pre-line;}
+</style>
+</head>
+<body>
+<div id="game">
+  <img id="bg" src="https://i.yapx.ru/d3rMS.jpg" alt="">
+  <svg id="path" viewBox="0 0 1200 675" preserveAspectRatio="none">
+    <path id="trail" d="" fill="none" stroke="#f0c04088" stroke-width="4" stroke-dasharray="10,7"/>
+  </svg>
+  <div id="totems"></div>
+  <div id="hero"><img id="hero-img" src="https://i.yapx.ru/d3rMD.png" alt=""></div>
+  <div id="hut"><img src="https://i.yapx.ru/d39Qz.png" alt=""></div>
+  <div id="hud">
+    <div class="hud-g"><span class="hud-l">Lives</span><div id="lives"></div></div>
+    <div class="hud-g"><span class="hud-l">Feathers</span><div id="feathers"></div></div>
+  </div>
+</div>
+<div id="overlay"><div id="modal">
+  <div id="m-badge"></div><div id="m-q"></div>
+  <div id="m-opts" style="display:none"></div>
+  <div id="m-fill" style="display:none">
+    <input id="m-input" placeholder="Type answer..."><div class="m-hint" id="m-hint"></div>
+    <button class="btn-c" id="m-submit">Check</button>
+  </div>
+  <div id="match" style="display:none">
+    <div class="mcol" id="mleft"></div><div class="mcol" id="mright"></div>
+  </div>
+  <div id="feedback"></div>
+  <button class="btn-c" id="continue">Continue</button>
+</div></div>
+<div id="end">
+  <img id="end-bg" src="" alt=""><div id="end-ov"></div>
+  <div id="end-box"><div id="end-title"></div><div id="end-sub"></div>
+    <button class="btn-c" id="restart">Play Again</button></div>
+</div>
+<script>
+const SET={"title":"Baba Yaga's Path","totemCount":8,"lives":3,"finishMsg":"You reached Baba Yaga's hut! Well done! 🏡","imgBg":"https://i.yapx.ru/d3rMS.jpg","imgTotem":"https://i.yapx.ru/d3rME.png","imgTotemDone":"https://i.yapx.ru/d3rMF.png","imgHero":"https://i.yapx.ru/d3rMD.png","imgHeroSide":"https://i.yapx.ru/d3rMB.png","imgHut":"https://i.yapx.ru/d39Qz.png","imgLife":"https://i.yapx.ru/d3rMG.png","imgFeather":"https://i.yapx.ru/d3rMH.png","imgVictory":"https://i.yapx.ru/d3rMA.png","imgGameOver":"","cardBg":"#0a190f","cardBorder":"#f0c040","correctColor":"#4caf7d","wrongColor":"#c0392b","showNumbers":true,"showPath":true,"snapGrid":false,"hutX":1017,"hutY":91,"hutSize":160,"heroSize":250,"heroOffsetX":4,"heroOffsetY":2,"heroSideStep":3};
+const POS=[{"x":109,"y":502,"size":150,"rot":0,"flipH":false,"flipV":false},{"x":311,"y":406,"size":125,"rot":0,"flipH":false,"flipV":false},{"x":555,"y":420,"size":135,"rot":0,"flipH":false,"flipV":false},{"x":729,"y":418,"size":115,"rot":0,"flipH":false,"flipV":false},{"x":608,"y":329,"size":100,"rot":0,"flipH":false,"flipV":false},{"x":736,"y":298,"size":90,"rot":0,"flipH":false,"flipV":false},{"x":979,"y":322,"size":100,"rot":0,"flipH":false,"flipV":false},{"x":798,"y":189,"size":85,"rot":0,"flipH":false,"flipV":false}];
+const TOT=[
+{"type":"quiz","badge":"Used to","question":"Choose the correct form: \"When I was a child, I _____ live in a small village near the dark forest.\"","options":["used to","use to","used","was used to"],"correct":0,"answer":"","alts":"","hint":"","pairs":[["",""],["",""],["",""],["",""]]},
+
+{"type":"quiz","badge":"Past Cont.","question":"Choose the correct form: \"While I _____ through the woods, I heard a strange whisper.\"","options":["was walking","walked","used to walk","had walked"],"correct":0,"answer":"","alts":"","hint":"","pairs":[["",""],["",""],["",""],["",""]]},
+
+{"type":"quiz","badge":"Past Perfect","question":"Choose the correct form: \"By the time I reached the hut, the witch _____ already left.\"","options":["had","has","was","used to"],"correct":0,"answer":"","alts":"","hint":"","pairs":[["",""],["",""],["",""],["",""]]},
+
+{"type":"fillin","badge":"Fill in","question":"Complete with PAST CONTINUOUS + PAST SIMPLE: \"I _____ (cook) dinner when the lights suddenly _____ (go) out.\"","options":["","","",""],"correct":0,"answer":"was cooking, went","alts":"was cooking went","hint":"Long background action (was cooking) interrupted by a short one (went)","pairs":[["",""],["",""],["",""],["",""]]},
+
+{"type":"quiz","badge":"Interrupted","question":"Choose the correct sentence (background action + interruption):","options":["I was sleeping when the phone rang.","I slept when the phone was ringing.","I used to sleep when the phone rang.","I had slept when the phone rang."],"correct":0,"answer":"","alts":"","hint":"","pairs":[["",""],["",""],["",""],["",""]]},
+
+{"type":"fillin","badge":"Fill in","question":"Complete with PAST PERFECT: \"She couldn't enter because she _____ (lose) the magic key.\"","options":["","","",""],"correct":0,"answer":"had lost","alts":"","hint":"An action completed BEFORE another past action → Past Perfect (had + V3)","pairs":[["",""],["",""],["",""],["",""]]},
+
+{"type":"quiz","badge":"Used to","question":"Choose the correct negative: \"She _____ like the forest, but now she feels safe there.\"","options":["didn't use to","didn't used to","don't use to","wasn't use to"],"correct":0,"answer":"","alts":"","hint":"","pairs":[["",""],["",""],["",""],["",""]]},
+
+{"type":"match","badge":"Match","question":"Match each sentence with the correct rule:","options":["","","",""],"correct":0,"answer":"","alts":"","hint":"","pairs":[
+  ["I used to play in these woods as a kid.","Past habit (not now)"],
+  ["I was walking home when it started to rain.","Action in progress, interrupted"],
+  ["She had finished the potion before I arrived.","Earlier action before another past action"],
+  ["They reached the castle at midnight.","One finished action in the past"]
+]}
+];
+const HUT={x:SET.hutX,y:SET.hutY,size:SET.hutSize};
+const $=s=>document.querySelector(s);
+const AudioCtx=window.AudioContext||window.webkitAudioContext;
+let audioCtx=null;
+function ensureAudio(){if(!audioCtx)audioCtx=new AudioCtx();if(audioCtx.state==='suspended')audioCtx.resume();}
+const SFX={
+  correct(){ensureAudio();const notes=[523.25,659.25,783.99,1046.5];
+    notes.forEach((f,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);o.type='sine';
+      o.frequency.setValueAtTime(f,audioCtx.currentTime+i*0.1);
+      g.gain.setValueAtTime(0,audioCtx.currentTime+i*0.1);
+      g.gain.linearRampToValueAtTime(0.18,audioCtx.currentTime+i*0.1+0.05);
+      g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+i*0.1+0.5);
+      o.start(audioCtx.currentTime+i*0.1);o.stop(audioCtx.currentTime+i*0.1+0.5);});},
+  wrong(){ensureAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain(),d=audioCtx.createWaveShaper();
+    const c=new Float32Array(256);for(let i=0;i<256;i++){const x=(i*2)/256-1;c[i]=(Math.PI+200)*x/(Math.PI+200*Math.abs(x));}
+    d.curve=c;o.connect(d);d.connect(g);g.connect(audioCtx.destination);o.type='sawtooth';
+    o.frequency.setValueAtTime(180,audioCtx.currentTime);
+    o.frequency.linearRampToValueAtTime(120,audioCtx.currentTime+0.3);
+    g.gain.setValueAtTime(0.2,audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.5);
+    o.start(audioCtx.currentTime);o.stop(audioCtx.currentTime+0.5);},
+  totemClick(){ensureAudio();const fs=[440,554.37,659.25];
+    fs.forEach((f,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);o.type='triangle';
+      o.frequency.setValueAtTime(f,audioCtx.currentTime+i*0.06);
+      g.gain.setValueAtTime(0.15,audioCtx.currentTime+i*0.06);
+      g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+i*0.06+0.8);
+      o.start(audioCtx.currentTime+i*0.06);o.stop(audioCtx.currentTime+i*0.06+0.8);});},
+  footsteps(duration=1200){ensureAudio();const steps=Math.floor(duration/300);
+    for(let i=0;i<steps;i++){const buf=audioCtx.createBuffer(1,audioCtx.sampleRate*0.08,audioCtx.sampleRate);
+      const data=buf.getChannelData(0);
+      for(let j=0;j<data.length;j++){data[j]=(Math.random()*2-1)*Math.pow(1-j/data.length,3);}
+      const src=audioCtx.createBufferSource(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();
+      f.type='lowpass';f.frequency.value=300;src.buffer=buf;
+      src.connect(f);f.connect(g);g.connect(audioCtx.destination);
+      g.gain.setValueAtTime(0.25,audioCtx.currentTime+i*0.3);
+      src.start(audioCtx.currentTime+i*0.3);}},
+  victory(){ensureAudio();const mel=[{freq:523.25,t:0},{freq:659.25,t:0.15},{freq:783.99,t:0.30},
+    {freq:1046.5,t:0.45},{freq:1318.5,t:0.60},{freq:1567.98,t:0.80}];
+    mel.forEach(n=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);o.type='sine';
+      o.frequency.setValueAtTime(n.freq,audioCtx.currentTime+n.t);
+      g.gain.setValueAtTime(0,audioCtx.currentTime+n.t);
+      g.gain.linearRampToValueAtTime(0.2,audioCtx.currentTime+n.t+0.05);
+      g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+n.t+0.7);
+      o.start(audioCtx.currentTime+n.t);o.stop(audioCtx.currentTime+n.t+0.7);});},
+  gameOver(){ensureAudio();const mel=[{freq:220,t:0},{freq:185,t:0.2},{freq:155.56,t:0.4},{freq:130.81,t:0.6}];
+    mel.forEach(n=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);o.type='sawtooth';
+      o.frequency.setValueAtTime(n.freq,audioCtx.currentTime+n.t);
+      g.gain.setValueAtTime(0.15,audioCtx.currentTime+n.t);
+      g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+n.t+0.4);
+      o.start(audioCtx.currentTime+n.t);o.stop(audioCtx.currentTime+n.t+0.4);});},
+  modalOpen(){ensureAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.connect(g);g.connect(audioCtx.destination);o.type='sine';
+    o.frequency.setValueAtTime(800,audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(400,audioCtx.currentTime+0.25);
+    g.gain.setValueAtTime(0.1,audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.25);
+    o.start(audioCtx.currentTime);o.stop(audioCtx.currentTime+0.25);},
+  matchPair(){ensureAudio();[600,900].forEach((f,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.connect(g);g.connect(audioCtx.destination);o.type='triangle';
+    o.frequency.setValueAtTime(f,audioCtx.currentTime+i*0.12);
+    g.gain.setValueAtTime(0.14,audioCtx.currentTime+i*0.12);
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+i*0.12+0.35);
+    o.start(audioCtx.currentTime+i*0.12);o.stop(audioCtx.currentTime+i*0.12+0.35);});}
+};
+let st={qi:0,lives:SET.lives,feathers:0,cur:0,done:[],ms:{}};
+function pct(g,axis){return axis==='x'?(g/1200*100):(g/675*100);}
+function buildTotems(){
+  const c=$('#totems');c.innerHTML='';
+  POS.forEach((p,i)=>{
+    const d=document.createElement('div');d.className='totem locked';d.id='t'+i;
+    d.style.left=pct(p.x,'x')+'%';d.style.top=pct(p.y,'y')+'%';
+    d.style.width=(p.size/1200*100)+'%';d.style.height=(p.size/675*100)+'%';
+    const fl='scaleX('+(p.flipH?-1:1)+') scaleY('+(p.flipV?-1:1)+') rotate('+p.rot+'deg)';
+    d.innerHTML='<img src="'+SET.imgTotem+'" style="transform:'+fl+'">';
+    c.appendChild(d);
+  });
+  upd();
+}
+function upd(){
+  POS.forEach((p,i)=>{const el=$('#t'+i);if(!el)return;const img=el.querySelector('img');
+    if(st.done.includes(i)){el.className='totem done';img.src=SET.imgTotemDone||SET.imgTotem;}
+    else if(i===st.cur){el.className='totem active';img.src=SET.imgTotem;}
+    else{el.className='totem locked';img.src=SET.imgTotem;}});
+}
+function placeHut(){const h=$('#hut');h.style.left=pct(HUT.x,'x')+'%';h.style.top=pct(HUT.y,'y')+'%';
+  h.style.width=(HUT.size/1200*100)+'%';h.style.height=(HUT.size/675*100)+'%';}
+function moveHero(x,y,idx,cb){const h=$('#hero'),img=$('#hero-img');
+  img.src=(idx===SET.heroSideStep&&SET.imgHeroSide)?SET.imgHeroSide:SET.imgHero;
+  const totalSteps=POS.length;
+  const stepIdx=(idx<0)?totalSteps:idx;
+  const minScale=SET.heroMinScale!=null?SET.heroMinScale:0.6;
+  const scale=1-(1-minScale)*(stepIdx/totalSteps);
+  const size=SET.heroSize*scale;
+  h.style.width=(size/1200*100)+'%';h.style.height=(size/675*100)+'%';
+  h.style.left=(pct(x,'x')+SET.heroOffsetX)+'%';h.style.top=(pct(y,'y')+SET.heroOffsetY)+'%';
+  SFX.footsteps(1200);
+  setTimeout(()=>{img.src=SET.imgHero;if(cb)cb();},1300);}
+function hud(){
+  const l=$('#lives');l.innerHTML='';
+  for(let i=0;i<SET.lives;i++){const im=document.createElement('img');im.src=SET.imgLife;
+    if(i>=st.lives)im.className='off';l.appendChild(im);}
+  const f=$('#feathers');f.innerHTML='';
+  for(let i=0;i<TOT.length;i++){const im=document.createElement('img');im.src=SET.imgFeather;
+    if(i>=st.feathers)im.className='off';f.appendChild(im);}
+}
+function trail(){
+  const pts=POS.map(p=>({x:p.x,y:p.y}));
+  pts.push({x:HUT.x,y:HUT.y});
+  if(pts.length<2){$('#trail').setAttribute('d','');return;}
+  if(pts.length===2){
+    $('#trail').setAttribute('d','M '+pts[0].x+' '+pts[0].y+' L '+pts[1].x+' '+pts[1].y);
+    return;
+  }
+  const k=SET.pathTension!=null?SET.pathTension:0.5;
+  let d='M '+pts[0].x+' '+pts[0].y;
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[i-1]||pts[i];
+    const p1=pts[i];
+    const p2=pts[i+1];
+    const p3=pts[i+2]||p2;
+    const c1x=p1.x+(p2.x-p0.x)/6*k*2;
+    const c1y=p1.y+(p2.y-p0.y)/6*k*2;
+    const c2x=p2.x-(p3.x-p1.x)/6*k*2;
+    const c2y=p2.y-(p3.y-p1.y)/6*k*2;
+    d+=' C '+c1x+' '+c1y+' '+c2x+' '+c2y+' '+p2.x+' '+p2.y;
+  }
+  $('#trail').setAttribute('d',d);
+}
+$('#totems').addEventListener('click',e=>{
+  const t=e.target.closest('.totem');if(!t)return;
+  const i=+t.id.slice(1);if(i!==st.cur||(st.lives<=0&&SET.lives>0))return;openModal();});
+function openModal(){
+  const q=TOT[st.qi];
+  SFX.totemClick();
+  $('#m-badge').textContent=q.badge||q.type;$('#m-q').textContent=q.question;
+  $('#m-opts').style.display='none';$('#m-fill').style.display='none';$('#match').style.display='none';
+  $('#feedback').textContent='';$('#feedback').className='';$('#continue').style.display='none';
+  st.ms={sl:null,sr:null,matched:[],pen:false};
+  if(q.type==='quiz')renderQuiz(q);
+  if(q.type==='fillin')renderFill(q);
+  if(q.type==='match')renderMatch(q);
+  $('#overlay').classList.add('on');
+  SFX.modalOpen();
+}
+function renderQuiz(q){
+  const c=$('#m-opts');c.style.display='block';c.innerHTML='';
+  q.options.filter(o=>o).forEach((o,i)=>{const b=document.createElement('button');
+    b.className='opt';b.textContent=o;b.onclick=()=>quizAns(i,q.correct,b);c.appendChild(b);});
+}
+function quizAns(ch,cor,btn){const bs=$('#m-opts').querySelectorAll('.opt');
+  bs.forEach(b=>b.disabled=true);
+  if(ch===cor){btn.classList.add('correct');correct();}
+  else{btn.classList.add('wrong');if(bs[cor])bs[cor].classList.add('correct');wrong(false);}}
+function renderFill(q){
+  $('#m-fill').style.display='block';const inp=$('#m-input');inp.value='';inp.className='';inp.disabled=false;
+  $('#m-hint').textContent=q.hint||'';
+  const check=()=>{const v=inp.value.trim().toLowerCase();
+    const ok=[q.answer,...(q.alts||'').split(',')].map(s=>s.trim().toLowerCase()).filter(s=>s);
+    inp.disabled=true;$('#m-submit').disabled=true;
+    if(ok.includes(v)){inp.classList.add('correct');correct();}
+    else{inp.classList.add('wrong');wrong(true,()=>{inp.disabled=false;$('#m-submit').disabled=false;
+      inp.className='';inp.value='';inp.focus();});}};
+  $('#m-submit').onclick=check;inp.onkeydown=e=>{if(e.key==='Enter')check();};
+}
+function renderMatch(q){
+  $('#match').style.display='grid';const L=$('#mleft'),R=$('#mright');L.innerHTML='';R.innerHTML='';
+  const pairs=q.pairs.filter(p=>p[0]&&p[1]);
+  const right=pairs.map((p,i)=>({t:p[1],pi:i}));
+  for(let i=right.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[right[i],right[j]]=[right[j],right[i]];}
+  pairs.forEach((p,i)=>{const b=document.createElement('button');b.className='mbtn';b.textContent=p[0];
+    b.dataset.pi=i;b.onclick=()=>mLeft(i,pairs.length);L.appendChild(b);});
+  right.forEach(it=>{const b=document.createElement('button');b.className='mbtn';b.textContent=it.t;
+    b.dataset.pi=it.pi;b.onclick=()=>mRight(it.pi,pairs.length);R.appendChild(b);});
+}
+function mBtn(side,pi){return (side==='l'?$('#mleft'):$('#mright')).querySelector('[data-pi="'+pi+'"]');}
+function mLeft(pi,total){if(st.ms.matched.includes(pi))return;
+  if(st.ms.sl!=null){const p=mBtn('l',st.ms.sl);if(p)p.classList.remove('sel');}
+  st.ms.sl=pi;const b=mBtn('l',pi);if(b)b.classList.add('sel');if(st.ms.sr!=null)mCheck(total);}
+function mRight(pi,total){if(st.ms.matched.includes(pi))return;
+  if(st.ms.sr!=null){const p=mBtn('r',st.ms.sr);if(p)p.classList.remove('sel');}
+  st.ms.sr=pi;const b=mBtn('r',pi);if(b)b.classList.add('sel');if(st.ms.sl!=null)mCheck(total);}
+function mCheck(total){const l=st.ms.sl,r=st.ms.sr,lb=mBtn('l',l),rb=mBtn('r',r);
+  if(l===r){lb.className='mbtn ok';rb.className='mbtn ok';st.ms.matched.push(l);st.ms.sl=null;st.ms.sr=null;SFX.matchPair();
+    if(st.ms.matched.length===total){if(!st.ms.pen)st.feathers++;hud();correct();}}
+  else{lb.classList.add('bad');rb.classList.add('bad');
+    setTimeout(()=>{lb.classList.remove('bad','sel');rb.classList.remove('bad','sel');},700);
+    st.ms.sl=null;st.ms.sr=null;if(!st.ms.pen){st.ms.pen=true;loseLife();}}}
+function correct(){$('#feedback').textContent='✦ Well done!';$('#feedback').className='correct';SFX.correct();
+  if(!st.done.includes(st.cur)){st.feathers++;}done();}
+function wrong(retry,cb){$('#modal').classList.add('shake');SFX.wrong();
+  setTimeout(()=>$('#modal').classList.remove('shake'),500);loseLife();
+  if(st.lives<=0&&SET.lives>0)return;
+  if(retry&&cb){$('#feedback').textContent='✦ Try again';$('#feedback').className='wrong';
+    setTimeout(()=>{$('#feedback').textContent='';cb();},1000);}
+  else{$('#feedback').textContent='✦ Correct answer highlighted';$('#feedback').className='wrong';done();}}
+function done(){if(!st.done.includes(st.cur))st.done.push(st.cur);upd();$('#continue').style.display='block';}
+function loseLife(){if(SET.lives>0){st.lives=Math.max(0,st.lives-1);hud();
+  if(st.lives<=0)setTimeout(gameOver,500);}}
+$('#continue').onclick=()=>{$('#overlay').classList.remove('on');
+  const next=st.qi+1,nt=st.cur+1;
+  if(next>=TOT.length){moveHero(HUT.x,HUT.y,-1,()=>setTimeout(victory,500));}
+  else{const p=POS[nt];moveHero(p.x,p.y,nt,()=>{st.qi=next;st.cur=nt;upd();hud();});}};
+function victory(){$('#overlay').classList.remove('on');SFX.victory();$('#end-bg').src=SET.imgVictory||SET.imgBg;
+  $('#end-title').textContent='You Reached the Hut!';
+  $('#end-sub').textContent=SET.finishMsg+'\n\nFeathers: '+st.feathers;$('#end').classList.add('on');}
+function gameOver(){$('#overlay').classList.remove('on');SFX.gameOver();$('#end-bg').src=SET.imgGameOver||SET.imgBg;
+  $('#end-title').textContent='The Forest Claims You...';
+  $('#end-sub').textContent='You ran out of lives.\n\nFeathers: '+st.feathers;$('#end').classList.add('on');}
+$('#restart').onclick=()=>{st={qi:0,lives:SET.lives,feathers:0,cur:0,done:[],ms:{}};
+  $('#end').classList.remove('on');initGame();};
+function initGame(){buildTotems();placeHut();trail();hud();
+  const p=POS[0];const h=$('#hero');h.style.transition='none';
+  h.style.left=(pct(p.x,'x')+SET.heroOffsetX)+'%';h.style.top=(pct(p.y,'y')+SET.heroOffsetY)+'%';
+  h.style.width=(SET.heroSize/1200*100)+'%';h.style.height=(SET.heroSize/675*100)+'%';
+  $('#hero-img').src=SET.imgHero;requestAnimationFrame(()=>h.style.transition='');}
+initGame();
+</script>
+</body>
+</html>
+
+нужно прописать внутри вопросы по теме: past simple vs used to
