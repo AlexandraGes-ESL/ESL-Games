@@ -18,8 +18,8 @@
     background:#0a0d12 url('https://i.yapx.ru/d5YPH.png') center/cover no-repeat;
   }
 
-  #waterZone {
-    position:absolute; left:50%; top:46%;
+    #waterZone {
+    position:absolute; left:50%; top:53%;   /* было 46% — опустили */
     transform:translate(-50%,-50%);
     width:42vw; max-width:620px; min-width:300px;
     text-align:center; z-index:4;
@@ -33,7 +33,7 @@
   #waterText b { color:#bcd2ff; font-style:normal; }
 
   .ripple {
-    position:absolute; left:50%; top:50%;
+    position:absolute; left:50%; top:60%;   /* было 50% — чуть ниже текста */
     width:30px; height:24px; border-radius:50%;
     border:2px solid rgba(160,180,255,.7);
     transform:translate(-50%,-50%) scale(0);
@@ -45,7 +45,7 @@
     100%{ transform:translate(-50%,-50%) scaleX(22) scaleY(16); opacity:0; }
   }
   .flash {
-    position:absolute; left:50%; top:50%;
+    position:absolute; left:50%; top:60%;   /* было 50% — чуть ниже текста */
     width:46vw; height:30vh; border-radius:50%;
     transform:translate(-50%,-50%);
     background:radial-gradient(ellipse, rgba(170,210,255,.6), transparent 70%);
