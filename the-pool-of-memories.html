@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Pool of Memories</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:100%; height:100%; overflow:hidden; font-family:'Georgia',serif; background:transparent; }
+
+  #stage { position:relative; width:100vw; height:100vh; background:transparent; }
+
+  /* ===== ОМУТ (водоём) ===== */
+  #pool {
+    position:absolute; left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    width:min(48vw,440px); aspect-ratio:1/1;
+    border-radius:50%;
+    background:radial-gradient(circle at 50% 45%, #1b2a44 0%, #0c1426 55%, #060a16 100%);
+    box-shadow:0 0 60px rgba(90,120,255,.35), inset 0 0 60px rgba(0,0,0,.8);
+    z-index:4;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  #pool::before { /* лёгкое свечение поверхности */
+    content:''; position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle at 50% 40%, rgba(120,160,255,.18), transparent 60%);
+    animation:shimmer 6s ease-in-out infinite;
+  }
+  @keyframes shimmer { 0%,100%{opacity:.5;} 50%{opacity:.9;} }
+
+  /* текст-следствие на воде */
+  #waterText {
+    position:relative; z-index:3;
+    color:#dfe9ff; font-size:clamp(.85rem,1.4vw,1.15rem);
+    text-align:center; line-height:1.5; padding:0 30px;
+    text-shadow:0 0 12px rgba(80,120,255,.9), 0 2px 6px #000;
+    font-style:italic; max-width:90%;
+  }
+  #waterText b { color:#a9c7ff; font-style:normal; }
+
+  /* круги по воде (ripples) */
+  .ripple {
+    position:absolute; left:50%; top:50%;
+    width:20px; height:20px; border-radius:50%;
+    border:2px solid rgba(150,200,255,.8);
+    transform:translate(-50%,-50%) scale(0);
+    pointer-events:none; z-index:5;
+    animation:rippleAnim 1.6s ease-out forwards;
+  }
+  @keyframes rippleAnim {
+    0%{ transform:translate(-50%,-50%) scale(0); opacity:.9; }
+    100%{ transform:translate(-50%,-50%) scale(18); opacity:0; }
+  }
+  .pool-flash {
+    position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle, rgba(180,220,255,.7), transparent 70%);
+    z-index:6; pointer-events:none;
+    animation:flashAnim .9s ease-out forwards;
+  }
+  @keyframes flashAnim { 0%{opacity:.9;} 100%{opacity:0;} }
+
+  /* ===== РУНЫ ===== */
+  #runes {
+    position:absolute; left:0; right:0; bottom:6%;
+    display:flex; justify-content:center; flex-wrap:wrap;
+    gap:18px; z-index:8; padding:0 20px;
+  }
+  .rune {
+    position:relative;
+    min-width:150px; max-width:230px;
+    padding:14px 18px;
+    background:linear-gradient(160deg,#2a2238,#171022);
+    border:2px solid #7a6cae;
+    border-radius:14px;
+    color:#e9e2ff; font-size:.98rem; text-align:center;
+    cursor:pointer; user-select:none;
+    box-shadow:0 0 14px rgba(150,120,255,.4);
+    transition:transform .25s, box-shadow .25s, opacity .4s;
+    animation:runeGlow 2.6s ease-in-out infinite;
+  }
+  @keyframes runeGlow {
+    0%,100%{ box-shadow:0 0 12px rgba(150,120,255,.35); }
+    50%{ box-shadow:0 0 22px rgba(170,150,255,.75); }
+  }
+  .rune:hover { transform:translateY(-6px) scale(1.05); border-color:#bda9ff; }
+  .rune.sink { animation:sink 1s ease-in forwards; }
+  @keyframes sink {
+    0%{ transform:translateY(0) scale(1); opacity:1; }
+    100%{ transform:translateY(-340px) scale(.3) rotate(20deg); opacity:0; }
+  }
+  .rune.wrong { animation:runeShake .4s; border-color:#ff6b6b; }
+  @keyframes runeShake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);} }
+
+  /* счётчик */
+  #pCounter {
+    position:fixed; top:16px; left:50%; transform:translateX(-50%);
+    background:rgba(18,14,30,.8); border:1px solid #7a6cae;
+    color:#d7ccff; padding:8px 20px; border-radius:20px;
+    font-size:1rem; z-index:30; letter-spacing:1px;
+  }
+
+  /* overlay (intro / final) */
+  .overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.8);
+    display:none; align-items:center; justify-content:center; z-index:50;
+  }
+  .overlay.show { display:flex; }
+  .card {
+    background:linear-gradient(160deg,#211a32,#120c1e);
+    border:2px solid #8a78c4; border-radius:18px;
+    padding:30px 34px; max-width:600px; width:90%;
+    box-shadow:0 0 40px rgba(150,120,255,.4);
+    color:#ece6ff; text-align:center;
+  }
+  .card h2 { color:#bda9ff; font-size:1.5rem; margin-bottom:14px; }
+  .card p { font-size:1.08rem; line-height:1.6; margin-bottom:16px; }
+  .card .ex {
+    font-size:.98rem; font-style:italic; color:#c9bdf0;
+    background:rgba(120,100,180,.15); border-radius:10px;
+    padding:10px 14px; margin-bottom:22px;
+  }
+  .card .ex b { color:#9ff09f; font-style:normal; }
+  .card .ex .a1 { color:#ffcf6b; font-style:normal; }
+  .card .ex .a2 { color:#7fd0ff; font-style:normal; }
+  .btn {
+    background:#5a4a8a; border:2px solid #bda9ff; color:#fff;
+    padding:12px 28px; font-size:1.05rem; border-radius:30px;
+    cursor:pointer; font-family:inherit; transition:all .2s;
+  }
+  .btn:hover { background:#6e5ca0; transform:scale(1.05); }
+
+  /* ФИНАЛ — отражение Кощея */
+  #poolFinal .card { border-color:#9b3fff; box-shadow:0 0 50px rgba(155,63,255,.5); }
+  #koschei {
+    width:120px; height:120px; margin:0 auto 16px;
+    border-radius:50%;
+    background:radial-gradient(circle at 50% 40%, #2a0f3a, #060206);
+    border:2px solid #9b3fff;
+    box-shadow:0 0 30px rgba(155,63,255,.6);
+    display:flex; align-items:center; justify-content:center;
+    font-size:3rem; animation:koscheiPulse 2.5s ease-in-out infinite;
+  }
+  @keyframes koscheiPulse { 0%,100%{box-shadow:0 0 25px rgba(155,63,255,.5);} 50%{box-shadow:0 0 45px rgba(180,80,255,.9);} }
+  #poolFinal p { color:#e7d6ff; }
+  #poolFinal .quote { font-style:italic; color:#ffd86b; font-size:1.15rem; }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="pCounter">🔮 0 / 4</div>
+
+  <div id="pool">
+    <div id="waterText"></div>
+  </div>
+
+  <div id="runes"></div>
+</div>
+
+<!-- INTRO (теория от Лешего) -->
+<div id="pIntro" class="overlay show">
+  <div class="card">
+    <h2>The Pool of Memories</h2>
+    <p>"You remember <i>what</i> happened, but you forgot <i>why</i>. Restore the chain of time."</p>
+    <p>To see the truth, use <b>Past Perfect</b> (<b>had + V3</b>) for an action that happened <b>BEFORE</b> another past action.</p>
+    <div class="ex">
+      The river was dead <span class="a2">(Action 2)</span> because the witch <span class="a1">had cursed</span> it <span class="a1">(Action 1)</span>.
+    </div>
+    <button class="btn" onclick="initSound();startPool()">Look into the water →</button>
+  </div>
+</div>
+
+<!-- ФИНАЛ блока -->
+<div id="poolFinal" class="overlay">
+  <div class="card">
+    <div id="koschei">💀</div>
+    <p>The water turns crystal clear... a face emerges from the deep.</p>
+    <p class="quote">"I see it now! I lost my memory because I had made a deal with Koschei..."</p>
+    <button class="btn" onclick="finishPool()">Continue →</button>
+  </div>
+</div>
+
+<script>
+/* ====== 🔊 МАГИЧЕСКИЕ ЗВУКИ (Web Audio API) ====== */
+let audioCtx=null;
+function initSound(){
+  if(!audioCtx){ try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+  if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();
+}
+function tone(freq,start,dur,type='sine',vol=0.25){
+  if(!audioCtx) return;
+  const t=audioCtx.currentTime+start;
+  const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+  osc.type=type; osc.frequency.setValueAtTime(freq,t);
+  gain.gain.setValueAtTime(0,t);
+  gain.gain.linearRampToValueAtTime(vol,t+0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(t); osc.stop(t+dur+0.05);
+}
+// 💧 руна тонет — мистический «дзынь» + всплеск
+function sndSplash(){
+  initSound();
+  const notes=[659.25,880,1174.7,1567.98];
+  notes.forEach((f,i)=> tone(f,i*0.07,0.9,'triangle',0.18));
+  tone(2349,0.3,0.8,'sine',0.08);   // искра
+  tone(180,0,0.5,'sine',0.12);      // глухой всплеск
+}
+// ❌ неверно
+function sndWrong(){ initSound(); tone(160,0,0.35,'sawtooth',0.16); tone(110,0.05,0.4,'sine',0.18); }
+// 🔮 открытие воспоминания
+function sndReveal(){ initSound(); tone(440,0,0.6,'sine',0.14); tone(660,0.1,0.6,'triangle',0.1); }
+// 💀 финал — тёмный аккорд
+function sndDark(){
+  initSound();
+  [196,261.63,311.13].forEach(f=> tone(f,0,2,'sawtooth',0.12));
+  tone(98,0,2.4,'sine',0.16);
+  tone(1318.5,0.5,1.8,'sine',0.06);
+}
+
+/* ====== ВОСПОМИНАНИЯ ====== */
+const memories = [
+  {
+    text:'By the time Vasilisa found the ancient spellbook, someone <b>______</b>',
+    opts:['tore out the pages','had already torn out the pages','was tearing the pages'],
+    correct:1
+  },
+  {
+    text:'The village was completely empty. Everyone <b>______</b>',
+    opts:['had fled into the mountains','fled into the mountains','has fled into the mountains'],
+    correct:0
+  },
+  {
+    text:'When she finally looked into the silver mirror, she realized that a demon <b>______</b>',
+    opts:['stole her reflection','had stolen her reflection','had stealed her reflection'],
+    correct:1
+  },
+  {
+    text:'Vasilisa <b>______</b> the memory crystal when it suddenly shattered into dust.',
+    opts:['just touched','had barely touched','touching'],
+    correct:1
+  },
+];
+
+const pool=document.getElementById('pool');
+const waterText=document.getElementById('waterText');
+const runesBox=document.getElementById('runes');
+const pCounter=document.getElementById('pCounter');
+let mIdx=0;
+
+function startPool(){
+  document.getElementById('pIntro').classList.remove('show');
+  mIdx=0;
+  showMemory();
+}
+
+function showMemory(){
+  const d=memories[mIdx];
+  sndReveal();
+  // текст на воде с лёгким fade
+  waterText.style.opacity=0;
+  setTimeout(()=>{ waterText.innerHTML=d.text; waterText.style.opacity=1; },200);
+  waterText.style.transition='opacity .4s';
+
+  // строим руны (перемешиваем порядок)
+  runesBox.innerHTML='';
+  const order=d.opts.map((o,i)=>({o,i})).sort(()=>Math.random()-0.5);
+  order.forEach(({o,i})=>{
+    const r=document.createElement('div');
+    r.className='rune'; r.textContent=o;
+    r.onclick=()=>throwRune(r,i,d);
+    runesBox.appendChild(r);
+  });
+}
+
+function throwRune(rune,idx,d){
+  if(idx===d.correct){
+    // руна тонет
+    rune.style.pointerEvents='none';
+    rune.classList.add('sink');
+    sndSplash();
+    // вода вспыхивает + круги
+    makeRipples();
+    flashPool();
+    // блокируем остальные руны
+    [...runesBox.children].forEach(r=>r.style.pointerEvents='none');
+    setTimeout(()=>{
+      mIdx++;
+      pCounter.textContent=`🔮 ${mIdx} / ${memories.length}`;
+      if(mIdx>=memories.length){
+        setTimeout(showFinal,800);
+      } else {
+        showMemory();
+      }
+    },1300);
+  } else {
+    sndWrong();
+    rune.classList.add('wrong');
+    setTimeout(()=>rune.classList.remove('wrong'),450);
+  }
+}
+
+/* анимация воды */
+function makeRipples(){
+  for(let i=0;i<3;i++){
+    setTimeout(()=>{
+      const rp=document.createElement('div');
+      rp.className='ripple';
+      pool.appendChild(rp);
+      setTimeout(()=>rp.remove(),1700);
+    }, i*220);
+  }
+}
+function flashPool(){
+  const f=document.createElement('div');
+  f.className='pool-flash';
+  pool.appendChild(f);
+  setTimeout(()=>f.remove(),1000);
+}
+
+/* финал */
+function showFinal(){
+  waterText.innerHTML='';
+  runesBox.innerHTML='';
+  // вода становится чистой
+  pool.style.transition='background 1.5s, box-shadow 1.5s';
+  pool.style.background='radial-gradient(circle at 50% 45%, #d8eaff 0%, #6fa8e0 55%, #2a5a9e 100%)';
+  pool.style.boxShadow='0 0 70px rgba(180,220,255,.7), inset 0 0 50px rgba(255,255,255,.4)';
+  setTimeout(()=>{
+    sndDark();
+    document.getElementById('poolFinal').classList.add('show');
+  },1200);
+}
+
+function finishPool(){
+  window.parent.postMessage('pool_complete','*');  // сигнал Genially
+  // window.location.href='next.html';  // или переход на отдельный файл
+  alert('The truth is revealed! 🔮');
+}
+</script>
+</body>
+</html>
