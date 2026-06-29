@@ -2,200 +2,313 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Old Ways</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;background:transparent;
-  font-family:Georgia,serif;color:#eaf6ff;}
-#stage{position:absolute;inset:0;}
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:100%; height:100%; overflow:hidden; font-family:'Georgia',serif; }
 
-/* ====== ГРИБЫ ====== */
-.shroom{position:absolute;width:90px;height:110px;cursor:pointer;z-index:20;
-  transition:filter .5s,transform .3s;filter:drop-shadow(0 0 8px #6fffa055);}
-.shroom:hover{transform:scale(1.08);}
-.shroom.lit{filter:drop-shadow(0 0 22px #ffd86fcc) drop-shadow(0 0 40px #ffaa3388);}
-.shroom .cap{position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:80px;height:55px;border-radius:50% 50% 45% 45%;
-  background:radial-gradient(circle at 50% 35%,#7affb0,#2fa86a 70%,#1c6e44);
-  transition:background .6s;}
-.shroom.lit .cap{background:radial-gradient(circle at 50% 35%,#fff3c0,#ffcb52 60%,#e8941f);}
-.shroom .stem{position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  width:30px;height:70px;border-radius:14px 14px 8px 8px;
-  background:linear-gradient(#f0ead8,#cbbf9e);}
-.shroom .dot{position:absolute;border-radius:50%;background:rgba(255,255,255,.85);}
-/* пульсация свечения у незажжённых */
-.shroom:not(.lit){animation:pulse 2.4s ease-in-out infinite;}
-@keyframes pulse{0%,100%{filter:drop-shadow(0 0 8px #6fffa055);}50%{filter:drop-shadow(0 0 18px #6fffa0aa);}}
+  #stage {
+    position:relative;
+    width:100vw; height:100vh;
+    background:url('bg.png') center/cover no-repeat #1a2418;
+  }
 
-/* ====== ИНСТРУКЦИЯ ====== */
-#intro{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
-  background:rgba(5,18,12,.6);backdrop-filter:blur(3px);}
-#intro.hide{display:none;}
-#introBox{background:#0c1f15;border:1px solid #6fffa0;border-radius:16px;
-  padding:28px 32px;max-width:460px;width:90%;text-align:center;box-shadow:0 0 30px #2fa86a88;}
-#introBox h2{font-size:18px;color:#9fffc4;letter-spacing:2px;margin-bottom:14px;}
-#introBox p{font-size:15px;line-height:1.7;margin-bottom:20px;}
-#introBox b{color:#ffd86f;}
-.btn{background:rgba(111,255,160,.12);border:1px solid #6fffa0;border-radius:10px;
-  color:#dfffe9;font-size:15px;padding:11px 26px;cursor:pointer;font-family:Georgia,serif;transition:.2s;}
-.btn:hover{background:#6fffa022;transform:translateY(-2px);}
+  /* Грибы */
+  .mushroom {
+    position:absolute;
+    cursor:pointer;
+    transition:transform .3s, filter .3s;
+    z-index:5;
+    transform:translate(-50%,-50%);
+    user-select:none;
+  }
+  .mushroom img { width:100%; height:auto; display:block; pointer-events:none; }
+  .mushroom:hover { transform:translate(-50%,-50%) scale(1.08); }
+  .mushroom .on  { display:none; }
+  .mushroom.solved .off { display:none; }
+  .mushroom.solved .on  { display:block; }
+  .mushroom.solved { cursor:default; pointer-events:none; }
 
-/* ====== МОДАЛКА ВОПРОСА ====== */
-#ov{position:fixed;inset:0;z-index:110;display:none;align-items:center;justify-content:center;
-  background:rgba(5,18,12,.55);backdrop-filter:blur(3px);}
-#ov.on{display:flex;}
-#box{background:#0c1f15;border:1px solid #6fffa0;border-radius:16px;padding:26px 30px;
-  max-width:460px;width:90%;box-shadow:0 0 30px #2fa86a88;}
-#q{font-size:16px;line-height:1.6;margin-bottom:18px;}
-.opt{display:block;width:100%;text-align:left;background:rgba(111,255,160,.08);
-  border:1px solid #6fffa055;border-radius:10px;color:#dfffe9;font-size:15px;
-  padding:12px 16px;margin-bottom:10px;cursor:pointer;transition:.2s;font-family:Georgia,serif;}
-.opt:hover{background:#6fffa022;transform:translateX(4px);}
-.opt.correct{background:#3fd07a33;border-color:#3fd07a;}
-.opt.wrong{background:#e0503033;border-color:#e05030;animation:shake .4s;}
-@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
-#fb{min-height:18px;text-align:center;font-size:13px;margin-top:6px;}
+  .mushroom:not(.solved) { filter:drop-shadow(0 0 6px rgba(120,200,255,.4)); animation:pulse 2.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{filter:drop-shadow(0 0 5px rgba(120,200,255,.35));} 50%{filter:drop-shadow(0 0 14px rgba(120,200,255,.7));} }
 
-/* ====== ФИНАЛ ====== */
-#final{position:fixed;inset:0;z-index:120;display:none;align-items:center;justify-content:center;
-  background:rgba(5,18,12,.6);backdrop-filter:blur(4px);}
-#final.on{display:flex;animation:fade 1.2s;}
-@keyframes fade{from{opacity:0;}to{opacity:1;}}
-#finalBox{background:#0c1f15;border:1px solid #ffd86f;border-radius:16px;
-  padding:30px 34px;max-width:480px;width:90%;text-align:center;box-shadow:0 0 40px #e8941f88;}
-#finalBox p{font-size:16px;line-height:1.8;font-style:italic;color:#ffe9b0;margin-bottom:24px;}
-.btn-gold{background:rgba(255,216,111,.12);border:1px solid #ffd86f;color:#fff3c0;}
-.btn-gold:hover{background:#ffd86f22;}
+  /* окно вопроса/интро/финала */
+  .card {
+    background:linear-gradient(160deg,#243024,#16201a);
+    border:2px solid #6fae6f;
+    border-radius:18px;
+    padding:32px 36px;
+    max-width:580px; width:90%;
+    box-shadow:0 0 40px rgba(120,255,160,.3);
+    color:#e8f5e8;
+    text-align:center;
+  }
+  .card .q { font-size:1.25rem; line-height:1.5; margin-bottom:24px; }
+  .card .q b { color:#9ff09f; }
+  .opts { display:flex; flex-direction:column; gap:12px; }
+  .opt {
+    background:#2f3d2f; border:2px solid #557a55; color:#eaffea;
+    padding:13px 18px; border-radius:10px; font-size:1.05rem;
+    cursor:pointer; transition:all .2s; font-family:inherit;
+  }
+  .opt:hover { background:#3d513d; border-color:#9ff09f; transform:translateY(-2px); }
+  .opt.correct { background:#2e7d32; border-color:#7CFC00; }
+  .opt.wrong   { background:#7d2e2e; border-color:#ff6b6b; animation:shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);} }
+  .feedback { margin-top:18px; font-size:1rem; min-height:24px; font-style:italic; color:#bfeebf; }
 
-/* счётчик */
-#hud{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:60;
-  background:rgba(8,28,18,.6);border:1px solid #6fffa0;border-radius:30px;
-  padding:6px 18px;color:#cdffe0;font-size:13px;letter-spacing:1px;}
+  .overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,.78);
+    display:none; align-items:center; justify-content:center; z-index:50;
+  }
+  .overlay.show { display:flex; }
+
+  #intro h2 { color:#9ff09f; font-size:1.6rem; margin-bottom:16px; }
+  #intro p { font-size:1.1rem; line-height:1.6; margin-bottom:24px; }
+  .btn {
+    background:#4a7a4a; border:2px solid #9ff09f; color:#fff;
+    padding:12px 28px; font-size:1.05rem; border-radius:30px;
+    cursor:pointer; font-family:inherit; transition:all .2s;
+  }
+  .btn:hover { background:#5e9e5e; transform:scale(1.05); }
+
+  #counter {
+    position:fixed; top:16px; left:50%; transform:translateX(-50%);
+    background:rgba(20,30,20,.8); border:1px solid #6fae6f;
+    color:#cfeecf; padding:8px 20px; border-radius:20px;
+    font-size:1rem; z-index:30; letter-spacing:1px;
+  }
+
+  /* ФИНАЛ блока 1 (Леший) */
+  #final .card { border-color:#FFD700; box-shadow:0 0 50px rgba(255,215,0,.4); }
+  #final p { font-size:1.2rem; font-style:italic; color:#f5e8c8; line-height:1.6; margin-bottom:26px; }
+  #final .btn { background:#7a5a2a; border-color:#FFD700; }
+  #final .btn:hover { background:#9e7a3e; }
+
+  /* БЛОК 2 — timeline (внутри того же файла) */
+  #block2 {
+    position:fixed; inset:0; z-index:70;
+    background:url('bg.png') center/cover no-repeat #14201a;
+    display:none; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:30px;
+    animation:fadeIn 1s ease;
+  }
+  #block2.show { display:flex; }
+  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+  #block2 .veil { position:absolute; inset:0; background:rgba(0,0,0,.55); }
+  #block2 .inner { position:relative; z-index:2; width:100%; max-width:780px; text-align:center; }
+  #block2 h2 { color:#9ff09f; font-size:1.7rem; margin-bottom:10px; }
+  #block2 .sub { color:#cfeecf; font-style:italic; margin-bottom:26px; }
+  .tl-q {
+    background:linear-gradient(160deg,#243024,#16201a);
+    border:2px solid #6fae6f; border-radius:14px;
+    padding:20px 24px; margin-bottom:18px; text-align:left;
+    color:#e8f5e8; box-shadow:0 0 20px rgba(120,255,160,.15);
+  }
+  .tl-q .qq { font-size:1.1rem; margin-bottom:14px; line-height:1.5; }
+  .tl-q .qq b { color:#9ff09f; }
+  .tl-opts { display:flex; flex-wrap:wrap; gap:10px; }
+  .tl-opt {
+    background:#2f3d2f; border:2px solid #557a55; color:#eaffea;
+    padding:9px 16px; border-radius:8px; cursor:pointer;
+    font-family:inherit; font-size:.98rem; transition:all .2s;
+  }
+  .tl-opt:hover { background:#3d513d; border-color:#9ff09f; }
+  .tl-opt.correct { background:#2e7d32; border-color:#7CFC00; }
+  .tl-opt.wrong { background:#7d2e2e; border-color:#ff6b6b; animation:shake .4s; }
+  #tlDone { display:none; margin-top:10px; }
+  #tlDone p { color:#FFD700; font-size:1.25rem; font-style:italic; margin-bottom:20px; }
 </style>
 </head>
 <body>
-<div id="stage"></div>
-<div id="hud">Mushrooms lit: <span id="cnt">0</span> / 3</div>
 
-<!-- ИНСТРУКЦИЯ -->
-<div id="intro"><div id="introBox">
-  <h2>🍄 The Old Ways</h2>
-  <p>Remember the Old Ways: complete the sentences using <b>used to</b> or
-  <b>didn't use to</b> to reveal the first part of your memory.</p>
-  <button class="btn" onclick="document.getElementById('intro').classList.add('hide')">I remember...</button>
-</div></div>
+<div id="stage">
+  <div id="counter">🍄 0 / 6</div>
+</div>
 
-<!-- ВОПРОС -->
-<div id="ov"><div id="box">
-  <div id="q"></div><div id="opts"></div><div id="fb"></div>
-</div></div>
+<!-- INTRO -->
+<div id="intro" class="overlay show">
+  <div class="card">
+    <h2>Remember the Old Ways</h2>
+    <p>The forest whispers... Tap each glowing mushroom and complete the sentence with <b>used to</b> or <b>didn't use to</b> to awaken your lost memories.</p>
+    <button class="btn" onclick="document.getElementById('intro').classList.remove('show')">Begin</button>
+  </div>
+</div>
 
-<!-- ФИНАЛ -->
-<div id="final"><div id="finalBox">
-  <p>"You remember... Good.<br>Now, untangle the timeline of what happened to you before the curse."</p>
-  <button class="btn btn-gold" onclick="goNext()">Untangle the timeline →</button>
-</div></div>
+<!-- QUESTION -->
+<div id="qOverlay" class="overlay">
+  <div class="card">
+    <div class="q" id="qText"></div>
+    <div class="opts" id="qOpts"></div>
+    <div class="feedback" id="qFb"></div>
+  </div>
+</div>
+
+<!-- FINAL (Леший) -->
+<div id="final" class="overlay">
+  <div class="card">
+    <p>"You remember now... Good. But your memories are scattered in time. Put them in order — what happened <b>before</b>, and what is <b>true now</b>."</p>
+    <button class="btn" onclick="openBlock2()">Continue your memory →</button>
+  </div>
+</div>
+
+<!-- ===== БЛОК 2: TIMELINE ===== -->
+<div id="block2">
+  <div class="veil"></div>
+  <div class="inner">
+    <h2>The Scattered Memories</h2>
+    <div class="sub">Choose the correct form for each fading memory.</div>
+    <div id="tlContainer"></div>
+    <div id="tlDone">
+      <p>"The timeline is whole again. You are free to walk on, traveler."</p>
+      <button class="btn" onclick="finishAll()">Finish →</button>
+    </div>
+  </div>
+</div>
 
 <script>
-/* данные грибов */
-const TASKS=[
-  {q:"When I was a child, this forest ______ (be) a safe place.",
-   o:["used to be","was used to be"],c:0,
-   x:18,y:55},
-  {q:"The glowing mushrooms ______ (guide) travelers, but now they lead them into traps.",
-   o:["use to guide","used to guide"],c:1,
-   x:46,y:62},
-  {q:"Baba Yaga ______ (not / be) so cruel before the dark magic corrupted her.",
-   o:["didn't used to be","didn't use to be"],c:1,
-   x:73,y:50}
-];
-let lit=0;
+/* ====== ССЫЛКИ НА ГРИБЫ ====== */
+const M = {
+  1:{off:'https://i.yapx.ru/d5S5J.png', on:'https://i.yapx.ru/d5S5L.png'},
+  2:{off:'https://i.yapx.ru/d5S5N.png', on:'https://i.yapx.ru/d5S5O.png'},
+  3:{off:'https://i.yapx.ru/d5S5Q.png', on:'https://i.yapx.ru/d5S5S.PNG'},
+};
 
-/* ====== ЗВУК ====== */
-let ac=null;
-function chime(){
-  if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();
-  if(ac.state==='suspended')ac.resume();
-  [659,880,1174,1568].forEach((f,i)=>{
-    const o=ac.createOscillator(),g=ac.createGain();
-    o.connect(g);g.connect(ac.destination);o.type='sine';
-    o.frequency.value=f;const t=ac.currentTime+i*0.08;
-    g.gain.setValueAtTime(0,t);
-    g.gain.linearRampToValueAtTime(0.15,t+0.02);
-    g.gain.exponentialRampToValueAtTime(0.001,t+0.8);
-    o.start(t);o.stop(t+0.8);
-  });
-}
+/* ====== ПОЗИЦИИ 6 ГРИБОВ (left/top в %, w в px) ====== */
+const positions = [
+  {left:14, top:55, w:135, pair:1},
+  {left:30, top:72, w:95,  pair:2},
+  {left:45, top:48, w:80,  pair:3},
+  {left:60, top:70, w:150, pair:1},
+  {left:76, top:50, w:110, pair:2},
+  {left:89, top:66, w:90,  pair:3},
+];
+
+/* ====== ВОПРОСЫ (грибы) ====== */
+const questions = [
+  { q:'When I was a child, this forest <b>______</b> a safe place.',
+    opts:['used to be','was used to be','use to be'], correct:0,
+    fb:'Yes... the trees were kind back then.' },
+  { q:'The glowing mushrooms <b>______</b> travelers home, but now they lead them astray.',
+    opts:['use to guide','used to guide','used to guiding'], correct:1,
+    fb:'They lit the path home...' },
+  { q:'The witch <b>______</b> so cruel before the dark magic took her.',
+    opts:["didn't used to be","didn't use to be","wasn't used to be"], correct:1,
+    fb:'A different soul, once.' },
+  { q:'The river <b>______</b> softly at night, calming the lost.',
+    opts:['used to sing','use to sing','was use to sing'], correct:0,
+    fb:'I can almost hear it again.' },
+  { q:'People <b>______</b> these woods the way they do today.',
+    opts:["didn't used to fear","weren't use to fear","didn't use to fear"], correct:2,
+    fb:'Fear came later, with the curse.' },
+  { q:'I <b>______</b> every path here before I lost my way.',
+    opts:['used to know','use to know','was used to know'], correct:0,
+    fb:'The memory is returning...' },
+];
+
+/* ====== БЛОК 2: TIMELINE ВОПРОСЫ ====== */
+const timeline = [
+  { q:'In the past, I <b>______</b> (live) deep in these woods. <i>(true in the past, not now)</i>',
+    opts:['used to live','live','am living'], correct:0 },
+  { q:'Now I <b>______</b> (live) at the edge of the forest. <i>(true now)</i>',
+    opts:['used to live','live','was living'], correct:1 },
+  { q:'I <b>______</b> (not / be) afraid of the dark before the curse. <i>(past)</i>',
+    opts:["am not","didn't use to be","wasn't used to"], correct:1 },
+  { q:'These days I <b>______</b> (carry) a lantern everywhere. <i>(present habit)</i>',
+    opts:['used to carry','carry','use to carry'], correct:1 },
+];
 
 /* ====== СОЗДАЁМ ГРИБЫ ====== */
-const stage=document.getElementById('stage');
-TASKS.forEach((task,i)=>{
+const stage = document.getElementById('stage');
+let solved = 0;
+
+positions.forEach((p,i)=>{
   const m=document.createElement('div');
-  m.className='shroom';
-  m.style.left=task.x+'%';
-  m.style.top=task.y+'%';
-  m.dataset.i=i;
-  // ножка + шляпка + точки
-  m.innerHTML='<div class="stem"></div><div class="cap"></div>';
-  // случайные точки на шляпке
-  const cap=m.querySelector('.cap');
-  for(let k=0;k<4;k++){
-    const d=document.createElement('div');d.className='dot';
-    const s=6+Math.random()*8;
-    d.style.width=s+'px';d.style.height=s+'px';
-    d.style.left=(15+Math.random()*55)+'%';
-    d.style.top=(20+Math.random()*45)+'%';
-    cap.appendChild(d);
-  }
-  m.style.animationDelay=(Math.random()*2)+'s';
-  m.onclick=()=>openQ(i,m);
+  m.className='mushroom';
+  m.style.left=p.left+'%'; m.style.top=p.top+'%'; m.style.width=p.w+'px';
+  m.innerHTML=`<img class="off" src="${M[p.pair].off}"><img class="on" src="${M[p.pair].on}">`;
+  m.onclick=()=>openQuestion(i,m);
   stage.appendChild(m);
 });
 
-/* ====== ВОПРОС ====== */
-const ov=document.getElementById('ov');
-let curEl=null,curI=null;
-function openQ(i,el){
-  if(el.classList.contains('lit'))return;
-  curEl=el;curI=i;const t=TASKS[i];
-  document.getElementById('q').textContent=t.q;
-  document.getElementById('fb').textContent='';
-  const oc=document.getElementById('opts');oc.innerHTML='';
-  t.o.forEach((txt,j)=>{
-    const b=document.createElement('button');b.className='opt';b.textContent=txt;
-    b.onclick=()=>answer(j,t,b,oc);
-    oc.appendChild(b);
+const qOverlay=document.getElementById('qOverlay');
+const qText=document.getElementById('qText');
+const qOpts=document.getElementById('qOpts');
+const qFb=document.getElementById('qFb');
+
+function openQuestion(i,el){
+  const d=questions[i];
+  qText.innerHTML=d.q; qFb.textContent=''; qOpts.innerHTML='';
+  d.opts.forEach((opt,idx)=>{
+    const b=document.createElement('button');
+    b.className='opt'; b.textContent=opt;
+    b.onclick=()=>checkAnswer(b,idx,d,el);
+    qOpts.appendChild(b);
   });
-  ov.classList.add('on');
-}
-function answer(j,t,btn,oc){
-  const bs=oc.querySelectorAll('.opt');
-  if(j===t.c){
-    bs.forEach(b=>b.disabled=true);
-    btn.classList.add('correct');
-    document.getElementById('fb').textContent='✦ Yes... I remember.';
-    document.getElementById('fb').style.color='#6fffa0';
-    chime();
-    setTimeout(()=>{
-      ov.classList.remove('on');
-      curEl.classList.add('lit');
-      lit++;
-      document.getElementById('cnt').textContent=lit;
-      if(lit>=TASKS.length)setTimeout(()=>document.getElementById('final').classList.add('on'),700);
-    },800);
-  } else {
-    btn.classList.add('wrong');
-    document.getElementById('fb').textContent='✦ No... that path is wrong.';
-    document.getElementById('fb').style.color='#e05030';
-    setTimeout(()=>{btn.classList.remove('wrong');document.getElementById('fb').textContent='';},1200);
-  }
+  qOverlay.classList.add('show');
 }
 
-/* ====== ПЕРЕХОД ====== */
-function goNext(){
-  window.parent.postMessage('old-ways-done','*');
-  /* или: location.href='URL_СЛЕДУЮЩЕГО_СЛАЙДА'; */
+function checkAnswer(btn,idx,d,el){
+  if(idx===d.correct){
+    btn.classList.add('correct'); qFb.textContent=d.fb;
+    [...qOpts.children].forEach(b=>b.disabled=true);
+    setTimeout(()=>{
+      qOverlay.classList.remove('show');
+      el.classList.add('solved'); solved++;
+      document.getElementById('counter').textContent=`🍄 ${solved} / 6`;
+      if(solved===6) setTimeout(()=>document.getElementById('final').classList.add('show'),700);
+    },1100);
+  } else {
+    btn.classList.add('wrong'); qFb.textContent='No... that is not how it was. Try again.';
+    setTimeout(()=>btn.classList.remove('wrong'),500);
+  }
+}
+qOverlay.onclick=e=>{ if(e.target===qOverlay) qOverlay.classList.remove('show'); };
+
+/* ====== ПЕРЕХОД В БЛОК 2 ====== */
+function openBlock2(){
+  document.getElementById('final').classList.remove('show');
+  buildTimeline();
+  document.getElementById('block2').classList.add('show');
+}
+
+let tlSolved=0;
+function buildTimeline(){
+  const c=document.getElementById('tlContainer'); c.innerHTML='';
+  timeline.forEach((d,i)=>{
+    const box=document.createElement('div'); box.className='tl-q';
+    const qq=document.createElement('div'); qq.className='qq'; qq.innerHTML=d.q;
+    const opts=document.createElement('div'); opts.className='tl-opts';
+    d.opts.forEach((opt,idx)=>{
+      const b=document.createElement('button');
+      b.className='tl-opt'; b.textContent=opt;
+      b.onclick=()=>{
+        if(b.classList.contains('correct'))return;
+        if(idx===d.correct){
+          b.classList.add('correct');
+          [...opts.children].forEach(x=>x.disabled=true);
+          tlSolved++;
+          if(tlSolved===timeline.length)
+            setTimeout(()=>document.getElementById('tlDone').style.display='block',400);
+        } else {
+          b.classList.add('wrong');
+          setTimeout(()=>b.classList.remove('wrong'),500);
+        }
+      };
+      opts.appendChild(b);
+    });
+    box.appendChild(qq); box.appendChild(opts); c.appendChild(box);
+  });
+}
+
+function finishAll(){
+  // сообщаем Genially что всё пройдено (для перехода на след. сцену, если нужно)
+  window.parent.postMessage('lesson_complete','*');
+  // или раскомментируй для перехода на отдельный файл:
+  // window.location.href='next.html';
+  alert('Well done! 🍄✨');
 }
 </script>
 </body>
