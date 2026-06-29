@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Pool of Truth</title>
+<title>The Pool of Truth — The Reason</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   html,body { width:100%; height:100%; overflow:hidden; font-family:'Georgia',serif; }
@@ -14,12 +14,10 @@
     background:#0a0d12 url('https://i.yapx.ru/d5YIw.jpg') center/cover no-repeat;
     transition:background-image 1.5s ease;
   }
-  /* светлый фон в финале */
   #stage.clear {
     background:#0a0d12 url('https://i.yapx.ru/d5YPH.png') center/cover no-repeat;
   }
 
-  /* зона воды (центр омута) — куда выводим текст */
   #waterZone {
     position:absolute; left:50%; top:46%;
     transform:translate(-50%,-50%);
@@ -34,7 +32,6 @@
   }
   #waterText b { color:#bcd2ff; font-style:normal; }
 
-  /* круги по воде */
   .ripple {
     position:absolute; left:50%; top:50%;
     width:30px; height:24px; border-radius:50%;
@@ -92,7 +89,6 @@
   .rune.wrong { animation:runeShake .4s; }
   @keyframes runeShake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-9px);}75%{transform:translateX(9px);} }
 
-  /* счётчик */
   #pCounter {
     position:fixed; top:16px; left:50%; transform:translateX(-50%);
     background:rgba(18,14,30,.85); border:1px solid #7a6cae;
@@ -100,7 +96,6 @@
     font-size:1rem; z-index:30; letter-spacing:1px;
   }
 
-  /* overlay */
   .overlay {
     position:fixed; inset:0; background:rgba(0,0,0,.82);
     display:none; align-items:center; justify-content:center; z-index:50;
@@ -130,10 +125,35 @@
   }
   .btn:hover { background:#6e5ca0; transform:scale(1.05); }
 
-  /* ФИНАЛ */
-  #poolFinal .card { border-color:#FFD700; box-shadow:0 0 50px rgba(255,215,0,.4); }
-  #poolFinal h2 { color:#FFD700; }
-  #poolFinal .quote { font-style:italic; color:#fff0c8; font-size:1.12rem; line-height:1.7; }
+  /* ===== ФИНАЛ — плашка ФРАГМЕНТА ПАМЯТИ ===== */
+  #poolFinal { background:rgba(0,0,0,.55); }
+  #poolFinal .card {
+    background:linear-gradient(160deg, rgba(33,26,50,.95), rgba(18,12,30,.95));
+    border:2px solid #FFD700;
+    box-shadow:0 0 55px rgba(255,215,0,.45);
+    max-width:640px;
+  }
+  #poolFinal .fragTag {
+    display:inline-block;
+    color:#0a0d12; background:linear-gradient(90deg,#ffe98a,#ffd700,#ffe98a);
+    font-weight:bold; letter-spacing:1.5px;
+    padding:8px 22px; border-radius:30px; margin-bottom:20px;
+    font-size:1.05rem; box-shadow:0 0 20px rgba(255,215,0,.6);
+  }
+  #poolFinal .memory {
+    font-style:italic; color:#fff3d0; font-size:1.12rem;
+    line-height:1.7; margin-bottom:20px;
+    text-shadow:0 0 12px rgba(255,215,0,.25);
+  }
+  #poolFinal .memory b { color:#ffe07a; font-style:normal; }
+  #poolFinal .note {
+    color:#cfc4ee; font-size:1rem; line-height:1.6;
+    margin-bottom:8px;
+  }
+  #poolFinal .incomplete {
+    color:#a99fd0; font-size:.95rem; font-style:italic;
+    margin-bottom:26px;
+  }
   #poolFinal .btn { background:#7a5a2a; border-color:#FFD700; }
   #poolFinal .btn:hover { background:#9e7a3e; }
 </style>
@@ -142,11 +162,7 @@
 
 <div id="stage">
   <div id="pCounter">🔮 0 / 4</div>
-
-  <div id="waterZone">
-    <div id="waterText"></div>
-  </div>
-
+  <div id="waterZone"><div id="waterText"></div></div>
   <div id="runes"></div>
 </div>
 
@@ -154,10 +170,10 @@
 <div id="pIntro" class="overlay show">
   <div class="card">
     <h2>THE POOL OF TRUTH</h2>
-    <p>"The fog clouded your mind," whispers the water. "To remember <i>why</i> you were heading to Baba Yaga, you must recall what happened <i>before</i> you entered the woods."</p>
+    <p>"The fog clouded your mind," whispers the water. "Look deep, and remember <i>why</i> you set out on this path... what happened <i>before</i> you entered the woods."</p>
     <div class="hint">
       Use <b>Past Perfect (had + V3)</b> for the earliest action in the past.
-      <span class="ex">Example: I went to the forest because my village <u>had fallen</u> ill.</span>
+      <span class="ex">Example: The river was dead <u>(Action 2)</u> because the witch <b style="color:#ffd86b">had cursed</b> it <u>(Action 1)</u>.</span>
     </div>
     <button class="btn" onclick="initSound();startPool()">Look into the water →</button>
   </div>
@@ -166,9 +182,11 @@
 <!-- ФИНАЛ -->
 <div id="poolFinal" class="overlay">
   <div class="card">
-    <h2>✦ MEMORY FRAGMENT RESTORED ✦</h2>
-    <p class="quote">"Now I remember! I was heading to Baba Yaga because a dark curse <b>had fallen</b> upon my village. I <b>had promised</b> my people that I would bring back the cure, no matter the cost."</p>
-    <button class="btn" onclick="finishPool()">Return to the Path →</button>
+    <div class="fragTag">💎 MEMORY FRAGMENT: THE REASON</div>
+    <p class="memory">"I remember! I <b>had left</b> my home because a dark curse <b>had fallen</b> upon my village. All the local healers <b>had failed</b>, so I <b>had decided</b> to seek out Baba Yaga, no matter the price."</p>
+    <p class="note">I know <b style="color:#9ff09f">why</b> I was heading to Baba Yaga's hut! But what happened to me on the way?</p>
+    <p class="incomplete">The memory is incomplete... I need to find the other missing fragment.</p>
+    <button class="btn" onclick="finishPool()">⟵ Go back to the Crossroad</button>
   </div>
 </div>
 
@@ -204,26 +222,26 @@ function sndClear(){
   tone(2093,0.7,1.6,'sine',0.07);
 }
 
-/* ====== ВОСПОМИНАНИЯ ====== */
+/* ====== ВОСПОМИНАНИЯ (THE REASON) ====== */
 const memories = [
   {
-    text:'I realized that I had to find Baba Yaga because the local healers <b>______</b>',
-    opts:['had already failed','already failed','were failing'],
-    correct:0
-  },
-  {
-    text:'Before I stepped into the dark woods, I <b>______</b> my mother’s magical lantern.',
-    opts:['took','had taken','have taken'],
-    correct:1
-  },
-  {
-    text:'A terrible curse <b>______</b> upon my village, and only the old witch knew the cure.',
+    text:'I realized I had to find Baba Yaga because a dark curse <b>______</b> upon my village.',
     opts:['had fallen','had falled','fell'],
     correct:0
   },
   {
-    text:"I didn't see the unnatural fog until the sun <b>______</b> completely.",
-    opts:['set','had set','had setted'],
+    text:'I made this desperate choice because all the local healers <b>______</b>.',
+    opts:['had failed','had fail','were failing'],
+    correct:0
+  },
+  {
+    text:'Before I stepped into the dark woods, I <b>______</b> my mother’s magical lantern to guide me.',
+    opts:['took','had taken','have taken'],
+    correct:1
+  },
+  {
+    text:'By the time I reached the forest edge, I <b>______</b> my mind to pay whatever price the Witch would ask.',
+    opts:['made','had made','had maked'],
     correct:1
   },
 ];
@@ -297,8 +315,7 @@ function showFinal(){
   waterText.innerHTML='';
   runesBox.innerHTML='';
   pCounter.style.display='none';
-  // вода становится чистой → меняем фон
-  stage.classList.add('clear');
+  stage.classList.add('clear');   // вода очищается
   setTimeout(()=>{
     sndClear();
     document.getElementById('poolFinal').classList.add('show');
@@ -306,9 +323,10 @@ function showFinal(){
 }
 
 function finishPool(){
-  window.parent.postMessage('pool_complete','*');
-  // window.location.href='next.html';
-  alert('The truth is revealed! 🔮✨');
+  // сигнал Genially: фрагмент "THE REASON" собран → вернуться на Перекрёсток
+  window.parent.postMessage('fragment_reason_complete','*');
+  // или: window.location.href='crossroad.html';
+  alert('Fragment "THE REASON" collected! 💎 Returning to the Crossroad...');
 }
 </script>
 </body>
