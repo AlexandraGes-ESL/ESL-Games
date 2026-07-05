@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight Warm-up</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; font-family: Georgia, 'Times New Roman', serif; }
+
+  #stage {
+    position: relative;
+    width: 100vw; height: 100vh;
+    background: #000 url('https://i.yapx.ru/d605R.jpg') center/cover no-repeat;
+    cursor: default;
+  }
+
+  /* --- Стартовый экран --- */
+  #beginScreen {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 50; transition: opacity 2s ease;
+  }
+  #beginBtn {
+    padding: 22px 60px; font-size: 1.4rem; letter-spacing: 3px;
+    color: #fff; background: transparent;
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 50px; cursor: pointer;
+    transition: all 0.6s ease; backdrop-filter: blur(2px);
+  }
+  #beginBtn:hover {
+    background: rgba(255,255,255,0.12);
+    letter-spacing: 5px; box-shadow: 0 0 40px rgba(255,255,255,0.35);
+  }
+  #beginHint { margin-top: 26px; color: rgba(255,255,255,0.65); font-size: 0.95rem; font-style: italic; }
+
+  /* --- ЗВЁЗДЫ --- */
+  .star {
+    position: absolute; width: 60px; height: 60px;
+    transform: translate(-50%, -50%) scale(0);
+    cursor: pointer; opacity: 0;
+    transition: transform 1.8s ease, opacity 1.8s ease; z-index: 10;
+  }
+  .star.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+  .star::before {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    width: calc(55px * var(--size, 1)); height: calc(55px * var(--size, 1));
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(255,250,240,0.55) 0%, rgba(255,245,225,0.22) 22%,
+      rgba(200,220,255,0.10) 45%, transparent 70%);
+    animation: breathe 5s ease-in-out infinite; pointer-events: none;
+  }
+  .star::after {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    width: calc(6px * var(--size, 1)); height: calc(6px * var(--size, 1));
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: #fffaf0;
+    box-shadow: 0 0 6px 2px rgba(255,250,240,0.9), 0 0 14px 4px rgba(255,240,220,0.5);
+    animation: breathe 5s ease-in-out infinite; pointer-events: none;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.65; transform: translate(-50%, -50%) scale(0.9); }
+    50%      { opacity: 1;    transform: translate(-50%, -50%) scale(1.08); }
+  }
+  .star:hover::before {
+    background: radial-gradient(circle,
+      rgba(255,252,245,0.75) 0%, rgba(255,245,225,0.35) 25%,
+      rgba(200,220,255,0.15) 50%, transparent 72%);
+    animation-duration: 2.5s;
+  }
+  .star:hover::after {
+    box-shadow: 0 0 10px 3px rgba(255,250,240,1), 0 0 22px 7px rgba(255,240,220,0.6);
+  }
+  .star.visited::before {
+    background: radial-gradient(circle,
+      rgba(190,210,235,0.28) 0%, rgba(190,210,235,0.12) 30%, transparent 65%);
+    animation-duration: 8s;
+  }
+  .star.visited::after {
+    background: #cdd8e8;
+    box-shadow: 0 0 4px 1px rgba(200,215,240,0.5), 0 0 8px 2px rgba(190,210,235,0.25);
+    animation-duration: 8s;
+  }
+  .star.visited:hover::after {
+    box-shadow: 0 0 8px 2px rgba(220,230,245,0.8), 0 0 16px 4px rgba(200,215,240,0.4);
+  }
+
+  /* --- Фоновая звёздная пыль --- */
+  .dust {
+    position: absolute; width: 2px; height: 2px;
+    background: #fff; border-radius: 50%; opacity: 0;
+    z-index: 5; pointer-events: none;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.1; }
+    50%      { opacity: 0.9; }
+  }
+
+    /* --- Падающая звезда --- */
+  .shooting {
+    position: absolute; width: 2px; height: 2px;
+    background: #fff; border-radius: 50%; z-index: 6;
+    pointer-events: none; box-shadow: 0 0 6px 2px rgba(255,255,255,0.8); opacity: 0;
+  }
+  .shooting::after {
+    content: ''; position: absolute; top: 50%; left: 2px;      /* хвост теперь слева-сверху */
+    width: 90px; height: 1px; transform-origin: right center;
+    transform: translateY(-50%) rotate(-30deg);                 /* хвост тянется назад-вверх */
+    background: linear-gradient(to right, rgba(255,255,255,0.7), transparent);
+  }
+  @keyframes shoot {
+    0%   { opacity: 0; transform: translate(0, 0); }
+    10%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(320px, 180px); }    /* летит вправо-вниз */
+  }
+
+  /* --- Панель с текстом образа --- */
+  #reveal {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -40%);
+    width: min(80%, 620px); text-align: center; color: #fff;
+    opacity: 0; pointer-events: none;
+    transition: opacity 1.8s ease, transform 1.8s ease;
+    z-index: 30; text-shadow: 0 2px 20px rgba(0,0,0,0.9);
+  }
+  #reveal.show { opacity: 1; transform: translate(-50%, -50%); }
+  #revealPrompt { font-size: 1.6rem; line-height: 1.5; margin-bottom: 24px; font-style: italic; }
+  #revealQ { font-size: 1.15rem; line-height: 1.5; color: rgba(255,255,255,0.85); }
+  #revealNote { margin-top: 30px; font-size: 0.85rem; color: rgba(255,255,255,0.5); letter-spacing: 1px; }
+
+  /* --- Кнопка "другая звезда" --- */
+  #backBtn {
+    position: absolute; bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 30px; font-size: 0.85rem; letter-spacing: 2px;
+    color: rgba(255,255,255,0.7); background: transparent;
+    border: 1px solid rgba(255,255,255,0.3); border-radius: 40px;
+    cursor: pointer; opacity: 0; pointer-events: none;
+    transition: opacity 1s ease; z-index: 30;
+  }
+  #backBtn.show { opacity: 1; pointer-events: auto; }
+  #backBtn:hover { background: rgba(255,255,255,0.1); }
+
+  /* --- Финальная надпись --- */
+  #finale {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(80%, 620px); text-align: center; color: #fff;
+    opacity: 0; pointer-events: none;
+    transition: opacity 2.5s ease; z-index: 40;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.9);
+  }
+  #finale.show { opacity: 1; }
+  #finaleTitle { font-size: 1.7rem; font-style: italic; line-height: 1.5; margin-bottom: 18px; }
+  #finaleSub   { font-size: 1rem; color: rgba(255,255,255,0.7); letter-spacing: 1px; }
+
+  /* --- Затемнение --- */
+  #dim {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0);
+    transition: background 1.8s ease;
+    z-index: 20; pointer-events: none;
+  }
+  #dim.on { background: rgba(0,0,0,0.55); }
+
+  /* ===== ПАНЕЛЬ УПРАВЛЕНИЯ ЗВУКОМ ===== */
+  #audio-toggle{
+    position:absolute; top:18px; right:18px; z-index:1100;
+    width:44px; height:44px; border-radius:50%;
+    background:rgba(15,20,35,.85);
+    border:1px solid rgba(200,215,240,.4);
+    color:rgba(220,230,245,.9);
+    cursor:pointer; font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .25s ease;
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  }
+  #audio-toggle:hover{
+    border-color:#fff; background:rgba(200,215,240,.2);
+    box-shadow:0 0 20px rgba(200,215,240,.4);
+  }
+  #audio-panel{
+    position:absolute; top:70px; right:18px; z-index:1100;
+    background:linear-gradient(180deg, rgba(15,20,35,.96), rgba(8,12,22,.98));
+    border:1px solid rgba(200,215,240,.5);
+    border-radius:8px; padding:18px 20px; width:240px; display:none;
+    box-shadow:0 10px 40px rgba(0,0,0,.7), 0 0 0 1px rgba(200,215,240,.15);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  }
+  #audio-panel.open{display:block; animation:panelIn .3s ease}
+  @keyframes panelIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+  .audio-panel-title{
+    font-family:Georgia,serif; font-size:12px; letter-spacing:3px;
+    color:#fff; text-align:center; margin-bottom:16px;
+    padding-bottom:8px; border-bottom:1px solid rgba(200,215,240,.25);
+  }
+  .audio-slider-row{margin-bottom:16px}
+  .audio-slider-row:last-child{margin-bottom:0}
+  .audio-slider-label{
+    display:flex; justify-content:space-between;
+    font-family:Georgia,serif; font-size:11px; letter-spacing:1.5px;
+    color:rgba(200,215,240,.85); margin-bottom:7px;
+  }
+  .audio-slider-value{color:#fff}
+  .audio-slider{
+    width:100%; -webkit-appearance:none; appearance:none;
+    height:4px; background:rgba(200,215,240,.2);
+    border-radius:2px; outline:none; cursor:pointer;
+  }
+  .audio-slider::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none;
+    width:14px; height:14px; border-radius:50%;
+    background:#fff; cursor:pointer;
+    box-shadow:0 0 8px rgba(200,215,240,.8); border:none;
+  }
+  .audio-slider::-moz-range-thumb{
+    width:14px; height:14px; border-radius:50%;
+    background:#fff; cursor:pointer;
+    box-shadow:0 0 8px rgba(200,215,240,.8); border:none;
+  }
+  .audio-mute-row{
+    margin-top:16px; padding-top:12px;
+    border-top:1px solid rgba(200,215,240,.25);
+    display:flex; justify-content:center;
+  }
+  .audio-mute-btn{
+    font-family:Georgia,serif; font-size:11px; letter-spacing:2px;
+    background:transparent; border:1px solid rgba(200,215,240,.6);
+    color:#fff; padding:6px 18px; border-radius:4px;
+    cursor:pointer; transition:all .2s ease;
+  }
+  .audio-mute-btn:hover{ background:rgba(200,215,240,.2); }
+  .audio-mute-btn.muted{ background:#7a3b3b; border-color:#c44545; color:#fff; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <div id="dim"></div>
+
+  <!-- Панель управления звуком -->
+  <button id="audio-toggle" title="sound">♪</button>
+  <div id="audio-panel">
+    <div class="audio-panel-title">SOUND</div>
+    <div class="audio-slider-row">
+      <div class="audio-slider-label"><span>VOLUME</span><span class="audio-slider-value" id="valVol">14</span></div>
+      <input type="range" class="audio-slider" id="sliderVol" min="0" max="40" value="14">
+    </div>
+    <div class="audio-slider-row">
+      <div class="audio-slider-label"><span>WAVES</span><span class="audio-slider-value" id="valWave">9</span></div>
+      <input type="range" class="audio-slider" id="sliderWave" min="3" max="20" value="9">
+    </div>
+    <div class="audio-slider-row">
+      <div class="audio-slider-label"><span>DEPTH</span><span class="audio-slider-value" id="valDepth">550</span></div>
+      <input type="range" class="audio-slider" id="sliderDepth" min="250" max="1000" value="550">
+    </div>
+    <div class="audio-mute-row">
+      <button class="audio-mute-btn" id="muteBtn">MUTE</button>
+    </div>
+  </div>
+
+  <!-- Стартовый экран -->
+  <div id="beginScreen">
+    <button id="beginBtn">B E G I N</button>
+    <div id="beginHint">turn on your sound · take a breath</div>
+  </div>
+
+  <!-- Панель раскрытия -->
+  <div id="reveal">
+    <div id="revealPrompt"></div>
+    <div id="revealQ"></div>
+    <div id="revealNote">there is no right answer · even one word is enough</div>
+  </div>
+
+  <!-- Финальная надпись -->
+  <div id="finale">
+    <div id="finaleTitle">you've visited every star</div>
+    <div id="finaleSub">thank you for sharing · let's begin</div>
+  </div>
+
+  <button id="backBtn">◂ another star</button>
+
+</div>
+
+<script>
+/* ===== ПРИБОЙ + управление ===== */
+let audioCtx = null;
+let masterGain = null, lowpassNode = null, lfoNode = null;
+let isMuted = false;
+let currentVol = 0.14;
+
+function startOcean() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  const bufferSize = 2 * audioCtx.sampleRate;
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = noiseBuffer; noise.loop = true;
+
+  lowpassNode = audioCtx.createBiquadFilter();
+  lowpassNode.type = 'lowpass';
+  lowpassNode.frequency.value = 550;
+
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0;
+
+  const wave = audioCtx.createGain();
+  wave.gain.value = 0.5;
+  lfoNode = audioCtx.createOscillator();
+  lfoNode.frequency.value = 0.09;
+  const lfoGain = audioCtx.createGain();
+  lfoGain.gain.value = 0.4;
+  lfoNode.connect(lfoGain);
+  lfoGain.connect(wave.gain);
+
+  noise.connect(lowpassNode);
+  lowpassNode.connect(wave);
+  wave.connect(masterGain);
+  masterGain.connect(audioCtx.destination);
+
+  masterGain.gain.linearRampToValueAtTime(currentVol, audioCtx.currentTime + 3);
+
+  noise.start();
+  lfoNode.start();
+}
+
+/* ===== ДАННЫЕ ЗВЁЗД ===== */
+const STARS = [
+  {
+    x: 30, y: 32, size: 1.3,
+    prompt: "You're standing somewhere far from home — a place alive with colours, voices and smells you don't recognise.",
+    q: "What can you see, hear and smell around you? How does it feel — exciting, or a little strange?"
+  },
+  {
+    x: 58, y: 24, size: 0.85,
+    prompt: "You're sitting at a table with people who welcomed you, though you'd only just met them.",
+    q: "Who are they? What are you sharing together — food, a story, a laugh?"
+  },
+  {
+    x: 72, y: 45, size: 1.1,
+    prompt: "Think of a moment when a place you didn't know suddenly felt like it was yours.",
+    q: "Where were you? What made you feel that you belonged there?"
+  }
+];
+
+const stage       = document.getElementById('stage');
+const beginScreen = document.getElementById('beginScreen');
+const beginBtn    = document.getElementById('beginBtn');
+const reveal      = document.getElementById('reveal');
+const revealPrompt= document.getElementById('revealPrompt');
+const revealQ     = document.getElementById('revealQ');
+const backBtn     = document.getElementById('backBtn');
+const dim         = document.getElementById('dim');
+const finale      = document.getElementById('finale');
+
+let starEls = [];
+
+STARS.forEach((s, i) => {
+  const el = document.createElement('div');
+  el.className = 'star';
+  el.style.left = s.x + '%';
+  el.style.top  = s.y + '%';
+  el.style.setProperty('--size', s.size);
+  el.dataset.index = i;
+  el.addEventListener('click', () => chooseStar(i));
+  stage.appendChild(el);
+  starEls.push(el);
+});
+
+/* --- Фоновая звёздная пыль --- */
+for (let i = 0; i < 60; i++) {
+  const d = document.createElement('div');
+  d.className = 'dust';
+  d.style.left = Math.random() * 100 + '%';
+  d.style.top  = Math.random() * 100 + '%';
+  d.style.animationDelay = (Math.random() * 4) + 's';
+  d.style.animationDuration = (3 + Math.random() * 4) + 's';
+  stage.appendChild(d);
+}
+
+/* --- Падающие звёзды --- */
+function shootingStar() {
+  const s = document.createElement('div');
+  s.className = 'shooting';
+  s.style.left = (Math.random() * 40) + '%';    // стартует в ЛЕВОЙ части
+  s.style.top  = (Math.random() * 40) + '%';    // из верхней части неба
+  stage.appendChild(s);
+  s.style.animation = 'shoot 1.4s ease-in forwards';
+  setTimeout(() => s.remove(), 1500);
+}
+
+/* --- Запуск --- */
+beginBtn.addEventListener('click', () => {
+  startOcean();
+  beginScreen.style.opacity = '0';
+  setTimeout(() => beginScreen.style.display = 'none', 2000);
+  setTimeout(showStars, 4000);
+});
+
+function showStars() {
+  starEls.forEach((el, i) => {
+    setTimeout(() => el.classList.add('show'), i * 700);
+  });
+}
+
+function chooseStar(i) {
+  const data = STARS[i];
+  starEls.forEach(el => el.classList.remove('show'));
+  starEls[i].classList.add('visited');
+  dim.classList.add('on');
+  revealPrompt.textContent = data.prompt;
+  revealQ.textContent = data.q;
+  setTimeout(() => {
+    reveal.classList.add('show');
+    backBtn.classList.add('show');
+  }, 1400);
+}
+
+function allVisited() {
+  return starEls.every(el => el.classList.contains('visited'));
+}
+
+backBtn.addEventListener('click', () => {
+  reveal.classList.remove('show');
+  backBtn.classList.remove('show');
+  if (allVisited()) {
+    setTimeout(() => finale.classList.add('show'), 1200);
+  } else {
+    dim.classList.remove('on');
+    setTimeout(showStars, 1200);
+  }
+});
+
+/* --- Панель управления звуком --- */
+const audioToggle = document.getElementById('audio-toggle');
+const audioPanel  = document.getElementById('audio-panel');
+const sliderVol   = document.getElementById('sliderVol');
+const sliderWave  = document.getElementById('sliderWave');
+const sliderDepth = document.getElementById('sliderDepth');
+const valVol      = document.getElementById('valVol');
+const valWave     = document.getElementById('valWave');
+const valDepth    = document.getElementById('valDepth');
+const muteBtn     = document.getElementById('muteBtn');
+
+audioToggle.addEventListener('click', () => audioPanel.classList.toggle('open'));
+
+sliderVol.addEventListener('input', () => {
+  valVol.textContent = sliderVol.value;
+  currentVol = sliderVol.value / 100;
+  if (masterGain && !isMuted) masterGain.gain.value = currentVol;
+});
+sliderWave.addEventListener('input', () => {
+  valWave.textContent = sliderWave.value;
+  if (lfoNode) lfoNode.frequency.value = sliderWave.value / 100;
+});
+sliderDepth.addEventListener('input', () => {
+  valDepth.textContent = sliderDepth.value;
+  if (lowpassNode) lowpassNode.frequency.value = +sliderDepth.value;
+});
+muteBtn.addEventListener('click', () => {
+  isMuted = !isMuted;
+  muteBtn.classList.toggle('muted', isMuted);
+  muteBtn.textContent = isMuted ? 'UNMUTE' : 'MUTE';
+  if (masterGain) masterGain.gain.value = isMuted ? 0 : currentVol;
+});
+</script>
+</body>
+</html>
