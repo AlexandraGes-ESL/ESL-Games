@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1A Suffixes — Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1a2b47; --lav:#c5b8e0; --lav-soft:#e8e2f4;
+    --teal:#4db8c4; --ok:#3aa76d; --err:#d64550; --bg:#f4f2f8;
+    --card:#fff; --text:#25314a; --muted:#7a8296;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Gowun Dodum',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;padding:16px}
+  .wrap{max-width:760px;margin:0 auto}
+
+  /* HEADER */
+  header{background:var(--navy);border-radius:16px;padding:22px 24px;color:#fff;position:relative;overflow:hidden}
+  header .tag{display:inline-block;background:var(--lav);color:var(--navy);font-weight:bold;padding:2px 10px;border-radius:6px;font-size:.8rem;letter-spacing:.5px}
+  header h1{font-family:'Bangers',cursive;font-size:2.6rem;letter-spacing:1px;margin-top:8px}
+  header h1 span{color:var(--lav)}
+  header p{color:#cdd4e4;font-size:.9rem;margin-top:4px}
+
+  /* PROGRESS */
+  .progress-wrap{margin:18px 0 8px}
+  .pbar{height:10px;background:var(--lav-soft);border-radius:20px;overflow:hidden}
+  .pfill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--lav));transition:width .4s ease;border-radius:20px}
+  .pmeta{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-top:6px}
+
+  /* STAGE */
+  .stage{display:none;animation:fade .35s ease}
+  .stage.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .shead{background:var(--navy);color:#fff;padding:10px 16px;border-radius:10px 10px 0 0;font-weight:bold;display:flex;align-items:center;gap:10px}
+  .snum{background:var(--teal);width:26px;height:26px;border-radius:6px;display:grid;place-items:center;font-family:'Bangers',cursive;font-size:1.1rem}
+  .sbody{background:var(--card);padding:18px 16px 22px;border-radius:0 0 12px 12px;box-shadow:0 4px 14px rgba(26,43,71,.08);margin-bottom:16px}
+  .hint{background:var(--lav-soft);border-left:4px solid var(--lav);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.86rem;color:#4a4266;margin-bottom:14px}
+
+  .q{margin:16px 0;padding-bottom:14px;border-bottom:1px dashed #e2e0ec}
+  .q:last-child{border:none}
+  .qtext{font-weight:bold;margin-bottom:8px}
+  .qtext em{color:var(--teal);font-style:normal;font-weight:bold}
+
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt{background:#fff;border:2px solid var(--lav);color:var(--navy);padding:9px 16px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:.95rem;transition:.15s;min-height:44px}
+  .opt:hover{background:var(--lav-soft)}
+  .opt.correct{background:var(--ok);border-color:var(--ok);color:#fff}
+  .opt.wrong{background:var(--err);border-color:var(--err);color:#fff}
+  .opt:disabled{cursor:default;opacity:.9}
+
+  .inrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  input[type=text]{font-family:inherit;font-size:1rem;padding:10px 14px;border:2px solid var(--lav);border-radius:10px;flex:1;min-width:160px}
+  input.ok{border-color:var(--ok);background:#eafaf1}
+  input.no{border-color:var(--err);background:#fdeef0}
+  .fb{font-size:.85rem;margin-top:6px;min-height:18px;font-weight:bold}
+  .fb.ok{color:var(--ok)}
+  .fb.no{color:var(--err)}
+
+  .btn{font-family:inherit;font-weight:bold;padding:11px 22px;border:none;border-radius:24px;cursor:pointer;font-size:.95rem;transition:.15s}
+  .btn-check{background:var(--teal);color:#fff}
+  .btn-check:hover{filter:brightness(1.08)}
+  .navbtns{display:flex;justify-content:space-between;margin-top:8px;gap:10px}
+  .btn-next{background:var(--navy);color:#fff;flex:1}
+  .btn-next:hover{background:#26406b}
+  .btn-back{background:#fff;color:var(--navy);border:2px solid var(--navy)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+
+  /* FINAL */
+  #final{text-align:center;padding:30px 20px}
+  #final h2{font-family:'Bangers',cursive;font-size:2.4rem;color:var(--navy);letter-spacing:1px}
+  .score-big{font-size:3rem;font-family:'Bangers',cursive;color:var(--teal);margin:10px 0}
+  .review{text-align:left;background:var(--lav-soft);border-radius:12px;padding:14px 16px;margin:16px 0;font-size:.9rem}
+  .review b{color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="tag">Unit 1 · Lesson A</span>
+    <h1><span>1A</span> Suffixes</h1>
+    <p>Personality adjectives &amp; academic word-building · 5 stages · TOEFL-style practice</p>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="pbar"><div class="pfill" id="pfill"></div></div>
+    <div class="pmeta"><span id="pstage">Stage 1 of 5</span><span id="pscore">Score: 0</span></div>
+  </div>
+
+  <!-- ================= STAGE 1: MATCH ================= -->
+  <div class="stage active" data-stage="1">
+    <div class="shead"><span class="snum">1</span> Warm-up — Which suffix?</div>
+    <div class="sbody">
+      <div class="hint">💡 Choose the suffix that turns each word into an adjective.</div>
+      <div id="s1"></div>
+      <div class="navbtns"><button class="btn btn-next" onclick="go(2)">Next stage →</button></div>
+    </div>
+  </div>
+
+  <!-- ================= STAGE 2: BUILD ================= -->
+  <div class="stage" data-stage="2">
+    <div class="shead"><span class="snum">2</span> Build it — spelling matters!</div>
+    <div class="sbody">
+      <div class="hint">💡 Add the suffix and write the correct form. Watch out: drop <em>-e</em>, double letters, <em>y→i</em>.</div>
+      <div id="s2"></div>
+      <div class="navbtns">
+        <button class="btn btn-back" onclick="go(1)">← Back</button>
+        <button class="btn btn-next" onclick="go(3)">Next stage →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= STAGE 3: GAP-FILL (TOEFL) ================= -->
+  <div class="stage" data-stage="3">
+    <div class="shead"><span class="snum">3</span> Gap-fill — TOEFL style</div>
+    <div class="sbody">
+      <div class="hint">💡 Read the academic sentence. Type the correct form of the word in brackets.</div>
+      <div id="s3"></div>
+      <div class="navbtns">
+        <button class="btn btn-back" onclick="go(2)">← Back</button>
+        <button class="btn btn-next" onclick="go(4)">Next stage →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= STAGE 4: SPELLING TRAP ================= -->
+  <div class="stage" data-stage="4">
+    <div class="shead"><span class="snum">4</span> Spelling trap — spot the right one</div>
+    <div class="sbody">
+      <div class="hint">💡 Only one spelling is correct. Choose carefully!</div>
+      <div id="s4"></div>
+      <div class="navbtns">
+        <button class="btn btn-back" onclick="go(3)">← Back</button>
+        <button class="btn btn-next" onclick="go(5)">Next stage →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= STAGE 5: FIND & FIX ================= -->
+  <div class="stage" data-stage="5">
+    <div class="shead"><span class="snum">5</span> Challenge — find &amp; fix the mistake</div>
+    <div class="sbody">
+      <div class="hint">💡 Each sentence has ONE wrong word form. Type the corrected word only.</div>
+      <div id="s5"></div>
+      <div class="navbtns">
+        <button class="btn btn-back" onclick="go(4)">← Back</button>
+        <button class="btn btn-next" onclick="finish()">See results 🎉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FINAL ================= -->
+  <div class="stage" data-stage="6">
+    <div class="sbody" id="final"></div>
+  </div>
+
+</div>
+
+<script>
+/* ---------- DATA ---------- */
+const S1 = [ // word -> correct suffix
+  {w:"adventure", opts:["-ous","-al","-ic"], a:"-ous"},
+  {w:"artist",    opts:["-ful","-ic","-able"], a:"-ic"},
+  {w:"reason",    opts:["-able","-ous","-ed"], a:"-able"},
+  {w:"emotion",   opts:["-ic","-al","-ous"], a:"-al"},
+  {w:"thought",   opts:["-able","-ic","-ful"], a:"-ful"},
+  {w:"comfort",   opts:["-able","-ous","-al"], a:"-able"},
+];
+const S2 = [ // build with spelling change
+  {q:"nature + -al", a:"natural"},
+  {q:"fame + -ous",  a:"famous"},
+  {q:"rely + -able", a:"reliable"},
+  {q:"beauty + -ful",a:"beautiful"},
+  {q:"response + -ible", a:"responsible"},
+  {q:"advertise + -ment", a:"advertisement"},
+];
+const S3 = [ // TOEFL-style gap-fill (type the form)
+  {before:"The research produced highly ", after:" data that changed the theory. (reliable)", a:"reliable"},
+  {before:"Her ", after:" to complete the project on time was impressive. (able)", a:"ability"},
+  {before:"Scientists made a ", after:" contribution to the field. (significance)", a:"significant"},
+  {before:"The report offers a ", after:" analysis of the results. (detail)", a:"detailed"},
+  {before:"Students showed great ", after:" during the difficult exam. (determine)", a:"determination"},
+  {before:"The findings were ", after:" published in a journal. (success)", a:"successfully"},
+];
+const S4 = [ // spelling trap
+  {opts:["adventurous","adventourous","adventrous"], a:"adventurous"},
+  {opts:["responsable","responsible","responsibel"], a:"responsible"},
+  {opts:["succesful","successful","successfull"], a:"successful"},
+  {opts:["comparison","comparation","comparasion"], a:"comparison"},
+  {opts:["definately","definitly","definitely"], a:"definitely"},
+  {opts:["independant","independent","independint"], a:"independent"},
+];
+const S5 = [ // find & fix (type corrected word)
+  {sent:"He is one of the most <em>succesful</em> people I know.", a:"successful"},
+  {sent:"Their <em>arguement</em> lasted for over an hour.", a:"argument"},
+  {sent:"She gave a very <em>convincingly</em> speech to the class.", a:"convincing"},
+  {sent:"The team worked with great <em>effeciency</em>.", a:"efficiency"},
+  {sent:"His <em>curiosdity</em> about science started early.", a:"curiosity"},
+  {sent:"This is an <em>enviromental</em> problem we must solve.", a:"environmental"},
+];
+
+/* ---------- STATE ---------- */
+let score=0, current=1;
+const total = S1.length+S2.length+S3.length+S4.length+S5.length; // 30
+const done = new Set(); // ids answered correctly (prevent double count)
+
+function norm(s){return (s||"").trim().toLowerCase().replace(/[.\s]+$/,"")}
+function addScore(id){ if(!done.has(id)){done.add(id);score++;updateMeta();} }
+function updateMeta(){
+  document.getElementById('pscore').textContent="Score: "+score;
+  document.getElementById('pstage').textContent = current<=5? "Stage "+current+" of 5":"Finished";
+  document.getElementById('pfill').style.width = Math.min(100,(done.size/total)*100)+"%";
+}
+
+/* ---------- RENDER: choice stages (1,4) ---------- */
+function renderChoice(data,box,prefix,textFn){
+  const c=document.getElementById(box);
+  data.forEach((item,i)=>{
+    const id=prefix+i;
+    const q=document.createElement('div');q.className='q';
+    q.innerHTML=`<div class="qtext">${i+1}. ${textFn(item)}</div>`;
+    const wrap=document.createElement('div');wrap.className='opts';
+    item.opts.forEach(o=>{
+      const b=document.createElement('button');b.className='opt';b.textContent=o;
+      b.onclick=()=>{
+        wrap.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+        if(o===item.a){b.classList.add('correct');addScore(id);}
+        else{b.classList.add('wrong');
+             wrap.querySelectorAll('.opt').forEach(x=>{if(x.textContent===item.a)x.classList.add('correct');});}
+      };
+      wrap.appendChild(b);
+    });
+    q.appendChild(wrap);c.appendChild(q);
+  });
+}
+
+/* ---------- RENDER: text-input stages (2,3,5) ---------- */
+function renderInput(data,box,prefix,buildHTML,answerFn){
+  const c=document.getElementById(box);
+  data.forEach((item,i)=>{
+    const id=prefix+i;
+    const q=document.createElement('div');q.className='q';
+    q.innerHTML=`<div class="qtext">${i+1}. ${buildHTML(item)}</div>`;
+    const row=document.createElement('div');row.className='inrow';
+    const inp=document.createElement('input');inp.type='text';inp.placeholder='type here';
+    const btn=document.createElement('button');btn.className='btn btn-check';btn.textContent='Check';
+    const fb=document.createElement('div');fb.className='fb';
+    btn.onclick=()=>{
+      if(norm(inp.value)===norm(answerFn(item))){
+        inp.classList.remove('no');inp.classList.add('ok');
+        fb.className='fb ok';fb.textContent='✅ Correct!';addScore(id);
+        inp.disabled=true;btn.disabled=true;
+      }else{
+        inp.classList.remove('ok');inp.classList.add('no');
+        fb.className='fb no';fb.textContent='❌ Try again';
+      }
+    };
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')btn.click();});
+    row.appendChild(inp);row.appendChild(btn);
+    q.appendChild(row);q.appendChild(fb);c.appendChild(q);
+  });
+}
+
+/* ---------- BUILD ALL ---------- */
+renderChoice(S1,'s1','a', it=>`Make an adjective: <em>${it.w}</em> + ___`);
+renderInput(S2,'s2','b', it=>`${it.q} = ?`, it=>it.a);
+renderInput(S3,'s3','c', it=>`${it.before}<em>_______</em>${it.after}`, it=>it.a);
+renderChoice(S4,'s4','d', it=>`Which spelling is correct?`);
+renderInput(S5,'s5','e', it=>it.sent, it=>it.a);
+
+/* ---------- NAV ---------- */
+function go(n){
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  document.querySelector('.stage[data-stage="'+n+'"]').classList.add('active');
+  current=n;updateMeta();window.scrollTo({top:0,behavior:'smooth'});
+}
+function finish(){
+  go(6);current=6;
+  const pct=Math.round((score/total)*100);
+  let msg = pct>=90?"Outstanding! 🌟":pct>=70?"Great work! 👏":pct>=50?"Good effort — keep going! 💪":"Nice start — review and try again! 📖";
+  const review = done.size<total
+    ? `<div class="review">📌 <b>Tip:</b> ${total-done.size} item(s) not answered correctly yet. Use ← Back to revisit any stage and boost your score!</div>`
+    : `<div class="review">🏆 <b>Perfect run!</b> Every single item correct. You've mastered 1A suffixes.</div>`;
+  document.getElementById('final').innerHTML=`
+    <h2>Well done!</h2>
+    <div class="score-big">${score} / ${total}</div>
+    <p style="color:var(--muted)">${pct}% correct — ${msg}</p>
+    ${review}
+    <button class="btn btn-next" style="max-width:220px;margin:6px auto 0" onclick="location.reload()">↻ Try again</button>`;
+}
+updateMeta();
+</script>
+</body>
+  </html>
