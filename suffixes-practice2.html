@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1A Suffixes — Advanced Word-Building (TOEFL)</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1a2b47; --lav:#c5b8e0; --lav-soft:#e8e2f4;
+    --teal:#4db8c4; --ok:#3aa76d; --err:#d64550; --bg:#f4f2f8;
+    --card:#fff; --text:#25314a; --muted:#7a8296; --note:#8a6d3b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Gowun Dodum',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;padding:16px}
+  .wrap{max-width:780px;margin:0 auto}
+
+  header{background:var(--navy);border-radius:16px;padding:22px 24px;color:#fff;position:relative;overflow:hidden}
+  header .tag{display:inline-block;background:var(--lav);color:var(--navy);font-weight:bold;padding:2px 10px;border-radius:6px;font-size:.8rem;letter-spacing:.5px}
+  header h1{font-family:'Bangers',cursive;font-size:2.6rem;letter-spacing:1px;margin-top:8px}
+  header h1 span{color:var(--lav)}
+  header p{color:#cdd4e4;font-size:.9rem;margin-top:4px}
+  .level{position:absolute;top:20px;right:22px;background:var(--teal);color:#fff;font-weight:bold;font-size:.75rem;padding:4px 10px;border-radius:20px}
+
+  .progress-wrap{margin:18px 0 8px}
+  .pbar{height:10px;background:var(--lav-soft);border-radius:20px;overflow:hidden}
+  .pfill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--lav));transition:width .4s ease;border-radius:20px}
+  .pmeta{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-top:6px}
+
+  .stage{display:none;animation:fade .35s ease}
+  .stage.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .shead{background:var(--navy);color:#fff;padding:10px 16px;border-radius:10px 10px 0 0;font-weight:bold;display:flex;align-items:center;gap:10px}
+  .snum{background:var(--teal);width:26px;height:26px;border-radius:6px;display:grid;place-items:center;font-family:'Bangers',cursive;font-size:1.1rem}
+  .sbody{background:var(--card);padding:18px 16px 22px;border-radius:0 0 12px 12px;box-shadow:0 4px 14px rgba(26,43,71,.08);margin-bottom:16px}
+  .hint{background:var(--lav-soft);border-left:4px solid var(--lav);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.86rem;color:#4a4266;margin-bottom:14px}
+
+  /* word bank */
+  .bank{display:flex;flex-wrap:wrap;gap:8px;background:#f0eef8;border:2px dashed var(--lav);border-radius:12px;padding:12px;margin-bottom:16px}
+  .bank .lbl{width:100%;font-size:.78rem;font-weight:bold;color:var(--navy);letter-spacing:.5px;margin-bottom:2px}
+  .chip{background:#fff;border:1px solid var(--lav);border-radius:8px;padding:5px 12px;font-size:.9rem;color:var(--navy)}
+
+  .passage{font-size:1.02rem;line-height:2}
+  .q{margin:16px 0;padding-bottom:14px;border-bottom:1px dashed #e2e0ec}
+  .q:last-child{border:none}
+  .qtext{font-weight:bold;margin-bottom:8px}
+  .qtext em{color:var(--teal);font-style:normal;font-weight:bold}
+  .root{background:var(--lav-soft);border-radius:6px;padding:1px 8px;font-weight:bold;color:var(--navy);font-size:.9em;white-space:nowrap}
+
+  .inrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  input[type=text]{font-family:inherit;font-size:1rem;padding:10px 14px;border:2px solid var(--lav);border-radius:10px;flex:1;min-width:150px}
+  input.ok{border-color:var(--ok);background:#eafaf1}
+  input.no{border-color:var(--err);background:#fdeef0}
+  .fb{font-size:.86rem;margin-top:8px;min-height:18px;font-weight:bold}
+  .fb.ok{color:var(--ok)}
+  .fb.no{color:var(--err)}
+  .note{display:none;margin-top:8px;background:#fbf6e9;border-left:4px solid #e0b84d;border-radius:0 8px 8px 0;padding:8px 12px;font-size:.85rem;color:var(--note)}
+  .note.show{display:block}
+  .note b{color:#7a5a1e}
+
+  .btn{font-family:inherit;font-weight:bold;padding:11px 22px;border:none;border-radius:24px;cursor:pointer;font-size:.95rem;transition:.15s}
+  .btn-check{background:var(--teal);color:#fff}
+  .btn-check:hover{filter:brightness(1.08)}
+  .btn-reveal{background:#fff;color:var(--muted);border:2px solid #d8d5e2;font-size:.85rem;padding:8px 14px}
+  .navbtns{display:flex;justify-content:space-between;margin-top:8px;gap:10px}
+  .btn-next{background:var(--navy);color:#fff;flex:1}
+  .btn-next:hover{background:#26406b}
+  .btn-back{background:#fff;color:var(--navy);border:2px solid var(--navy)}
+
+  #final{text-align:center;padding:30px 20px}
+  #final h2{font-family:'Bangers',cursive;font-size:2.4rem;color:var(--navy);letter-spacing:1px}
+  .score-big{font-size:3rem;font-family:'Bangers',cursive;color:var(--teal);margin:10px 0}
+  .review{text-align:left;background:var(--lav-soft);border-radius:12px;padding:14px 16px;margin:16px 0;font-size:.9rem}
+  .review b{color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="level">C1 · TOEFL 2026</span>
+    <span class="tag">Unit 1 · Lesson A · Vocabulary Bank p.136</span>
+    <h1><span>1A</span> Word-Building</h1>
+    <p>Suffixes, prefixes &amp; parts of speech · form the word yourself · 5 stages</p>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="pbar"><div class="pfill" id="pfill"></div></div>
+    <div class="pmeta"><span id="pstage">Stage 1 of 5</span><span id="pscore">Score: 0</span></div>
+  </div>
+
+  <!-- STAGE 1 -->
+  <div class="stage active" data-stage="1">
+    <div class="shead"><span class="snum">1</span> Form the adjective — from the root</div>
+    <div class="sbody">
+      <div class="hint">💡 You get the <b>root word</b> only. Build the correct adjective yourself — mind the spelling.</div>
+      <div id="s1"></div>
+      <div class="navbtns"><button class="btn btn-next" onclick="go(2)">Next stage →</button></div>
+    </div>
+  </div>
+
+  <!-- STAGE 2 -->
+  <div class="stage" data-stage="2">
+    <div class="shead"><span class="snum">2</span> Part of speech — same root, different form</div>
+    <div class="sbody">
+      <div class="hint">💡 Same root, but the sentence needs a specific <b>part of speech</b> (noun / adjective / adverb). Choose the right form.</div>
+      <div id="s2"></div>
+      <div class="navbtns">
+        <button class="btn btn-back" onclick="go(1)">← Back</button>
+        <button class="btn btn-next" onclick="go(3)">Next stage →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 3 -->
+  <div class="stage" data-stage="3">
+    <div class="shead"><span class="snum">3</span> Academic gap-fill — TOEFL word bank</div>
+    <div class="sbody">
+      <div class="hint">💡 Read the passage. Use each <b>root from the bank</b> ONCE, in the correct form. There are <b>2 extra roots</b> you won't need.</div>
+      <div class="bank" id="bank">
+        <span class="lbl">WORD BANK (change the form!):</span>
+      </div>
+      <div class="passage" id="s3"></div>
+      <div class="navbtns">
+        <button class="btn btn-back" onclick="go(2)">← Back</button>
+        <button class="btn btn-next" onclick="go(4)">Next stage →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 4 -->
+  <div class="stage" data-stage="4">
+    <div class="shead"><span class="snum">4</span> Prefix trap — positive or negative?</div>
+    <div class="sbody">
+      <div class="hint">💡 The <b>meaning</b> of the sentence decides if you need a negative prefix (<em>un- / in- / im- / ir- / dis-</em>). Read carefully!</div>
+      <div id="s4"></div>
+      <div class="navbtns">
+        <button class="btn btn-back" onclick="go(3)">← Back</button>
+        <button class="btn btn-next" onclick="go(5)">Next stage →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 5 -->
+  <div class="stage" data-stage="5">
+    <div class="shead"><span class="snum">5</span> Challenge — find &amp; fix the wrong form</div>
+    <div class="sbody">
+      <div class="hint">💡 Each sentence has ONE word in the WRONG form. Type the corrected word only.</div>
+      <div id="s5"></div>
+      <div class="navbtns">
+        <button class="btn btn-back" onclick="go(4)">← Back</button>
+        <button class="btn btn-next" onclick="finish()">See results 🎉</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage" data-stage="6"><div class="sbody" id="final"></div></div>
+</div>
+
+<script>
+/* ===== DATA ===== accept: array of correct variants; note: footnote ===== */
+
+const S1 = [ // root -> build adjective
+  {root:"rely",     accept:["reliable"], note:"<b>rely → reliable</b>: drop <em>-y</em>, add <em>-iable</em>. (dependable)"},
+  {root:"nature",   accept:["natural"], note:"<b>nature → natural</b>: drop final <em>-e</em>, add <em>-al</em>."},
+  {root:"ambition", accept:["ambitious"], note:"<b>ambition → ambitious</b>: <em>-ion</em> → <em>-ious</em>. (from the article!)"},
+  {root:"response", accept:["responsible"], note:"<b>response → responsible</b>: irregular — <em>-se</em> → <em>-sible</em>."},
+  {root:"caution",  accept:["cautious"], note:"<b>caution → cautious</b>: <em>-ion</em> → <em>-ious</em> (like ambition)."},
+  {root:"knowledge",accept:["knowledgeable"], note:"<b>knowledge → knowledgeable</b>: keep the <em>-e</em> (soft g!), add <em>-able</em>."},
+];
+
+const S2 = [ // one root, sentence forces part of speech
+  {root:"create", pos:"noun", before:"The team's latest ", after:" won an international design award.",
+   accept:["creation"], note:"Need a <b>noun</b> (the thing made) → <b>creation</b>. Not <em>creativity</em> (that's the quality)."},
+  {root:"create", pos:"adjective", before:"She is one of the most ", after:" people in the studio.",
+   accept:["creative"], note:"Need an <b>adjective</b> describing a person → <b>creative</b>."},
+  {root:"analyse", pos:"noun", before:"The report offers a detailed ", after:" of the data.",
+   accept:["analysis"], note:"<b>Noun</b> → <b>analysis</b> (BrE <em>analyse</em>/AmE <em>analyze</em>). Plural: analyses."},
+  {root:"analyse", pos:"adverb", before:"He approached the problem ", after:", step by step.",
+   accept:["analytically"], note:"<b>Adverb</b> (how?) → <b>analytically</b> (analytical + -ly)."},
+  {root:"determine", pos:"noun", before:"Her ", after:" to succeed impressed everyone.",
+   accept:["determination"], note:"<b>Noun</b> (the quality) → <b>determination</b>."},
+  {root:"significance", pos:"adjective", before:"The study made a ", after:" contribution to science.",
+   accept:["significant"], note:"<b>Adjective</b> → <b>significant</b>. The noun is <em>significance</em>."},
+];
+
+/* STAGE 3 — real TOEFL passage, word bank with 2 distractors */
+const S3_BANK = ["adventure","society","argue","emotion","curious","outgoing","reason","practice"]; // 2 extra: outgoing, practice
+const S3 = [
+  {before:"Psychologists have long been ", after:" about what shapes human personality. ",
+   accept:["curious"], root:"curious", note:"<b>curious</b> — adjective after <em>been</em>. (from the article: Gosia feels 'more curious')"},
+  {before:"One widely accepted ", after:" is that our family position plays a role. ",
+   accept:["argument"], root:"argue", note:"<b>argue → argument</b>: noun, and note the spelling — NO <em>e</em> after <em>u</em> (not <em>arguement</em>)."},
+  {before:"For example, first-born children are often more ", after:", showing strong self-control. ",
+   accept:["reasonable"], root:"reason", note:"<b>reason → reasonable</b>: adjective, add <em>-able</em>."},
+  {before:"Younger siblings may be more ", after:", eager to try new things and take risks. ",
+   accept:["adventurous"], root:"adventure", note:"<b>adventure → adventurous</b>: drop <em>-e</em>, add <em>-ous</em>. (article word!)"},
+  {before:"Culture also matters: some ", after:" encourage independence more than others. ",
+   accept:["societies"], root:"society", note:"<b>society → societies</b>: PLURAL noun, <em>-y</em> → <em>-ies</em>. Context ('some') needs plural."},
+  {before:"Finally, our ", after:" responses — how we handle joy or stress — complete the picture.",
+   accept:["emotional"], root:"emotion", note:"<b>emotion → emotional</b>: adjective before <em>responses</em>, add <em>-al</em>."},
+];
+
+const S4 = [ // prefix trap: meaning decides
+  {before:"The results kept changing, so the data was completely ", after:" and we had to repeat the test.",
+   root:"rely", accept:["unreliable"], note:"Meaning = NOT reliable → <b>unreliable</b>. The word 'so we repeated' signals a problem."},
+  {before:"He never admits his mistakes; it's quite ", after:" of him to blame others.",
+   root:"maturity", accept:["immature"], note:"Negative meaning → <b>immature</b>. Before <em>m/p</em>, <em>in-</em> becomes <em>im-</em>."},
+  {before:"She always keeps her promises — she is extremely ", after:".",
+   root:"rely", accept:["reliable"], note:"POSITIVE here ('keeps promises') → <b>reliable</b>, NO prefix. Don't add un- automatically!"},
+  {before:"It would be ", after:" to ignore all the safety rules just to save time.",
+   root:"responsible", accept:["irresponsible"], note:"Negative → <b>irresponsible</b>. Before <em>r</em>, <em>in-</em> becomes <em>ir-</em>."},
+  {before:"The two witnesses gave totally different stories, so their accounts were ", after:".",
+   root:"consistent", accept:["inconsistent"], note:"'different stories' → NOT consistent → <b>inconsistent</b>."},
+  {before:"Everyone respected her because she was honest and ", after:" in all her dealings.",
+   root:"honest", accept:["honest"], note:"POSITIVE ('respected, honest') → keep <b>honest</b>. Trap: no dishonest here!"},
+];
+
+const S5 = [ // find & fix wrong form
+  {sent:"His <em>determinate</em> to finish the marathon inspired the whole team.",
+   accept:["determination"], note:"Need a NOUN → <b>determination</b> (<em>determinate</em> is a rare adjective, wrong here)."},
+  {sent:"The scientist gave a <em>convincingly</em> explanation of the theory.",
+   accept:["convincing"], note:"Before a noun (explanation) → ADJECTIVE <b>convincing</b>, not the adverb."},
+  {sent:"They were praised for the <em>efficient</em> with which they solved the crisis.",
+   accept:["efficiency"], note:"After 'the' + 'with which' → NOUN <b>efficiency</b>."},
+  {sent:"Her <em>curiousity</em> about other cultures led her to travel the world.",
+   accept:["curiosity"], note:"Spelling: <b>curiosity</b> — drop the <em>u</em> from <em>curious</em> (not <em>curiousity</em>)."},
+  {sent:"Being <em>argumentation</em> all the time makes teamwork difficult.",
+   accept:["argumentative"], note:"After 'Being' + describing a person → ADJECTIVE <b>argumentative</b>. (article word!)"},
+  {sent:"The company made a <em>signify</em> profit this year.",
+   accept:["significant"], note:"Before a noun (profit) → ADJECTIVE <b>significant</b> (<em>signify</em> is a verb)."},
+];
+
+/* ===== STATE ===== */
+let score=0,current=1;
+const total=S1.length+S2.length+S3.length+S4.length+S5.length; // 30
+const done=new Set();
+function norm(s){return (s||"").trim().toLowerCase().replace(/[.,;:!?]+$/,"")}
+function addScore(id){if(!done.has(id)){done.add(id);score++;updateMeta();}}
+function updateMeta(){
+  document.getElementById('pscore').textContent="Score: "+score;
+  document.getElementById('pstage').textContent=current<=5?"Stage "+current+" of 5":"Finished";
+  document.getElementById('pfill').style.width=Math.min(100,(done.size/total)*100)+"%";
+}
+
+/* ===== INPUT RENDERER (with reveal + footnote) ===== */
+function makeInput(id,item,questionHTML,container){
+  const q=document.createElement('div');q.className='q';
+  q.innerHTML=`<div class="qtext">${questionHTML}</div>`;
+  const row=document.createElement('div');row.className='inrow';
+  const inp=document.createElement('input');inp.type='text';inp.placeholder='type the word';
+  const chk=document.createElement('button');chk.className='btn btn-check';chk.textContent='Check';
+  const rev=document.createElement('button');rev.className='btn btn-reveal';rev.textContent='Show answer';
+  const fb=document.createElement('div');fb.className='fb';
+  const note=document.createElement('div');note.className='note';note.innerHTML="📝 "+(item.note||"");
+  const win=()=>{inp.classList.remove('no');inp.classList.add('ok');fb.className='fb ok';
+    fb.textContent='✅ Correct!';addScore(id);inp.disabled=true;chk.disabled=true;note.classList.add('show');};
+  chk.onclick=()=>{
+    if(item.accept.map(norm).includes(norm(inp.value)))win();
+    else{inp.classList.remove('ok');inp.classList.add('no');fb.className='fb no';fb.textContent='❌ Not yet — try again';}
+  };
+  rev.onclick=()=>{inp.value=item.accept[0];inp.classList.remove('no');inp.classList.add('ok');
+    fb.className='fb no';fb.textContent='👀 Answer shown (not scored)';inp.disabled=true;chk.disabled=true;note.classList.add('show');};
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')chk.click();});
+  row.appendChild(inp);row.appendChild(chk);row.appendChild(rev);
+  q.appendChild(row);q.appendChild(fb);q.appendChild(note);container.appendChild(q);
+}
+
+/* ===== BUILD ===== */
+S1.forEach((it,i)=>makeInput('a'+i,it,
+  `${i+1}. Root: <span class="root">${it.root}</span> → make the <em>adjective</em>`,document.getElementById('s1')));
+
+S2.forEach((it,i)=>makeInput('b'+i,it,
+  `${i+1}. <span class="root">${it.root}</span> → <em>${it.pos}</em><br>${it.before}<em>______</em>${it.after}`,document.getElementById('s2')));
+
+/* stage 3 bank */
+const bankBox=document.getElementById('bank');
+S3_BANK.forEach(w=>{const c=document.createElement('span');c.className='chip';c.textContent=w;bankBox.appendChild(c);});
+S3.forEach((it,i)=>makeInput('c'+i,it,
+  `${i+1}. ${it.before}<em>______</em>${it.after} <span class="root">${it.root}</span>`,document.getElementById('s3')));
+
+S4.forEach((it,i)=>makeInput('d'+i,it,
+  `${i+1}. ${it.before}<em>______</em>${it.after}<br><span class="root">root: ${it.root}</span>`,document.getElementById('s4')));
+
+S5.forEach((it,i)=>makeInput('e'+i,it,
+  `${i+1}. ${it.sent}`,document.getElementById('s5')));
+
+/* ===== NAV ===== */
+function go(n){
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+  document.querySelector('.stage[data-stage="'+n+'"]').classList.add('active');
+  current=n;updateMeta();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function finish(){
+  go(6);current=6;updateMeta();
+  const pct=Math.round((score/total)*100);
+  const msg = pct>=90?"Outstanding word-building! 🌟"
+            : pct>=70?"Strong TOEFL-level control! 👏"
+            : pct>=50?"Solid progress — review the notes! 💪"
+            : "Good start — read the footnotes and retry! 📖";
+  const review = done.size<total
+    ? `<div class="review">📌 <b>To improve:</b> ${total-done.size} item(s) not yet correct (answers you revealed don't count). Use <b>← Back</b> to revisit any stage. Re-read the yellow 📝 notes — they explain the exact rule.</div>`
+    : `<div class="review">🏆 <b>Perfect run!</b> Every form correct — suffixes, parts of speech, prefix traps and error-correction all mastered. TOEFL-ready! 🎓</div>`;
+  document.getElementById('final').innerHTML=`
+    <h2>Well done!</h2>
+    <div class="score-big">${score} / ${total}</div>
+    <p style="color:var(--muted)">${pct}% correct — ${msg}</p>
+    ${review}
+    <button class="btn btn-next" style="max-width:220px;margin:6px auto 0" onclick="location.reload()">↻ Try again</button>`;
+}
+
+updateMeta();
+</script>
+</body>
+</html>
