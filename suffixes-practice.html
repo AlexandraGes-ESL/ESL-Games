@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice: Suffixes 1A</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Gowun Dodum', sans-serif; max-width: 720px; margin: 0 auto; padding: 20px; background: #fff8f0; color: #333; }
+  h1 { font-family: 'Bangers', cursive; font-size: 2.6rem; color: #ff6b6b; text-align: center; letter-spacing: 1px; margin-bottom: 4px; }
+  .sub { text-align: center; color: #888; margin-top: 0; }
+  .rules { background: #fff3cd; border: 2px dashed #ffc107; border-radius: 12px; padding: 14px 18px; margin: 20px 0; }
+  .rules h3 { margin: 0 0 8px; color: #e67700; }
+  .rules ul { margin: 0; padding-left: 20px; line-height: 1.6; }
+  .card { background: #fff; border: 2px solid #ffe0d0; border-radius: 16px; padding: 18px; margin: 18px 0; box-shadow: 0 3px 10px rgba(0,0,0,.05); }
+  .q { font-weight: bold; margin-bottom: 10px; }
+  .opts button { display: block; width: 100%; text-align: left; margin: 6px 0; padding: 10px 14px; border: 2px solid #ddd; border-radius: 10px; background: #fafafa; font-family: inherit; font-size: 1rem; cursor: pointer; transition: .15s; }
+  .opts button:hover { border-color: #ff6b6b; }
+  .opts button.correct { background: #d3f9d8; border-color: #40c057; }
+  .opts button.wrong { background: #ffe3e3; border-color: #ff6b6b; }
+  input[type=text] { padding: 8px 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; font-family: inherit; width: 180px; }
+  .feedback { margin-top: 8px; font-size: .95rem; }
+  .ok { color: #2b8a3e; }
+  .no { color: #c92a2a; }
+  #timer { position: sticky; top: 0; text-align: center; background: #ff6b6b; color: #fff; padding: 8px; border-radius: 0 0 12px 12px; font-family: 'Bangers', cursive; font-size: 1.3rem; letter-spacing: 1px; z-index: 10; }
+  #score { position: sticky; top: 50px; text-align: right; font-weight: bold; color: #ff6b6b; }
+  .check-btn { background: #ff6b6b; color: #fff; border: none; padding: 8px 18px; border-radius: 10px; font-family: inherit; cursor: pointer; font-size: 1rem; margin-top: 8px; }
+  #final { text-align: center; font-family: 'Bangers', cursive; font-size: 2rem; color: #40c057; margin: 30px 0; display: none; }
+</style>
+</head>
+<body>
+
+<div id="timer">⏱ 00:00</div>
+<h1>Practice: Suffixes</h1>
+<p class="sub">Unit 1A — making adjectives with suffixes</p>
+<div id="score">Score: 0</div>
+
+<div class="rules">
+  <h3>📝 Spelling reminders</h3>
+  <ul>
+    <li>Drop <b>-e</b> before <b>-ous / -able / -al</b>: adventure → <b>adventurous</b>, nature → <b>natural</b></li>
+    <li>Just add the suffix: hope → <b>hopeful</b>, help → <b>helpful</b>, thought → <b>thoughtful</b></li>
+    <li>Watch the ending: rely → <b>reliable</b>, ambition → <b>ambitious</b></li>
+  </ul>
+</div>
+
+<!-- Ex 1: Match suffix (MC) -->
+<h2>1️⃣ Which suffix?</h2>
+<div id="ex1"></div>
+
+<!-- Ex 2: Word formation gaps -->
+<h2>2️⃣ Complete the sentence</h2>
+<div id="ex2"></div>
+
+<!-- Ex 3: Spelling trap (MC) -->
+<h2>3️⃣ Correct spelling?</h2>
+<div id="ex3"></div>
+
+<div id="final"></div>
+
+<script>
+/* ===== DATA ===== */
+const ex1 = [
+  { q: "hope → hope + ?", opts: ["-ful", "-ous", "-al"], answer: 0 },
+  { q: "optimist → optimist + ?", opts: ["-able", "-ic", "-ed"], answer: 1 },
+  { q: "generosity root 'gener-' takes:", opts: ["-ful", "-ic", "-ous"], answer: 2 },
+  { q: "rely → rely + ?", opts: ["-able", "-al", "-ed"], answer: 0 },
+];
+
+const ex2 = [
+  { sentence: "My grandma is very ______ — she gives presents to everyone. (generous)", answer: "generous" },
+  { sentence: "He stays ______ even when things go wrong. (optimistic)", answer: "optimistic" },
+  { sentence: "She's a ______ friend — always on time. (reliable)", answer: "reliable" },
+  { sentence: "That was a ______ decision, very sensible. (practical)", answer: "practical" },
+];
+
+const ex3 = [
+  { opts: ["adventourous", "adventurous", "adventureous"], answer: 1 },
+  { opts: ["thoughtful", "thoughtfull", "thoughful"], answer: 0 },
+  { opts: ["ambitous", "ambicious", "ambitious"], answer: 2 },
+];
+
+let score = 0;
+function addScore() { score++; document.getElementById("score").textContent = "Score: " + score; checkDone(); }
+
+/* ===== RENDER MC (ex1, ex3) ===== */
+function renderMC(data, containerId, prefix) {
+  const box = document.getElementById(containerId);
+  data.forEach((item, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    const q = document.createElement("div");
+    q.className = "q";
+    q.textContent = (i + 1) + ". " + (item.q || "Choose the correct spelling:");
+    card.appendChild(q);
+    const opts = document.createElement("div");
+    opts.className = "opts";
+    let answered = false;
+    item.opts.forEach((opt, j) => {
+      const b = document.createElement("button");
+      b.textContent = opt;
+      b.onclick = () => {
+        if (answered) return;
+        answered = true;
+        if (j === item.answer) { b.classList.add("correct"); addScore(); }
+        else {
+          b.classList.add("wrong");
+          opts.children[item.answer].classList.add("correct");
+        }
+      };
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+    box.appendChild(card);
+  });
+}
+
+/* ===== RENDER GAPS (ex2) ===== */
+function renderGaps(data, containerId) {
+  const box = document.getElementById(containerId);
+  data.forEach((item, i) => {
+    const card = document.createElement("div");
+    card.className = "card";
+    const q = document.createElement("div");
+    q.className = "q";
+    q.textContent = (i + 1) + ". " + item.sentence;
+    card.appendChild(q);
+    const input = document.createElement("input");
+    input.type = "text";
+    const btn = document.createElement("button");
+    btn.className = "check-btn";
+    btn.textContent = "Check";
+    const fb = document.createElement("div");
+    fb.className = "feedback";
+    let answered = false;
+    btn.onclick = () => {
+      if (answered) return;
+      const val = input.value.trim().toLowerCase();
+      if (val === item.answer) {
+        fb.innerHTML = "<span class='ok'>✅ Correct!</span>";
+        answered = true; input.disabled = true; addScore();
+      } else {
+        fb.innerHTML = "<span class='no'>❌ Try again (check the spelling!)</span>";
+      }
+    };
+    card.appendChild(document.createElement("br"));
+    card.appendChild(input);
+    card.appendChild(btn);
+    card.appendChild(fb);
+    box.appendChild(card);
+  });
+}
+
+renderMC(ex1, "ex1");
+renderGaps(ex2, "ex2");
+renderMC(ex3, "ex3");
+
+/* ===== FINAL ===== */
+const total = ex1.length + ex2.length + ex3.length;
+function checkDone() {
+  if (score >= total) {
+    const f = document.getElementById("final");
+    f.style.display = "block";
+    f.textContent = "🎉 Well done! " + score + "/" + total;
+    clearInterval(timerInt);
+  }
+}
+
+/* ===== SOFT TIMER (counts up) ===== */
+let seconds = 0;
+const timerInt = setInterval(() => {
+  seconds++;
+  const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+  const s = String(seconds % 60).padStart(2, "0");
+  document.getElementById("timer").textContent = "⏱ " + m + ":" + s;
+}, 1000);
+</script>
+
+</body>
+</html>
