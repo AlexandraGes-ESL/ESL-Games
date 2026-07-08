@@ -294,7 +294,15 @@ let masterGain = null, lowpassNode = null, lfoNode = null;
 let isMuted = false;
 let currentVol = 0.14;
 
-function startOcean() {
+/* Плавно и корректно выставляет громкость, отменяя старые «расписания» */
+function applyGain(value) {
+  if (!masterGain || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  masterGain.gain.cancelScheduledValues(now);
+  masterGain.gain.setValueAtTime(masterGain.gain.value, now); // фиксируем текущее
+  masterGain.gain.linearRampToValueAtTime(value, now + 0.15); // плавно за 150мс
+}
+ function startOcean() {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
   const bufferSize = 2 * audioCtx.sampleRate;
@@ -455,7 +463,7 @@ audioToggle.addEventListener('click', () => audioPanel.classList.toggle('open'))
 sliderVol.addEventListener('input', () => {
   valVol.textContent = sliderVol.value;
   currentVol = sliderVol.value / 100;
-  if (masterGain && !isMuted) masterGain.gain.value = currentVol;
+  if (!isMuted) applyGain(currentVol);
 });
 sliderWave.addEventListener('input', () => {
   valWave.textContent = sliderWave.value;
@@ -469,7 +477,7 @@ muteBtn.addEventListener('click', () => {
   isMuted = !isMuted;
   muteBtn.classList.toggle('muted', isMuted);
   muteBtn.textContent = isMuted ? 'UNMUTE' : 'MUTE';
-  if (masterGain) masterGain.gain.value = isMuted ? 0 : currentVol;
+  applyGain(isMuted ? 0 : currentVol);
 });
 </script>
 </body>
