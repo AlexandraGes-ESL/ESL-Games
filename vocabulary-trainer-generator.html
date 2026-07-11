@@ -1763,7 +1763,7 @@ if(DATA.gaps.length) SCREENS.push('gaps');
 if(DATA.speak.length) SCREENS.push('speak');
 SCREENS.push('finish');
 const ENABLED=DATA.enabled||[];
-const VISIBLE=SCREENS.filter(s=>s==='finish'||ENABLED.includes(s));
+const VISIBLE=SCREENS.filter(s=>s==='finish'||s==='quiz'||ENABLED.includes(s));
 let cur=0;
 
 const LABELS={flashcards:'📇 Карточки',quiz:'🎯 Квиз',match:'🔗 Пары',gaps:'✏️ Пропуски',speak:'🎙️ Speaking',finish:'🏁 Итог'};
