@@ -262,6 +262,30 @@ input.not-found{border-color:var(--lava)!important;background:#fbeded!important}
 .match-empty{text-align:center;padding:40px 20px}
 .match-empty-icon{display:flex;justify-content:center;margin-bottom:12px;color:var(--ink-faint)}
 .match-empty-icon .ic{width:40px;height:40px;stroke-width:1.4}
+  /* ===== QUIZ ===== */
+.quiz{max-width:640px;margin:0 auto;}
+.quiz__bar{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);margin-bottom:var(--s5);font-family:var(--font-hand);font-size:18px;color:var(--acc-strong);}
+.quiz__prog{flex:1;height:8px;border-radius:8px;background:rgba(0,0,0,.12);overflow:hidden;margin:0 var(--s3);}
+.quiz__progf{height:100%;background:linear-gradient(90deg,var(--brass),var(--acc));width:0;transition:width var(--tr);}
+.quiz__card{background:var(--surface-grad);border:var(--card-border);border-radius:var(--r-lg);padding:var(--s6) var(--s5);box-shadow:var(--sh);text-align:center;margin-bottom:var(--s5);position:relative;overflow:hidden;}
+.quiz__q-lab{font-family:var(--font-hand);font-size:17px;color:var(--ink-soft);margin-bottom:var(--s2);}
+.quiz__q{font-family:var(--font-head);font-weight:600;font-size:var(--t-xl);color:var(--acc-strong);line-height:1.2;word-break:break-word;}
+.quiz__q .spk{margin:var(--s3) auto 0;}
+.quiz__opts{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);}
+.qopt{background:var(--surface-grad);border:var(--card-border);border-radius:var(--r);padding:var(--s4);font-family:var(--font-body);font-size:var(--t-md);font-weight:600;color:var(--ink);cursor:pointer;transition:all var(--tr);box-shadow:var(--sh-sm);text-align:left;display:flex;align-items:center;gap:var(--s3);word-break:break-word;}
+.qopt__key{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:var(--t-sm);color:var(--acc-strong);}
+[data-theme="focus"] .qopt__key{background:rgba(255,255,255,.12);}
+.qopt:hover:not(.locked){transform:translateY(-3px);box-shadow:var(--sh);border-color:var(--acc);}
+.qopt.locked{cursor:default;}
+.qopt.correct{background:color-mix(in srgb,var(--ok) 20%,var(--surface));border-color:var(--ok);color:var(--acc-strong);}
+.qopt.correct .qopt__key{background:var(--ok);color:#fff;}
+.qopt.wrong{background:color-mix(in srgb,var(--bad) 18%,var(--surface));border-color:var(--bad);color:var(--bad);animation:shake .3s;}
+.qopt.wrong .qopt__key{background:var(--bad);color:#fff;}
+.qopt.dim{opacity:.45;}
+.quiz__fb{min-height:26px;margin-top:var(--s4);font-family:var(--font-hand);font-size:20px;text-align:center;}
+.quiz__fb.ok{color:var(--ok);}
+.quiz__fb.no{color:var(--bad);}
+@media(max-width:520px){.quiz__opts{grid-template-columns:1fr;}}
 
 /* ===== GAPS EDITOR ===== */
 .gaps-hint{padding:16px 20px}
@@ -1045,6 +1069,66 @@ $('btnGapsAutoExamples').addEventListener('click',async()=>{
   renderGaps(); autoSave();
   showToast(added? `Добавлено ${added} примеров из словаря`:'Примеры не найдены');
 });
+  // ===== QUIZ =====
+function buildQuizPool(){
+  // собираем все слова с переводом ИЛИ определением
+  const pool=[];
+  DATA.sections.forEach(s=>s.words.forEach(w=>{
+    const ans=(w.tr||'').trim()||(w.def||'').trim();
+    if((w.word||'').trim() && ans) pool.push({word:w.word.trim(), clue:ans, useTr:!!(w.tr||'').trim()});
+  }));
+  return pool;
+}
+let QUIZ={pool:[],i:0,score:0,order:[]};
+function quizInit(){
+  QUIZ.pool=buildQuizPool();
+  QUIZ.order=shuffle(QUIZ.pool.map((_,i)=>i));
+  QUIZ.i=0; QUIZ.score=0;
+}
+function viewQuiz(){
+  if(!QUIZ.pool.length) quizInit();
+  if(QUIZ.i>=QUIZ.order.length){
+    // финиш раунда
+    return '<div class="intro"><h2>🎯 Квиз</h2></div>'+
+      '<div class="quiz"><div class="quiz__card"><div class="quiz__q-lab">Раунд завершён!</div>'+
+      '<div class="quiz__q">'+QUIZ.score+' / '+QUIZ.order.length+'</div>'+
+      '<div class="quiz__fb ok">'+(QUIZ.score===QUIZ.order.length?'Идеально! 🎉':QUIZ.score/QUIZ.order.length>=.7?'Отличный результат! 👏':'Ещё разок? 💪')+'</div></div>'+
+      '<div style="text-align:center"><button class="btn btn--primary" onclick="quizInit();render();">↻ Заново</button></div></div>';
+  }
+  const cur=QUIZ.pool[QUIZ.order[QUIZ.i]];
+  // 3 дистрактора
+  const others=shuffle(QUIZ.pool.filter(p=>p.word!==cur.word)).slice(0,3);
+  const opts=shuffle([cur,...others]);
+  const keys=['A','B','C','D'];
+  return '<div class="intro"><h2>🎯 Квиз</h2><p>Выбери слово, которое подходит по значению.</p></div>'+
+    '<div class="quiz">'+
+    '<div class="quiz__bar"><span>Вопрос '+(QUIZ.i+1)+'/'+QUIZ.order.length+'</span>'+
+      '<div class="quiz__prog"><div class="quiz__progf" style="width:'+(QUIZ.i/QUIZ.order.length*100)+'%"></div></div>'+
+      '<span>✓ '+QUIZ.score+'</span></div>'+
+    '<div class="quiz__card"><div class="quiz__q-lab">'+(cur.useTr?'перевод':'значение')+'</div>'+
+      '<div class="quiz__q">'+esc(cur.clue)+'</div></div>'+
+    '<div class="quiz__opts">'+opts.map((o,n)=>
+      '<button class="qopt" data-w="'+esc(o.word).replace(/"/g,'&quot;')+'"><span class="qopt__key">'+keys[n]+'</span>'+esc(o.word)+'</button>').join('')+'</div>'+
+    '<div class="quiz__fb" id="quizFb"></div></div>';
+}
+function bindQuiz(){
+  const cur=QUIZ.pool[QUIZ.order[QUIZ.i]];
+  $$('.qopt').forEach(btn=>btn.onclick=()=>{
+    if(btn.classList.contains('locked')) return;
+    const chosen=btn.dataset.w;
+    const isRight=norm(chosen)===norm(cur.word);
+    $$('.qopt').forEach(b=>{
+      b.classList.add('locked');
+      if(norm(b.dataset.w)===norm(cur.word)) b.classList.add('correct');
+      else if(b===btn) b.classList.add('wrong');
+      else b.classList.add('dim');
+    });
+    const fb=$('#quizFb');
+    if(isRight){ QUIZ.score++; fb.className='quiz__fb ok'; fb.textContent='Верно! ✓'; if(ttsOK)say(cur.word); }
+    else{ fb.className='quiz__fb no'; fb.textContent='Правильно: '+cur.word; }
+    setTimeout(()=>{ QUIZ.i++; render(); }, isRight?900:1600);
+  });
+}
 
 // ---------- MATCH ----------
 $('matchModeOptions').querySelectorAll('.option-card').forEach(c=>{
@@ -1385,6 +1469,7 @@ function buildTrainerHTML(){
       link: state.authorLink || ''
     },
     enabled,
+    quiz: state.screens.quiz !== false,
     sections: state.sections.map(s=>({
       title: s.title,
       emoji: s.emoji,
@@ -1680,7 +1765,7 @@ const ENABLED=DATA.enabled||[];
 const VISIBLE=SCREENS.filter(s=>s==='finish'||ENABLED.includes(s));
 let cur=0;
 
-const LABELS={flashcards:'📇 Карточки',match:'🔗 Пары',gaps:'✏️ Пропуски',speak:'🎙️ Speaking',finish:'🏁 Итог'};
+const LABELS={flashcards:'📇 Карточки',quiz:'🎯 Квиз',match:'🔗 Пары',gaps:'✏️ Пропуски',speak:'🎙️ Speaking',finish:'🏁 Итог'};
 
 function header(){
   const a=DATA.author||{};
@@ -1713,6 +1798,7 @@ function render(){
   if(scr==='flashcards')body=viewFlash();
   else if(scr==='match')body=viewMatch();
   else if(scr==='gaps')body=viewGaps();
+  else if(scr==='quiz')body=viewQuiz();
   else if(scr==='speak')body=viewSpeak();
   else if(scr==='finish')body=viewFinish();
   $('#app').innerHTML=header()+progressBar()+tabsBar()+'<div class="screen is-active">'+body+'</div>'+navBar();
@@ -1720,6 +1806,7 @@ function render(){
   if(scr==='match')bindMatch();
   if(scr==='gaps')bindGaps();
   if(scr==='speak')bindSpeak();
+  if(scr==='quiz')bindQuiz();
   if(!ttsOK)document.body.classList.add('no-tts');
   window.scrollTo({top:0,behavior:'smooth'});
 }
