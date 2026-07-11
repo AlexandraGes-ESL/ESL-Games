@@ -1106,6 +1106,28 @@ function renderSpeak(){
       <p class="muted">Нет заданий для говорения.<br>Добавь первый вопрос!</p></div>`;
     return;
   }
+  list.innerHTML = state.speak.map((sp,i)=>`
+    <div class="speak-card" data-i="${i}">
+      <div class="gap-num">${i+1}</div>
+      <div class="gap-body">
+        <textarea class="speak-q" placeholder="What did you do last weekend?">${escapeHtml(sp.q)}</textarea>
+        <input class="speak-hint" placeholder="Подсказка (опц.): went, visited, stayed at home…" value="${escapeAttr(sp.hint||'')}">
+      </div>
+      <div class="gap-actions">
+        <button class="mini-btn sp-up" ${i===0?'disabled':''}><svg class="ic" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></button>
+        <button class="mini-btn sp-down" ${i===state.speak.length-1?'disabled':''}><svg class="ic" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button class="mini-btn danger sp-del"><svg class="ic" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>`).join('');
+  list.querySelectorAll('.speak-card').forEach(card=>{
+    const i=+card.dataset.i;
+    card.querySelector('.speak-q').addEventListener('input',e=>{ state.speak[i].q=e.target.value; autoSave(); });
+    card.querySelector('.speak-hint').addEventListener('input',e=>{ state.speak[i].hint=e.target.value; autoSave(); });
+    card.querySelector('.sp-up').addEventListener('click',()=>{ if(i>0){ [state.speak[i],state.speak[i-1]]=[state.speak[i-1],state.speak[i]]; renderSpeak(); autoSave(); }});
+    card.querySelector('.sp-down').addEventListener('click',()=>{ if(i<state.speak.length-1){ [state.speak[i],state.speak[i+1]]=[state.speak[i+1],state.speak[i]]; renderSpeak(); autoSave(); }});
+    card.querySelector('.sp-del').addEventListener('click',()=>{ state.speak.splice(i,1); renderSpeak(); autoSave(); });
+  });
+}
   // ============ PART 4b — SPEAKING AI (Groq через прокси) ============
 // PROXY_URL и GROQ_MODEL уже объявлены в PART 8
 
@@ -1231,28 +1253,6 @@ $('btnSpeakHintAI')?.addEventListener('click',async()=>{
     showToast('Ошибка ИИ: '+err.message);
   }
 });
-  list.innerHTML = state.speak.map((sp,i)=>`
-    <div class="speak-card" data-i="${i}">
-      <div class="gap-num">${i+1}</div>
-      <div class="gap-body">
-        <textarea class="speak-q" placeholder="What did you do last weekend?">${escapeHtml(sp.q)}</textarea>
-        <input class="speak-hint" placeholder="Подсказка (опц.): went, visited, stayed at home…" value="${escapeAttr(sp.hint||'')}">
-      </div>
-      <div class="gap-actions">
-        <button class="mini-btn sp-up" ${i===0?'disabled':''}><svg class="ic" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg></button>
-        <button class="mini-btn sp-down" ${i===state.speak.length-1?'disabled':''}><svg class="ic" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
-        <button class="mini-btn danger sp-del"><svg class="ic" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      </div>
-    </div>`).join('');
-  list.querySelectorAll('.speak-card').forEach(card=>{
-    const i=+card.dataset.i;
-    card.querySelector('.speak-q').addEventListener('input',e=>{ state.speak[i].q=e.target.value; autoSave(); });
-    card.querySelector('.speak-hint').addEventListener('input',e=>{ state.speak[i].hint=e.target.value; autoSave(); });
-    card.querySelector('.sp-up').addEventListener('click',()=>{ if(i>0){ [state.speak[i],state.speak[i-1]]=[state.speak[i-1],state.speak[i]]; renderSpeak(); autoSave(); }});
-    card.querySelector('.sp-down').addEventListener('click',()=>{ if(i<state.speak.length-1){ [state.speak[i],state.speak[i+1]]=[state.speak[i+1],state.speak[i]]; renderSpeak(); autoSave(); }});
-    card.querySelector('.sp-del').addEventListener('click',()=>{ state.speak.splice(i,1); renderSpeak(); autoSave(); });
-  });
-}
 
 // ============ PART 6 — BULK MODAL ============
 $('btnBulkAdd').addEventListener('click',()=>{ $('bulkModal').classList.add('open'); $('bulkSectionName').focus(); });
