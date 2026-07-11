@@ -1260,15 +1260,56 @@ $('bulkClose').addEventListener('click',()=>$('bulkModal').classList.remove('ope
 $('bulkCancel').addEventListener('click',()=>$('bulkModal').classList.remove('open'));
 $('bulkModal').addEventListener('click',e=>{ if(e.target===$('bulkModal')) $('bulkModal').classList.remove('open'); });
 
+// ---------- УМНЫЙ ПАРСЕР СТРОКИ (слово + перевод) ----------
 function parseBulkLine(line){
+  // Разделители между словом и переводом: - – — = : таб
   const seps=/\s*[-–—=:\t]\s*/;
   const parts=line.split(seps);
-  if(parts.length>=2){
-    const word=parts[0].trim();
-    const tr=parts.slice(1).join(' ').trim();
-    return {word, tr};
+  if(parts.length>=2 && parts[0].trim() && parts.slice(1).join('').trim()){
+    return {word:parts[0].trim(), tr:parts.slice(1).join(' ').trim()};
   }
   return {word:line.trim(), tr:''};
+}
+
+// ---------- РАЗБИВКА ТЕКСТА НА ЭЛЕМЕНТЫ (строки И/ИЛИ запятые) ----------
+function splitBulkText(raw){
+  const items=[];
+  raw.split(/\n/).forEach(ln=>{
+    ln=ln.trim();
+    if(!ln) return;
+
+    // Есть ли в строке разделитель "слово - перевод"?
+    const hasSep=/[-–—=:\t]/.test(ln);
+
+    if(hasSep){
+      // Формат с переводами. Разбиваем по запятой ТОЛЬКО между парами,
+      // но так, чтобы не разорвать перевод из нескольких слов.
+      // Пример: "apply - подавать заявку, commute - ездить на работу"
+      // Стратегия: делим по запятой, затем склеиваем куски без разделителя
+      // с предыдущим (это части многословного перевода).
+      const chunks=ln.split(',').map(s=>s.trim()).filter(Boolean);
+      let buffer='';
+      chunks.forEach(ch=>{
+        if(/[-–—=:\t]/.test(ch)){
+          // новый элемент "слово - перевод"
+          if(buffer) items.push(buffer);
+          buffer=ch;
+        }else{
+          // продолжение перевода предыдущего элемента
+          buffer = buffer ? buffer+', '+ch : ch;
+        }
+      });
+      if(buffer) items.push(buffer);
+    }else{
+      // Нет разделителей — просто слова. Режем по запятой.
+      if(ln.includes(',')){
+        ln.split(',').forEach(p=>{ if(p.trim()) items.push(p.trim()); });
+      }else{
+        items.push(ln);
+      }
+    }
+  });
+  return items;
 }
 
 $('bulkConfirm').addEventListener('click',async()=>{
@@ -1276,15 +1317,12 @@ $('bulkConfirm').addEventListener('click',async()=>{
   const raw=$('bulkText').value.trim();
   if(!raw){ showToast('Вставь хотя бы одно слово'); return; }
   const autoFill=$('bulkAutoFill').checked;
-  // разделители: новая строка ИЛИ запятая
-  let lines=[];
-  raw.split(/\n/).forEach(ln=>{
-    if(ln.includes(',') && !/[-–—=:\t]/.test(ln)){
-      ln.split(',').forEach(p=>{ if(p.trim()) lines.push(p.trim()); });
-    } else if(ln.trim()){ lines.push(ln.trim()); }
-  });
+
+  // используем умную разбивку
+  const lines=splitBulkText(raw);
   const words=lines.map(parseBulkLine).filter(w=>w.word);
   if(!words.length){ showToast('Не удалось распознать слова'); return; }
+
   const section={title:name,emoji:'📚',words:words.map(w=>({word:w.word,ipa:'',def:'',tr:w.tr}))};
   state.sections.push(section);
   const si=state.sections.length-1;
@@ -1294,8 +1332,12 @@ $('bulkConfirm').addEventListener('click',async()=>{
   showToast(`Добавлено ${words.length} слов`);
 
   if(autoFill){
-    const btn=$('sectionsList').querySelector(`.fill-section-btn[data-si="${si}"]`);
-    if(btn){ $$('.tab').forEach(t=>{ if(t.dataset.tab==='vocab') t.click(); }); setTimeout(()=>fillSection(si,btn),300); }
+    // переключаемся на вкладку лексики и запускаем ИИ-заполнение секции
+    $$('.tab').forEach(t=>{ if(t.dataset.tab==='vocab') t.click(); });
+    setTimeout(()=>{
+      const btn=$('sectionsList').querySelector(`.fill-section-btn[data-si="${si}"]`);
+      if(btn) fillSectionAI(si, btn);   // ← теперь через ИИ (см. ниже)
+    },300);
   }
 });
         // ============ PART 5 — EXPORT + TRAINER GENERATOR ============
@@ -1846,6 +1888,119 @@ const GROQ_MODEL = 'llama-3.3-70b-versatile';
 let AI_LEVEL = 'B1';
 
 // запрос к Groq для партии слов
+  // ============ AI: заполнение лексики (definition + перевод + IPA) ============
+
+async function askGroqVocab(words, level){
+  const sys =
+    'You are an English dictionary assistant helping create vocabulary flashcards '+
+    'for CEFR level '+level+' students. For each given word or phrase provide:\n'+
+    '1. "ipa" — IPA transcription in slashes, e.g. /əˈplaɪ/ (British English). If unsure, leave "".\n'+
+    '2. "def" — ONE clear, simple English definition suitable for level '+level+' '+
+       '(use the MOST COMMON meaning, no dictionary labels like "transitive", 8-16 words, start with a capital letter, end with a period).\n'+
+    '3. "tr" — Russian translation. Give the 2-3 most common meanings separated by commas.\n'+
+    'Use the EXACT word form given. '+
+    'Return ONLY valid JSON: {"items":[{"word":"...","ipa":"...","def":"...","tr":"..."}]}';
+  const user = 'Words: '+words.join(', ');
+
+  const res=await fetch(PROXY_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:GROQ_MODEL,
+      temperature:0.4,               // ниже — точнее и стабильнее
+      messages:[{role:'system',content:sys},{role:'user',content:user}],
+      response_format:{type:'json_object'}
+    })
+  });
+  if(!res.ok){ const t=await res.text().catch(()=> ''); throw new Error('Groq '+res.status+': '+t.slice(0,150)); }
+
+  const data=await res.json();
+  const content=data.choices&&data.choices[0]&&data.choices[0].message?data.choices[0].message.content:'';
+  let parsed; try{ parsed=JSON.parse(content); }
+  catch(e){ const m=content.match(/\[[\s\S]*\]/); parsed=m?JSON.parse(m[0]):{}; }
+
+  let arr=Array.isArray(parsed)?parsed:(parsed.items||parsed.words||[]);
+  if(!Array.isArray(arr)) arr=[];
+  return arr;
+}
+
+// Заполнить ВСЮ секцию через ИИ
+async function fillSectionAI(si, btn){
+  const words=state.sections[si].words;
+  const targets=words.map((w,wi)=>({wi, word:(w.word||'').trim()})).filter(t=>t.word);
+  if(!targets.length){ showToast('В секции нет слов'); return; }
+
+  const prog=$('sectionsList').querySelector(`.fill-progress[data-prog="${si}"]`);
+  btn.disabled=true;
+  let filled=0;
+
+  try{
+    // партиями по 10 слов
+    const BATCH=10;
+    for(let i=0;i<targets.length;i+=BATCH){
+      const batch=targets.slice(i,i+BATCH);
+      if(prog) prog.textContent=`ИИ… ${Math.min(i+BATCH,targets.length)}/${targets.length}`;
+
+      const arr=await askGroqVocab(batch.map(t=>t.word), AI_LEVEL);
+
+      arr.forEach(item=>{
+        const iw=(item.word||'').trim().toLowerCase();
+        // ищем слово в секции (по совпадению текста)
+        const t=batch.find(b=>b.word.toLowerCase()===iw) ||
+                targets.find(b=>b.word.toLowerCase()===iw);
+        if(!t) return;
+        const w=words[t.wi];
+        if(item.ipa && (item.ipa||'').trim()) w.ipa=item.ipa.trim();
+        if(item.def && (item.def||'').trim()) w.def=item.def.trim();
+        if(item.tr  && (item.tr ||'').trim()) w.tr =item.tr.trim();
+        filled++;
+      });
+    }
+  }catch(err){
+    console.error(err);
+    showToast('Ошибка ИИ: '+err.message);
+  }
+
+  if(prog) prog.textContent=filled? 'Готово ✨':'';
+  btn.disabled=false;
+  renderSections(); autoSave();
+  if(filled) showToast('Заполнено '+filled+' слов через ИИ ✨');
+  setTimeout(()=>{ const p=$('sectionsList').querySelector(`.fill-progress[data-prog="${si}"]`); if(p) p.textContent=''; },2500);
+}
+
+// Заполнить ОДНО слово через ИИ
+async function fillWordAI(si, wi, btn){
+  const w=state.sections[si].words[wi];
+  const word=(w.word||'').trim();
+  if(!word){ showToast('Сначала впиши слово'); return; }
+
+  btn.disabled=true; btn.classList.add('loading');
+  const row=btn.closest('.word-row');
+  const ipaInp=row.querySelector('.w-ipa'), defInp=row.querySelector('.w-def'), trInp=row.querySelector('.w-tr');
+  let found=false;
+
+  try{
+    const arr=await askGroqVocab([word], AI_LEVEL);
+    const item=arr[0];
+    if(item){
+      if((item.ipa||'').trim()){ w.ipa=item.ipa.trim(); ipaInp.value=w.ipa; found=true; }
+      if((item.def||'').trim()){ w.def=item.def.trim(); defInp.value=w.def; found=true; }
+      if((item.tr ||'').trim() && trInp){ w.tr=item.tr.trim(); trInp.value=w.tr; found=true; }
+    }
+  }catch(err){
+    console.error(err);
+    showToast('Ошибка ИИ: '+err.message);
+  }
+
+  btn.disabled=false; btn.classList.remove('loading');
+  if(!found){
+    row.querySelector('.w-word').classList.add('not-found');
+    showToast(`«${word}» — ИИ не дал результата`);
+  }else{
+    row.querySelector('.w-word').classList.remove('not-found');
+    autoSave();
+  }
+}
 async function askGroq(words, level){
   const sys = 'You are an English teacher creating gap-fill exercises for CEFR level '+level+'. '+
     'For each target word, write ONE natural example sentence at level '+level+'. '+
