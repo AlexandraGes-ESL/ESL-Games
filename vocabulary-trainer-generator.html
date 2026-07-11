@@ -1555,7 +1555,7 @@ body{margin:0;font-family:var(--font-body);color:var(--ink);min-height:100vh;pad
 .fface{position:absolute;inset:0;border-radius:var(--r);padding:var(--s4);backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;overflow:hidden;border:var(--card-border);box-shadow:var(--sh);}
 .fface--f{justify-content:center;background:var(--surface-grad);}
 .fface--b{justify-content:flex-start;transform:rotateY(180deg);background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 18%,var(--surface)),var(--surface-2));}
-.fhint{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:1.5px;color:var(--ink-faint);font-weight:700;}
+.fhint{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:1.5px;color:var(--ink-faint);font-weight:700;white-space:nowrap;max-width:60px;overflow:hidden;text-overflow:ellipsis;}
 .frow{display:flex;align-items:center;gap:var(--s3);}
 .frow--top{margin-bottom:var(--s2);}
 .ftext{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
@@ -1565,6 +1565,7 @@ body{margin:0;font-family:var(--font-body);color:var(--ink);min-height:100vh;pad
 .fdef{margin:0;font-size:var(--t-sm);line-height:1.45;color:var(--ink);overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--acc) transparent;}
 .fdef::-webkit-scrollbar{width:4px;}
 .fdef::-webkit-scrollbar-thumb{background:var(--acc);border-radius:4px;}
+.ftr{font-size:var(--t-sm);color:var(--acc-strong);font-weight:600;margin:2px 0 6px;line-height:1.3;word-break:break-word;}
 .match{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--s5);}
 .mdefs{display:flex;flex-direction:column;gap:var(--s3);}
 .mrow{background:var(--surface-grad);padding:var(--s3) var(--s4);border-radius:var(--r);border-left:4px solid var(--bad);box-shadow:var(--sh-sm);display:flex;align-items:center;gap:var(--s3);min-height:60px;border:var(--card-border);}
@@ -1732,9 +1733,10 @@ function viewFlash(){
         '<div class="fcard__in">'+
           '<div class="fface fface--f"><span class="fhint">TAP</span><div class="frow"><div class="ftext"><b>'+esc(w.word)+'</b>'+
             (w.ipa?'<em>'+esc(w.ipa)+'</em>':'')+'</div>'+(ttsOK?spkBtn(w.word,'spk--inline'):'')+'</div></div>'+
-          '<div class="fface fface--b"><span class="fhint">'+(w.tr?esc(w.tr):'DEF')+'</span>'+
-            '<div class="frow frow--top"><span class="fbw">'+esc(w.word)+'</span>'+(ttsOK?spkBtn(w.word,'spk--sm'):'')+'</div>'+
-            '<p class="fdef">'+(w.def?esc(w.def):(w.tr?esc(w.tr):'—'))+'</p></div>'+
+          '<div class="fface fface--b"><span class="fhint">DEF</span>'+
+  '<div class="frow frow--top"><span class="fbw">'+esc(w.word)+'</span>'+(ttsOK?spkBtn(w.word,'spk--sm'):'')+'</div>'+
+  (w.tr?'<div class="ftr">'+esc(w.tr)+'</div>':'')+
+  '<p class="fdef">'+(w.def?esc(w.def):(w.tr?esc(w.tr):'—'))+'</p></div>'+
         '</div></div>').join('')+'</div></div>').join('');
 }
 
