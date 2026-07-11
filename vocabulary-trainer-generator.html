@@ -830,7 +830,7 @@ function bindSectionEvents(){
     renderSections(); autoSave();
     setTimeout(()=>{ const rows=$('sectionsList').querySelectorAll(`.section-card[data-si="${si}"] .w-word`); if(rows.length) rows[rows.length-1].focus(); },50);
   }));
-  list.querySelectorAll('.fill-section-btn').forEach(b=>b.addEventListener('click',()=>fillSection(+b.dataset.si,b)));
+  list.querySelectorAll('.fill-section-btn').forEach(b=>b.addEventListener('click',()=>fillSectionAI(+b.dataset.si,b)));
   list.querySelectorAll('.word-row').forEach(row=>{
     const si=+row.dataset.si, wi=+row.dataset.wi;
     row.querySelector('.w-word').addEventListener('input',e=>{ state.sections[si].words[wi].word=e.target.value; e.target.classList.remove('not-found'); autoSave(); });
@@ -838,7 +838,7 @@ function bindSectionEvents(){
     row.querySelector('.w-def').addEventListener('input',e=>{ state.sections[si].words[wi].def=e.target.value; autoSave(); });
     const trInp=row.querySelector('.w-tr');
     if(trInp) trInp.addEventListener('input',e=>{ state.sections[si].words[wi].tr=e.target.value; autoSave(); });
-    row.querySelector('.w-fill').addEventListener('click',e=>fillWord(si,wi,e.currentTarget));
+    row.querySelector('.w-fill').addEventListener('click',e=>fillWordAI(si,wi,e.currentTarget));
     row.querySelector('.w-del').addEventListener('click',()=>{
       if(state.sections[si].words.length<=1){ showToast('Должно быть ≥1 слова'); return; }
       state.sections[si].words.splice(wi,1); renderSections(); autoSave();
