@@ -1757,6 +1757,7 @@ function spkBtn(text,cls){
 
 const SCREENS=[];
 if(DATA.sections.length) SCREENS.push('flashcards');
+if(DATA.quiz && DATA.sections.some(s=>s.words.some(w=>(w.tr||w.def||'').trim())) ) SCREENS.push('quiz');
 if(DATA.match.pairs.length) SCREENS.push('match');
 if(DATA.gaps.length) SCREENS.push('gaps');
 if(DATA.speak.length) SCREENS.push('speak');
