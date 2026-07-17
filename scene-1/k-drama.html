@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Episode 0 — Save the Broadcast</title>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#fff6ec; --pink:#ff8fab; --peach:#ffb26b; --ink:#4a3428;
+  --red:#e5484d; --glass:rgba(20,14,10,.88);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#0d0a08;overflow:hidden;font-family:'Gaegu',cursive}
+
+.stage{position:relative;width:100vw;height:56.25vw;max-height:100vh;max-width:177.78vh;
+  margin:auto;top:50%;transform:translateY(-50%);overflow:hidden;background:#000}
+.frame{position:absolute;inset:0;background-size:cover;background-position:center;
+  opacity:0;transition:opacity .7s ease}
+.frame.active{opacity:1}
+.dimmer{position:absolute;inset:0;background:var(--ink);opacity:0;
+  transition:opacity .45s ease;pointer-events:none;z-index:2}
+
+.onair{position:absolute;top:3%;right:3%;display:flex;align-items:center;gap:.5em;
+  color:#fff;background:var(--red);padding:.28em .9em;border-radius:.4em;font-weight:700;
+  letter-spacing:.14em;font-size:clamp(13px,1.5vw,22px);z-index:8;
+  box-shadow:0 4px 16px rgba(229,72,77,.5);transition:opacity .4s}
+.onair .dot{width:.55em;height:.55em;border-radius:50%;background:#fff;
+  animation:blink 1.1s steps(2) infinite}
+.onair.alarm{animation:alarm .5s steps(2) infinite}
+@keyframes blink{50%{opacity:.15}}
+@keyframes alarm{50%{background:#7a1518}}
+
+.dialogue{position:absolute;left:4%;right:4%;bottom:4%;z-index:9;cursor:pointer;
+  background:rgba(255,246,236,.95);border:2px solid var(--ink);border-radius:1em;
+  padding:.9em 1.3em 1em;box-shadow:0 10px 34px rgba(0,0,0,.45);
+  transition:transform .15s,opacity .3s;user-select:none}
+.dialogue:active{transform:scale(.99)}
+.who{display:inline-block;color:#fff;background:var(--pink);padding:.05em .8em;
+  border-radius:.6em;font-weight:700;font-size:clamp(13px,1.4vw,21px);margin-bottom:.25em}
+.say{color:var(--ink);font-size:clamp(16px,1.9vw,28px);line-height:1.3}
+.say .dir{font-style:italic;opacity:.85}
+.hint{position:absolute;right:1em;bottom:.6em;color:var(--pink);font-weight:700;
+  animation:blink 1s infinite;font-size:clamp(14px,1.6vw,24px)}
+
+.cta{position:absolute;left:50%;bottom:26%;transform:translateX(-50%);z-index:10;
+  background:var(--pink);color:#fff;border:3px solid #fff;padding:.6em 1.8em;
+  border-radius:2em;font-family:'Gaegu',cursive;font-weight:700;cursor:pointer;
+  font-size:clamp(18px,2.4vw,34px);box-shadow:0 8px 28px rgba(255,143,171,.65);
+  display:none;animation:pulse 1.3s ease-in-out infinite}
+@keyframes pulse{50%{transform:translateX(-50%) scale(1.06)}}
+
+#game{position:absolute;inset:0;z-index:12;display:none}
+.hud{position:absolute;top:3%;left:3%;right:16%;display:flex;gap:2%;align-items:center;z-index:13}
+.viewers{background:var(--glass);color:#fff;border-radius:.6em;padding:.3em .9em;
+  font-size:clamp(14px,1.7vw,26px);white-space:nowrap;border:1px solid rgba(255,255,255,.2)}
+.viewers b{color:var(--peach)}
+.tbar{flex:1;height:.9em;background:rgba(0,0,0,.55);border-radius:1em;overflow:hidden;
+  border:1px solid rgba(255,255,255,.25)}
+.tfill{height:100%;width:100%;background:linear-gradient(90deg,var(--peach),var(--red));
+  transition:width 1s linear}
+.prompter{position:absolute;left:50%;top:16%;transform:translateX(-50%);width:74%;z-index:13;
+  background:var(--glass);border:2px solid rgba(255,178,107,.5);border-radius:1em;
+  padding:1.2em 1.5em;box-shadow:0 0 60px rgba(255,178,107,.25), inset 0 0 40px rgba(0,0,0,.6)}
+.plabel{color:var(--peach);letter-spacing:.25em;font-size:clamp(11px,1.1vw,16px);
+  margin-bottom:.5em;opacity:.8}
+.pline{color:#fff;font-size:clamp(19px,2.4vw,38px);line-height:1.35;min-height:2.7em}
+.pline .gap{display:inline-block;min-width:4.5em;border-bottom:3px dashed var(--pink);
+  color:var(--pink);text-align:center;font-weight:700}
+.chunks{position:absolute;left:50%;bottom:9%;transform:translateX(-50%);z-index:13;
+  display:flex;gap:1em;flex-wrap:wrap;justify-content:center;width:90%}
+.chunk{background:var(--cream);border:2px solid var(--ink);border-radius:2em;
+  color:var(--ink);font-family:'Gaegu',cursive;font-weight:700;cursor:pointer;
+  font-size:clamp(16px,2vw,30px);padding:.45em 1.3em;transition:all .15s;
+  box-shadow:0 5px 0 var(--ink)}
+.chunk:hover{transform:translateY(-3px);box-shadow:0 8px 0 var(--ink)}
+.chunk:active{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
+.toast{position:absolute;left:50%;top:52%;transform:translateX(-50%);z-index:14;
+  background:var(--red);color:#fff;padding:.4em 1.2em;border-radius:1em;
+  font-size:clamp(15px,1.8vw,26px);opacity:0;transition:opacity .3s;pointer-events:none;
+  text-align:center;white-space:nowrap}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-50%) translateX(-8px)}75%{transform:translateX(-50%) translateX(8px)}}
+
+#credits{position:absolute;inset:0;z-index:20;display:none;place-items:center;
+  background:radial-gradient(ellipse at center,#2a1e16 0%,#0d0a08 80%)}
+.card{text-align:center;color:var(--cream);padding:2em;animation:rise 1.4s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(30px)}to{opacity:1}}
+.ep{font-family:'Nanum Myeongjo',serif;font-weight:800;letter-spacing:.06em;
+  font-size:clamp(26px,4.5vw,64px);margin-bottom:.3em}
+.ep small{display:block;font-size:.4em;letter-spacing:.4em;color:var(--peach);margin-bottom:.6em}
+.cliff{font-size:clamp(15px,1.8vw,26px);line-height:1.5;opacity:.9;max-width:34em;margin:0 auto 1.6em}
+.cliff b{color:var(--pink)}
+.nextep{background:transparent;border:2px solid var(--pink);color:var(--pink);
+  font-family:'Gaegu',cursive;font-weight:700;font-size:clamp(17px,2.2vw,32px);
+  padding:.5em 1.8em;border-radius:2em;cursor:pointer;transition:all .25s}
+.nextep:hover{background:var(--pink);color:#fff;box-shadow:0 0 30px rgba(255,143,171,.5)}
+.nextep.done{border-color:#7ddc9a;color:#7ddc9a;cursor:default;animation:none}
+.nextep.done:hover{background:transparent;box-shadow:none}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <div class="frame" id="f01"  style="background-image:url('https://i.yapx.ru/d8uoO.jpg')"></div> <!-- Ё-джин, эфир начинается -->
+  <div class="frame" id="f02"  style="background-image:url('https://i.yapx.ru/d8uo1.jpg')"></div> <!-- Упс, суфлёр упал -->
+  <div class="frame" id="fGM"  style="background-image:url('https://i.yapx.ru/d96Xq.jpg')"></div> <!-- Пустая студия — фон игры -->
+  <div class="frame" id="f04"  style="background-image:url('https://i.yapx.ru/d8uq0.jpg')"></div> <!-- Выдох + босс -->
+
+  <div class="dimmer" id="dim"></div>
+  <div class="onair" id="onair"><span class="dot"></span>ON AIR</div>
+
+  <div class="dialogue" id="dlg" onclick="next()">
+    <span class="who" id="who"></span>
+    <p class="say" id="say"></p>
+    <span class="hint">▸</span>
+  </div>
+
+  <button class="cta" id="cta">🎬 BE HER PROMPTER ▶</button>
+
+  <div id="game">
+    <div class="hud">
+      <div class="viewers">👀 <b id="vc">11,000</b> watching</div>
+      <div class="tbar"><div class="tfill" id="tfill"></div></div>
+    </div>
+    <div class="prompter">
+      <div class="plabel">◉ TELEPROMPTER — FEED HER THE LINE</div>
+      <div class="pline" id="pline"></div>
+    </div>
+    <div class="chunks" id="chunks"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <div id="credits">
+    <div class="card">
+      <div class="ep"><small>NEXT ON THIS DRAMA</small>Episode 1: The Countryside</div>
+      <p class="cliff">
+        <b>cliffhanger</b> /ˈklɪfhæŋə/ — an exciting moment at the end of an episode
+        that makes you desperate to watch the next one.<br>
+        <i>— What's a cliffhanger?<br>— You're in one right now.</i>
+      </p>
+      <button class="nextep" id="nextBtn" onclick="nextEpisode()">NEXT EPISODE ▶</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   SOUND DESIGN — генерируется на лету через Web Audio API.
+   Никаких файлов, никаких внешних сервисов: только осцилляторы
+   и огибающая громкости. AudioContext создаётся лениво, по
+   первому клику пользователя (иначе браузер блокирует автоплей).
+   ========================================================= */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let actx = null;
+function getCtx(){ if(!actx) actx = new AudioCtx(); return actx; }
+
+// Один "чистый" тон заданной высоты/длительности
+function tone(freq, dur, type='sine', vol=.22, delay=0){
+  const ctx = getCtx();
+  const t0 = ctx.currentTime + delay;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(vol, t0);
+  gain.gain.exponentialRampToValueAtTime(.001, t0 + dur); // плавное затухание, без щелчка
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(t0); osc.stop(t0 + dur);
+}
+// Тон со скользящей частотой (для "бзз" вниз / сирены вверх)
+function sweep(freqFrom, freqTo, dur, type='sine', vol=.22, delay=0){
+  const ctx = getCtx();
+  const t0 = ctx.currentTime + delay;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freqFrom, t0);
+  osc.frequency.exponentialRampToValueAtTime(freqTo, t0 + dur);
+  gain.gain.setValueAtTime(vol, t0);
+  gain.gain.exponentialRampToValueAtTime(.001, t0 + dur);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(t0); osc.stop(t0 + dur);
+}
+
+const SFX = {
+  click:   ()=> tone(600, .07, 'square', .1),
+  correct: ()=> { tone(880,.1,'sine',.2); tone(1320,.14,'sine',.16,.09); },     // "дзынь-дзынь"
+  wrong:   ()=> sweep(220,100,.28,'sawtooth',.15),                              // короткий неприятный "бзз"
+  win:     ()=> [523,659,784,1046].forEach((f,idx)=>tone(f,.22,'triangle',.18,idx*.11)), // фанфара
+  fail:    ()=> sweep(300,70,.5,'sine',.18),                                    // грустное падение
+  alarmOn: ()=> { tone(880,.15,'square',.13); tone(880,.15,'square',.13,.25); } // сирена, два сигнала
+};
+function playSfx(name){
+  try{ SFX[name] && SFX[name](); }
+  catch(e){ /* AudioContext может быть временно заблокирован — не критично, тихо игнорируем */ }
+}
+
+/* ================= СЮЖЕТ ================= */
+const BEATS = [
+ {f:'f01',dim:0, who:'Director',dir:1,say:'"Yeo-jin, we\'re on air in five... four... three..."'},
+ {f:'f01',dim:0, who:'Yeo-jin', say:'"Good evening, Korea! You\'re watching HIT Homeshopping — live! I\'ve been waiting all day to show you this..."'},
+ {f:'f02',dim:.30,alarm:1, who:'Director',dir:1,say:'"Yeo-jin. Don\'t panic. The prompter is down. Repeat: the prompter is DOWN. You have forty seconds of script left and eleven thousand people watching."'},
+ {f:'f02',dim:.30,alarm:1, who:'Yeo-jin', say:'(through her TV smile, through her teeth) "...I have never needed help more than right now."', cta:1},
+ // -------- ИГРА ВСТАВЛЯЕТСЯ ЗДЕСЬ --------
+ {f:'f04',dim:0, who:'Director',dir:1,say:'"...and we\'re off air. Yeo-jin, that was — honestly? Your best broadcast this season."'},
+ {f:'f04',dim:0, who:'Boss', say:'"Best? The ratings have been falling for three months, Yeo-jin. Viewers are tired of plastic. They want real. Authentic. Countryside. Tomorrow you\'re driving to a farm. They grow something called... nuri mushrooms."'},
+ {f:'f04',dim:0, who:'Yeo-jin', say:'(staring at her high heels) "...A farm."', end:1},
+];
+const GAME_AT = 4; // индекс, с которого продолжаем после игры
+
+/* ================= ИГРА: КОНТЕНТ ================= */
+const LINES = [
+ {t:'Korea, we are [___] right now — so I\'ll be honest with you!', ok:'on air',  opts:['on air','on screen','on sale']},
+ {t:'Don\'t [___] your TV — the best part is coming!',              ok:'turn off',opts:['turn off','turn over','turn down']},
+ {t:'[___] the volume — this price won\'t last!',                   ok:'Turn up', opts:['Turn up','Turn on','Turn over']},
+ {t:'This is not an [___] . This is a promise.',                    ok:'advert',  opts:['advert','episode','forecast']},
+ {t:'You\'re watching a [___] — everything you see is real.',       ok:'live broadcast', opts:['live broadcast','soap opera','quiz show']},
+];
+const FLOPS = ['"...uh... kimchi?"','"...my grandmother... liked... jars?"','"...buy... the... thing?"'];
+const TIME = 40, START_V = 11000, WRONG_COST = 1500, DRAIN = 45;
+
+/* ================= ДВИЖОК ================= */
+const $ = id=>document.getElementById(id);
+let i=0, line=0, viewers=START_V, t=TIME, timer=null;
+
+function beat(){
+  const b=BEATS[i];
+  document.querySelectorAll('.frame').forEach(f=>f.classList.remove('active'));
+  $(b.f).classList.add('active');
+  $('dim').style.opacity=b.dim;
+  $('onair').classList.toggle('alarm',!!b.alarm);
+  if(b.alarm) playSfx('alarmOn');
+  $('who').textContent=b.who;
+  $('who').style.background = b.who==='Boss'?'var(--ink)':b.who==='Director'?'var(--peach)':'var(--pink)';
+  $('say').innerHTML = b.dir?`<span class="dir">🎧 ${b.say}</span>`:b.say;
+  $('cta').style.display=b.cta?'block':'none';
+  $('dlg').style.pointerEvents=b.cta?'none':'auto';
+}
+function next(){
+  playSfx('click');
+  const b=BEATS[i];
+  if(b.end){ $('dlg').style.opacity=0; $('onair').style.opacity=0;
+    $('credits').style.display='grid'; return; }
+  if(i<BEATS.length-1){ i++; beat(); }
+}
+$('cta').onclick=startGame;
+
+/* ================= ИГРА: ЛОГИКА ================= */
+function startGame(){
+  playSfx('click');
+  $('cta').style.display='none'; $('dlg').style.opacity=0; $('dlg').style.pointerEvents='none';
+  document.querySelectorAll('.frame').forEach(f=>f.classList.remove('active'));
+  $('fGM').classList.add('active'); $('dim').style.opacity=0;
+  $('onair').classList.add('alarm');
+  $('game').style.display='block';
+  line=0; viewers=START_V; t=TIME;
+  renderLine(); updHUD();
+  timer=setInterval(()=>{
+    t--; viewers=Math.max(0,viewers-DRAIN-Math.floor(Math.random()*30));
+    updHUD();
+    if(t<=0) fail('⏱ Time\'s up! The director cut to an advert. Try again.');
+  },1000);
+}
+function renderLine(){
+  const L=LINES[line];
+  $('pline').innerHTML=L.t.replace('[___]','<span class="gap">______</span>');
+  const box=$('chunks'); box.innerHTML='';
+  [...L.opts].sort(()=>Math.random()-.5).forEach(o=>{
+    const b=document.createElement('button');
+    b.className='chunk'; b.textContent=o;
+    b.onclick=()=>pick(o,L.ok,b);
+    box.appendChild(b);
+  });
+}
+function pick(o,ok,btn){
+  if(o===ok){
+    playSfx('correct');
+    $('pline').innerHTML = LINES[line].t.replace('[___]', `<b style="color:var(--pink)">${ok}</b>`);
+    $('chunks').innerHTML = '';
+    viewers += 400; updHUD();
+    line++;
+    if (line < LINES.length) {
+      setTimeout(renderLine, 900);
+    } else {
+      setTimeout(win, 1100);
+    }
+  } else {
+    playSfx('wrong');
+    viewers = Math.max(0, viewers - WRONG_COST); updHUD();
+    btn.style.opacity = .35; btn.style.pointerEvents = 'none';
+    toast(`Yeo-jin: ${FLOPS[Math.floor(Math.random() * FLOPS.length)]} 📉 −1,500 viewers`);
+    $('pline').parentElement.classList.add('shake');
+    setTimeout(() => $('pline').parentElement.classList.remove('shake'), 400);
+    if (viewers <= 0) fail('📉 Everyone switched over. The broadcast is dead. Try again.');
+  }
+}
+function toast(msg){
+  $('toast').textContent = msg; $('toast').style.opacity = 1;
+  setTimeout(() => $('toast').style.opacity = 0, 1600);
+}
+function updHUD(){
+  $('vc').textContent = viewers.toLocaleString('en-US');
+  $('tfill').style.width = (t / TIME * 100) + '%';
+}
+function fail(msg){
+  clearInterval(timer);
+  playSfx('fail');
+  toast(msg);
+  setTimeout(startGame, 2200);
+}
+function win(){
+  clearInterval(timer);
+  playSfx('win');
+  $('game').style.display = 'none';
+  $('onair').classList.remove('alarm');
+  i = GAME_AT;
+  $('dlg').style.opacity = 1; $('dlg').style.pointerEvents = 'auto';
+  beat();
+}
+
+/* ================= ФИНАЛ =================
+   Навигация между эпизодами происходит через саму Genially
+   (переход на следующую страницу делает стрелка навигации,
+   не наш JS). Кнопка — визуальный сигнал завершения, не редирект. */
+function nextEpisode(){
+  const btn = $('nextBtn');
+  btn.classList.add('done');
+  btn.textContent = '✅ Episode complete — continue in Genially';
+  btn.onclick = null; // дальше кнопка не реагирует на клики
+}
+
+beat();
+</script>
+</body>
+</html>
