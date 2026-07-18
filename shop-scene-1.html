@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scene 1 — The Village Shop</title>
+<style>
+  /* ── RESET & BASE ─────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --warm-amber:  #f5a623;
+    --cold-blue:   #6a8fa8;
+    --text-main:   #2c1a0e;
+    --text-name:   #8b4513;
+    --text-name-g: #2d5a3d;
+    --bg-dialog:   rgba(255, 248, 235, 0.92);
+    --border:      rgba(139, 90, 43, 0.35);
+    --btn-bg:      rgba(255, 248, 235, 0.88);
+    --btn-hover:   #f5a623;
+    --btn-border:  rgba(139, 90, 43, 0.4);
+    --mood-cold:   #6a8fa8;
+    --mood-neutral:#a0946b;
+    --mood-warm:   #e8843a;
+  }
+
+  body {
+    background: #1a1008;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Georgia', serif;
+    overflow: hidden;
+  }
+
+  /* ── GAME CONTAINER ───────────────────────────────────────── */
+  #game {
+    position: relative;
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    border-radius: 4px;
+    box-shadow: 0 0 60px rgba(0,0,0,0.8);
+  }
+
+  /* ── BACKGROUND ───────────────────────────────────────────── */
+  #bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.8s ease;
+  }
+
+  /* ── OVERLAY (mood tint) ──────────────────────────────────── */
+  #mood-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    transition: background 1.2s ease;
+    background: rgba(106, 143, 168, 0.08); /* starts cold */
+  }
+
+  /* ── SPRITES ──────────────────────────────────────────────── */
+  .sprite {
+    position: absolute;
+    bottom: 140px; /* sits above dialog box */
+    height: 74%;
+    width: auto;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  #sprite-ginie {
+    right: 8%;
+    transform-origin: bottom right;
+  }
+
+  #sprite-yeojin {
+    left: 8%;
+    transform-origin: bottom left;
+  }
+
+  .sprite.hidden   { opacity: 0; }
+  .sprite.dim      { opacity: 0.45; filter: brightness(0.75); }
+  .sprite.active   { opacity: 1; filter: brightness(1); }
+
+  /* speaking pulse */
+  @keyframes speak-pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.012); }
+    100% { transform: scale(1); }
+  }
+  .sprite.speaking { animation: speak-pulse 1.8s ease-in-out infinite; }
+
+  /* ── DIALOG BOX ───────────────────────────────────────────── */
+  #dialog-box {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 148px;
+    background: var(--bg-dialog);
+    border-top: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 16px 40px 12px;
+    backdrop-filter: blur(6px);
+  }
+
+  #speaker-name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    transition: color 0.4s;
+  }
+
+  #dialog-text {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text-main);
+    min-height: 52px;
+  }
+
+  #continue-hint {
+    position: absolute;
+    bottom: 14px; right: 28px;
+    font-size: 13px;
+    color: var(--warm-amber);
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    user-select: none;
+  }
+  #continue-hint.visible { opacity: 1; }
+
+  /* ── CHOICE PANEL ─────────────────────────────────────────── */
+  #choice-panel {
+    position: absolute;
+    bottom: 160px; left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 560px;
+    max-width: 700px;
+    z-index: 10;
+  }
+  #choice-panel.visible { display: flex; }
+
+  .choice-btn {
+    background: var(--btn-bg);
+    border: 1.5px solid var(--btn-border);
+    border-radius: 6px;
+    padding: 13px 22px;
+    font-size: 15px;
+    font-family: 'Georgia', serif;
+    color: var(--text-main);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    backdrop-filter: blur(4px);
+  }
+  .choice-btn:hover {
+    background: var(--btn-hover);
+    border-color: #c8720a;
+    color: #fff;
+    transform: translateX(4px);
+  }
+  .choice-btn.correct {
+    background: #d4edda;
+    border-color: #4caf50;
+    color: #1a5c1e;
+    pointer-events: none;
+  }
+  .choice-btn.wrong {
+    background: #fde8e8;
+    border-color: #e57373;
+    color: #7a1a1a;
+    pointer-events: none;
+  }
+
+  /* ── FEEDBACK FLASH ───────────────────────────────────────── */
+  #feedback {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    font-weight: 700;
+    padding: 12px 32px;
+    border-radius: 8px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 20;
+  }
+  #feedback.show-correct {
+    background: rgba(76, 175, 80, 0.9);
+    color: #fff;
+    opacity: 1;
+  }
+  #feedback.show-wrong {
+    background: rgba(229, 115, 115, 0.9);
+    color: #fff;
+    opacity: 1;
+  }
+
+  /* ── MOOD BAR ─────────────────────────────────────────────── */
+  #mood-bar-wrap {
+    position: absolute;
+    top: 18px; left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 5;
+  }
+  #mood-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+  }
+  #mood-bar {
+    width: 140px; height: 7px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  #mood-fill {
+    height: 100%;
+    width: 25%; /* starts COLD = 1/4 */
+    background: var(--mood-cold);
+    border-radius: 4px;
+    transition: width 0.6s ease, background 0.6s ease;
+  }
+
+  /* ── SCENE TITLE CARD ─────────────────────────────────────── */
+  #title-card {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 10, 4, 0.88);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 50;
+    transition: opacity 0.8s;
+  }
+  #title-card.hidden { opacity: 0; pointer-events: none; }
+
+  #title-card h2 {
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--warm-amber);
+  }
+  #title-card h1 {
+    font-size: 36px;
+    color: #fff;
+    text-align: center;
+  }
+  #title-card p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 6px;
+  }
+  #title-card button {
+    margin-top: 24px;
+    padding: 12px 36px;
+    background: var(--warm-amber);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: 'Georgia', serif;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+  }
+  #title-card button:hover { background: #c8720a; }
+
+  /* ── SCREEN FADE ──────────────────────────────────────────── */
+  #fade {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.7s ease;
+    z-index: 40;
+  }
+  #fade.active { opacity: 1; pointer-events: all; }
+</style>
+</head>
+<body>
+
+<div id="game">
+
+  <!-- Background -->
+  <div id="bg"></div>
+
+  <!-- Mood tint overlay -->
+  <div id="mood-overlay"></div>
+
+  <!-- Sprites -->
+  <img id="sprite-ginie"  class="sprite hidden" src="" alt="Ginie">
+  <img id="sprite-yeojin" class="sprite hidden" src="" alt="Yeo-jin">
+
+  <!-- Mood bar -->
+  <div id="mood-bar-wrap">
+    <span id="mood-label">Mood</span>
+    <div id="mood-bar"><div id="mood-fill"></div></div>
+  </div>
+
+  <!-- Feedback flash -->
+  <div id="feedback"></div>
+
+  <!-- Dialog -->
+  <div id="dialog-box">
+    <div id="speaker-name"></div>
+    <div id="dialog-text"></div>
+    <div id="continue-hint">▼ click to continue</div>
+  </div>
+
+  <!-- Choice panel -->
+  <div id="choice-panel"></div>
+
+  <!-- Screen fade -->
+  <div id="fade"></div>
+
+  <!-- Title card -->
+  <div id="title-card">
+    <h2>Scene 1</h2>
+    <h1>The Village Shop</h1>
+    <p>만물상회 · Manmul Sanghoe</p>
+    <button onclick="startScene()">Begin →</button>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// ASSET BASE URL
+// ─────────────────────────────────────────────────────────────
+const BASE = 'https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/';
+
+const ASSETS = {
+  bg_outside : BASE + 'background-shop-outside.png',
+  bg_inside  : BASE + 'background-shop-inside.png',
+
+  // Ginie sprites
+  ginie_cold         : BASE + 'ginie_cold.png',
+  ginie_neutral_front: BASE + 'ginie_neutral_front.png',
+  ginie_neutral_aside: BASE + 'ginie_neutral_aside.png',
+  ginie_neutral_back : BASE + 'ginie_neutral_back.png',
+  ginie_warm         : BASE + 'ginie_warm.png',
+
+  // Yeojin sprites
+  yeojin_cold        : BASE + 'yeojin_cold.png',
+  yeojin_neutral_front: BASE + 'yeojin_neutral_front.png',
+  yeojin_neutral_aside: BASE + 'yeojin_neutral_aside.png',
+  yeojin_neutral_back : BASE + 'yeojin_neutral_back.png',
+  yeojin_has_an_idea : BASE + 'yeojin_has_an_idea.png',
+  yeojin_smiling_warm: BASE + 'yeojin_smiling_warm.png',
+};
+
+// ─────────────────────────────────────────────────────────────
+// MOOD SYSTEM  −2 (cold) … 0 … +2 (warm)
+// ─────────────────────────────────────────────────────────────
+let mood = -2; // starts COLD
+
+function adjustMood(delta) {
+  mood = Math.max(-2, Math.min(2, mood + delta));
+  updateMoodUI();
+}
+
+function getMoodTier() {
+  if (mood <= -1) return 'cold';
+  if (mood >= 1)  return 'warm';
+  return 'neutral';
+}
+
+function updateMoodUI() {
+  const fill    = document.getElementById('mood-fill');
+  const overlay = document.getElementById('mood-overlay');
+  const tier    = getMoodTier();
+
+  // bar: map -2…+2 to 5%-95%
+  const pct = ((mood + 2) / 4) * 90 + 5;
+  fill.style.width = pct + '%';
+
+  const colors = {
+    cold:    { fill: '#6a8fa8', overlay: 'rgba(106,143,168,0.10)' },
+    neutral: { fill: '#a0946b', overlay: 'rgba(160,148,107,0.06)' },
+    warm:    { fill: '#e8843a', overlay: 'rgba(232,132,58,0.08)'  },
+  };
+  fill.style.background    = colors[tier].fill;
+  overlay.style.background = colors[tier].overlay;
+
+  // update Ginie sprite to match mood (if she's on screen)
+  const g = document.getElementById('sprite-ginie');
+  if (!g.classList.contains('hidden')) {
+    const map = { cold:'ginie_cold', neutral:'ginie_neutral_front', warm:'ginie_warm' };
+    g.src = ASSETS[map[tier]];
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// SPRITE HELPERS
+// ─────────────────────────────────────────────────────────────
+function setSprite(who, assetKey, { speaking = false, dim = false } = {}) {
+  const el = document.getElementById('sprite-' + who);
+  el.src = ASSETS[assetKey] || assetKey; // allow direct URL too
+  el.classList.remove('hidden','dim','active','speaking');
+  if (dim)      el.classList.add('dim');
+  else          el.classList.add('active');
+  if (speaking) el.classList.add('speaking');
+}
+
+function hideSprite(who) {
+  document.getElementById('sprite-' + who).classList.add('hidden');
+  document.getElementById('sprite-' + who).classList.remove('active','dim','speaking');
+}
+
+function setSpeaker(who) {
+  // 'ginie' | 'yeojin' | null (narration)
+  if (who === 'ginie') {
+    document.getElementById('sprite-ginie').classList.add('speaking');
+    document.getElementById('sprite-ginie').classList.remove('dim');
+    document.getElementById('sprite-yeojin').classList.add('dim');
+    document.getElementById('sprite-yeojin').classList.remove('speaking','active');
+  } else if (who === 'yeojin') {
+    document.getElementById('sprite-yeojin').classList.add('speaking');
+    document.getElementById('sprite-yeojin').classList.remove('dim');
+    document.getElementById('sprite-ginie').classList.add('dim');
+    document.getElementById('sprite-ginie').classList.remove('speaking','active');
+  } else {
+    // narration — both dim
+    ['ginie','yeojin'].forEach(w => {
+      const el = document.getElementById('sprite-' + w);
+      el.classList.remove('speaking','active');
+      el.classList.add('dim');
+    });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// BG HELPER
+// ─────────────────────────────────────────────────────────────
+function setBG(assetKey) {
+  document.getElementById('bg').style.backgroundImage = `url('${ASSETS[assetKey]}')`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// DIALOG SYSTEM
+// ─────────────────────────────────────────────────────────────
+const nameColors = { ginie: '#2d5a3d', yeojin: '#8b3a3a', narrator: '#5a4a30' };
+const displayNames = { ginie: 'Ginie', yeojin: 'Yeo-jin', narrator: '' };
+
+let currentStepIndex = 0;
+let waitingForClick  = false;
+let script           = [];
+
+function showDialog(speaker, text) {
+  const nameEl = document.getElementById('speaker-name');
+  const textEl = document.getElementById('dialog-text');
+  const hint   = document.getElementById('continue-hint');
+
+  nameEl.textContent  = displayNames[speaker] || '';
+  nameEl.style.color  = nameColors[speaker]   || nameColors.narrator;
+  textEl.textContent  = text;
+  hint.classList.remove('visible');
+
+  setSpeaker(speaker === 'narrator' ? null : speaker);
+
+  // show hint after short delay
+  setTimeout(() => hint.classList.add('visible'), 600);
+  waitingForClick = true;
+}
+
+// ─────────────────────────────────────────────────────────────
+// QUIZ SYSTEM
+// ─────────────────────────────────────────────────────────────
+const questions = [
+  {
+    question: "Ginie: *She glances at your shoes — definitely not farm boots.* 'Hmm. Tell me, city girl — what do you call the wooden or metal barrier at the entrance to a field?'",
+    choices: [
+      { text: 'A fence', correct: false },
+      { text: 'A gate',  correct: true  },
+      { text: 'A hedge', correct: false },
+    ],
+    feedbackCorrect: "Ginie: *She raises an eyebrow, the tiniest bit impressed.* 'Well. Not completely clueless.'",
+    feedbackWrong:   "Ginie: *She sighs.* 'A fence goes around the whole field. A gate is how you get in. Big difference out here.'",
+  },
+  {
+    question: "Ginie: 'Next. What do farmers store hay in — the big building at the back of the farm?'",
+    choices: [
+      { text: 'A barn',      correct: true  },
+      { text: 'A shed',      correct: false },
+      { text: 'A warehouse', correct: false },
+    ],
+    feedbackCorrect: "Ginie: *She uncrosses her arms slightly.* 'Mmm. You actually know that one.'",
+    feedbackWrong:   "Ginie: 'A shed is small. A barn — now that's the real thing. You'll see one at Matthew's place.'",
+  },
+  {
+    question: "Ginie: 'There's a stone structure in fields — farmers used to pull water from it. What is it called?'",
+    choices: [
+      { text: 'A well',     correct: true  },
+      { text: 'A fountain', correct: false },
+      { text: 'A pump',     correct: false },
+    ],
+    feedbackCorrect: "Ginie: *A tiny smile crosses her face.* 'Not bad. Not bad at all.'",
+    feedbackWrong:   "Ginie: 'A fountain is for parks. A pump is modern. A well — deep, stone, old. Remember it.'",
+  },
+  {
+    question: "Ginie: 'Last one. The narrow track through fields — not a road, not a highway — what do you call it?'",
+    choices: [
+      { text: 'A trail', correct: false },
+      { text: 'A lane',  correct: false },
+      { text: 'A path',  correct: true  },
+    ],
+    feedbackCorrect: "Ginie: *She exhales slowly — something between a sigh and a quiet laugh.* 'Alright. Maybe you do belong here after all.'",
+    feedbackWrong:   "Ginie: 'A trail is in the mountains. A lane has cars. A path is what connects fields — and people. Remember that too.'",
+  },
+];
+
+let currentQuestion = 0;
+
+function showQuestion(idx) {
+  const q = questions[idx];
+  showDialog('ginie', q.question.replace(/\*[^*]+\*/g, m => m.slice(1,-1)));
+
+  // Override: show choices instead of click-to-continue
+  const hint = document.getElementById('continue-hint');
+  hint.classList.remove('visible');
+  waitingForClick = false;
+
+  setTimeout(() => {
+    const panel = document.getElementById('choice-panel');
+    panel.innerHTML = '';
+    q.choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.textContent = c.text;
+      btn.onclick = () => handleAnswer(c.correct, idx, btn, panel);
+      panel.appendChild(btn);
+    });
+    panel.classList.add('visible');
+  }, 400);
+}
+
+function handleAnswer(isCorrect, qIdx, btn, panel) {
+  // disable all buttons
+  panel.querySelectorAll('.choice-btn').forEach(b => b.style.pointerEvents = 'none');
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  // mood
+  adjustMood(isCorrect ? 1 : -1);
+
+  // yeojin sprite reaction
+  if (isCorrect) {
+    setSprite('yeojin', 'yeojin_has_an_idea', { speaking: false });
+  } else {
+    setSprite('yeojin', 'yeojin_cold', { dim: true });
+  }
+
+  // feedback flash
+  const fb = document.getElementById('feedback');
+  fb.textContent = isCorrect ? '✓ Correct!' : '✗ Not quite';
+  fb.className = isCorrect ? 'show-correct' : 'show-wrong';
+  setTimeout(() => { fb.className = ''; }, 1200);
+
+  setTimeout(() => {
+    panel.classList.remove('visible');
+    panel.innerHTML = '';
+
+    // show feedback dialog
+    const feedbackText = isCorrect
+      ? questions[qIdx].feedbackCorrect
+      : questions[qIdx].feedbackWrong;
+
+    showDialog('ginie', feedbackText.replace(/\*[^*]+\*/g, m => m.slice(1,-1)));
+    setSprite('yeojin', 'yeojin_neutral_front', { dim: true });
+
+    // queue next step
+    waitingForClick = true;
+    pendingAfterClick = () => {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion(currentQuestion);
+      } else {
+        showOutro();
+      }
+    };
+  }, 1400);
+}
+
+// ─────────────────────────────────────────────────────────────
+// OUTRO (branching based on final mood)
+// ─────────────────────────────────────────────────────────────
+function showOutro() {
+  const tier = getMoodTier();
+
+  const outroScript = tier === 'warm'
+  ? [
+      {
+        speaker: 'ginie',
+        sprite:  'ginie_warm',
+        text:    "*She steps out from behind the counter and points toward the road.* 'Matthew's farm. Follow the path past the old well, through the gate at the bottom of the hill. You can't miss the barn.'",
+        gspeaking: true,
+      },
+      {
+        speaker: 'yeojin',
+        sprite:  'yeojin_smiling_warm',
+        text:    "*Yeo-jin's shoulders drop with relief.* 'Thank you. Really.'",
+        yspeaking: true,
+      },
+      {
+        speaker: 'ginie',
+        sprite:  'ginie_warm',
+        text:    "'Hmm. Come back if you get lost. I'll be here.' *She almost smiles.*",
+        gspeaking: true,
+      },
+      { speaker: 'narrator', text: '*Yeo-jin steps out into the golden afternoon light — and follows the path.*', exit: true },
+    ]
+  : [
+      {
+        speaker: 'ginie',
+        sprite:  'ginie_cold',
+        text:    "*She goes back to stacking shelves without looking up.* 'Matthew's farm is somewhere past the hill. Ask the signpost.'",
+        gspeaking: true,
+      },
+      {
+        speaker: 'yeojin',
+        sprite:  'yeojin_cold',
+        text:    "*Yeo-jin lingers for a moment — then nods quietly and turns to go.*",
+        yspeaking: false,
+      },
+      { speaker: 'narrator', text: '*She finds the path on her own. The sign at the crossroads reads: HILL FARM — 800m.*', exit: true },
+    ];
+
+  runOutroScript(outroScript, 0);
+}
+
+let outroQueue = [];
+let outroIdx   = 0;
+
+function runOutroScript(queue, idx) {
+  if (idx >= queue.length) return;
+  outroQueue = queue;
+  outroIdx   = idx;
+
+  const step = queue[idx];
+  if (step.sprite) {
+    setSprite('ginie', step.sprite);
+  }
+  if (step.yspeaking !== undefined) {
+    const yk = step.yspeaking ? 'yeojin_smiling_warm' : 'yeojin_neutral_front';
+    setSprite('yeojin', yk, { dim: !step.yspeaking });
+  }
+
+  showDialog(step.speaker, step.text);
+
+  if (step.exit) {
+    pendingAfterClick = () => endScene();
+  } else {
+    pendingAfterClick = () => runOutroScript(queue, idx + 1);
+  }
+  waitingForClick = true;
+}
+
+// ─────────────────────────────────────────────────────────────
+// END SCENE
+// ─────────────────────────────────────────────────────────────
+function endScene() {
+  // Yeo-jin walks out
+  setSprite('yeojin', 'yeojin_neutral_back', { dim: false });
+  setSpeaker(null);
+  document.getElementById('dialog-box').style.opacity = '0';
+  document.getElementById('mood-bar-wrap').style.opacity = '0';
+
+  setTimeout(() => {
+    fadeOut(() => {
+      // ── hand off to Scene 2 here ──
+      document.getElementById('dialog-box').style.opacity = '1';
+      document.getElementById('mood-bar-wrap').style.opacity = '1';
+      // placeholder:
+      document.getElementById('title-card').innerHTML =
+        '<h2>Scene 2</h2><h1>The Farm</h1><p>Coming soon…</p>';
+      document.getElementById('title-card').classList.remove('hidden');
+      fadeIn();
+    });
+  }, 800);
+}
+
+// ─────────────────────────────────────────────────────────────
+// CLICK HANDLER
+// ─────────────────────────────────────────────────────────────
+let pendingAfterClick = null;
+
+document.getElementById('game').addEventListener('click', e => {
+  // ignore clicks on choice buttons
+  if (e.target.classList.contains('choice-btn')) return;
+  if (!waitingForClick) return;
+
+  waitingForClick = false;
+  document.getElementById('continue-hint').classList.remove('visible');
+
+  if (pendingAfterClick) {
+    const fn = pendingAfterClick;
+    pendingAfterClick = null;
+    fn();
+  }
+});
+
+// ─────────────────────────────────────────────────────────────
+// FADE HELPERS
+// ─────────────────────────────────────────────────────────────
+function fadeOut(cb) {
+  const f = document.getElementById('fade');
+  f.classList.add('active');
+  setTimeout(cb, 750);
+}
+function fadeIn() {
+  const f = document.getElementById('fade');
+  f.classList.remove('active');
+}
+
+// ─────────────────────────────────────────────────────────────
+// OPENING SEQUENCE
+// ─────────────────────────────────────────────────────────────
+const openingScript = [
+  {
+    type: 'setBG',
+    asset: 'bg_outside',
+  },
+  {
+    type: 'dialog',
+    speaker: 'narrator',
+    text: 'The village of Hadong-ri. Population: 340. One bus a day. No cell signal.',
+  },
+  {
+    type: 'dialog',
+    speaker: 'narrator',
+    text: 'Yeo-jin has a list, a deadline, and absolutely no idea where Matthew\'s farm is.',
+  },
+  {
+    type: 'showYeojin',
+    asset: 'yeojin_neutral_aside',
+  },
+  {
+    type: 'dialog',
+    speaker: 'yeojin',
+    text: '*She stares at the hand-painted sign above the door.* "만물상회... General store. Okay. Someone in there has to know."',
+  },
+  {
+    type: 'fadeTransition',
+    newBG: 'bg_inside',
+  },
+  {
+    type: 'showGinie',
+    asset: 'ginie_cold',
+  },
+  {
+    type: 'dialog',
+    speaker: 'narrator',
+    text: 'Inside: warm light, the smell of dried herbs, and a woman who doesn\'t look up.',
+  },
+  {
+    type: 'dialog',
+    speaker: 'ginie',
+    text: '*Still counting stock, back half-turned.* "We\'re not hiring. And the Wi-Fi password isn\'t for customers."',
+  },
+  {
+    type: 'showYeojinFront',
+    asset: 'yeojin_neutral_front',
+  },
+  {
+    type: 'dialog',
+    speaker: 'yeojin',
+    text: '"Oh — I\'m not here for Wi-Fi. I\'m looking for Matthew\'s farm. The organic one, up the hill?"',
+  },
+  {
+    type: 'dialog',
+    speaker: 'ginie',
+    text: '*She finally looks up. Eyes sharp, measuring.* "Matthew\'s farm. City girl, alone, no boots, no map." *A pause.* "You know anything about farms at all?"',
+  },
+  {
+    type: 'dialog',
+    speaker: 'yeojin',
+    text: '"I... know some things." *Not entirely convincing.*',
+  },
+  {
+    type: 'dialog',
+    speaker: 'ginie',
+    text: '"Hmm. We\'ll see about that. I\'ll tell you where the farm is — but first, let\'s find out if you actually speak the language out here."',
+  },
+  {
+    type: 'startQuiz',
+  },
+];
+
+let openingIdx = 0;
+
+function runOpening() {
+  if (openingIdx >= openingScript.length) return;
+
+  const step = openingScript[openingIdx];
+  openingIdx++;
+
+  switch (step.type) {
+
+    case 'setBG':
+      setBG(step.asset);
+      runOpening();
+      break;
+
+    case 'dialog':
+      showDialog(step.speaker, step.text);
+      pendingAfterClick = () => runOpening();
+      waitingForClick = true;
+      break;
+
+    case 'showYeojin':
+      setSprite('yeojin', step.asset, { dim: false });
+      runOpening();
+      break;
+
+    case 'showYeojinFront':
+      setSprite('yeojin', step.asset, { dim: false });
+      runOpening();
+      break;
+
+    case 'showGinie':
+      setSprite('ginie', step.asset, { dim: true });
+      runOpening();
+      break;
+
+    case 'fadeTransition':
+      fadeOut(() => {
+        setBG(step.newBG);
+        // reset sprites for interior
+        hideSprite('yeojin');
+        hideSprite('ginie');
+        fadeIn();
+        setTimeout(() => runOpening(), 300);
+      });
+      break;
+
+    case 'startQuiz':
+      currentQuestion = 0;
+      showQuestion(0);
+      break;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// PRELOAD ASSETS
+// ─────────────────────────────────────────────────────────────
+function preloadAssets(cb) {
+  const urls = Object.values(ASSETS);
+  let loaded = 0;
+  const total = urls.length;
+
+  if (total === 0) { cb(); return; }
+
+  urls.forEach(url => {
+    const img = new Image();
+    img.onload  = () => { loaded++; if (loaded >= total) cb(); };
+    img.onerror = () => { loaded++; if (loaded >= total) cb(); }; // fail gracefully
+    img.src = url;
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// START
+// ─────────────────────────────────────────────────────────────
+function startScene() {
+  const titleCard = document.getElementById('title-card');
+  titleCard.classList.add('hidden');
+
+  fadeOut(() => {
+    // set initial BG before fade-in
+    setBG('bg_outside');
+    fadeIn();
+    setTimeout(() => runOpening(), 400);
+  });
+}
+
+// Preload silently in background while title card is visible
+preloadAssets(() => {
+  console.log('✅ All assets preloaded');
+});
+</script>
+</body>
+</html>
