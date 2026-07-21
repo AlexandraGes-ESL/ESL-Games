@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Present Perfect: Simple vs Continuous | B1+/B2</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================
+   ДИЗАЙН-ТОКЕНЫ
+   ============================================ */
+:root{
+  --bg-1:#DAD3C8; --bg-2:#E8E2D8;
+  --ink:#2B2A28; --ink-soft:#6c6659;
+  --accent:#C15A3E; --accent-soft:#d98b74;
+  --blue:#6B7A82;
+  --card:rgba(255,255,255,.55); --card-solid:#f4f0e9;
+  --ok:#5e8c6a; --err:#c15a3e;
+  --r-sm:10px; --r-md:18px; --r-lg:28px;
+  --sh-soft:0 8px 30px rgba(60,50,40,.12);
+  --sh-hover:0 14px 40px rgba(60,50,40,.20);
+  --serif:'Cormorant Garamond', Georgia, serif;
+  --sans:'Inter', system-ui, sans-serif;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+
+/* ============================================ БАЗА ============================================ */
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  font-family:var(--sans);color:var(--ink);
+  background:linear-gradient(160deg,var(--bg-2) 0%,var(--bg-1) 100%);
+  min-height:100vh;overflow-x:hidden;position:relative;
+}
+
+/* ЦИФРЫ */
+h1,h2,.q-counter,.score-big,.score-label,
+.result-card .num,.acc-num,.xp-pop{
+  font-feature-settings:"lnum" 1,"tnum" 1;
+  font-variant-numeric:lining-nums tabular-nums;
+}
+.stat b{font-variant-numeric:lining-nums tabular-nums;}
+
+/* --- Декоративный фон --- */
+.sky-decor{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.mountains{
+  position:absolute;bottom:0;left:0;width:100%;height:38vh;
+  object-fit:cover;object-position:bottom;opacity:.5;
+  mask-image:linear-gradient(to top,#000 40%,transparent);
+}
+.birds{position:absolute;top:14%;left:-12%;width:130px;opacity:.55;animation:fly 46s linear infinite;}
+@keyframes fly{
+  0%{transform:translate(-10vw,0) scale(.8);}
+  50%{transform:translate(55vw,-4vh) scale(1);}
+  100%{transform:translate(120vw,2vh) scale(.7);}
+}
+
+/* --- Прогресс-бар с Воздушным Шаром --- */
+.progress-sky{
+  position:sticky;top:0;z-index:20;height:74px;backdrop-filter:blur(8px);
+  background:rgba(232,226,216,.6);border-bottom:1px solid rgba(107,122,130,.18);
+  display:flex;align-items:center;gap:14px;padding:0 clamp(14px,4vw,40px);
+}
+.progress-track{position:relative;flex:1;height:4px;background:rgba(107,122,130,.25);border-radius:99px;}
+.progress-fill{
+  position:absolute;inset:0;width:0%;
+  background:linear-gradient(90deg,var(--blue),var(--accent));
+  border-radius:99px;transition:width .8s var(--ease);
+}
+.progress-balloon{
+  position:absolute;
+  top:-22px;                 
+  left:0%;
+  width:44px;
+  transform:translateX(-50%);
+  transition:left 1s cubic-bezier(.22,.61,.36,1);
+  filter:drop-shadow(0 6px 10px rgba(60,50,40,.22));
+  will-change:transform;
+}
+.progress-balloon.wobble{ animation:floatBalloon 4s ease-in-out infinite; }
+@keyframes floatBalloon{
+  0%, 100% {transform:translateX(-50%) translateY(0);}
+  50%      {transform:translateX(-50%) translateY(-6px);}
+}
+
+.stats{display:flex;gap:16px;align-items:center;font-family:var(--sans);font-size:.85rem;}
+.stat{display:flex;align-items:center;gap:6px;font-weight:500;color:var(--ink-soft);white-space:nowrap;}
+.stat b{color:var(--ink);font-size:1rem;}
+.combo{
+  padding:3px 12px;border-radius:99px;background:var(--accent);color:#fff;
+  font-weight:600;font-size:.8rem;opacity:0;transform:scale(.6);transition:all .3s var(--ease);
+}
+.combo.show{opacity:1;transform:scale(1);}
+.energy{display:flex;gap:5px;}
+.energy .heart{width:16px;height:16px;border-radius:50%;background:var(--accent);transition:all .4s var(--ease);}
+.energy .heart.lost{background:rgba(107,122,130,.3);transform:scale(.7);}
+
+/* ============================================ ЭКРАНЫ ============================================ */
+.stage{position:relative;z-index:5;max-width:820px;margin:0 auto;padding:clamp(24px,5vw,56px) clamp(18px,4vw,32px) 40px; display:flex; flex-direction:column; min-height: calc(100vh - 74px);}
+.screen{display:none;animation:rise .6s var(--ease) both; flex:1;}
+.screen.active{display:block;}
+@keyframes rise{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+h1{font-family:var(--serif);font-weight:500;font-size:clamp(2rem,6vw,3.4rem);line-height:1.05;letter-spacing:.02em;text-transform:uppercase;}
+h2{font-family:var(--serif);font-weight:500;font-size:clamp(1.5rem,4vw,2.2rem);letter-spacing:.03em;text-transform:uppercase;margin-bottom:8px;}
+.eyebrow{font-family:var(--sans);font-size:.75rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:block;}
+.lead{font-size:1.05rem;line-height:1.6;color:var(--ink-soft);max-width:56ch;margin-top:12px;}
+
+/* Кнопки */
+.btn{font-family:var(--sans);font-weight:600;font-size:.95rem;cursor:pointer;border:none;border-radius:99px;padding:14px 30px;display:inline-flex;align-items:center;gap:10px;transition:all .3s var(--ease);}
+.btn-primary{background:var(--ink);color:var(--bg-2);box-shadow:var(--sh-soft);}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:var(--sh-hover);background:var(--accent);}
+.btn-primary:active{transform:translateY(-1px) scale(.98);}
+.btn-ghost{background:transparent;color:var(--ink-soft);border:1.5px solid rgba(107,122,130,.35);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+.btn .plane{width:28px;transform:scaleX(-1);transition:transform .3s var(--ease);}
+.btn:hover .plane{transform:scaleX(-1) translateX(6px) rotate(8deg);}
+.btn:active .plane{transform:translate(3px,-2px) rotate(-18deg) scale(.92);}
+.actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px;align-items:center;}
+
+/* --- INTRO --- */
+.intro-whale{
+  width:clamp(260px,52vw,460px);display:block;margin:6px auto 0;
+  transform:scaleX(-1);animation:floatMir 6s ease-in-out infinite;
+  filter:drop-shadow(0 20px 30px rgba(60,50,40,.2));
+}
+@keyframes floatMir{
+  0%,100%{transform:scaleX(-1) translateY(0) rotate(-1deg);}
+  50%{transform:scaleX(-1) translateY(-18px) rotate(1deg);}
+}
+
+/* --- ТЕОРИЯ --- */
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 4px;}
+.tag{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:7px;}
+.tag::before{content:'';width:9px;height:9px;border-radius:50%;}
+.tag-s{background:rgba(107,122,130,.15);color:var(--blue);} .tag-s::before{background:var(--blue);}
+.tag-c{background:rgba(193,90,62,.14);color:var(--accent);} .tag-c::before{background:var(--accent);}
+.tag-st{background:rgba(94,140,106,.16);color:var(--ok);} .tag-st::before{background:var(--ok);}
+.w-s{color:var(--blue);font-weight:600;} .w-c{color:var(--accent);font-weight:600;} .w-st{color:var(--ok);font-weight:600;}
+
+.theory-grid{display:grid;gap:14px;margin-top:26px;}
+.accordion{background:var(--card);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.5);border-radius:var(--r-md);overflow:hidden;transition:box-shadow .3s var(--ease);}
+.accordion:hover{box-shadow:var(--sh-soft);}
+.acc-head{cursor:pointer;padding:18px 22px;display:flex;align-items:center;gap:14px;user-select:none;transition:background .2s;}
+.acc-head:hover{background:rgba(255,255,255,.35);}
+.acc-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-family:var(--serif);font-size:1.2rem;font-weight:600;}
+.acc-title{flex:1;font-weight:600;font-size:1rem;}
+.acc-arrow{transition:transform .3s var(--ease);color:var(--ink-soft);}
+.accordion.open .acc-arrow{transform:rotate(180deg);}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .4s var(--ease);}
+.accordion.open .acc-body{max-height:520px;}
+.acc-inner{padding:0 22px 20px 70px;color:var(--ink-soft);line-height:1.6;font-size:.95rem;}
+.acc-inner .example{background:rgba(107,122,130,.1);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 var(--r-sm) var(--r-sm) 0;margin-top:10px;font-style:italic;}
+
+.formula{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px;font-family:var(--sans);font-weight:600;font-size:.9rem;}
+.formula .box{padding:6px 12px;border-radius:8px;border:1.5px dashed;}
+.formula .box.v{border-color:var(--blue);color:var(--blue);}
+.formula .box.o{border-color:var(--accent);color:var(--accent);}
+.formula .plus{color:var(--ink-soft);}
+.rule-row{display:flex;gap:10px;align-items:flex-start;margin-top:8px;font-size:.94rem;}
+.rule-row .mark{flex-shrink:0;font-weight:700;}
+.rule-row.yes .mark{color:var(--ok);}
+.rule-row.no .mark{color:var(--err);}
+
+/* --- Задания --- */
+.task-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:8px;flex-wrap:wrap;}
+.q-counter{font-family:var(--serif);font-size:1.5rem;color:var(--ink-soft);line-height:1;display:inline-flex;align-items:baseline;gap:.1em;}
+
+/* MATCH */
+.match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;}
+.match-col{display:flex;flex-direction:column;gap:12px;}
+.chip{background:var(--card-solid);border:1.5px solid transparent;border-radius:var(--r-sm);padding:15px 16px;cursor:pointer;font-weight:500;font-size:.95rem;transition:all .25s var(--ease);box-shadow:var(--sh-soft);text-align:left;}
+.chip:hover{transform:translateY(-2px);border-color:var(--accent-soft);}
+.chip.selected{border-color:var(--accent);background:#fff;transform:translateY(-2px);}
+.chip.matched{background:rgba(94,140,106,.15);border-color:var(--ok);color:var(--ok);cursor:default;pointer-events:none;opacity:.75;}
+.chip.wrong{animation:shake .4s;border-color:var(--err);}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-7px);}75%{transform:translateX(7px);}}
+
+/* WHICH TYPE */
+.options{display:grid;gap:12px;margin-top:22px;}
+.option{background:var(--card-solid);border:1.5px solid transparent;border-radius:var(--r-sm);padding:16px 18px;cursor:pointer;font-weight:500;font-size:.98rem;transition:all .25s var(--ease);box-shadow:var(--sh-soft);display:flex;align-items:center;gap:12px;}
+.option:hover{transform:translateX(5px);border-color:var(--accent-soft);}
+.option .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--blue);flex-shrink:0;transition:all .2s;}
+.option.correct{background:rgba(94,140,106,.15);border-color:var(--ok);}
+.option.correct .dot{background:var(--ok);border-color:var(--ok);}
+.option.incorrect{background:rgba(193,90,62,.12);border-color:var(--err);}
+.option.disabled{pointer-events:none;}
+
+/* GAP-FILL */
+.prompt-card{background:var(--card);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.5);border-radius:var(--r-md);padding:26px;margin-top:22px;box-shadow:var(--sh-soft);}
+.prompt-card .sentence{font-size:1.15rem;line-height:1.7;font-family:var(--serif);}
+.prompt-card .sentence b{color:var(--accent);font-family:var(--sans);font-size:.9em;}
+.hint-kw{margin-top:8px;font-size:.85rem;color:var(--ink-soft);}
+.hint-kw b{background:var(--ink);color:var(--bg-2);padding:3px 10px;border-radius:6px;letter-spacing:.05em;}
+.answer-input{width:100%;margin-top:18px;padding:14px 18px;font-family:var(--sans);font-size:1rem;border:1.5px solid rgba(107,122,130,.35);border-radius:var(--r-sm);background:#fff;color:var(--ink);transition:all .25s var(--ease);}
+.answer-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(193,90,62,.12);}
+.answer-input.correct{border-color:var(--ok);background:rgba(94,140,106,.08);}
+.answer-input.incorrect{border-color:var(--err);background:rgba(193,90,62,.08);}
+
+.feedback{margin-top:16px;padding:14px 18px;border-radius:var(--r-sm);font-size:.92rem;line-height:1.55;display:none;animation:rise .4s var(--ease) both;}
+.feedback.show{display:block;}
+.feedback.ok{background:rgba(94,140,106,.14);color:#3f6349;border-left:3px solid var(--ok);}
+.feedback.no{background:rgba(193,90,62,.12);color:#8a3d29;border-left:3px solid var(--err);}
+.feedback b{display:block;margin-bottom:4px;font-weight:600;}
+
+/* РЕЗУЛЬТАТ */
+.result-balloon{width:clamp(150px,35vw,240px);display:block;margin:0 auto 10px;animation:floatMir 7s ease-in-out infinite;filter:drop-shadow(0 24px 34px rgba(60,50,40,.22));}
+.score-big{font-family:var(--serif);font-size:clamp(3rem,14vw,6rem);color:var(--accent);line-height:1;text-align:center;}
+.score-label{text-align:center;color:var(--ink-soft);font-size:1rem;margin-bottom:8px;}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0;}
+.result-card{background:var(--card);border-radius:var(--r-md);padding:18px;text-align:center;border:1px solid rgba(255,255,255,.5);}
+.result-card .num{font-family:var(--serif);font-size:2rem;color:var(--ink);}
+.result-card .cap{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px;}
+
+.xp-pop{position:fixed;z-index:100;font-family:var(--serif);font-weight:600;font-size:1.6rem;color:var(--ok);pointer-events:none;animation:xpUp 1s var(--ease) forwards;}
+@keyframes xpUp{0%{opacity:0;transform:translateY(0) scale(.6);}20%{opacity:1;}100%{opacity:0;transform:translateY(-60px) scale(1.1);}}
+
+/* ═══ FOOTER СТИЛИ ═══ */
+.app-footer {
+  margin-top: 60px; 
+  padding: 24px;
+  background: var(--card); 
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--r-md);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  box-shadow: var(--sh-soft);
+}
+.footer-by { font-weight: 500; font-family: var(--sans); }
+.footer-links { display: flex; gap: 12px; }
+.footer-link {
+  display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+  border-radius: 99px; background: rgba(107, 122, 130, 0.1); color: var(--ink);
+  text-decoration: none; font-weight: 600; font-size: 0.85rem;
+  transition: all 0.3s var(--ease);
+}
+.footer-link .ico { width: 16px; height: 16px; fill: currentColor; }
+.footer-link:hover { background: #fff; transform: translateY(-2px); box-shadow: var(--sh-soft); }
+.footer-link.boosty:hover { color: #f15f2c; }
+.footer-link.tg:hover { color: #24A1DE; }
+
+/* АДАПТИВ */
+@media(max-width:600px){
+  .progress-sky{height:64px;gap:10px;}
+  .stats{font-size:.72rem;gap:10px;}
+  .stat b{font-size:.9rem;}
+  .progress-balloon{width:36px;top:-18px;}
+  .intro-whale{width:clamp(220px,70vw,300px);}
+  .q-counter{font-size:1.2rem;}
+  .match-wrap{gap:10px;}
+  .chip{padding:12px;font-size:.85rem;}
+  .result-grid{grid-template-columns:1fr;}
+  .acc-inner{padding-left:22px;}
+  .stage{padding-bottom:110px;}
+  .birds{display:none;}
+  .app-footer { flex-direction: column; text-align: center; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ФОНОВЫЙ ДЕКОР -->
+<div class="sky-decor">
+  <img class="birds" src="https://i.yapx.ru/eAowd.png" alt="">
+  <img class="mountains" src="https://i.yapx.ru/eAowe.png" alt="">
+</div>
+
+<!-- ПРОГРЕСС-БАР С ШАРОМ -->
+<header class="progress-sky">
+  <div class="progress-track">
+    <div class="progress-fill" id="progFill"></div>
+    <img class="progress-balloon wobble" id="progWhale" src="https://i.yapx.ru/eAowg.png" alt="progress balloon">
+  </div>
+  <div class="stats">
+    <span class="combo" id="combo">×2 COMBO</span>
+    <span class="stat">XP <b id="xp">0</b></span>
+    <div class="energy" id="energy">
+      <span class="heart"></span><span class="heart"></span><span class="heart"></span>
+    </div>
+  </div>
+</header>
+
+<main class="stage">
+
+  <!-- ===== ЭКРАН 0: INTRO ===== -->
+  <section class="screen active" data-screen="0">
+    <span class="eyebrow">Grammar in Use · B1+ / B2</span>
+    <h1>Present Perfect:<br>Simple vs Continuous</h1>
+    <img class="intro-whale" src="https://i.yapx.ru/eAowY.png" alt="whale">
+    <p class="lead">Master the subtle differences between <i>"I have done"</i> and <i>"I have been doing"</i>. Explore the sky, clear up the grammar rules, and learn to speak about past actions connecting to the present. Ready for take-off?</p>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="goto(1)">Start the journey<img class="plane" src="https://i.yapx.ru/eAowc.png" alt=""></button>
+    </div>
+  </section>
+
+  <!-- ===== ЭКРАН 1: ТЕОРИЯ ===== -->
+  <section class="screen" data-screen="1">
+    <span class="eyebrow">Warm-up · Theory</span>
+    <h2>The 3 Golden Rules</h2>
+    <p class="lead">Compare these two tenses to understand exactly what you want to emphasize.</p>
+
+    <div class="legend">
+      <span class="tag tag-s">Simple</span>
+      <span class="tag tag-c">Continuous</span>
+      <span class="tag tag-st">State Verbs</span>
+    </div>
+
+    <div class="theory-grid">
+      <div class="accordion">
+        <div class="acc-head" onclick="toggleAcc(this)">
+          <span class="acc-num">1</span>
+          <span class="acc-title">The Result vs The Activity</span>
+          <span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body"><div class="acc-inner">
+          <div class="formula"><span class="box v">have/has</span><span class="plus">+</span><span class="box o">V3 / -ed</span></div>
+          <div class="rule-row yes"><span class="mark"><span class="w-s">Simple</span></span><span class="txt">Focus on the <b>result</b>. The action is complete.<br><i>"I <b>have painted</b> my room."</i> (The room was green, now it's yellow).</span></div>
+          
+          <div class="formula" style="margin-top:16px"><span class="box v">have/has been</span><span class="plus">+</span><span class="box o">V-ing</span></div>
+          <div class="rule-row yes"><span class="mark"><span class="w-c">Cont.</span></span><span class="txt">Focus on the <b>activity itself</b>. It doesn't matter if it's finished or not.<br><i>"I <b>have been painting</b> my room."</i> (My clothes are covered in paint).</span></div>
+        </div></div>
+      </div>
+
+      <div class="accordion">
+        <div class="acc-head" onclick="toggleAcc(this)">
+          <span class="acc-num">2</span>
+          <span class="acc-title">How much? vs How long?</span>
+          <span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body"><div class="acc-inner">
+          We use different tenses depending on what question we answer.
+          <div class="rule-row yes"><span class="mark"><span class="w-s">Simple</span></span><span class="txt">How much / How many / How many times?<br><i>"She <b>has written</b> ten emails this morning."</i></span></div>
+          <div class="rule-row yes"><span class="mark"><span class="w-c">Cont.</span></span><span class="txt">How long?<br><i>"She <b>has been writing</b> emails for two hours."</i></span></div>
+        </div></div>
+      </div>
+
+      <div class="accordion">
+        <div class="acc-head" onclick="toggleAcc(this)">
+          <span class="acc-num">3</span>
+          <span class="acc-title">State Verbs (Never Continuous)</span>
+          <span class="acc-arrow">▾</span>
+        </div>
+        <div class="acc-body"><div class="acc-inner">
+          Some verbs are normally not used in the continuous form: <i>know, like, believe, own, understand, belong</i>.
+          <div class="rule-row yes"><span class="mark">✔</span><span class="txt">I <b>have known</b> her for five years. (Present Perfect Simple)</span></div>
+          <div class="rule-row no"><span class="mark">✘</span><span class="txt">I have been knowing her.</span></div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goto(0)">Back</button>
+      <button class="btn btn-primary" onclick="goto(2)">Mission 1<img class="plane" src="https://i.yapx.ru/eAowc.png" alt=""></button>
+    </div>
+  </section>
+
+  <!-- ===== ЭКРАН 2: МИССИЯ 1 — MATCH ===== -->
+  <section class="screen" data-screen="2">
+    <div class="task-head">
+      <div>
+        <span class="eyebrow">Mission 1 · Meaning Matching</span>
+        <h2>Situation ➔ Sentence</h2>
+      </div>
+      <span class="q-counter"><span id="matchDone">0</span>/8</span>
+    </div>
+    <p class="lead">Match the situation (what you see/know) with the grammatically correct consequence.</p>
+    <div class="match-wrap">
+      <div class="match-col" id="matchLeft"></div>
+      <div class="match-col" id="matchRight"></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goto(1)">Back</button>
+      <button class="btn btn-primary" id="match-next" style="opacity:.4;pointer-events:none" onclick="goto(3)">Mission 2<img class="plane" src="https://i.yapx.ru/eAowc.png" alt=""></button>
+    </div>
+  </section>
+
+  <!-- ===== ЭКРАН 3: МИССИЯ 2 — MULTIPLE CHOICE ===== -->
+  <section class="screen" data-screen="3">
+    <div class="task-head">
+      <div>
+        <span class="eyebrow">Mission 2 · Grammar Context</span>
+        <h2>Which form?</h2>
+      </div>
+      <span class="q-counter"><span id="typeIdx">1</span>/6</span>
+    </div>
+    <p class="lead" id="typeQ">—</p>
+    <div class="options" id="typeOptions"></div>
+    <div class="feedback" id="typeFb"></div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goto(2)">Back</button>
+      <button class="btn btn-primary" id="typeNext" style="opacity:.4;pointer-events:none" onclick="nextType()">Next<img class="plane" src="https://i.yapx.ru/eAowc.png" alt=""></button>
+    </div>
+  </section>
+
+  <!-- ===== ЭКРАН 4: МИССИЯ 3 — GAP FILL ===== -->
+  <section class="screen" data-screen="4">
+    <div class="task-head">
+      <div>
+        <span class="eyebrow">Mission 3 · Gap-fill</span>
+        <h2>Type it right</h2>
+      </div>
+      <span class="q-counter"><span id="gapIdx">1</span>/6</span>
+    </div>
+    <p class="lead">Fill in the correct form: Present Perfect Simple or Continuous. You can use contractions (e.g. <i>'ve been playing</i>).</p>
+    <div class="prompt-card">
+      <p class="sentence" id="gapSentence">—</p>
+      <p class="hint-kw">Verb: <b id="gapHint">—</b></p>
+      <input class="answer-input" id="gapInput" type="text" placeholder="Type your answer..." autocomplete="off">
+    </div>
+    <div class="feedback" id="gapFb"></div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goto(3)">Back</button>
+      <button class="btn btn-primary" id="gapCheck" onclick="checkGap()">Check</button>
+      <button class="btn btn-primary" id="gapNext" style="display:none" onclick="nextGap()">Next<img class="plane" src="https://i.yapx.ru/eAowc.png" alt=""></button>
+    </div>
+  </section>
+
+  <!-- ===== ЭКРАН 5: BOSS — CONVERSATION BUILDER ===== -->
+  <section class="screen" data-screen="5">
+    <div class="task-head">
+      <div>
+        <span class="eyebrow">Final Challenge · Speaking Prep</span>
+        <h2>Conversation Builder</h2>
+      </div>
+      <span class="q-counter"><span id="speakIdx">1</span>/6</span>
+    </div>
+    <p class="lead">Make a grammatically correct question using the words in brackets. When you finish, <b>be ready to ask your partner!</b></p>
+    <div class="prompt-card">
+      <p class="sentence" id="speakPrompt">—</p>
+      <input class="answer-input" id="speakInput" type="text" placeholder="Type the full question..." autocomplete="off">
+    </div>
+    <div class="feedback" id="speakFb"></div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goto(4)">Back</button>
+      <button class="btn btn-primary" id="speakCheck" onclick="checkSpeak()">Check</button>
+      <button class="btn btn-primary" id="speakNext" style="display:none" onclick="nextSpeak()">Next<img class="plane" src="https://i.yapx.ru/eAowc.png" alt=""></button>
+    </div>
+  </section>
+
+  <!-- ===== ЭКРАН 6: РЕЗУЛЬТАТ ===== -->
+  <section class="screen" data-screen="6">
+    <span class="eyebrow" style="text-align:center;display:block">Journey complete</span>
+    <img class="result-balloon" src="https://i.yapx.ru/eAowg.png" alt="balloon">
+    <div class="score-big" id="finalScore">0%</div>
+    <div class="score-label" id="finalMsg">—</div>
+    <div class="result-grid">
+      <div class="result-card"><div class="num" id="rXp">0</div><div class="cap">Total XP</div></div>
+      <div class="result-card"><div class="num" id="rCorrect">0</div><div class="cap">Correct</div></div>
+      <div class="result-card"><div class="num" id="rCombo">0</div><div class="cap">Best combo</div></div>
+    </div>
+    <div class="actions" style="justify-content:center">
+      <button class="btn btn-primary" onclick="restart()">Fly again<img class="plane" src="https://i.yapx.ru/eAowc.png" alt=""></button>
+    </div>
+  </section>
+
+  <!-- ═══ ПОСТОЯННЫЙ FOOTER ═══ -->
+  <footer class="app-footer">
+    <span class="footer-by">Made with ❤️ by Alexandra Ges · ESL</span>
+    <div class="footer-links">
+      <a class="footer-link boosty" href="https://boosty.to/alexandrages_esl" target="_blank" rel="noopener" aria-label="Boosty">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5zm0 2.2 6.5 3.6-6.5 3.6-6.5-3.6L12 4.2z"/></svg>
+        Boosty
+      </a>
+      <a class="footer-link tg" href="https://t.me/alexandragesESL" target="_blank" rel="noopener" aria-label="Telegram">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M9.8 15.6 9.6 19c.4 0 .6-.2.8-.4l1.9-1.8 4 2.9c.7.4 1.3.2 1.5-.7l2.7-12.6c.3-1.1-.4-1.6-1.1-1.3L2.3 9.3c-1.1.4-1.1 1-.2 1.3l4.4 1.4L17 5.5c.5-.3.9-.1.6.2z"/></svg>
+        Telegram
+      </a>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+/* ============================================ WEB AUDIO API (МЯГКАЯ БУМАГА) ============================================ */
+let audioCtx;
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+}
+
+function playPaperSound(duration, filterFreq, type = 'bandpass') {
+  initAudio();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  
+  const bufferSize = audioCtx.sampleRate * duration;
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = buffer;
+  
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = type; 
+  filter.frequency.value = filterFreq; 
+  filter.Q.value = 0.5;
+
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0, audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + duration * 0.2); 
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+  noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+  noise.start();
+}
+
+function playTone(freq, duration, type='sine') {
+  initAudio();
+  const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+  osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(0.06, audioCtx.currentTime); 
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime + duration);
+}
+
+const sndTap = () => playPaperSound(0.18, 600, 'bandpass'); 
+const sndOk = () => { playPaperSound(0.2, 800, 'bandpass'); playTone(600, 0.15, 'triangle'); setTimeout(()=>playTone(800, 0.2, 'triangle'), 100); };
+const sndNo = () => { playPaperSound(0.25, 400, 'lowpass'); playTone(150, 0.2, 'sawtooth'); };
+const sndWin = () => { 
+  [400, 500, 600, 800].forEach((f, i) => setTimeout(() => { playPaperSound(0.15, 800); playTone(f, 0.2, 'triangle'); }, i * 150)); 
+};
+
+document.addEventListener('click', (e) => {
+  if(e.target.closest('.btn-primary') && !e.target.closest('#gapCheck') && !e.target.closest('#speakCheck')) sndTap();
+  if(e.target.closest('.btn-ghost')) sndTap();
+});
+
+/* ============================================ СОСТОЯНИЕ ============================================ */
+const state = { xp:0, energy:3, combo:0, bestCombo:0, correct:0, totalQuestions:0, screen:0 };
+const TOTAL_SCREENS = 7;
+
+/* ============================================ НАВИГАЦИЯ ============================================ */
+function goto(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`.screen[data-screen="${n}"]`).classList.add('active');
+  state.screen = n;
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateProgress();
+  if(n===2) initMatch();
+  if(n===6) { renderResult(); sndWin(); }
+}
+function updateProgress(){
+  const pct = (state.screen/(TOTAL_SCREENS-1))*100;
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progWhale').style.left = pct+'%';
+}
+
+/* ============================================ ОЧКИ / ЭНЕРГИЯ / КОМБО ============================================ */
+function award(isCorrect, evt){
+  state.totalQuestions++;
+  if(isCorrect){
+    sndOk();
+    state.correct++; state.combo++;
+    if(state.combo>state.bestCombo) state.bestCombo=state.combo;
+    const gain = 10 + Math.max(0,(state.combo-1))*5;
+    state.xp += gain;
+    popXp('+'+gain, evt);
+    showCombo(); flyBirds();
+  } else {
+    sndNo(); 
+    state.combo = 0; hideCombo(); loseEnergy();
+  }
+  renderStats();
+}
+function renderStats(){
+  document.getElementById('xp').textContent = state.xp;
+  document.querySelectorAll('#energy .heart').forEach((h,i)=> h.classList.toggle('lost', i>=state.energy));
+}
+function loseEnergy(){
+  if(state.energy>0) state.energy--;
+  if(state.energy<=0){ setTimeout(()=>{ state.energy=3; renderStats(); },1200); }
+}
+function showCombo(){
+  if(state.combo>=2){
+    const c=document.getElementById('combo');
+    c.textContent = '×'+state.combo+' COMBO'; c.classList.add('show');
+  }
+}
+function hideCombo(){ document.getElementById('combo').classList.remove('show'); }
+function popXp(text, evt){
+  const el=document.createElement('div');
+  el.className='xp-pop'; el.textContent=text;
+  el.style.left=(evt?evt.clientX:window.innerWidth/2)+'px';
+  el.style.top=(evt?evt.clientY:120)+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1000);
+}
+function flyBirds(){
+  const b=document.querySelector('.birds');
+  if(!b) return;
+  b.style.animation='none'; void b.offsetWidth;
+  b.style.animation='fly 46s linear infinite';
+}
+
+/* ============================================ ТЕОРИЯ ============================================ */
+function toggleAcc(head){ 
+  sndTap();
+  head.parentElement.classList.toggle('open'); 
+}
+
+/* ============================================ МИССИЯ 1 — MATCH ============================================ */
+const matchData = [
+  {id: 1, v:'You look exhausted.', m:'I have been working out.'},
+  {id: 2, v:'You look great!', m:'I have lost some weight.'},
+  {id: 3, v:'The ground is wet.', m:'It has been raining.'},
+  {id: 4, v:'The road is blocked.', m:'A tree has fallen.'},
+  {id: 5, v:'He is out of breath.', m:'He has been running.'},
+  {id: 6, v:'He is holding a medal.', m:'He has won the race.'},
+  {id: 7, v:'I can’t call my mum.', m:'I have lost my phone.'},
+  {id: 8, v:'Your English is so good now!', m:'I’ve been practising.'}
+];
+let matchSel=null, matchDone=0;
+function shuffle(a){return a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);}
+function initMatch(){
+  if(document.getElementById('matchLeft').childElementCount) return;
+  const left=document.getElementById('matchLeft'), right=document.getElementById('matchRight');
+  shuffle(matchData).forEach(d=>{
+    const c=document.createElement('div');
+    c.className='chip'; c.textContent=d.v; c.dataset.key=d.id; c.dataset.side='v';
+    c.onclick=e=>selectChip(c,e); left.appendChild(c);
+  });
+  shuffle(matchData).forEach(d=>{
+    const c=document.createElement('div');
+    c.className='chip'; c.textContent=d.m; c.dataset.key=d.id; c.dataset.side='m';
+    c.onclick=e=>selectChip(c,e); right.appendChild(c);
+  });
+}
+function selectChip(chip,e){
+  if(chip.classList.contains('matched')) return;
+  if(!matchSel){ sndTap(); matchSel=chip; chip.classList.add('selected'); return; }
+  if(matchSel===chip){ sndTap(); chip.classList.remove('selected'); matchSel=null; return; }
+  if(matchSel.dataset.side===chip.dataset.side){
+    sndTap(); matchSel.classList.remove('selected'); matchSel=chip; chip.classList.add('selected'); return;
+  }
+  if(matchSel.dataset.key===chip.dataset.key){
+    [matchSel,chip].forEach(x=>{x.classList.remove('selected');x.classList.add('matched');});
+    matchDone++;
+    document.getElementById('matchDone').textContent=matchDone;
+    award(true,e);
+    if(matchDone===matchData.length){
+      const nx=document.getElementById('match-next');
+      nx.style.opacity='1'; nx.style.pointerEvents='auto';
+    }
+  } else {
+    matchSel.classList.add('wrong'); chip.classList.add('wrong');
+    const b1=matchSel,b2=chip;
+    setTimeout(()=>{b1.classList.remove('wrong','selected');b2.classList.remove('wrong');},450);
+    award(false,e);
+  }
+  matchSel=null;
+}
+
+/* ============================================ МИССИЯ 2 — WHICH TYPE ============================================ */
+const typeData=[
+  {q:'"I __________ the book you lent me, but I\'m not finished yet." ',
+   opts:['have read', 'have been reading'],
+   answer:1, fb:'Focus is on the ongoing activity (not finished yet).'},
+  {q:'"I __________ the book you lent me, so you can have it back now." ',
+   opts:['have read', 'have been reading'],
+   answer:0, fb:'Focus is on the result. The action is complete.'},
+  {q:'"How long __________ Jane?" ',
+   opts:['have you known', 'have you been knowing'],
+   answer:0, fb:'"Know" is a state verb. We never use it in Continuous.'},
+  {q:'"She __________ four cups of coffee today." ',
+   opts:['has drunk', 'has been drinking'],
+   answer:0, fb:'We are talking about "How much/many" (four cups) = Simple.'},
+  {q:'"They __________ tennis since 2 o\'clock." ',
+   opts:['have played', 'have been playing'],
+   answer:1, fb:'We are talking about "How long" (since 2 o\'clock) = Continuous.'},
+  {q:'"I __________ my keys. Have you seen them?" ',
+   opts:['have lost', 'have been losing'],
+   answer:0, fb:'The action is finished and has a result now.'}
+];
+let typeIdx=0;
+function renderType(){
+  const d=typeData[typeIdx];
+  document.getElementById('typeIdx').textContent=typeIdx+1;
+  document.getElementById('typeQ').innerHTML=d.q;
+  const box=document.getElementById('typeOptions'); box.innerHTML='';
+  document.getElementById('typeFb').className='feedback';
+  const nx=document.getElementById('typeNext'); nx.style.opacity='.4'; nx.style.pointerEvents='none';
+  d.opts.forEach((o,i)=>{
+    const el=document.createElement('div');
+    el.className='option'; el.innerHTML=`<span class="dot"></span>${o}`;
+    el.onclick=e=>pickType(i,e); box.appendChild(el);
+  });
+}
+function pickType(i,e){
+  const d=typeData[typeIdx];
+  const opts=document.querySelectorAll('#typeOptions .option');
+  opts.forEach(o=>o.classList.add('disabled'));
+  const fb=document.getElementById('typeFb');
+  if(i===d.answer){
+    opts[i].classList.add('correct');
+    fb.className='feedback ok show'; fb.innerHTML='<b>Correct!</b>'+d.fb;
+    award(true,e);
+  } else {
+    opts[i].classList.add('incorrect'); opts[d.answer].classList.add('correct');
+    fb.className='feedback no show'; fb.innerHTML='<b>Not quite.</b>'+d.fb;
+    award(false,e);
+  }
+  const nx=document.getElementById('typeNext'); nx.style.opacity='1'; nx.style.pointerEvents='auto';
+}
+function nextType(){ if(typeIdx<typeData.length-1){ typeIdx++; renderType(); } else goto(4); }
+
+/* ============================================ МИССИЯ 3 — GAP FILL ============================================ */
+const gapData=[
+  {s:'Someone __________ my chocolates. There are none left!',
+   hint:'eat', accept:['has eaten', "'s eaten"]},
+  {s:'Someone __________ my chocolates. Half the box is gone!',
+   hint:'eat', accept:['has been eating', "'s been eating"]},
+  {s:'I __________ the windows all day, and I am still not done.',
+   hint:'clean', accept:['have been cleaning', "'ve been cleaning"]},
+  {s:'How many pages __________ so far?',
+   hint:'you / write', accept:['have you written']},
+  {s:'I __________ this song. It\'s my favourite.',
+   hint:'always / love', accept:['have always loved', "'ve always loved"]},
+  {s:'He looks tired. He __________ hard all day.',
+   hint:'work', accept:['has been working', "'s been working"]}
+];
+let gapIdx=0;
+function renderGap(){
+  const d=gapData[gapIdx];
+  document.getElementById('gapIdx').textContent=gapIdx+1;
+  document.getElementById('gapSentence').textContent=d.s;
+  document.getElementById('gapHint').textContent=d.hint;
+  const inp=document.getElementById('gapInput');
+  inp.value=''; inp.className='answer-input'; inp.disabled=false; inp.focus();
+  document.getElementById('gapFb').className='feedback';
+  document.getElementById('gapCheck').style.display='inline-flex';
+  document.getElementById('gapNext').style.display='none';
+}
+function norm(s){return s.trim().toLowerCase().replace(/\s+/g,' ').replace(/[.,!?]/g,'');}
+function checkGap(){
+  const d=gapData[gapIdx];
+  const inp=document.getElementById('gapInput');
+  const val=norm(inp.value);
+  if(!val){ sndTap(); inp.focus(); return; }
+  const fb=document.getElementById('gapFb');
+  const ok=d.accept.some(a=>norm(a)===val);
+  inp.disabled=true;
+  if(ok){
+    inp.classList.add('correct');
+    fb.className='feedback ok show';
+    fb.innerHTML='<b>Perfect!</b> "'+d.accept[0]+'" fits perfectly.';
+    award(true);
+  } else {
+    inp.classList.add('incorrect');
+    fb.className='feedback no show';
+    fb.innerHTML='<b>Almost.</b> The best answer is "<b>'+d.accept[0]+'</b>". Check if it is a result or a process.';
+    award(false);
+  }
+  document.getElementById('gapCheck').style.display='none';
+  document.getElementById('gapNext').style.display='inline-flex';
+}
+document.getElementById('gapInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkGap();});
+function nextGap(){ if(gapIdx<gapData.length-1){ gapIdx++; renderGap(); } else goto(5); }
+
+/* ============================================ BOSS — CONVERSATION BUILDER ============================================ */
+const speakData=[
+  {prompt:'(you / ever / eat / octopus?)',
+   accept:['have you ever eaten octopus', 'have you ever eaten an octopus'], 
+   tip:'"Ever" asks about life experience = Present Perfect Simple.'},
+  {prompt:'(how long / you / live / in this city?)',
+   accept:['how long have you been living in this city', 'how long have you lived in this city'], 
+   tip:'With "live" and "work", both Simple and Continuous are correct!'},
+  {prompt:'(what / you / do / all morning?)',
+   accept:['what have you been doing all morning'], 
+   tip:'"All morning" emphasises the length of the activity = Continuous.'},
+  {prompt:'(how many / times / you / visit / London?)',
+   accept:['how many times have you visited london'], 
+   tip:'"How many times" asks for a quantity/result = Simple.'},
+  {prompt:'(how long / you / have / your current phone?)',
+   accept:['how long have you had your current phone'], 
+   tip:'"Have" (possession) is a state verb, so we cannot use Continuous.'},
+  {prompt:'(you / study / hard / recently?)',
+   accept:['have you been studying hard recently'], 
+   tip:'"Recently" focusing on an ongoing activity = Continuous.'}
+];
+let speakIdx=0;
+function renderSpeak(){
+  const d=speakData[speakIdx];
+  document.getElementById('speakIdx').textContent=speakIdx+1;
+  document.getElementById('speakPrompt').textContent=d.prompt;
+  const inp=document.getElementById('speakInput');
+  inp.value=''; inp.className='answer-input'; inp.disabled=false; inp.focus();
+  document.getElementById('speakFb').className='feedback';
+  document.getElementById('speakCheck').style.display='inline-flex';
+  document.getElementById('speakNext').style.display='none';
+}
+function checkSpeak(){
+  const d=speakData[speakIdx];
+  const inp=document.getElementById('speakInput');
+  const val=norm(inp.value);
+  if(!val){ sndTap(); inp.focus(); return; }
+  const fb=document.getElementById('speakFb');
+  const ok=d.accept.some(a=>norm(a)===val);
+  inp.disabled=true;
+  if(ok){
+    inp.classList.add('correct');
+    fb.className='feedback ok show';
+    fb.innerHTML='<b>Excellent!</b> '+d.tip+' <br><br>🗣️ <i>Now turn to your partner and ask them this question!</i>';
+    award(true);
+  } else {
+    inp.classList.add('incorrect');
+    fb.className='feedback no show';
+    fb.innerHTML='<b>Check your grammar.</b><br>Correct question: "<b>'+d.accept[0]+'?</b>" <br>'+d.tip;
+    award(false);
+  }
+  document.getElementById('speakCheck').style.display='none';
+  document.getElementById('speakNext').style.display='inline-flex';
+}
+document.getElementById('speakInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkSpeak();});
+function nextSpeak(){ if(speakIdx<speakData.length-1){ speakIdx++; renderSpeak(); } else goto(6); }
+
+/* ============================================ РЕЗУЛЬТАТ ============================================ */
+function renderResult(){
+  const pct = state.totalQuestions
+    ? Math.round((state.correct/state.totalQuestions)*100) : 0;
+  document.getElementById('finalScore').textContent = pct+'%';
+  document.getElementById('rXp').textContent = state.xp;
+  document.getElementById('rCorrect').textContent = state.correct+'/'+state.totalQuestions;
+  document.getElementById('rCombo').textContent = '×'+state.bestCombo;
+
+  const msg = document.getElementById('finalMsg');
+  if(pct>=90)      msg.textContent = 'Outstanding! You soared through the sky. ✦';
+  else if(pct>=70) msg.textContent = 'Great flight! A few clouds to clear, but strong work.';
+  else if(pct>=50) msg.textContent = 'Good start — review the rules and fly again.';
+  else             msg.textContent = 'Every pilot needs practice. Take off once more!';
+
+  document.getElementById('progWhale').classList.remove('wobble');
+}
+
+/* ============================================ РЕСТАРТ ============================================ */
+function restart(){
+  state.xp=0; state.energy=3; state.combo=0; state.bestCombo=0;
+  state.correct=0; state.totalQuestions=0;
+
+  document.getElementById('matchLeft').innerHTML='';
+  document.getElementById('matchRight').innerHTML='';
+  matchSel=null; matchDone=0;
+  document.getElementById('matchDone').textContent='0';
+  const mnx=document.getElementById('match-next');
+  mnx.style.opacity='.4'; mnx.style.pointerEvents='none';
+
+  typeIdx=0; renderType();
+  gapIdx=0; renderGap();
+  speakIdx=0; renderSpeak();
+
+  document.getElementById('progWhale').classList.add('wobble');
+  hideCombo();
+  renderStats();
+  goto(0);
+}
+
+/* ============================================ ИНИЦИАЛИЗАЦИЯ ============================================ */
+window.addEventListener('DOMContentLoaded',()=>{
+  renderStats();
+  renderType();
+  renderGap();
+  renderSpeak();
+  updateProgress();
+});
+</script>
+</body>
+</html>
