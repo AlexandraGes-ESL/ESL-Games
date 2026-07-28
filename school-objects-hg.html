@@ -3,23 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<!-- 1. Подключаем шрифт Comfortaa (веса 400, 600, 700) -->
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --glass:rgba(23,23,44,.85); --border:rgba(129,140,248,.35); --primary:#818cf8;
     --primary-dark:#4f46e5; --text:#eef2ff; --glow:rgba(129,140,248,.55); --accent:#a78bfa;
-    --ok:#10b981; --error:#ef4444; --font:'Nunito',sans-serif;
+    --ok:#10b981; --error:#ef4444; 
+    /* 2. Устанавливаем Comfortaa как главный шрифт */
+    --font:'Comfortaa', sans-serif;
   }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:var(--font); color:var(--text); display:flex; align-items:center; justify-content:center; min-height:100vh; overflow:hidden; background:transparent; }
-
-  .mode-selector { position:absolute; top:18px; left:18px; z-index:120; display:flex; gap:6px; background:var(--glass); backdrop-filter:blur(14px); padding:7px; border-radius:99px; border:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.35); }
-  .mode-btn { background:transparent; border:none; color:var(--text); opacity:.65; font-weight:800; padding:9px 20px; border-radius:99px; cursor:pointer; transition:.3s; font-family:inherit; font-size:.9rem; }
-  .mode-btn:hover { opacity:.9; }
-  .mode-btn.active { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; opacity:1; box-shadow:0 4px 14px var(--glow); }
-
   .game-container { position:relative; width:100%; max-width:1300px; aspect-ratio:16/9; background:url('https://i.yapx.ru/eBKJf.jpg') center/cover; border-radius:22px; overflow:hidden; box-shadow:0 25px 60px rgba(0,0,0,.55); border:2px solid var(--border); }
-
   .hidden-obj { position:absolute; transform:translate(-50%,-50%); cursor:pointer; user-select:none; }
   .obj-inner { width:100%; height:100%; transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .3s; filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)); }
   .obj-inner img { width:100%; height:auto; pointer-events:none; display:block; }
@@ -29,10 +25,8 @@
   .hidden-obj.error-shake .obj-inner { animation:shake .5s ease; filter:drop-shadow(0 0 18px var(--error)); }
   @keyframes pulseGlow { 0%,100%{filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));} 50%{filter:drop-shadow(0 0 22px var(--accent));} }
   .hidden-obj.hint .obj-inner { animation:pulseGlow 1s ease infinite; }
-
   .sparkle { position:absolute; pointer-events:none; font-size:2rem; z-index:130; animation:sparkFly .8s ease forwards; }
   @keyframes sparkFly { 0%{transform:translate(-50%,-50%) scale(0);opacity:1;} 100%{transform:translate(-50%,-160%) scale(1.6);opacity:0;} }
-
   .word-dock { position:absolute; bottom:0; left:50%; transform:translateX(-50%); z-index:110; display:flex; flex-direction:column; align-items:center; transition:transform .4s cubic-bezier(.4,0,.2,1); width:92%; max-width:900px; }
   .word-dock.hidden { transform:translateX(-50%) translateY(calc(100% - 34px)); }
   .dock-handle { background:var(--glass); backdrop-filter:blur(14px); border:1px solid var(--border); border-bottom:none; border-radius:14px 14px 0 0; padding:5px 24px; cursor:pointer; font-weight:800; font-size:.8rem; display:flex; align-items:center; gap:8px; transition:.2s; user-select:none; }
@@ -40,59 +34,58 @@
   .dock-arrow { transition:transform .4s; }
   .word-dock.hidden .dock-arrow { transform:rotate(180deg); }
   .word-panel { background:var(--glass); backdrop-filter:blur(14px); border:1px solid var(--border); border-radius:16px 16px 0 0; padding:16px 22px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; width:100%; box-shadow:0 -6px 24px rgba(0,0,0,.3); margin-bottom:16px; }
-  .word { font-size:1.05rem; font-weight:800; opacity:.75; transition:.25s; padding:8px 18px; border-radius:10px; cursor:pointer; border:2px solid transparent; }
+  .word { font-size:1.05rem; font-weight:700; opacity:.75; transition:.25s; padding:8px 18px; border-radius:10px; cursor:pointer; border:2px solid transparent; }
   .word:hover:not(.found) { opacity:1; background:rgba(255,255,255,.08); }
   .word.selected { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; opacity:1; transform:translateY(-4px); box-shadow:0 6px 16px var(--glow); }
   .word.found { text-decoration:line-through; color:var(--ok); background:rgba(16,185,129,.14); pointer-events:none; opacity:.5; }
   .word .spk { font-size:.85rem; opacity:.6; margin-left:4px; }
-
   .modal-overlay { position:absolute; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:.3s; z-index:200; }
   .modal-overlay.show { opacity:1; pointer-events:auto; }
   .modal-box { background:var(--glass); border:1px solid var(--border); padding:40px; border-radius:24px; max-width:460px; width:90%; text-align:center; transform:translateY(30px) scale(.92); transition:.4s cubic-bezier(.34,1.56,.64,1); backdrop-filter:blur(18px); box-shadow:0 20px 50px rgba(0,0,0,.5); }
   .modal-overlay.show .modal-box { transform:translateY(0) scale(1); }
-  .modal-title { color:var(--primary); font-size:.85rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:12px; font-weight:900; }
-  .modal-text { font-size:1.5rem; font-weight:900; line-height:1.35; margin-bottom:22px; display:flex; align-items:center; justify-content:center; gap:10px; }
+  .modal-title { color:var(--primary); font-size:.85rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:12px; font-weight:700; }
+  .modal-text { font-size:1.5rem; font-weight:700; line-height:1.35; margin-bottom:22px; display:flex; align-items:center; justify-content:center; gap:10px; }
   .btn-speak { background:rgba(255,255,255,.1); border:1px solid var(--border); color:var(--text); width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:1.1rem; flex-shrink:0; transition:.2s; }
   .btn-speak:hover { background:var(--primary); color:#fff; transform:scale(1.1); }
-
-  .quiz-btn { display:block; width:100%; background:transparent; border:2px solid var(--border); color:var(--text); padding:13px; border-radius:14px; font-size:1.1rem; font-family:inherit; font-weight:800; cursor:pointer; margin-bottom:10px; transition:.2s; }
+  .quiz-btn { display:block; width:100%; background:transparent; border:2px solid var(--border); color:var(--text); padding:13px; border-radius:14px; font-size:1.1rem; font-family:inherit; font-weight:700; cursor:pointer; margin-bottom:10px; transition:.2s; }
   .quiz-btn:hover { border-color:var(--primary); background:rgba(255,255,255,.06); transform:translateY(-2px); }
   .quiz-btn.correct { background:var(--ok); border-color:var(--ok); color:#fff; }
   .quiz-btn.wrong { background:var(--error); border-color:var(--error); color:#fff; }
-
-  .fill-input { width:100%; padding:15px; border-radius:14px; border:2px solid var(--border); background:rgba(0,0,0,.35); color:var(--text); font-size:1.2rem; font-family:inherit; font-weight:800; text-align:center; margin-bottom:15px; outline:none; }
+  .fill-input { width:100%; padding:15px; border-radius:14px; border:2px solid var(--border); background:rgba(0,0,0,.35); color:var(--text); font-size:1.2rem; font-family:inherit; font-weight:700; text-align:center; margin-bottom:15px; outline:none; }
   .fill-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--glow); }
   .fill-input.correct { border-color:var(--ok); color:var(--ok); }
   .fill-input.wrong { border-color:var(--error); color:var(--error); animation:shake .5s; }
-  .btn-done { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; border:none; padding:13px 44px; font-size:1.1rem; font-weight:900; font-family:inherit; border-radius:99px; cursor:pointer; transition:.2s; box-shadow:0 6px 16px var(--glow); }
+  .btn-done { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; border:none; padding:13px 44px; font-size:1.1rem; font-weight:700; font-family:inherit; border-radius:99px; cursor:pointer; transition:.2s; box-shadow:0 6px 16px var(--glow); }
   .btn-done:hover { transform:translateY(-2px); filter:brightness(1.1); }
-
   .sound-toggle { position:absolute; top:18px; right:18px; z-index:120; background:var(--glass); backdrop-filter:blur(10px); border:1px solid var(--border); color:var(--text); width:44px; height:44px; border-radius:50%; cursor:pointer; font-size:1.2rem; transition:.2s; }
   .sound-toggle:hover { background:var(--primary); color:#fff; }
   .sound-toggle.muted { opacity:.5; }
-
-  .progress-bar { position:absolute; top:24px; left:50%; transform:translateX(-50%); z-index:110; background:var(--glass); backdrop-filter:blur(10px); border:1px solid var(--border); padding:8px 24px; border-radius:99px; font-weight:800; font-size:.95rem; box-shadow:0 4px 12px rgba(0,0,0,.2); }
-
+  .help-btn { position:absolute; top:18px; right:72px; z-index:120; background:var(--glass); backdrop-filter:blur(10px); border:1px solid var(--border); color:var(--text); width:44px; height:44px; border-radius:50%; cursor:pointer; font-size:1.3rem; font-weight:700; transition:.2s; animation:helpPulse 2s ease-in-out infinite; }
+  .help-btn:hover { background:var(--primary); color:#fff; transform:scale(1.1); }
+  @keyframes helpPulse { 0%,100%{box-shadow:0 0 0 0 var(--glow);} 50%{box-shadow:0 0 0 8px transparent;} }
+  .help-tip { position:absolute; top:70px; right:18px; z-index:121; background:var(--glass); backdrop-filter:blur(14px); border:1px solid var(--primary); color:var(--text); padding:14px 20px; border-radius:16px; font-size:.95rem; font-weight:700; max-width:280px; text-align:center; line-height:1.5; box-shadow:0 8px 28px rgba(0,0,0,.4),0 0 18px var(--glow); opacity:0; pointer-events:none; transform:translateY(-10px); transition:.35s cubic-bezier(.34,1.56,.64,1); }
+  .help-tip.show { opacity:1; transform:translateY(0); }
+  .help-tip b { color:var(--accent); }
+  .progress-bar { position:absolute; top:24px; left:50%; transform:translateX(-50%); z-index:110; background:var(--glass); backdrop-filter:blur(10px); border:1px solid var(--border); padding:8px 24px; border-radius:99px; font-weight:700; font-size:.95rem; box-shadow:0 4px 12px rgba(0,0,0,.2); }
   .game-footer { position:absolute; bottom:6px; right:12px; font-size:.66rem; opacity:.5; z-index:115; }
-  .game-footer a { color:var(--text); text-decoration:none; font-weight:800; }
+  .game-footer a { color:var(--text); text-decoration:none; font-weight:700; }
   .game-footer a:hover { opacity:1; text-decoration:underline; }
 </style>
 </head>
 <body>
-  
   <button class="sound-toggle" id="sndBtn" onclick="toggleSound()" title="Toggle sound">🔊</button>
+  <button class="help-btn" id="helpBtn" title="How to play">?</button>
+  <div class="help-tip" id="helpTip">👆 <b>Choose a word</b>, then <b>find &amp; tap the object</b> in the picture!</div>
 
   <div class="game-container">
     <div class="progress-bar" id="progress" style="display:none;">0 / 0</div>
     <div id="objectsLayer"></div>
-
     <div class="word-dock" id="wordDock">
       <div class="dock-handle" onclick="toggleDock()">
         <span class="dock-arrow">▼</span> <span id="dockLabel">Hide words</span>
       </div>
       <div class="word-panel" id="wordPanel"></div>
     </div>
-
     <div class="modal-overlay" id="modal">
       <div class="modal-box">
         <div class="modal-title" id="mType">Message</div>
@@ -102,195 +95,44 @@
     </div>
     <div class="game-footer">© Alexandra Ges ESL · <a href="https://t.me/alexandragesESL" target="_blank">TG</a></div>
   </div>
-
 <script>
 const D1 = [{"id":"w1","text":"Book","img":"https://i.yapx.ru/eBKL1.png","size":7.170265926901277,"ratio":1,"x":77.0263353256859,"y":82.86666857039073,"rot":0,"fH":false,"fV":false},{"id":"w2","text":"Eraser","img":"https://i.yapx.ru/eBKL2.png","size":4.136679774663545,"ratio":1,"x":35.24582886764367,"y":94.87876967196392,"rot":0,"fH":false,"fV":false},{"id":"w3","text":"Cloak","img":"https://i.yapx.ru/eBKL3.png","size":7.721803480400448,"ratio":1,"x":64.34049945180448,"y":80.90550635178631,"rot":0,"fH":true,"fV":false},{"id":"w1784744310811","text":"Scissors","img":"https://i.yapx.ru/eBKL4.png","size":5.515579204693883,"ratio":1,"x":60.479597711604264,"y":65.2162250616605,"rot":-72,"fH":false,"fV":false},{"id":"w1784744349452","text":" Ruler","img":"https://i.yapx.ru/eBKUO.png","size":6.342913308083845,"ratio":0.375,"x":96.46873767277555,"y":74.28658695000445,"rot":54,"fH":false,"fV":false},{"id":"w1784744405293","text":"Pen","img":"https://i.yapx.ru/eBKL6.png","size":5.515569946980148,"ratio":1,"x":92.46995154420054,"y":51.48810599013909,"rot":0,"fH":false,"fV":false},{"id":"w1784744457745","text":"School bag","img":"https://i.yapx.ru/eBKL8.png","size":8.549146841504145,"ratio":1,"x":53.309350300130454,"y":76.24774916860886,"rot":0,"fH":false,"fV":false},{"id":"w1784744481180","text":"Broom","img":"https://i.yapx.ru/eBKMA.png","size":19.028739924251532,"ratio":0.375,"x":43.10553525184638,"y":75.02202792532783,"rot":76,"fH":false,"fV":false}];
 const D2 = [];
 let selW = null, soundOn = true, dockOpen = true;
 const lay = document.getElementById('objectsLayer'), pnl = document.getElementById('wordPanel'), mod = document.getElementById('modal');
-
-function speak(text) {
-  if (!soundOn || !window.speechSynthesis) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-US'; u.rate = 0.9; u.pitch = 1;
-  speechSynthesis.speak(u);
-}
+function speak(text){ if(!soundOn||!window.speechSynthesis)return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.9; u.pitch=1; speechSynthesis.speak(u); }
 let actx;
-function beep(freq, dur, type='sine') {
-  if (!soundOn) return;
-  try {
-    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
-    const o = actx.createOscillator(), g = actx.createGain();
-    o.type = type; o.frequency.value = freq;
-    o.connect(g); g.connect(actx.destination);
-    g.gain.setValueAtTime(.15, actx.currentTime);
-    g.gain.exponentialRampToValueAtTime(.001, actx.currentTime+dur);
-    o.start(); o.stop(actx.currentTime+dur);
-  } catch(e){}
-}
-const sndOk = () => { beep(660,.1); setTimeout(()=>beep(880,.15),90); };
-const sndErr = () => beep(160,.25,'sawtooth');
-const sndWin = () => { [523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.2),i*130)); };
+function beep(freq,dur,type='sine'){ if(!soundOn)return; try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)(); const o=actx.createOscillator(),g=actx.createGain(); o.type=type; o.frequency.value=freq; o.connect(g); g.connect(actx.destination); g.gain.setValueAtTime(.15,actx.currentTime); g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur); o.start(); o.stop(actx.currentTime+dur); }catch(e){} }
+const sndOk=()=>{ beep(660,.1); setTimeout(()=>beep(880,.15),90); };
+const sndErr=()=>beep(160,.25,'sawtooth');
+const sndWin=()=>{ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.2),i*130)); };
+function toggleSound(){ soundOn=!soundOn; const b=document.getElementById('sndBtn'); b.textContent=soundOn?'🔊':'🔇'; b.classList.toggle('muted',!soundOn); if(!soundOn)speechSynthesis.cancel(); }
+function toggleDock(){ dockOpen=!dockOpen; document.getElementById('wordDock').classList.toggle('hidden',!dockOpen); document.getElementById('dockLabel').textContent=dockOpen?'Hide words':'Show words'; }
+function sparkle(x,y){ const s=document.createElement('div'); s.className='sparkle'; s.textContent='✨'; s.style.left=x+'%'; s.style.top=y+'%'; document.querySelector('.game-container').appendChild(s); setTimeout(()=>s.remove(),800); }
+function setMode(m,btn){ lay.innerHTML=''; pnl.innerHTML=''; selW=null; const prog=document.getElementById('progress'); if(m==='m1'){ document.getElementById('wordDock').style.display='flex'; prog.style.display='block'; prog.textContent='0 / '+D1.length; D1.forEach(renderM1); } else { document.getElementById('wordDock').style.display='none'; prog.style.display='none'; D2.forEach(renderM2); } }
+function createObj(d){ const e=document.createElement('div'); e.className='hidden-obj'; e.style.width=d.size+'%'; e.style.left=d.x+'%'; e.style.top=d.y+'%'; const sx=d.fH?-1:1,sy=d.fV?-1:1; e.innerHTML='<div class="obj-inner" style="transform:rotate('+d.rot+'deg) scaleX('+sx+') scaleY('+sy+');"><img src="'+d.img+'"></div>'; lay.appendChild(e); return e; }
+function renderM1(d){ const s=document.createElement('span'); s.className='word'; s.id='w-'+d.id; s.innerHTML=d.text+'<span class="spk">🔊</span>'; s.onclick=(ev)=>{ if(s.classList.contains('found'))return; speak(d.text); document.querySelectorAll('.word').forEach(w=>w.classList.remove('selected')); document.querySelectorAll('.hidden-obj').forEach(o=>o.classList.remove('hint')); selW=selW===d.id?null:d.id; if(selW){ s.classList.add('selected'); } }; pnl.appendChild(s); const o=createObj(d); o.dataset.id=d.id; o.onclick=()=>{ if(selW===d.id){ sparkle(d.x,d.y); o.classList.add('found'); document.getElementById('w-'+d.id).className='word found'; selW=null; sndOk(); speak('Correct! '+d.text); updateProgress(); } else if(selW){ o.classList.remove('error-shake'); void o.offsetWidth; o.classList.add('error-shake'); sndErr(); } else { o.classList.remove('error-shake'); void o.offsetWidth; o.classList.add('error-shake'); } }; }
+function updateProgress(){ const found=document.querySelectorAll('.word.found').length; document.getElementById('progress').textContent=found+' / '+D1.length; if(found===D1.length&&D1.length>0)setTimeout(showWin,600); }
+function showWin(){ sndWin(); document.getElementById('mType').innerText='🎉 Perfect!'; document.getElementById('mText').innerHTML='You found everything!'; document.getElementById('mContent').innerHTML='<button class="btn-done" onclick="restartM1()">Play Again</button>'; mod.classList.add('show'); }
+function restartM1(){ closeM(); setMode('m1',null); }
+function renderM2(d){ const o=createObj(d); o.onclick=()=>openQ(d); }
+function openQ(q){ const c=document.getElementById('mContent'); c.innerHTML=''; const titles={speak:'🎤 Speak',quiz:'❓ Question',fill:'✍️ Type'}; document.getElementById('mType').innerText=titles[q.type]||'Task'; document.getElementById('mText').innerHTML='<span>'+q.text+'</span><button class="btn-speak" onclick="speak(\''+q.text.replace(/\x27/g,"")+'\')">🔊</button>'; speak(q.text); if(q.type==='speak'){ c.innerHTML='<button class="btn-done" onclick="closeM()">✓ Done</button>'; } else if(q.type==='quiz'){ let opts=[q.options[0],q.options[1],q.options[2]].map(o=>({t:o,c:o===q.options[0]})).filter(o=>o.t).sort(()=>Math.random()-.5); opts.forEach(opt=>{ const b=document.createElement('button'); b.className='quiz-btn'; b.innerText=opt.t; b.onclick=()=>{ if(opt.c){ b.classList.add('correct'); sndOk(); speak('Correct'); setTimeout(closeM,900); } else { b.classList.add('wrong'); sndErr(); setTimeout(()=>{ b.classList.remove('wrong'); },600); } }; c.appendChild(b); }); } else if(q.type==='fill'){ c.innerHTML='<input type="text" class="fill-input" id="fInp" placeholder="Type your answer...">' + '<button class="btn-done" onclick="chkFill(\''+(q.correct||'').replace(/\x27/g,"")+'\')">Check</button>'; setTimeout(()=>{ const i=document.getElementById('fInp'); if(i)i.focus(); },300); } mod.classList.add('show'); }
+window.chkFill=(ans)=>{ const i=document.getElementById('fInp'); if(i.value.toLowerCase().trim()===ans.toLowerCase().trim()){ i.classList.remove('wrong'); i.classList.add('correct'); sndOk(); speak('Correct'); setTimeout(closeM,900); } else { i.classList.remove('wrong'); void i.offsetWidth; i.classList.add('wrong'); sndErr(); } };
+window.speak=speak;
+window.closeM=()=>{ mod.classList.remove('show'); speechSynthesis.cancel(); };
+mod.addEventListener('click',(e)=>{ if(e.target===mod)window.closeM(); });
+if(window.speechSynthesis)speechSynthesis.getVoices();
 
-function toggleSound() {
-  soundOn = !soundOn;
-  const b = document.getElementById('sndBtn');
-  b.textContent = soundOn ? '🔊' : '🔇';
-  b.classList.toggle('muted', !soundOn);
-  if (!soundOn) speechSynthesis.cancel();
-}
+/* Подсказка «как играть» */
+const helpBtn=document.getElementById('helpBtn'), helpTip=document.getElementById('helpTip');
+let helpTimer;
+function showHelp(){ helpTip.classList.add('show'); clearTimeout(helpTimer); helpTimer=setTimeout(()=>helpTip.classList.remove('show'),4000); }
+helpBtn.onmouseenter=()=>{ helpTip.classList.add('show'); clearTimeout(helpTimer); };
+helpBtn.onmouseleave=()=>{ helpTimer=setTimeout(()=>helpTip.classList.remove('show'),500); };
+helpBtn.onclick=showHelp;
+setTimeout(showHelp,800);
 
-function toggleDock() {
-  dockOpen = !dockOpen;
-  document.getElementById('wordDock').classList.toggle('hidden', !dockOpen);
-  document.getElementById('dockLabel').textContent = dockOpen ? 'Hide words' : 'Show words';
-}
-
-function sparkle(x, y) {
-  const s = document.createElement('div');
-  s.className = 'sparkle'; s.textContent = '✨';
-  s.style.left = x + '%'; s.style.top = y + '%';
-  document.querySelector('.game-container').appendChild(s);
-  setTimeout(() => s.remove(), 800);
-}
-
-function setMode(m, btn) {
-  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-  // Защита: если кнопок на экране нет (режим только один), btn будет null
-  if (btn) btn.classList.add('active'); 
-  
-  lay.innerHTML = ''; pnl.innerHTML = ''; selW = null;
-  const prog = document.getElementById('progress');
-  if (m === 'm1') {
-    document.getElementById('wordDock').style.display = 'flex';
-    prog.style.display = 'block';
-    prog.textContent = '0 / ' + D1.length;
-    D1.forEach(renderM1);
-  } else {
-    document.getElementById('wordDock').style.display = 'none';
-    prog.style.display = 'none';
-    D2.forEach(renderM2);
-  }
-}
-
-function createObj(d) {
-  const e = document.createElement('div'); e.className = 'hidden-obj';
-  e.style.width = d.size + '%'; e.style.left = d.x + '%'; e.style.top = d.y + '%';
-  const sx = d.fH ? -1 : 1, sy = d.fV ? -1 : 1;
-  e.innerHTML = '<div class="obj-inner" style="transform:rotate(' + d.rot + 'deg) scaleX(' + sx + ') scaleY(' + sy + ');"><img src="' + d.img + '"></div>';
-  lay.appendChild(e); return e;
-}
-
-function renderM1(d) {
-  const s = document.createElement('span'); s.className = 'word'; s.id = 'w-' + d.id;
-  s.innerHTML = d.text + '<span class="spk">🔊</span>';
-  s.onclick = (ev) => {
-    if (s.classList.contains('found')) return;
-    speak(d.text);
-    document.querySelectorAll('.word').forEach(w => w.classList.remove('selected'));
-    document.querySelectorAll('.hidden-obj').forEach(o => o.classList.remove('hint'));
-    selW = selW === d.id ? null : d.id;
-    if (selW) {
-      s.classList.add('selected');
-      const obj = lay.querySelector('[data-id="'+d.id+'"]');
-    }
-  };
-   pnl.appendChild(s);
-  const o = createObj(d);
-  o.dataset.id = d.id;
-  o.onclick = () => {
-    if (selW === d.id) {
-      sparkle(d.x, d.y);
-      o.classList.add('found');
-      document.getElementById('w-' + d.id).className = 'word found';
-      selW = null;
-      sndOk();
-      speak('Correct! ' + d.text);
-      updateProgress();
-    } else if (selW) {
-      o.classList.remove('error-shake'); void o.offsetWidth; o.classList.add('error-shake');
-      sndErr();
-    } else {
-      o.classList.remove('error-shake'); void o.offsetWidth; o.classList.add('error-shake');
-    }
-  };
-}
-
-function updateProgress() {
-  const found = document.querySelectorAll('.word.found').length;
-  document.getElementById('progress').textContent = found + ' / ' + D1.length;
-  if (found === D1.length && D1.length > 0) setTimeout(showWin, 600);
-}
-
-function showWin() {
-  sndWin();
-  document.getElementById('mType').innerText = '🎉 Perfect!';
-  document.getElementById('mText').innerHTML = 'You found everything!';
-  document.getElementById('mContent').innerHTML =
-    '<button class="btn-done" onclick="restartM1()">Play Again</button>';
-  mod.classList.add('show');
-}
-function restartM1() {
-  closeM();
-  setMode('m1', document.querySelector('.mode-btn.active'));
-}
-
-function renderM2(d) {
-  const o = createObj(d);
-  o.onclick = () => openQ(d);
-}
-
-function openQ(q) {
-  const c = document.getElementById('mContent'); c.innerHTML = '';
-  const titles = { speak: '🎤 Speak', quiz: '❓ Question', fill: '✍️ Type' };
-  document.getElementById('mType').innerText = titles[q.type] || 'Task';
-  document.getElementById('mText').innerHTML =
-    '<span>' + q.text + '</span>' +
-    '<button class="btn-speak" onclick="speak(\''+ q.text.replace(/'/g,"") +'\')">🔊</button>';
-  speak(q.text);
-
-  if (q.type === 'speak') {
-    c.innerHTML = '<button class="btn-done" onclick="closeM()">✓ Done</button>';
-  } else if (q.type === 'quiz') {
-    let opts = [q.options[0], q.options[1], q.options[2]]
-      .map(o => ({ t: o, c: o === q.options[0] }))
-      .filter(o => o.t)
-      .sort(() => Math.random() - .5);
-    opts.forEach(opt => {
-      const b = document.createElement('button');
-      b.className = 'quiz-btn'; b.innerText = opt.t;
-      b.onclick = () => {
-        if (opt.c) { b.classList.add('correct'); sndOk(); speak('Correct'); setTimeout(closeM, 900); }
-        else { b.classList.add('wrong'); sndErr(); setTimeout(() => { b.classList.remove('wrong'); }, 600); }
-      };
-      c.appendChild(b);
-    });
-  } else if (q.type === 'fill') {
-    c.innerHTML = '<input type="text" class="fill-input" id="fInp" placeholder="Type your answer...">' +
-      '<button class="btn-done" onclick="chkFill(\''+ (q.correct||'').replace(/'/g,"") +'\')">Check</button>';
-    setTimeout(() => { const i = document.getElementById('fInp'); if (i) i.focus(); }, 300);
-  }
-  mod.classList.add('show');
-}
-
-window.chkFill = (ans) => {
-  const i = document.getElementById('fInp');
-  if (i.value.toLowerCase().trim() === ans.toLowerCase().trim()) {
-    i.classList.remove('wrong'); i.classList.add('correct'); sndOk(); speak('Correct'); setTimeout(closeM, 900);
-  } else {
-    i.classList.remove('wrong'); void i.offsetWidth; i.classList.add('wrong'); sndErr();
-  }
-};
-
-window.speak = speak;
-window.closeM = () => { mod.classList.remove('show'); speechSynthesis.cancel(); };
-
-mod.addEventListener('click', (e) => { if (e.target === mod) window.closeM(); });
-if (window.speechSynthesis) speechSynthesis.getVoices();
-
-// Умный запуск (выбирает режим в зависимости от того, что мы насчитали в генераторе)
-setMode('m1', document.querySelector('.mode-btn.active'));
+setMode('m1',null);
 </script>
 </body>
 </html>
