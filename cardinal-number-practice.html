@@ -67,6 +67,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .brand-logo {
@@ -81,13 +83,9 @@
       text-shadow: 0 0 12px rgba(255, 230, 0, 0.6);
     }
 
-    .brand-logo img {
+    .brand-logo .img-wrap {
       width: 42px;
       height: 42px;
-      border-radius: 10px;
-      object-fit: cover;
-      border: 2px solid var(--neon-yellow);
-      box-shadow: 0 0 10px rgba(255, 230, 0, 0.5);
     }
 
     .hud-stats {
@@ -107,7 +105,7 @@
       box-shadow: 0 0 15px rgba(255, 230, 0, 0.3);
     }
 
-    .btn-sound {
+    .btn-sound, .btn-reload-imgs {
       background: var(--panel-bg);
       border: 1px solid var(--panel-border);
       color: #fff;
@@ -117,7 +115,18 @@
       font-size: 1.1rem;
       transition: all 0.2s;
     }
-    .btn-sound:hover { transform: scale(1.05); }
+    .btn-sound:hover, .btn-reload-imgs:hover { transform: scale(1.05); border-color: var(--neon-cyan); }
+
+    .btn-reload-imgs {
+      font-size: 0.85rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-reload-imgs.spinning svg {
+      animation: spin 0.6s linear;
+    }
 
     /* ==========================================================================
        3. ОСНОВНОЙ КОНТЕЙНЕР
@@ -143,9 +152,7 @@
       margin: auto 0;
     }
 
-    .map-title {
-      text-align: center;
-    }
+    .map-title { text-align: center; }
     .map-title h1 {
       font-size: clamp(2rem, 5vw, 3.2rem);
       text-transform: uppercase;
@@ -204,19 +211,65 @@
       gap: 14px;
     }
 
-    .arena-icon {
-      width: 56px;
-      height: 56px;
+    /* ==========================================================================
+       4.1 СИСТЕМА УСТОЙЧИВОСТИ ИЗОБРАЖЕНИЙ (IMAGE RESILIENCE WRAPPER)
+       ========================================================================== */
+    .img-wrap {
+      position: relative;
+      flex-shrink: 0;
       border-radius: 14px;
-      object-fit: cover;
-      border: 2px solid var(--neon-cyan);
+      overflow: hidden;
       background: #101426;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
     }
-    .boss-card .arena-icon {
-      border-color: var(--neon-red);
-      box-shadow: 0 0 15px rgba(255, 42, 85, 0.6);
+
+    .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.3s ease;
     }
+
+    .img-wrap img.loading { opacity: 0.3; }
+    .img-wrap img.broken { opacity: 0; }
+
+    /* Заглушка, когда картинка не загрузилась после всех попыток */
+    .img-placeholder {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #1a1f3a, #0d1024);
+      border: 1px dashed var(--panel-border-glow);
+      cursor: pointer;
+    }
+    .img-wrap.show-placeholder .img-placeholder { display: flex; }
+
+    .img-placeholder .ph-icon {
+      font-size: 1.4rem;
+      opacity: 0.7;
+    }
+    .img-placeholder .ph-retry {
+      font-size: 0.6rem;
+      font-weight: 900;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      background: rgba(0, 243, 255, 0.15);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+    .img-placeholder:hover .ph-retry {
+      background: rgba(0, 243, 255, 0.35);
+    }
+
+    .arena-icon-wrap { width: 56px; height: 56px; border: 2px solid var(--neon-cyan); }
+    .boss-card .arena-icon-wrap { border-color: var(--neon-red); }
+    .theory-avatar-wrap { width: 70px; height: 70px; border: 3px solid var(--neon-yellow); border-radius: 18px; }
+    .brawler-avatar-wrap { width: 58px; height: 58px; border: 2px solid var(--neon-pink); border-radius: 14px; }
+    .victory-img-wrap { width: 110px; height: 110px; border: 3px solid var(--neon-yellow); border-radius: 24px; margin: 0 auto 1.2rem; }
 
     .arena-num {
       font-size: 0.8rem;
@@ -224,9 +277,7 @@
       color: var(--neon-pink);
       letter-spacing: 1px;
     }
-    .boss-card .arena-num {
-      color: var(--neon-yellow);
-    }
+    .boss-card .arena-num { color: var(--neon-yellow); }
 
     .arena-name {
       font-size: 1.2rem;
@@ -275,15 +326,6 @@
       gap: 16px;
       border-bottom: 2px solid var(--panel-border);
       padding-bottom: 1.2rem;
-    }
-
-    .theory-avatar {
-      width: 70px;
-      height: 70px;
-      border-radius: 18px;
-      border: 3px solid var(--neon-yellow);
-      object-fit: cover;
-      box-shadow: 0 0 20px rgba(255, 230, 0, 0.4);
     }
 
     .theory-title-wrap h2 {
@@ -337,7 +379,6 @@
       margin: auto 0;
     }
 
-    /* Шкала Здоровья Босса */
     .boss-hp-container {
       background: rgba(0,0,0,0.6);
       border: 2px solid var(--neon-red);
@@ -398,19 +439,8 @@
       border-left: 5px solid var(--neon-pink);
     }
 
-    .brawler-avatar {
-      width: 58px;
-      height: 58px;
-      border-radius: 14px;
-      border: 2px solid var(--neon-pink);
-      object-fit: cover;
-      box-shadow: 0 0 12px rgba(255, 0, 127, 0.4);
-    }
-
-    .brawler-avatar.boss-hit {
-      animation: shake 0.4s ease-in-out;
-      border-color: var(--neon-red);
-    }
+    .brawler-avatar-wrap.boss-hit { animation: shake 0.4s ease-in-out; }
+    .brawler-avatar-wrap.boss-hit { border-color: var(--neon-red); }
 
     .brawler-speech {
       font-size: 1rem;
@@ -439,7 +469,6 @@
       letter-spacing: 1px;
     }
 
-    /* Кнопки ответов */
     .options-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -466,11 +495,7 @@
       transform: translateY(-2px);
     }
 
-    /* Поле ввода */
-    .type-zone {
-      display: flex;
-      gap: 12px;
-    }
+    .type-zone { display: flex; gap: 12px; }
 
     .type-zone input {
       flex: 1;
@@ -490,7 +515,6 @@
       box-shadow: 0 0 18px rgba(0, 243, 255, 0.4);
     }
 
-    /* Подсказка / Результат */
     .feedback {
       margin-top: 1.5rem;
       padding: 1.2rem;
@@ -510,9 +534,7 @@
       color: #ffd0d8;
     }
 
-    .fb-title {
-      font-size: 1.25rem;
-      font-weight: 900;
+    .fb-title { font-size: 1.25rem;       font-weight: 900;
       margin-bottom: 0.4rem;
     }
 
@@ -555,7 +577,7 @@
       box-shadow: 0 3px 0 #b36b00;
     }
 
-    .btn-next {
+        .btn-next {
       background: linear-gradient(180deg, var(--neon-green) 0%, #009933 100%);
       color: #000;
       box-shadow: 0 4px 0 #006622;
@@ -582,16 +604,6 @@
       animation: popIn 0.4s ease-out;
     }
 
-    .victory-img {
-      width: 110px;
-      height: 110px;
-      border-radius: 24px;
-      border: 3px solid var(--neon-yellow);
-      object-fit: cover;
-      margin-bottom: 1.2rem;
-      box-shadow: 0 0 30px rgba(255, 230, 0, 0.6);
-    }
-
     /* АНИМАЦИИ */
     @keyframes popIn {
       0% { opacity: 0; transform: scale(0.9) translateY(12px); }
@@ -609,10 +621,16 @@
       100% { box-shadow: 0 0 25px rgba(255, 42, 85, 0.7); }
     }
 
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
     @media (max-width: 600px) {
       .hud-top { padding: 0.8rem; }
       .type-zone { flex-direction: column; }
       .quest-sentence { font-size: 1.35rem; }
+      .btn-reload-imgs span.label { display: none; } /* на мобиле оставляем только иконку */
     }
   </style>
 </head>
@@ -621,11 +639,22 @@
   <!-- ШАПКА ХУДА -->
   <header class="hud-top">
     <div class="brand-logo">
-      <img src="https://i.yapx.ru/eDP15.png" id="headerLogo" alt="Brawl Stars Logo">
+      <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP15.png" id="headerLogoWrap">
+        <img alt="Brawl Stars Logo">
+        <div class="img-placeholder"><span class="ph-icon">⭐</span><span class="ph-retry">Retry</span></div>
+      </div>
       <span>BRAWL NUMBERS</span>
     </div>
     <div class="hud-stats">
       <div class="xp-chip">⭐ <span id="xpVal">0</span> XP</div>
+      <!-- НОВЫЙ БЛОК: Кнопка перезагрузки картинок -->
+      <button class="btn-reload-imgs" id="btnReloadImgs" title="Перезагрузить все картинки на странице">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 12a9 9 0 1 1-2.64-6.36"/>
+          <polyline points="21 3 21 9 15 9"/>
+        </svg>
+        <span class="label">Обновить</span>
+      </button>
       <button class="btn-sound" id="btnSound">🔊</button>
     </div>
   </header>
@@ -642,7 +671,10 @@
         <!-- Module 1 -->
         <div class="arena-card" onclick="openTheory(0)">
           <div class="arena-header">
-            <img src="https://i.yapx.ru/eDP2E.png" class="arena-icon" alt="Colt">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP2E.png">
+              <img alt="Colt">
+              <div class="img-placeholder"><span class="ph-icon">🔫</span><span class="ph-retry">Retry</span></div>
+            </div>
             <div>
               <div class="arena-num">ARENA 1</div>
               <div class="arena-name">Cardinal Traps</div>
@@ -655,7 +687,10 @@
         <!-- Module 2 -->
         <div class="arena-card" onclick="openTheory(1)">
           <div class="arena-header">
-            <img src="https://i.yapx.ru/eDP2C.png" class="arena-icon" alt="Jessie">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP2C.png">
+              <img alt="Jessie">
+              <div class="img-placeholder"><span class="ph-icon">🔧</span><span class="ph-retry">Retry</span></div>
+            </div>
             <div>
               <div class="arena-num">ARENA 2</div>
               <div class="arena-name">Ordinal Suffixes</div>
@@ -668,7 +703,10 @@
         <!-- Module 3 -->
         <div class="arena-card" onclick="openTheory(2)">
           <div class="arena-header">
-            <img src="https://i.yapx.ru/eDP2A.jpg" class="arena-icon" alt="Colette">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP2A.jpg">
+              <img alt="Colette">
+              <div class="img-placeholder"><span class="ph-icon">📖</span><span class="ph-retry">Retry</span></div>
+            </div>
             <div>
               <div class="arena-num">ARENA 3</div>
               <div class="arena-name">Dates & Context</div>
@@ -681,7 +719,10 @@
         <!-- Module 4 -->
         <div class="arena-card" onclick="openTheory(3)">
           <div class="arena-header">
-            <img src="https://i.yapx.ru/eDP16.png" class="arena-icon" alt="Surge">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP16.png">
+              <img alt="Surge">
+              <div class="img-placeholder"><span class="ph-icon">⚡</span><span class="ph-retry">Retry</span></div>
+            </div>
             <div>
               <div class="arena-num">ARENA 4</div>
               <div class="arena-name">Years & Big Numbers</div>
@@ -694,7 +735,10 @@
         <!-- ARENA 5: BOSS FIGHT -->
         <div class="arena-card boss-card" onclick="startBossFight()">
           <div class="arena-header">
-            <img src="https://i.yapx.ru/eDP16.png" class="arena-icon" alt="Boss Mech">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP16.png">
+              <img alt="Boss Mech">
+              <div class="img-placeholder"><span class="ph-icon">👾</span><span class="ph-retry">Retry</span></div>
+            </div>
             <div>
               <div class="arena-num">FINAL ARENA</div>
               <div class="arena-name">👾 SUPER BOSS FIGHT</div>
@@ -709,16 +753,17 @@
     <!-- 2. ЭКРАН ТЕОРИИ -->
     <section class="theory-screen hidden" id="theoryScreen">
       <div class="theory-header">
-        <img src="" class="theory-avatar" id="theoryAvatar" alt="Brawler Avatar">
+        <div class="img-wrap theory-avatar-wrap" id="theoryAvatarWrap">
+          <img alt="Brawler Avatar" id="theoryAvatar">
+          <div class="img-placeholder"><span class="ph-icon">🥷</span><span class="ph-retry">Retry</span></div>
+        </div>
         <div class="theory-title-wrap">
           <h2 id="theoryTitle">ТЕОРИЯ МОДУЛЯ</h2>
           <p>Инструктаж от Бравлера перед боем</p>
         </div>
       </div>
 
-      <div class="theory-grid" id="theoryContent">
-        <!-- Динамическая теория -->
-      </div>
+      <div class="theory-grid" id="theoryContent"></div>
 
       <button class="btn btn-action" id="btnStartPractice">▶ НАЧАТЬ БОЙ (PRACTICE)</button>
     </section>
@@ -726,7 +771,6 @@
     <!-- 3. ИГРОВОЙ ЭКРАН ПРАКТИКИ / БОССА -->
     <section class="game-screen hidden" id="gameScreen">
       
-      <!-- Шкала ХП Босса (только для Boss Fight) -->
       <div class="boss-hp-container hidden" id="bossHpContainer">
         <div class="boss-hp-header">
           <span>👾 MECHA BOSS HP</span>
@@ -739,23 +783,23 @@
 
       <div class="quest-card">
         <div class="brawler-speech-zone">
-          <img src="" class="brawler-avatar" id="gameAvatar" alt="Brawler">
+          <div class="img-wrap brawler-avatar-wrap" id="gameAvatarWrap">
+            <img alt="Brawler" id="gameAvatar">
+            <div class="img-placeholder"><span class="ph-icon">🥊</span><span class="ph-retry">Retry</span></div>
+          </div>
           <div class="brawler-speech" id="brawlerSpeech">Задание на подходе!</div>
         </div>
 
         <div class="quest-prompt" id="questPrompt">Задание</div>
         <div class="quest-sentence" id="questSentence">---</div>
 
-        <!-- Варианты выбора -->
         <div class="options-grid" id="optionsGrid"></div>
 
-        <!-- Поле ввода текста -->
         <div class="type-zone hidden" id="typeZone">
           <input type="text" id="typeInput" placeholder="Введи ответ по-английски..." autocomplete="off">
           <button class="btn btn-check" id="btnCheck">CHECK</button>
         </div>
 
-        <!-- Фидбек / Ответ -->
         <div class="feedback hidden" id="feedback">
           <div class="fb-title" id="fbTitle"></div>
           <div class="fb-text" id="fbText"></div>
@@ -766,7 +810,10 @@
 
     <!-- 4. ЭКРАН ПОБЕДЫ -->
     <section class="victory-screen hidden" id="victoryScreen">
-      <img src="https://i.yapx.ru/eDP18.png" class="victory-img" alt="Golden Trophy">
+      <div class="img-wrap victory-img-wrap" data-src="https://i.yapx.ru/eDP18.png">
+        <img alt="Golden Trophy">
+        <div class="img-placeholder"><span class="ph-icon">🏆</span><span class="ph-retry">Retry</span></div>
+      </div>
       <h2 style="font-size: 2.2rem; color: var(--neon-yellow); margin-bottom: 0.5rem;" id="vicTitle">ARENA VICTORY!</h2>
       <p style="color: var(--text-muted); margin-bottom: 1.8rem;" id="vicSubtitle">Ты отлично усвоил этот модуль и заработал награды!</p>
       <button class="btn btn-action" id="btnBackToMap">🗺 НА КАРТУ АРЕН</button>
@@ -774,6 +821,101 @@
   </main>
 
   <script>
+    /* ==========================================================================
+       БЛОК УСТОЙЧИВОСТИ ИЗОБРАЖЕНИЙ (IMAGE RESILIENCE SYSTEM)
+       -----------------------------------------------------------------------
+       Идея: каждая картинка обёрнута в .img-wrap с атрибутом data-src (или
+       сам src ставится через JS). Если картинка не загрузилась — включаем
+       retry с задержкой (до 3 попыток), а если всё равно не вышло — 
+       показываем красивую SVG-заглушку с кнопкой "Retry" прямо на аватаре.
+       Плюс глобальная кнопка "Обновить картинки" в шапке, которая триггерит
+       принудительную перезагрузку ВСЕХ картинок разом (добавляя cache-buster).
+       ========================================================================== */
+    const ImageResilience = {
+      registry: [], // { wrap, img, placeholder, baseSrc, attempts }
+      maxAttempts: 3,
+      retryDelay: 900, // мс между попытками
+
+      // Инициализация одной обёртки
+      register(wrapEl) {
+        const img = wrapEl.querySelector('img');
+        const placeholder = wrapEl.querySelector('.img-placeholder');
+        const baseSrc = wrapEl.dataset.src || img.dataset.src || img.getAttribute('data-pending-src');
+        if (!img) return;
+
+        const entry = { wrap: wrapEl, img, placeholder, baseSrc, attempts: 0 };
+        this.registry.push(entry);
+
+        img.addEventListener('error', () => this.handleError(entry));
+        img.addEventListener('load', () => this.handleSuccess(entry));
+
+        // Клик по заглушке — ручной повторный запрос
+        if (placeholder) {
+          placeholder.addEventListener('click', () => {
+            entry.attempts = 0;
+            this.loadImage(entry, true);
+          });
+        }
+
+        this.loadImage(entry);
+        return entry;
+      },
+
+      // Загрузка/перезагрузка конкретной картинки
+      loadImage(entry, forceBust = false) {
+        if (!entry.baseSrc) return;
+        entry.wrap.classList.remove('show-placeholder');
+        entry.img.classList.add('loading');
+        entry.img.classList.remove('broken');
+
+        // Добавляем cache-buster при принудительном обновлении,
+        // чтобы браузер не брал битую версию из кэша
+        const bust = forceBust ? `?_r=${Date.now()}` : '';
+        entry.img.src = entry.baseSrc + bust;
+      },
+
+      handleSuccess(entry) {
+        entry.attempts = 0;
+        entry.img.classList.remove('loading', 'broken');
+        entry.wrap.classList.remove('show-placeholder');
+      },
+
+      handleError(entry) {
+        entry.attempts++;
+        if (entry.attempts < this.maxAttempts) {
+          // Пробуем ещё раз через паузу (сеть могла на секунду моргнуть)
+          setTimeout(() => this.loadImage(entry, true), this.retryDelay * entry.attempts);
+        } else {
+          // Все попытки исчерпаны — показываем заглушку
+          entry.img.classList.add('broken');
+          entry.wrap.classList.add('show-placeholder');
+        }
+      },
+
+      // Обновить конкретную картинку по новому URL (используется при смене аватара бравлера)
+      updateSrc(wrapEl, newSrc) {
+        let entry = this.registry.find(e => e.wrap === wrapEl);
+        if (!entry) entry = this.register(wrapEl); // если ещё не зарегистрирована
+        entry.baseSrc = newSrc;
+        wrapEl.dataset.src = newSrc;
+        entry.attempts = 0;
+        this.loadImage(entry, true);
+      },
+
+      // Глобальная перезагрузка ВСЕХ картинок на странице по кнопке
+      reloadAll() {
+        this.registry.forEach(entry => {
+          entry.attempts = 0;
+          this.loadImage(entry, true);
+        });
+      },
+
+      // Инициализация всех .img-wrap, что уже есть в DOM на старте
+      initAll() {
+        document.querySelectorAll('.img-wrap').forEach(wrap => this.register(wrap));
+      }
+    };
+
     /* ==========================================================================
        ЗВУКОВОЙ ДВИЖОК (Web Audio API)
        ========================================================================== */
@@ -826,8 +968,8 @@
     const MODULES = [
       // ------------------------------------------------------------------------
       // MODULE 1: Cardinal Traps (Кольт)
-      // ------------------------------------------------------------------------
-      {
+      // ------------------------------------------------
+            {
         id: 0,
         title: "ARENA 1: CARDINAL TRAPS",
         avatar: "https://i.yapx.ru/eDP2E.png",
@@ -1149,13 +1291,14 @@
 
     const xpVal = document.getElementById('xpVal');
     const btnSound = document.getElementById('btnSound');
+    const btnReloadImgs = document.getElementById('btnReloadImgs');
 
-    const theoryAvatar = document.getElementById('theoryAvatar');
+    const theoryAvatarWrap = document.getElementById('theoryAvatarWrap');
     const theoryTitle = document.getElementById('theoryTitle');
     const theoryContent = document.getElementById('theoryContent');
     const btnStartPractice = document.getElementById('btnStartPractice');
 
-    const gameAvatar = document.getElementById('gameAvatar');
+    const gameAvatarWrap = document.getElementById('gameAvatarWrap');
     const brawlerSpeech = document.getElementById('brawlerSpeech');
     const questPrompt = document.getElementById('questPrompt');
     const questSentence = document.getElementById('questSentence');
@@ -1168,9 +1311,18 @@
     const fbText = document.getElementById('fbText');
     const btnNext = document.getElementById('btnNext');
 
+    // Кнопка звука
     btnSound.addEventListener('click', () => {
       sfx.muted = !sfx.muted;
       btnSound.textContent = sfx.muted ? '🔇' : '🔊';
+    });
+
+    // Кнопка принудительной перезагрузки всех картинок
+    btnReloadImgs.addEventListener('click', () => {
+      sfx.click();
+      btnReloadImgs.classList.add('spinning');
+      setTimeout(() => btnReloadImgs.classList.remove('spinning'), 600);
+      ImageResilience.reloadAll();
     });
 
     // 1. Открытие Теории
@@ -1184,7 +1336,7 @@
       victoryScreen.classList.add('hidden');
       theoryScreen.classList.remove('hidden');
 
-      theoryAvatar.src = mod.avatar;
+      ImageResilience.updateSrc(theoryAvatarWrap, mod.avatar);
       theoryTitle.textContent = mod.title;
 
       theoryContent.innerHTML = '';
@@ -1225,7 +1377,7 @@
         const shuffled = [...m.quests].sort(() => 0.5 - Math.random());
         activeQuests.push(shuffled[0], shuffled[1]);
       });
-      activeQuests.sort(() => 0.5 - Math.random()); // Перемешиваем весь босс-сет
+      activeQuests.sort(() => 0.5 - Math.random()); // Перемешиваем босс-сет
 
       mapScreen.classList.add('hidden');
       theoryScreen.classList.add('hidden');
@@ -1249,11 +1401,11 @@
       feedback.classList.add('hidden');
 
       if (isBossMode) {
-        gameAvatar.src = "https://i.yapx.ru/eDP16.png"; // Surge Mech Boss
+        ImageResilience.updateSrc(gameAvatarWrap, "https://i.yapx.ru/eDP16.png"); // Surge Mech Boss
         brawlerSpeech.textContent = "👾 МЕГА-БОСС: Попробуй одолеть мои вопросы!";
       } else {
         const mod = MODULES[currentModuleIdx];
-        gameAvatar.src = mod.avatar;
+        ImageResilience.updateSrc(gameAvatarWrap, mod.avatar);
         brawlerSpeech.textContent = `Задание ${currentQuestIdx + 1} из ${activeQuests.length}`;
       }
 
@@ -1311,8 +1463,8 @@
       if (isCorrect) {
         if (isBossMode) {
           sfx.bossHit();
-          gameAvatar.classList.add('boss-hit');
-          setTimeout(() => gameAvatar.classList.remove('boss-hit'), 400);
+          gameAvatarWrap.classList.add('boss-hit');
+          setTimeout(() => gameAvatarWrap.classList.remove('boss-hit'), 400);
 
           const damage = Math.ceil(100 / activeQuests.length);
           bossHP = Math.max(0, bossHP - damage);
@@ -1377,6 +1529,11 @@
       sfx.click();
       victoryScreen.classList.add('hidden');
       mapScreen.classList.remove('hidden');
+    });
+
+    // Инициализация устойчивости картинок при первой загрузке страницы
+    document.addEventListener('DOMContentLoaded', () => {
+      ImageResilience.initAll();
     });
   </script>
 </body>
