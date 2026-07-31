@@ -83,11 +83,6 @@
       text-shadow: 0 0 12px rgba(255, 230, 0, 0.6);
     }
 
-    .brand-logo .img-wrap {
-      width: 42px;
-      height: 42px;
-    }
-
     .hud-stats {
       display: flex;
       align-items: center;
@@ -143,7 +138,7 @@
     }
 
     /* ==========================================================================
-       4. КАРТА АРЕН (MAP / LOBBY)
+       4. КАРТА АРЕН (КРАСИВАЯ СЕТКА 2x2 + БОСС)
        ========================================================================== */
     .map-screen {
       display: flex;
@@ -169,17 +164,18 @@
       margin-top: 0.4rem;
     }
 
+    /* Сетка 2х2 на десктопе */
     .arenas-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
     }
 
     .arena-card {
       background: var(--panel-bg);
       border: 2px solid var(--panel-border);
       border-radius: var(--radius-lg);
-      padding: 1.3rem;
+      padding: 1.4rem;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -195,14 +191,30 @@
       box-shadow: 0 12px 30px rgba(0, 243, 255, 0.3);
     }
 
+    /* Карточка Босса на всю ширину снизу */
     .arena-card.boss-card {
-      background: linear-gradient(135deg, rgba(255, 42, 85, 0.2), rgba(157, 78, 221, 0.2));
+      background: linear-gradient(135deg, rgba(255, 42, 85, 0.25), rgba(157, 78, 221, 0.25));
       border-color: var(--neon-red);
       grid-column: 1 / -1;
     }
-    .arena-card.boss-card:hover {
+
+    .arena-card.boss-card:not(.locked):hover {
       border-color: var(--neon-yellow);
-      box-shadow: 0 12px 35px rgba(255, 42, 85, 0.5);
+      box-shadow: 0 12px 35px rgba(255, 42, 85, 0.6);
+    }
+
+    /* Заблокированный Босс (Locked State) */
+    .arena-card.boss-card.locked {
+      opacity: 0.65;
+      filter: grayscale(0.6);
+      cursor: not-allowed;
+      border-color: rgba(255, 255, 255, 0.2) !important;
+      background: rgba(15, 18, 35, 0.8) !important;
+    }
+
+    .arena-card.boss-card.locked:hover {
+      transform: none !important;
+      box-shadow: none !important;
     }
 
     .arena-header {
@@ -211,9 +223,7 @@
       gap: 14px;
     }
 
-    /* ==========================================================================
-       4.1 СИСТЕМА УСТОЙЧИВОСТИ ИЗОБРАЖЕНИЙ (IMAGE RESILIENCE WRAPPER)
-       ========================================================================== */
+    /* Обёртка устойчивости изображений */
     .img-wrap {
       position: relative;
       flex-shrink: 0;
@@ -233,7 +243,6 @@
     .img-wrap img.loading { opacity: 0.3; }
     .img-wrap img.broken { opacity: 0; }
 
-    /* Заглушка, когда картинка не загрузилась после всех попыток */
     .img-placeholder {
       position: absolute;
       inset: 0;
@@ -248,10 +257,7 @@
     }
     .img-wrap.show-placeholder .img-placeholder { display: flex; }
 
-    .img-placeholder .ph-icon {
-      font-size: 1.4rem;
-      opacity: 0.7;
-    }
+    .img-placeholder .ph-icon { font-size: 1.4rem; opacity: 0.7; }
     .img-placeholder .ph-retry {
       font-size: 0.6rem;
       font-weight: 900;
@@ -261,15 +267,12 @@
       padding: 2px 6px;
       border-radius: 6px;
     }
-    .img-placeholder:hover .ph-retry {
-      background: rgba(0, 243, 255, 0.35);
-    }
 
-    .arena-icon-wrap { width: 56px; height: 56px; border: 2px solid var(--neon-cyan); }
+    .arena-icon-wrap { width: 58px; height: 58px; border: 2px solid var(--neon-cyan); }
     .boss-card .arena-icon-wrap { border-color: var(--neon-red); }
     .theory-avatar-wrap { width: 70px; height: 70px; border: 3px solid var(--neon-yellow); border-radius: 18px; }
     .brawler-avatar-wrap { width: 58px; height: 58px; border: 2px solid var(--neon-pink); border-radius: 14px; }
-    .victory-img-wrap { width: 110px; height: 110px; border: 3px solid var(--neon-yellow); border-radius: 24px; margin: 0 auto 1.2rem; }
+    .victory-img-wrap { width: 120px; height: 120px; border: 3px solid var(--neon-yellow); border-radius: 24px; margin: 0 auto 1.2rem; }
 
     .arena-num {
       font-size: 0.8rem;
@@ -280,14 +283,14 @@
     .boss-card .arena-num { color: var(--neon-yellow); }
 
     .arena-name {
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 900;
       color: #fff;
       line-height: 1.2;
     }
 
     .arena-desc {
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       color: var(--text-muted);
       line-height: 1.4;
       flex: 1;
@@ -439,8 +442,7 @@
       border-left: 5px solid var(--neon-pink);
     }
 
-    .brawler-avatar-wrap.boss-hit { animation: shake 0.4s ease-in-out; }
-    .brawler-avatar-wrap.boss-hit { border-color: var(--neon-red); }
+    .brawler-avatar-wrap.boss-hit { animation: shake 0.4s ease-in-out; border-color: var(--neon-red); }
 
     .brawler-speech {
       font-size: 1rem;
@@ -534,7 +536,9 @@
       color: #ffd0d8;
     }
 
-    .fb-title { font-size: 1.25rem;       font-weight: 900;
+    .fb-title {
+      font-size: 1.25rem;
+      font-weight: 900;
       margin-bottom: 0.4rem;
     }
 
@@ -577,7 +581,7 @@
       box-shadow: 0 3px 0 #b36b00;
     }
 
-        .btn-next {
+    .btn-next {
       background: linear-gradient(180deg, var(--neon-green) 0%, #009933 100%);
       color: #000;
       box-shadow: 0 4px 0 #006622;
@@ -626,11 +630,12 @@
       to { transform: rotate(360deg); }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 650px) {
       .hud-top { padding: 0.8rem; }
+      .arenas-grid { grid-template-columns: 1fr; }
       .type-zone { flex-direction: column; }
       .quest-sentence { font-size: 1.35rem; }
-      .btn-reload-imgs span.label { display: none; } /* на мобиле оставляем только иконку */
+      .btn-reload-imgs span.label { display: none; }
     }
   </style>
 </head>
@@ -647,7 +652,6 @@
     </div>
     <div class="hud-stats">
       <div class="xp-chip">⭐ <span id="xpVal">0</span> XP</div>
-      <!-- НОВЫЙ БЛОК: Кнопка перезагрузки картинок -->
       <button class="btn-reload-imgs" id="btnReloadImgs" title="Перезагрузить все картинки на странице">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M21 12a9 9 0 1 1-2.64-6.36"/>
@@ -664,14 +668,14 @@
     <section class="map-screen" id="mapScreen">
       <div class="map-title">
         <h1>ARENA <span>ACADEMY</span></h1>
-        <p>Изучай правила бравлеров и сразись с Главным Мега-Боссом!</p>
+        <p>Изучай правила бравлеров и разблокируй Мега-Босса!</p>
       </div>
 
       <div class="arenas-grid">
         <!-- Module 1 -->
         <div class="arena-card" onclick="openTheory(0)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDWvV.jpg">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP2E.png">
               <img alt="Colt">
               <div class="img-placeholder"><span class="ph-icon">🔫</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -687,7 +691,7 @@
         <!-- Module 2 -->
         <div class="arena-card" onclick="openTheory(1)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDWvW.jpg">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP2C.png">
               <img alt="Jessie">
               <div class="img-placeholder"><span class="ph-icon">🔧</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -703,7 +707,7 @@
         <!-- Module 3 -->
         <div class="arena-card" onclick="openTheory(2)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDWzD.png">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP2A.jpg">
               <img alt="Colette">
               <div class="img-placeholder"><span class="ph-icon">📖</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -719,7 +723,7 @@
         <!-- Module 4 -->
         <div class="arena-card" onclick="openTheory(3)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDW0c.png">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP16.png">
               <img alt="Surge">
               <div class="img-placeholder"><span class="ph-icon">⚡</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -732,8 +736,8 @@
           <div class="arena-status" id="status-3">0 / 6 CLEARED</div>
         </div>
 
-        <!-- ARENA 5: BOSS FIGHT -->
-        <div class="arena-card boss-card" onclick="startBossFight()">
+        <!-- ARENA 5: BOSS FIGHT (Изначально заблокирована) -->
+        <div class="arena-card boss-card locked" id="bossCard" onclick="tryStartBoss()">
           <div class="arena-header">
             <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP16.png">
               <img alt="Boss Mech">
@@ -744,8 +748,8 @@
               <div class="arena-name">👾 SUPER BOSS FIGHT</div>
             </div>
           </div>
-          <div class="arena-desc">Битва с Мега-Боссом! Все темы вперемешку. Уничтожь его HP!</div>
-          <div class="arena-status" id="status-4" style="color: var(--neon-red);">READY FOR BATTLE!</div>
+          <div class="arena-desc">Битва с Мега-Боссом! Все темы вперемешку. Доступна только после прохождения 4 арены!</div>
+          <div class="arena-status" id="status-4" style="color: var(--text-muted);">🔒 LOCKED (Пройди 4 арены)</div>
         </div>
       </div>
     </section>
@@ -808,10 +812,10 @@
       </div>
     </section>
 
-    <!-- 4. ЭКРАН ПОБЕДЫ -->
+    <!-- 4. ЭКРАН ПОБЕДЫ С НАГРАДАМИ -->
     <section class="victory-screen hidden" id="victoryScreen">
-      <div class="img-wrap victory-img-wrap" data-src="https://i.yapx.ru/eDP18.png">
-        <img alt="Golden Trophy">
+      <div class="img-wrap victory-img-wrap" id="victoryImgWrap" data-src="https://i.yapx.ru/eDP18.png">
+        <img alt="Reward" id="victoryImg">
         <div class="img-placeholder"><span class="ph-icon">🏆</span><span class="ph-retry">Retry</span></div>
       </div>
       <h2 style="font-size: 2.2rem; color: var(--neon-yellow); margin-bottom: 0.5rem;" id="vicTitle">ARENA VICTORY!</h2>
@@ -823,20 +827,12 @@
   <script>
     /* ==========================================================================
        БЛОК УСТОЙЧИВОСТИ ИЗОБРАЖЕНИЙ (IMAGE RESILIENCE SYSTEM)
-       -----------------------------------------------------------------------
-       Идея: каждая картинка обёрнута в .img-wrap с атрибутом data-src (или
-       сам src ставится через JS). Если картинка не загрузилась — включаем
-       retry с задержкой (до 3 попыток), а если всё равно не вышло — 
-       показываем красивую SVG-заглушку с кнопкой "Retry" прямо на аватаре.
-       Плюс глобальная кнопка "Обновить картинки" в шапке, которая триггерит
-       принудительную перезагрузку ВСЕХ картинок разом (добавляя cache-buster).
        ========================================================================== */
     const ImageResilience = {
-      registry: [], // { wrap, img, placeholder, baseSrc, attempts }
+      registry: [],
       maxAttempts: 3,
-      retryDelay: 900, // мс между попытками
+      retryDelay: 900,
 
-      // Инициализация одной обёртки
       register(wrapEl) {
         const img = wrapEl.querySelector('img');
         const placeholder = wrapEl.querySelector('.img-placeholder');
@@ -849,7 +845,6 @@
         img.addEventListener('error', () => this.handleError(entry));
         img.addEventListener('load', () => this.handleSuccess(entry));
 
-        // Клик по заглушке — ручной повторный запрос
         if (placeholder) {
           placeholder.addEventListener('click', () => {
             entry.attempts = 0;
@@ -861,15 +856,12 @@
         return entry;
       },
 
-      // Загрузка/перезагрузка конкретной картинки
       loadImage(entry, forceBust = false) {
         if (!entry.baseSrc) return;
         entry.wrap.classList.remove('show-placeholder');
         entry.img.classList.add('loading');
         entry.img.classList.remove('broken');
 
-        // Добавляем cache-buster при принудительном обновлении,
-        // чтобы браузер не брал битую версию из кэша
         const bust = forceBust ? `?_r=${Date.now()}` : '';
         entry.img.src = entry.baseSrc + bust;
       },
@@ -883,26 +875,22 @@
       handleError(entry) {
         entry.attempts++;
         if (entry.attempts < this.maxAttempts) {
-          // Пробуем ещё раз через паузу (сеть могла на секунду моргнуть)
           setTimeout(() => this.loadImage(entry, true), this.retryDelay * entry.attempts);
         } else {
-          // Все попытки исчерпаны — показываем заглушку
           entry.img.classList.add('broken');
           entry.wrap.classList.add('show-placeholder');
         }
       },
 
-      // Обновить конкретную картинку по новому URL (используется при смене аватара бравлера)
       updateSrc(wrapEl, newSrc) {
         let entry = this.registry.find(e => e.wrap === wrapEl);
-        if (!entry) entry = this.register(wrapEl); // если ещё не зарегистрирована
+        if (!entry) entry = this.register(wrapEl);
         entry.baseSrc = newSrc;
         wrapEl.dataset.src = newSrc;
         entry.attempts = 0;
         this.loadImage(entry, true);
       },
 
-      // Глобальная перезагрузка ВСЕХ картинок на странице по кнопке
       reloadAll() {
         this.registry.forEach(entry => {
           entry.attempts = 0;
@@ -910,7 +898,6 @@
         });
       },
 
-      // Инициализация всех .img-wrap, что уже есть в DOM на старте
       initAll() {
         document.querySelectorAll('.img-wrap').forEach(wrap => this.register(wrap));
       }
@@ -963,16 +950,17 @@
     const sfx = new SoundSystem();
 
     /* ==========================================================================
-       БАЗА ДАННЫХ: МОДУЛИ, ТЕОРИЯ И ВОПРОСЫ
+       БАЗА ДАННЫХ: МОДУЛИ, ТЕОРИЯ, УНИКАЛЬНЫЕ НАГРАДЫ И ВОПРОСЫ
        ========================================================================== */
     const MODULES = [
-      // ------------------------------------------------------------------------
-      // MODULE 1: Cardinal Traps (Кольт)
-      // ------------------------------------------------
-            {
+      // MODULE 1: Cardinal Traps (Кольт) -> Награда: Brawl Box
+      {
         id: 0,
         title: "ARENA 1: CARDINAL TRAPS",
         avatar: "https://i.yapx.ru/eDP2E.png",
+        rewardImg: "https://i.yapx.ru/eAq0y.png",
+        rewardTitle: "🎁 BRAWL BOX UNLOCKED!",
+        rewardDesc: "Отличная работа! Ты разгромил все ловушки в 40, 14 и 80 и получил первый Бокс!",
         theory: [
           {
             title: "🔥 Ловушка 40 vs 14",
@@ -1041,13 +1029,14 @@
         ]
       },
 
-      // ------------------------------------------------------------------------
-      // MODULE 2: Ordinal Suffixes (Джесси)
-      // ------------------------------------------------------------------------
+      // MODULE 2: Ordinal Suffixes (Джесси) -> Награда: Big Box
       {
         id: 1,
         title: "ARENA 2: ORDINAL SUFFIXES",
         avatar: "https://i.yapx.ru/eDP2C.png",
+        rewardImg: "https://i.yapx.ru/d9H4q.png",
+        rewardTitle: "📦 BIG BOX UNLOCKED!",
+        rewardDesc: "Супер! Джесси гордится тобой. Окончания 1st, 2nd, 3rd, 5th освоены!",
         theory: [
           {
             title: "🏆 Главная тройка (Исключения)",
@@ -1117,13 +1106,14 @@
         ]
       },
 
-      // ------------------------------------------------------------------------
-      // MODULE 3: Dates & Context (Колетт)
-      // ------------------------------------------------------------------------
+      // MODULE 3: Dates & Context (Колетт) -> Награда: Starr Drop
       {
         id: 2,
         title: "ARENA 3: DATES & CONTEXT",
         avatar: "https://i.yapx.ru/eDP2A.jpg",
+        rewardImg: "https://i.yapx.ru/eDP15.png",
+        rewardTitle: "⭐ STARR DROP UNLOCKED!",
+        rewardDesc: "Ура! Ты научился правильно ставить даты и отличать их от штук предметов!",
         theory: [
           {
             title: "📅 ДАТЫ (Ordinals)",
@@ -1192,13 +1182,14 @@
         ]
       },
 
-      // ------------------------------------------------------------------------
-      // MODULE 4: Years & Big Numbers (Сёрдж)
-      // ------------------------------------------------------------------------
+      // MODULE 4: Years & Big Numbers (Сёрдж) -> Награда: Mega Box
       {
         id: 3,
         title: "ARENA 4: YEARS & BIG NUMBERS",
         avatar: "https://i.yapx.ru/eDP16.png",
+        rewardImg: "https://i.yapx.ru/d9H4u.png",
+        rewardTitle: "💎 MEGA BOX UNLOCKED!",
+        rewardDesc: "Мега-результат! Чтение годов (1998, 2024, 2005) у тебя от зубов отскакивает!",
         theory: [
           {
             title: "🏛 Годы до 2000 года",
@@ -1278,6 +1269,7 @@
     let isBossMode = false;
     let bossHP = 100;
     let activeQuests = [];
+    let clearedModules = [false, false, false, false];
 
     // DOM Элементы
     const mapScreen = document.getElementById('mapScreen');
@@ -1285,6 +1277,7 @@
     const gameScreen = document.getElementById('gameScreen');
     const victoryScreen = document.getElementById('victoryScreen');
 
+    const bossCard = document.getElementById('bossCard');
     const bossHpContainer = document.getElementById('bossHpContainer');
     const bossHpFill = document.getElementById('bossHpFill');
     const bossHpText = document.getElementById('bossHpText');
@@ -1311,19 +1304,43 @@
     const fbText = document.getElementById('fbText');
     const btnNext = document.getElementById('btnNext');
 
-    // Кнопка звука
+    const victoryImgWrap = document.getElementById('victoryImgWrap');
+    const vicTitle = document.getElementById('vicTitle');
+    const vicSubtitle = document.getElementById('vicSubtitle');
+
     btnSound.addEventListener('click', () => {
       sfx.muted = !sfx.muted;
       btnSound.textContent = sfx.muted ? '🔇' : '🔊';
     });
 
-    // Кнопка принудительной перезагрузки всех картинок
     btnReloadImgs.addEventListener('click', () => {
       sfx.click();
       btnReloadImgs.classList.add('spinning');
       setTimeout(() => btnReloadImgs.classList.remove('spinning'), 600);
       ImageResilience.reloadAll();
     });
+
+    // Проверка разблокировки Босса
+    function checkBossUnlock() {
+      const allCleared = clearedModules.every(c => c === true);
+      if (allCleared) {
+        bossCard.classList.remove('locked');
+        const statusEl = document.getElementById('status-4');
+        statusEl.textContent = '⚔️ READY FOR BATTLE!';
+        statusEl.style.color = 'var(--neon-green)';
+        statusEl.style.fontWeight = '900';
+      }
+    }
+
+    function tryStartBoss() {
+      const allCleared = clearedModules.every(c => c === true);
+      if (!allCleared) {
+        sfx.wrong();
+        alert("🔒 Сначала пройди все 4 основные арены, чтобы разблокировать Мега-Босса!");
+        return;
+      }
+      startBossFight();
+    }
 
     // 1. Открытие Теории
     function openTheory(modIdx) {
@@ -1371,13 +1388,12 @@
       bossHP = 100;
       currentQuestIdx = 0;
 
-      // Сборная микс-пачка из всех 4 модулей (по 2 из каждого)
       activeQuests = [];
       MODULES.forEach(m => {
         const shuffled = [...m.quests].sort(() => 0.5 - Math.random());
         activeQuests.push(shuffled[0], shuffled[1]);
       });
-      activeQuests.sort(() => 0.5 - Math.random()); // Перемешиваем босс-сет
+      activeQuests.sort(() => 0.5 - Math.random());
 
       mapScreen.classList.add('hidden');
       theoryScreen.classList.add('hidden');
@@ -1401,7 +1417,7 @@
       feedback.classList.add('hidden');
 
       if (isBossMode) {
-        ImageResilience.updateSrc(gameAvatarWrap, "https://i.yapx.ru/eDP16.png"); // Surge Mech Boss
+        ImageResilience.updateSrc(gameAvatarWrap, "https://i.yapx.ru/eDP16.png");
         brawlerSpeech.textContent = "👾 МЕГА-БОСС: Попробуй одолеть мои вопросы!";
       } else {
         const mod = MODULES[currentModuleIdx];
@@ -1486,7 +1502,7 @@
         feedback.classList.add('wrong');
         
         if (isBossMode) {
-          bossHP = Math.min(100, bossHP + 10); // Босс восстанавливает HP
+          bossHP = Math.min(100, bossHP + 10);
           updateBossBar();
           fbTitle.innerHTML = `❌ БОСС ВОССТАНОВИЛ ХП! (+10% HP)`;
         } else {
@@ -1497,7 +1513,7 @@
       }
     }
 
-    // 6. Переход к следующему шагу
+    // 6. Переход и Награды
     btnNext.addEventListener('click', () => {
       sfx.click();
       currentQuestIdx++;
@@ -1505,33 +1521,38 @@
       if (currentQuestIdx < activeQuests.length && (!isBossMode || bossHP > 0)) {
         renderQuest();
       } else {
-        // Победа в Модуле или над Боссом
         sfx.win();
         gameScreen.classList.add('hidden');
         victoryScreen.classList.remove('hidden');
 
         if (isBossMode) {
-          document.getElementById('vicTitle').textContent = '👾 BOSS DEFEATED!';
-          document.getElementById('vicSubtitle').textContent = 'Ты сокрушил Мега-Босса и полностью освоил тему английских чисел!';
+          ImageResilience.updateSrc(victoryImgWrap, "https://i.yapx.ru/eDP18.png"); // Golden Trophy
+          vicTitle.textContent = '👾 BOSS DEFEATED!';
+          vicSubtitle.textContent = 'Ты сокрушил Мега-Босса и завоевал Золотой Кубок Бравла!';
           document.getElementById('status-4').textContent = '🏆 VICTORY!';
           document.getElementById('status-4').style.color = 'var(--neon-green)';
         } else {
-          document.getElementById('vicTitle').textContent = 'ARENA CLEARED!';
-          document.getElementById('vicSubtitle').textContent = 'Отличная работа! Ты прошел все тренировки этой арены!';
+          const mod = MODULES[currentModuleIdx];
+          clearedModules[currentModuleIdx] = true;
+
+          ImageResilience.updateSrc(victoryImgWrap, mod.rewardImg);
+          vicTitle.textContent = mod.rewardTitle;
+          vicSubtitle.textContent = mod.rewardDesc;
+
           document.getElementById(`status-${currentModuleIdx}`).textContent = '✅ CLEARED (6/6)';
           document.getElementById(`status-${currentModuleIdx}`).style.color = 'var(--neon-green)';
+
+          checkBossUnlock();
         }
       }
     });
 
-    // Возврат на карту
     document.getElementById('btnBackToMap').addEventListener('click', () => {
       sfx.click();
       victoryScreen.classList.add('hidden');
       mapScreen.classList.remove('hidden');
     });
 
-    // Инициализация устойчивости картинок при первой загрузке страницы
     document.addEventListener('DOMContentLoaded', () => {
       ImageResilience.initAll();
     });
