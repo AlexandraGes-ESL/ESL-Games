@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brawl Numbers: Arena Academy & Boss Fight</title>
+  <style>
+    /* ==========================================================================
+       1. ПЕРЕМЕННЫЕ И ТЕМА BRAWL STARS
+       ========================================================================== */
+    :root {
+      --bg-dark: #070913;
+      --panel-bg: rgba(18, 22, 42, 0.92);
+      --panel-border: #2b386e;
+      --panel-border-glow: #4d61b3;
+      
+      --neon-yellow: #ffe600;
+      --neon-cyan: #00f3ff;
+      --neon-pink: #ff007f;
+      --neon-green: #00ff66;
+      --neon-red: #ff2a55;
+      --neon-purple: #9d4edd;
+      
+      --text-main: #ffffff;
+      --text-muted: #94a3b8;
+      
+      --font-main: 'Trebuchet MS', 'Impact', system-ui, -apple-system, sans-serif;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 10%, rgba(0, 243, 255, 0.15), transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(255, 0, 127, 0.15), transparent 60%),
+        linear-gradient(0deg, rgba(7, 9, 19, 0.95), rgba(7, 9, 19, 0.95));
+      color: var(--text-main);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ==========================================================================
+       2. ШАПКА ХУД (HUD HEADER)
+       ========================================================================== */
+    header.hud-top {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 960px;
+      padding: 1rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      color: var(--neon-yellow);
+      text-transform: uppercase;
+      text-shadow: 0 0 12px rgba(255, 230, 0, 0.6);
+    }
+
+    .brand-logo img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 2px solid var(--neon-yellow);
+      box-shadow: 0 0 10px rgba(255, 230, 0, 0.5);
+    }
+
+    .hud-stats {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .xp-chip {
+      background: rgba(255, 230, 0, 0.15);
+      border: 2px solid var(--neon-yellow);
+      color: var(--neon-yellow);
+      padding: 6px 16px;
+      border-radius: 14px;
+      font-weight: 900;
+      font-size: 1rem;
+      box-shadow: 0 0 15px rgba(255, 230, 0, 0.3);
+    }
+
+    .btn-sound {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+    }
+    .btn-sound:hover { transform: scale(1.05); }
+
+    /* ==========================================================================
+       3. ОСНОВНОЙ КОНТЕЙНЕР
+       ========================================================================== */
+    main {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 960px;
+      padding: 0 1.2rem 2.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ==========================================================================
+       4. КАРТА АРЕН (MAP / LOBBY)
+       ========================================================================== */
+    .map-screen {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin: auto 0;
+    }
+
+    .map-title {
+      text-align: center;
+    }
+    .map-title h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+    .map-title h1 span {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
+    }
+    .map-title p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-top: 0.4rem;
+    }
+
+    .arenas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .arena-card {
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: var(--radius-lg);
+      padding: 1.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .arena-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 12px 30px rgba(0, 243, 255, 0.3);
+    }
+
+    .arena-card.boss-card {
+      background: linear-gradient(135deg, rgba(255, 42, 85, 0.2), rgba(157, 78, 221, 0.2));
+      border-color: var(--neon-red);
+      grid-column: 1 / -1;
+    }
+    .arena-card.boss-card:hover {
+      border-color: var(--neon-yellow);
+      box-shadow: 0 12px 35px rgba(255, 42, 85, 0.5);
+    }
+
+    .arena-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .arena-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      object-fit: cover;
+      border: 2px solid var(--neon-cyan);
+      background: #101426;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+    }
+    .boss-card .arena-icon {
+      border-color: var(--neon-red);
+      box-shadow: 0 0 15px rgba(255, 42, 85, 0.6);
+    }
+
+    .arena-num {
+      font-size: 0.8rem;
+      font-weight: 900;
+      color: var(--neon-pink);
+      letter-spacing: 1px;
+    }
+    .boss-card .arena-num {
+      color: var(--neon-yellow);
+    }
+
+    .arena-name {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .arena-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .arena-status {
+      align-self: flex-start;
+      background: rgba(255,255,255,0.08);
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 900;
+      color: var(--neon-yellow);
+    }
+
+    /* ==========================================================================
+       5. КАРТОЧКА ТЕОРИИ (THEORY CARD)
+       ========================================================================== */
+    .theory-screen {
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border-glow);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      animation: popIn 0.3s ease-out;
+    }
+
+    .theory-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 2px solid var(--panel-border);
+      padding-bottom: 1.2rem;
+    }
+
+    .theory-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 18px;
+      border: 3px solid var(--neon-yellow);
+      object-fit: cover;
+      box-shadow: 0 0 20px rgba(255, 230, 0, 0.4);
+    }
+
+    .theory-title-wrap h2 {
+      font-size: 1.6rem;
+      color: var(--neon-yellow);
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+    .theory-title-wrap p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .theory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 14px;
+    }
+
+    .theory-box {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-md);
+      padding: 1.2rem;
+    }
+
+    .theory-box h3 {
+      font-size: 1.05rem;
+      color: var(--neon-cyan);
+      margin-bottom: 0.6rem;
+    }
+
+    .theory-box ul {
+      list-style: none;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+    }
+
+    .theory-box b { color: var(--neon-yellow); }
+    .theory-box i.trap { color: var(--neon-red); font-style: normal; font-weight: bold; }
+    .theory-box i.ok { color: var(--neon-green); font-style: normal; font-weight: bold; }
+
+    /* ==========================================================================
+       6. ИГРОВОЙ ЭКРАН И БОСС-БАР (PRACTICE / BOSS FIGHT)
+       ========================================================================== */
+    .game-screen {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin: auto 0;
+    }
+
+    /* Шкала Здоровья Босса */
+    .boss-hp-container {
+      background: rgba(0,0,0,0.6);
+      border: 2px solid var(--neon-red);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 0 20px rgba(255, 42, 85, 0.3);
+      animation: pulseGlow 2s infinite alternate;
+    }
+
+    .boss-hp-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 900;
+      font-size: 0.9rem;
+      color: var(--neon-red);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .boss-hp-bar {
+      width: 100%;
+      height: 18px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 42, 85, 0.5);
+    }
+
+    .boss-hp-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ff2a55 0%, #ff6600 100%);
+      transition: width 0.4s ease-out;
+      box-shadow: 0 0 10px var(--neon-red);
+    }
+
+    .quest-card {
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+      position: relative;
+    }
+
+    .brawler-speech-zone {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 1.5rem;
+      background: rgba(0,0,0,0.4);
+      padding: 12px 18px;
+      border-radius: 16px;
+      border-left: 5px solid var(--neon-pink);
+    }
+
+    .brawler-avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      border: 2px solid var(--neon-pink);
+      object-fit: cover;
+      box-shadow: 0 0 12px rgba(255, 0, 127, 0.4);
+    }
+
+    .brawler-avatar.boss-hit {
+      animation: shake 0.4s ease-in-out;
+      border-color: var(--neon-red);
+    }
+
+    .brawler-speech {
+      font-size: 1rem;
+      color: #e0e6ed;
+      font-weight: 700;
+    }
+
+    .quest-prompt {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: #ffffff;
+      line-height: 1.4;
+    }
+
+    .quest-sentence {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--neon-yellow);
+      background: rgba(0,0,0,0.5);
+      padding: 1.2rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+      text-align: center;
+      border: 2px dashed var(--panel-border);
+      letter-spacing: 1px;
+    }
+
+    /* Кнопки ответов */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .opt-btn {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid var(--panel-border);
+      color: var(--text-main);
+      padding: 1.1rem;
+      border-radius: var(--radius-md);
+      font-size: 1.15rem;
+      font-weight: 800;
+      font-family: var(--font-main);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .opt-btn:hover {
+      background: rgba(0, 243, 255, 0.15);
+      border-color: var(--neon-cyan);
+      transform: translateY(-2px);
+    }
+
+    /* Поле ввода */
+    .type-zone {
+      display: flex;
+      gap: 12px;
+    }
+
+    .type-zone input {
+      flex: 1;
+      background: rgba(0,0,0,0.6);
+      border: 2px solid var(--panel-border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.2rem;
+      color: var(--neon-yellow);
+      font-size: 1.2rem;
+      font-weight: 800;
+      font-family: var(--font-main);
+      outline: none;
+    }
+
+    .type-zone input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 18px rgba(0, 243, 255, 0.4);
+    }
+
+    /* Подсказка / Результат */
+    .feedback {
+      margin-top: 1.5rem;
+      padding: 1.2rem;
+      border-radius: var(--radius-md);
+      animation: popIn 0.3s ease-out;
+    }
+
+    .feedback.correct {
+      background: rgba(0, 255, 102, 0.14);
+      border: 2px solid var(--neon-green);
+      color: #d0ffe0;
+    }
+
+    .feedback.wrong {
+      background: rgba(255, 42, 85, 0.14);
+      border: 2px solid var(--neon-red);
+      color: #ffd0d8;
+    }
+
+    .fb-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      margin-bottom: 0.4rem;
+    }
+
+    .fb-text {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ==========================================================================
+       7. КНОПКИ (BUTTONS)
+       ========================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 2.2rem;
+      font-size: 1.15rem;
+      font-weight: 900;
+      font-family: var(--font-main);
+      text-transform: uppercase;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      letter-spacing: 1px;
+    }
+
+    .btn-action {
+      background: linear-gradient(180deg, var(--neon-yellow) 0%, #ff9900 100%);
+      color: #000;
+      box-shadow: 0 5px 0 #b36b00, 0 0 20px rgba(255, 230, 0, 0.4);
+    }
+    .btn-action:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 0 #b36b00, 0 0 30px rgba(255, 230, 0, 0.6);
+    }
+    .btn-action:active {
+      transform: translateY(2px);
+      box-shadow: 0 3px 0 #b36b00;
+    }
+
+    .btn-next {
+      background: linear-gradient(180deg, var(--neon-green) 0%, #009933 100%);
+      color: #000;
+      box-shadow: 0 4px 0 #006622;
+      width: 100%;
+    }
+
+    .btn-check {
+      background: linear-gradient(180deg, var(--neon-cyan) 0%, #0088cc 100%);
+      color: #000;
+      box-shadow: 0 4px 0 #005580;
+    }
+
+    /* ==========================================================================
+       8. ЭКРАН ПОБЕДЫ (VICTORY SCREEN)
+       ========================================================================== */
+    .victory-screen {
+      background: var(--panel-bg);
+      border: 2px solid var(--panel-border-glow);
+      border-radius: var(--radius-lg);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      backdrop-filter: blur(14px);
+      margin: auto 0;
+      animation: popIn 0.4s ease-out;
+    }
+
+    .victory-img {
+      width: 110px;
+      height: 110px;
+      border-radius: 24px;
+      border: 3px solid var(--neon-yellow);
+      object-fit: cover;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 0 30px rgba(255, 230, 0, 0.6);
+    }
+
+    /* АНИМАЦИИ */
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.9) translateY(12px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 15px rgba(255, 42, 85, 0.3); }
+      100% { box-shadow: 0 0 25px rgba(255, 42, 85, 0.7); }
+    }
+
+    @media (max-width: 600px) {
+      .hud-top { padding: 0.8rem; }
+      .type-zone { flex-direction: column; }
+      .quest-sentence { font-size: 1.35rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ШАПКА ХУДА -->
+  <header class="hud-top">
+    <div class="brand-logo">
+      <img src="https://i.yapx.ru/eDP15.png" id="headerLogo" alt="Brawl Stars Logo">
+      <span>BRAWL NUMBERS</span>
+    </div>
+    <div class="hud-stats">
+      <div class="xp-chip">⭐ <span id="xpVal">0</span> XP</div>
+      <button class="btn-sound" id="btnSound">🔊</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. КАРТА МОДУЛЕЙ / ЛОББИ -->
+    <section class="map-screen" id="mapScreen">
+      <div class="map-title">
+        <h1>ARENA <span>ACADEMY</span></h1>
+        <p>Изучай правила бравлеров и сразись с Главным Мега-Боссом!</p>
+      </div>
+
+      <div class="arenas-grid">
+        <!-- Module 1 -->
+        <div class="arena-card" onclick="openTheory(0)">
+          <div class="arena-header">
+            <img src="https://i.yapx.ru/eDP2E.png" class="arena-icon" alt="Colt">
+            <div>
+              <div class="arena-num">ARENA 1</div>
+              <div class="arena-name">Cardinal Traps</div>
+            </div>
+          </div>
+          <div class="arena-desc">Кольт обучит ловушкам в числах 40, 14, 80 и 15.</div>
+          <div class="arena-status" id="status-0">0 / 6 CLEARED</div>
+        </div>
+
+        <!-- Module 2 -->
+        <div class="arena-card" onclick="openTheory(1)">
+          <div class="arena-header">
+            <img src="https://i.yapx.ru/eDP2C.png" class="arena-icon" alt="Jessie">
+            <div>
+              <div class="arena-num">ARENA 2</div>
+              <div class="arena-name">Ordinal Suffixes</div>
+            </div>
+          </div>
+          <div class="arena-desc">Джесси расскажет про окончания: 1st, 2nd, 3rd, 5th, 12th.</div>
+          <div class="arena-status" id="status-1">0 / 6 CLEARED</div>
+        </div>
+
+        <!-- Module 3 -->
+        <div class="arena-card" onclick="openTheory(2)">
+          <div class="arena-header">
+            <img src="https://i.yapx.ru/eDP2A.jpg" class="arena-icon" alt="Colette">
+            <div>
+              <div class="arena-num">ARENA 3</div>
+              <div class="arena-name">Dates & Context</div>
+            </div>
+          </div>
+          <div class="arena-desc">Колетт научит отличать даты от количества предметов.</div>
+          <div class="arena-status" id="status-2">0 / 6 CLEARED</div>
+        </div>
+
+        <!-- Module 4 -->
+        <div class="arena-card" onclick="openTheory(3)">
+          <div class="arena-header">
+            <img src="https://i.yapx.ru/eDP16.png" class="arena-icon" alt="Surge">
+            <div>
+              <div class="arena-num">ARENA 4</div>
+              <div class="arena-name">Years & Big Numbers</div>
+            </div>
+          </div>
+          <div class="arena-desc">Сёрдж покажет, как легко читать годы (1998, 2024, 2005).</div>
+          <div class="arena-status" id="status-3">0 / 6 CLEARED</div>
+        </div>
+
+        <!-- ARENA 5: BOSS FIGHT -->
+        <div class="arena-card boss-card" onclick="startBossFight()">
+          <div class="arena-header">
+            <img src="https://i.yapx.ru/eDP16.png" class="arena-icon" alt="Boss Mech">
+            <div>
+              <div class="arena-num">FINAL ARENA</div>
+              <div class="arena-name">👾 SUPER BOSS FIGHT</div>
+            </div>
+          </div>
+          <div class="arena-desc">Битва с Мега-Боссом! Все темы вперемешку. Уничтожь его HP!</div>
+          <div class="arena-status" id="status-4" style="color: var(--neon-red);">READY FOR BATTLE!</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. ЭКРАН ТЕОРИИ -->
+    <section class="theory-screen hidden" id="theoryScreen">
+      <div class="theory-header">
+        <img src="" class="theory-avatar" id="theoryAvatar" alt="Brawler Avatar">
+        <div class="theory-title-wrap">
+          <h2 id="theoryTitle">ТЕОРИЯ МОДУЛЯ</h2>
+          <p>Инструктаж от Бравлера перед боем</p>
+        </div>
+      </div>
+
+      <div class="theory-grid" id="theoryContent">
+        <!-- Динамическая теория -->
+      </div>
+
+      <button class="btn btn-action" id="btnStartPractice">▶ НАЧАТЬ БОЙ (PRACTICE)</button>
+    </section>
+
+    <!-- 3. ИГРОВОЙ ЭКРАН ПРАКТИКИ / БОССА -->
+    <section class="game-screen hidden" id="gameScreen">
+      
+      <!-- Шкала ХП Босса (только для Boss Fight) -->
+      <div class="boss-hp-container hidden" id="bossHpContainer">
+        <div class="boss-hp-header">
+          <span>👾 MECHA BOSS HP</span>
+          <span id="bossHpText">100%</span>
+        </div>
+        <div class="boss-hp-bar">
+          <div class="boss-hp-fill" id="bossHpFill"></div>
+        </div>
+      </div>
+
+      <div class="quest-card">
+        <div class="brawler-speech-zone">
+          <img src="" class="brawler-avatar" id="gameAvatar" alt="Brawler">
+          <div class="brawler-speech" id="brawlerSpeech">Задание на подходе!</div>
+        </div>
+
+        <div class="quest-prompt" id="questPrompt">Задание</div>
+        <div class="quest-sentence" id="questSentence">---</div>
+
+        <!-- Варианты выбора -->
+        <div class="options-grid" id="optionsGrid"></div>
+
+        <!-- Поле ввода текста -->
+        <div class="type-zone hidden" id="typeZone">
+          <input type="text" id="typeInput" placeholder="Введи ответ по-английски..." autocomplete="off">
+          <button class="btn btn-check" id="btnCheck">CHECK</button>
+        </div>
+
+        <!-- Фидбек / Ответ -->
+        <div class="feedback hidden" id="feedback">
+          <div class="fb-title" id="fbTitle"></div>
+          <div class="fb-text" id="fbText"></div>
+          <button class="btn btn-next" id="btnNext">NEXT ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ЭКРАН ПОБЕДЫ -->
+    <section class="victory-screen hidden" id="victoryScreen">
+      <img src="https://i.yapx.ru/eDP18.png" class="victory-img" alt="Golden Trophy">
+      <h2 style="font-size: 2.2rem; color: var(--neon-yellow); margin-bottom: 0.5rem;" id="vicTitle">ARENA VICTORY!</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.8rem;" id="vicSubtitle">Ты отлично усвоил этот модуль и заработал награды!</p>
+      <button class="btn btn-action" id="btnBackToMap">🗺 НА КАРТУ АРЕН</button>
+    </section>
+  </main>
+
+  <script>
+    /* ==========================================================================
+       ЗВУКОВОЙ ДВИЖОК (Web Audio API)
+       ========================================================================== */
+    class SoundSystem {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+      }
+      init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      playTone(freq, type, duration) {
+        if (this.muted) return;
+        this.init();
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e){}
+      }
+      click() { this.playTone(600, 'sine', 0.05); }
+      correct() {
+        this.playTone(523, 'triangle', 0.08);
+        setTimeout(() => this.playTone(659, 'triangle', 0.12), 70);
+      }
+      wrong() {
+        this.playTone(220, 'sawtooth', 0.12);
+        setTimeout(() => this.playTone(180, 'sawtooth', 0.15), 90);
+      }
+      bossHit() {
+        this.playTone(150, 'square', 0.1);
+        setTimeout(() => this.playTone(300, 'triangle', 0.15), 60);
+      }
+      win() {
+        [440, 554, 659, 880].forEach((f, i) => setTimeout(() => this.playTone(f, 'square', 0.15), i * 100));
+      }
+    }
+    const sfx = new SoundSystem();
+
+    /* ==========================================================================
+       БАЗА ДАННЫХ: МОДУЛИ, ТЕОРИЯ И ВОПРОСЫ
+       ========================================================================== */
+    const MODULES = [
+      // ------------------------------------------------------------------------
+      // MODULE 1: Cardinal Traps (Кольт)
+      // ------------------------------------------------------------------------
+      {
+        id: 0,
+        title: "ARENA 1: CARDINAL TRAPS",
+        avatar: "https://i.yapx.ru/eDP2E.png",
+        theory: [
+          {
+            title: "🔥 Ловушка 40 vs 14",
+            items: [
+              "4 = <b>four</b>",
+              "14 = <i class='ok'>fourteen</i> (буква U есть!)",
+              "40 = <i class='trap'>forty</i> (буква U выпадает!)"
+            ]
+          },
+          {
+            title: "⚡ Ловушка 80 и 15",
+            items: [
+              "8 = <b>eight</b> → 80 = <i class='ok'>eighty</i> (одна буква T!)",
+              "5 = <b>five</b> → 15 = <i class='ok'>fifteen</i> (не fiveteen!)",
+              "50 = <i class='ok'>fifty</i> (не fivety!)"
+            ]
+          }
+        ],
+        quests: [
+          {
+            prompt: "Выбери ПРАВИЛЬНОЕ написание числа 40:",
+            sentence: "40",
+            type: "choice",
+            options: ["forty", "fourty", "fortee"],
+            answer: "forty",
+            hint: "💡 <b>Запомни:</b> В слове <b>forty</b> буква U выпадает!"
+          },
+          {
+            prompt: "Выбери ПРАВИЛЬНОЕ написание числа 14:",
+            sentence: "14",
+            type: "choice",
+            options: ["fourteen", "forteen", "fortin"],
+            answer: "fourteen",
+            hint: "💡 В 14 (<b>fourteen</b>) буква U сохраняется!"
+          },
+          {
+            prompt: "Выбери ПРАВИЛЬНОЕ написание числа 80:",
+            sentence: "80",
+            type: "choice",
+            options: ["eighty", "eightty", "eaghty"],
+            answer: "eighty",
+            hint: "💡 В слове <b>eighty</b> пишется только одна буква T."
+          },
+          {
+            prompt: "Выбери ПРАВИЛЬНОЕ написание числа 15:",
+            sentence: "15",
+            type: "choice",
+            options: ["fifteen", "fiveteen", "fiften"],
+            answer: "fifteen",
+            hint: "💡 Five меняется на <b>fif-</b> → <i>fifteen</i>!"
+          },
+          {
+            prompt: "Напечатай по-английски число 50:",
+            sentence: "50 = ___",
+            type: "type",
+            answer: "fifty",
+            hint: "💡 50 пишется как <b>fifty</b>!"
+          },
+          {
+            prompt: "Напечатай по-английски число 40 (без ошибок!):",
+            sentence: "40 = ___",
+            type: "type",
+            answer: "forty",
+            hint: "💡 Напоминание: <b>forty</b> (без буквы U)!"
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // MODULE 2: Ordinal Suffixes (Джесси)
+      // ------------------------------------------------------------------------
+      {
+        id: 1,
+        title: "ARENA 2: ORDINAL SUFFIXES",
+        avatar: "https://i.yapx.ru/eDP2C.png",
+        theory: [
+          {
+            title: "🏆 Главная тройка (Исключения)",
+            items: [
+              "1st = <i class='ok'>first</i> (первый)",
+              "2nd = <i class='ok'>second</i> (второй)",
+              "3rd = <i class='ok'>third</i> (третий)"
+            ]
+          },
+          {
+            title: "⚠️ Мутации слов (+th)",
+            items: [
+              "5th = <i class='trap'>fifth</i> (не fiveth!)",
+              "9th = <i class='trap'>ninth</i> (буква E выпадает!)",
+              "12th = <i class='trap'>twelfth</i> (ve → f!)"
+            ]
+          }
+        ],
+        quests: [
+          {
+            prompt: "Какое окончание у порядкового числа 21st?",
+            sentence: "21...",
+            type: "choice",
+            options: ["st", "nd", "rd", "th"],
+            answer: "st",
+            hint: "💡 21st = twenty-first (окончание <b>-st</b>)!"
+          },
+          {
+            prompt: "Как правильно пишется '5-й' (5th)?",
+            sentence: "5th",
+            type: "choice",
+            options: ["fifth", "fiveth", "fivth"],
+            answer: "fifth",
+            hint: "💡 Five меняется на <b>fifth</b>!"
+          },
+          {
+            prompt: "Как правильно пишется '9-й' (9th)?",
+            sentence: "9th",
+            type: "choice",
+            options: ["ninth", "nineth", "nine th"],
+            answer: "ninth",
+            hint: "💡 В слове <b>ninth</b> выпадает буква E (nine → ninth)."
+          },
+          {
+            prompt: "Как правильно пишется '12-й' (12th)?",
+            sentence: "12th",
+            type: "choice",
+            options: ["twelfth", "twelveth", "twelth"],
+            answer: "twelfth",
+            hint: "💡 Twelve превращается в <b>twelfth</b>!"
+          },
+          {
+            prompt: "Какое окончание у числа 43 (43rd)?",
+            sentence: "43...",
+            type: "choice",
+            options: ["rd", "st", "nd", "th"],
+            answer: "rd",
+            hint: "💡 43rd = forty-third (окончание <b>-rd</b> от third)!"
+          },
+          {
+            prompt: "Напечатай слово 'третий' (3rd) по-английски:",
+            sentence: "3rd = ___",
+            type: "type",
+            answer: "third",
+            hint: "💡 3rd = <b>third</b>!"
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // MODULE 3: Dates & Context (Колетт)
+      // ------------------------------------------------------------------------
+      {
+        id: 2,
+        title: "ARENA 3: DATES & CONTEXT",
+        avatar: "https://i.yapx.ru/eDP2A.jpg",
+        theory: [
+          {
+            title: "📅 ДАТЫ (Ordinals)",
+            items: [
+              "Для дат ВСЕГДА используем порядковые числа!",
+              "Конструкция: <b>the + [число-th] + of</b>",
+              "Пример: <i>the 5th of May</i> (пятое мая)"
+            ]
+          },
+          {
+            title: "📦 КОЛИЧЕСТВО (Cardinals)",
+            items: [
+              "Когда считаем предметы (сколько?) — обычные числа!",
+              "Пример: <i>I have 5 robux</i> (не 5th!)"
+            ]
+          }
+        ],
+        quests: [
+          {
+            prompt: "Вставь правильное число в предложение о дате:",
+            sentence: "My birthday is on the ___ of May.",
+            type: "choice",
+            options: ["5th (fifth)", "5 (five)", "5st"],
+            answer: "5th (fifth)",
+            hint: "💡 Для дат всегда берем порядковые числа с окончанием -th / -st / -nd / -rd!"
+          },
+          {
+            prompt: "Вставь число в предложение про количество предметов:",
+            sentence: "I have ___ brawlers in my squad.",
+            type: "choice",
+            options: ["10 (ten)", "10th (tenth)"],
+            answer: "10 (ten)",
+            hint: "💡 Для количества используем обычное число (<b>ten</b>)!"
+          },
+          {
+            prompt: "Какая форма нужна в предложении про день?",
+            sentence: "Today is the ___ day of autumn.",
+            type: "choice",
+            options: ["1st (first)", "1 (one)"],
+            answer: "1st (first)",
+            hint: "💡 'Первый день' = порядковое число <b>first</b>!"
+          },
+          {
+            prompt: "Выбери верный вариант:",
+            sentence: "She finished in ___ place!",
+            type: "choice",
+            options: ["2nd (second)", "2 (two)"],
+            answer: "2nd (second)",
+            hint: "💡 'Второе место' = <b>second place</b>."
+          },
+          {
+            prompt: "Напечатай пропущенное слово (3-е число):",
+            sentence: "It's the ___ of October.",
+            type: "type",
+            answer: "third",
+            hint: "💡 3-е число = <b>third</b>!"
+          },
+          {
+            prompt: "Выбери правильный вариант для даты:",
+            sentence: "Today is the 22nd = the twenty-___ of April.",
+            type: "choice",
+            options: ["second", "two"],
+            answer: "second",
+            hint: "💡 22nd = twenty-<b>second</b>!"
+          }
+        ]
+      },
+
+      // ------------------------------------------------------------------------
+      // MODULE 4: Years & Big Numbers (Сёрдж)
+      // ------------------------------------------------------------------------
+      {
+        id: 3,
+        title: "ARENA 4: YEARS & BIG NUMBERS",
+        avatar: "https://i.yapx.ru/eDP16.png",
+        theory: [
+          {
+            title: "🏛 Годы до 2000 года",
+            items: [
+              "Делим год на ДВЕ ПАРЫ цифр!",
+              "1998 = 19 (<b>nineteen</b>) + 98 (<b>ninety-eight</b>)",
+              "1900 = nineteen hundred"
+            ]
+          },
+          {
+            title: "🚀 Годы после 2000 года",
+            items: [
+              "Читаем как тысячу + остаток:",
+              "2005 = <b>two thousand (and) five</b>",
+              "2024 = <b>twenty twenty-four</b> ИЛИ two thousand and twenty-four"
+            ]
+          }
+        ],
+        quests: [
+          {
+            prompt: "Как правильно прочитать год 1998?",
+            sentence: "Year: 1998",
+            type: "choice",
+            options: ["nineteen ninety-eight", "one thousand nine hundred", "ninety nineteen"],
+            answer: "nineteen ninety-eight",
+            hint: "💡 Делим 1998 на две пары: 19 (nineteen) + 98 (ninety-eight)."
+          },
+          {
+            prompt: "Как правильно прочитать год 2005?",
+            sentence: "Year: 2005",
+            type: "choice",
+            options: ["two thousand and five", "twenty five", "two hundred five"],
+            answer: "two thousand and five",
+            hint: "💡 Британская норма: <b>two thousand and five</b>!"
+          },
+          {
+            prompt: "Как прочитать год 1800?",
+            sentence: "Year: 1800",
+            type: "choice",
+            options: ["eighteen hundred", "one thousand eight", "eighteen zero zero"],
+            answer: "eighteen hundred",
+            hint: "💡 Сотые годы читаются со словом hundred: 1800 = <b>eighteen hundred</b>."
+          },
+          {
+            prompt: "Как прочитать год 2024?",
+            sentence: "Year: 2024",
+            type: "choice",
+            options: ["twenty twenty-four", "two twenty four", "twenty hundred four"],
+            answer: "twenty twenty-four",
+            hint: "💡 Современные годы удобно делить: 20 + 24 (<b>twenty twenty-four</b>)."
+          },
+          {
+            prompt: "Напечатай пропущенные слова для года 2008 (two thousand ___):",
+            sentence: "2008 = two thousand ___",
+            type: "type",
+            validAnswers: ["and eight", "eight"],
+            answer: "and eight",
+            hint: "💡 Британский стандарт: <b>and eight</b>!"
+          },
+          {
+            prompt: "Напечатай слово 'сто' (100) по-английски:",
+            sentence: "100 = one ___",
+            type: "type",
+            answer: "hundred",
+            hint: "💡 100 = one <b>hundred</b>!"
+          }
+        ]
+      }
+    ];
+
+    /* ==========================================================================
+       ИГРОВОЙ ДВИЖОК И СОСТОЯНИЯ (GAME ENGINE)
+       ========================================================================== */
+    let currentModuleIdx = 0;
+    let currentQuestIdx = 0;
+    let totalXP = 0;
+    let isBossMode = false;
+    let bossHP = 100;
+    let activeQuests = [];
+
+    // DOM Элементы
+    const mapScreen = document.getElementById('mapScreen');
+    const theoryScreen = document.getElementById('theoryScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const victoryScreen = document.getElementById('victoryScreen');
+
+    const bossHpContainer = document.getElementById('bossHpContainer');
+    const bossHpFill = document.getElementById('bossHpFill');
+    const bossHpText = document.getElementById('bossHpText');
+
+    const xpVal = document.getElementById('xpVal');
+    const btnSound = document.getElementById('btnSound');
+
+    const theoryAvatar = document.getElementById('theoryAvatar');
+    const theoryTitle = document.getElementById('theoryTitle');
+    const theoryContent = document.getElementById('theoryContent');
+    const btnStartPractice = document.getElementById('btnStartPractice');
+
+    const gameAvatar = document.getElementById('gameAvatar');
+    const brawlerSpeech = document.getElementById('brawlerSpeech');
+    const questPrompt = document.getElementById('questPrompt');
+    const questSentence = document.getElementById('questSentence');
+    const optionsGrid = document.getElementById('optionsGrid');
+    const typeZone = document.getElementById('typeZone');
+    const typeInput = document.getElementById('typeInput');
+    const btnCheck = document.getElementById('btnCheck');
+    const feedback = document.getElementById('feedback');
+    const fbTitle = document.getElementById('fbTitle');
+    const fbText = document.getElementById('fbText');
+    const btnNext = document.getElementById('btnNext');
+
+    btnSound.addEventListener('click', () => {
+      sfx.muted = !sfx.muted;
+      btnSound.textContent = sfx.muted ? '🔇' : '🔊';
+    });
+
+    // 1. Открытие Теории
+    function openTheory(modIdx) {
+      sfx.click();
+      isBossMode = false;
+      currentModuleIdx = modIdx;
+      const mod = MODULES[modIdx];
+
+      mapScreen.classList.add('hidden');
+      victoryScreen.classList.add('hidden');
+      theoryScreen.classList.remove('hidden');
+
+      theoryAvatar.src = mod.avatar;
+      theoryTitle.textContent = mod.title;
+
+      theoryContent.innerHTML = '';
+      mod.theory.forEach(block => {
+        const box = document.createElement('div');
+        box.className = 'theory-box';
+        box.innerHTML = `
+          <h3>⚡ ${block.title}</h3>
+          <ul>${block.items.map(i => `<li>• ${i}</li>`).join('')}</ul>
+        `;
+        theoryContent.appendChild(box);
+      });
+    }
+
+    // 2. Старт Практики
+    btnStartPractice.addEventListener('click', () => {
+      sfx.click();
+      currentQuestIdx = 0;
+      activeQuests = [...MODULES[currentModuleIdx].quests];
+      
+      theoryScreen.classList.add('hidden');
+      gameScreen.classList.remove('hidden');
+      bossHpContainer.classList.add('hidden');
+
+      renderQuest();
+    });
+
+    // 3. Старт SUPER BOSS FIGHT
+    function startBossFight() {
+      sfx.click();
+      isBossMode = true;
+      bossHP = 100;
+      currentQuestIdx = 0;
+
+      // Сборная микс-пачка из всех 4 модулей (по 2 из каждого)
+      activeQuests = [];
+      MODULES.forEach(m => {
+        const shuffled = [...m.quests].sort(() => 0.5 - Math.random());
+        activeQuests.push(shuffled[0], shuffled[1]);
+      });
+      activeQuests.sort(() => 0.5 - Math.random()); // Перемешиваем весь босс-сет
+
+      mapScreen.classList.add('hidden');
+      theoryScreen.classList.add('hidden');
+      victoryScreen.classList.add('hidden');
+      gameScreen.classList.remove('hidden');
+
+      bossHpContainer.classList.remove('hidden');
+      updateBossBar();
+
+      renderQuest();
+    }
+
+    function updateBossBar() {
+      bossHpFill.style.width = `${bossHP}%`;
+      bossHpText.textContent = `${bossHP}%`;
+    }
+
+    // 4. Отображение вопроса
+    function renderQuest() {
+      const q = activeQuests[currentQuestIdx];
+      feedback.classList.add('hidden');
+
+      if (isBossMode) {
+        gameAvatar.src = "https://i.yapx.ru/eDP16.png"; // Surge Mech Boss
+        brawlerSpeech.textContent = "👾 МЕГА-БОСС: Попробуй одолеть мои вопросы!";
+      } else {
+        const mod = MODULES[currentModuleIdx];
+        gameAvatar.src = mod.avatar;
+        brawlerSpeech.textContent = `Задание ${currentQuestIdx + 1} из ${activeQuests.length}`;
+      }
+
+      questPrompt.textContent = q.prompt;
+      questSentence.textContent = q.sentence;
+
+      optionsGrid.innerHTML = '';
+      typeZone.classList.add('hidden');
+
+      if (q.type === 'choice') {
+        optionsGrid.classList.remove('hidden');
+        q.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'opt-btn';
+          btn.textContent = opt;
+          btn.onclick = () => handleAnswer(opt);
+          optionsGrid.appendChild(btn);
+        });
+      } else if (q.type === 'type') {
+        optionsGrid.classList.add('hidden');
+        typeZone.classList.remove('hidden');
+        typeInput.value = '';
+        typeInput.focus();
+      }
+    }
+
+    btnCheck.addEventListener('click', () => {
+      const val = typeInput.value.trim();
+      if (val) handleAnswer(val);
+    });
+
+    typeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const val = typeInput.value.trim();
+        if (val) handleAnswer(val);
+      }
+    });
+
+    // 5. Обработка ответа
+    function handleAnswer(userAns) {
+      const q = activeQuests[currentQuestIdx];
+      const cleanUser = userAns.toLowerCase().trim();
+
+      let isCorrect = false;
+      if (q.validAnswers) {
+        isCorrect = q.validAnswers.some(ans => ans.toLowerCase() === cleanUser);
+      } else {
+        isCorrect = cleanUser === q.answer.toLowerCase();
+      }
+
+      optionsGrid.classList.add('hidden');
+      typeZone.classList.add('hidden');
+      feedback.classList.remove('hidden', 'correct', 'wrong');
+
+      if (isCorrect) {
+        if (isBossMode) {
+          sfx.bossHit();
+          gameAvatar.classList.add('boss-hit');
+          setTimeout(() => gameAvatar.classList.remove('boss-hit'), 400);
+
+          const damage = Math.ceil(100 / activeQuests.length);
+          bossHP = Math.max(0, bossHP - damage);
+          updateBossBar();
+
+          fbTitle.innerHTML = '💥 УДАР ПО БОССУ! (-' + damage + '% HP)';
+        } else {
+          sfx.correct();
+          fbTitle.innerHTML = '✅ ОТЛИЧНО! (+25 XP)';
+        }
+
+        fbText.innerHTML = q.hint;
+        totalXP += 25;
+        xpVal.textContent = totalXP;
+        feedback.classList.add('correct');
+
+      } else {
+        sfx.wrong();
+        feedback.classList.add('wrong');
+        
+        if (isBossMode) {
+          bossHP = Math.min(100, bossHP + 10); // Босс восстанавливает HP
+          updateBossBar();
+          fbTitle.innerHTML = `❌ БОСС ВОССТАНОВИЛ ХП! (+10% HP)`;
+        } else {
+          fbTitle.innerHTML = `❌ ОШИБКА! (Правильно: ${q.answer})`;
+        }
+
+        fbText.innerHTML = q.hint;
+      }
+    }
+
+    // 6. Переход к следующему шагу
+    btnNext.addEventListener('click', () => {
+      sfx.click();
+      currentQuestIdx++;
+
+      if (currentQuestIdx < activeQuests.length && (!isBossMode || bossHP > 0)) {
+        renderQuest();
+      } else {
+        // Победа в Модуле или над Боссом
+        sfx.win();
+        gameScreen.classList.add('hidden');
+        victoryScreen.classList.remove('hidden');
+
+        if (isBossMode) {
+          document.getElementById('vicTitle').textContent = '👾 BOSS DEFEATED!';
+          document.getElementById('vicSubtitle').textContent = 'Ты сокрушил Мега-Босса и полностью освоил тему английских чисел!';
+          document.getElementById('status-4').textContent = '🏆 VICTORY!';
+          document.getElementById('status-4').style.color = 'var(--neon-green)';
+        } else {
+          document.getElementById('vicTitle').textContent = 'ARENA CLEARED!';
+          document.getElementById('vicSubtitle').textContent = 'Отличная работа! Ты прошел все тренировки этой арены!';
+          document.getElementById(`status-${currentModuleIdx}`).textContent = '✅ CLEARED (6/6)';
+          document.getElementById(`status-${currentModuleIdx}`).style.color = 'var(--neon-green)';
+        }
+      }
+    });
+
+    // Возврат на карту
+    document.getElementById('btnBackToMap').addEventListener('click', () => {
+      sfx.click();
+      victoryScreen.classList.add('hidden');
+      mapScreen.classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
