@@ -138,7 +138,7 @@
     }
 
     /* ==========================================================================
-       4. КАРТА АРЕН (КРАСИВАЯ СЕТКА 2x2 + БОСС)
+       4. КАРТА АРЕН (СЕТКА 2x2 + БОСС)
        ========================================================================== */
     .map-screen {
       display: flex;
@@ -272,7 +272,7 @@
     .boss-card .arena-icon-wrap { border-color: var(--neon-red); }
     .theory-avatar-wrap { width: 70px; height: 70px; border: 3px solid var(--neon-yellow); border-radius: 18px; }
     .brawler-avatar-wrap { width: 58px; height: 58px; border: 2px solid var(--neon-pink); border-radius: 14px; }
-    .victory-img-wrap { width: 120px; height: 120px; border: 3px solid var(--neon-yellow); border-radius: 24px; margin: 0 auto 1.2rem; }
+    .victory-img-wrap { width: 130px; height: 130px; border: 3px solid var(--neon-yellow); border-radius: 24px; margin: 0 auto 1.2rem; }
 
     .arena-num {
       font-size: 0.8rem;
@@ -608,6 +608,85 @@
       animation: popIn 0.4s ease-out;
     }
 
+    /* ==========================================================================
+       9. ФУТЕР И АВТОРСКИЕ ПРАВА (FOOTER)
+       ========================================================================== */
+    footer.app-footer {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      background: rgba(10, 13, 26, 0.85);
+      border-top: 1px solid var(--panel-border);
+      padding: 1.2rem 1rem;
+      backdrop-filter: blur(10px);
+      margin-top: auto;
+    }
+
+    .footer-content {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .footer-copy {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .footer-copy b { color: var(--neon-yellow); }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .social-btn.tg {
+      background: rgba(0, 136, 204, 0.15);
+      color: #0088cc;
+      border-color: rgba(0, 136, 204, 0.4);
+    }
+    .social-btn.tg:hover {
+      background: rgba(0, 136, 204, 0.3);
+      border-color: var(--neon-cyan);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);
+    }
+
+    .social-btn.boosty {
+      background: rgba(241, 100, 33, 0.15);
+      color: #f16421;
+      border-color: rgba(241, 100, 33, 0.4);
+    }
+    .social-btn.boosty:hover {
+      background: rgba(241, 100, 33, 0.3);
+      border-color: var(--neon-yellow);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(241, 100, 33, 0.3);
+    }
+
     /* АНИМАЦИИ */
     @keyframes popIn {
       0% { opacity: 0; transform: scale(0.9) translateY(12px); }
@@ -636,6 +715,7 @@
       .type-zone { flex-direction: column; }
       .quest-sentence { font-size: 1.35rem; }
       .btn-reload-imgs span.label { display: none; }
+      .footer-content { flex-direction: column; text-align: center; }
     }
   </style>
 </head>
@@ -675,7 +755,7 @@
         <!-- Module 1 -->
         <div class="arena-card" onclick="openTheory(0)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP2E.png">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDWvV.jpg">
               <img alt="Colt">
               <div class="img-placeholder"><span class="ph-icon">🔫</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -691,7 +771,7 @@
         <!-- Module 2 -->
         <div class="arena-card" onclick="openTheory(1)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP2C.png">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDWvW.jpg">
               <img alt="Jessie">
               <div class="img-placeholder"><span class="ph-icon">🔧</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -707,7 +787,7 @@
         <!-- Module 3 -->
         <div class="arena-card" onclick="openTheory(2)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP2A.jpg">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDWzD.png">
               <img alt="Colette">
               <div class="img-placeholder"><span class="ph-icon">📖</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -723,7 +803,7 @@
         <!-- Module 4 -->
         <div class="arena-card" onclick="openTheory(3)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP16.png">
+            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDW0c.png">
               <img alt="Surge">
               <div class="img-placeholder"><span class="ph-icon">⚡</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -736,7 +816,7 @@
           <div class="arena-status" id="status-3">0 / 6 CLEARED</div>
         </div>
 
-        <!-- ARENA 5: BOSS FIGHT (Изначально заблокирована) -->
+        <!-- ARENA 5: BOSS FIGHT (Заблокирована) -->
         <div class="arena-card boss-card locked" id="bossCard" onclick="tryStartBoss()">
           <div class="arena-header">
             <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP16.png">
@@ -823,6 +903,23 @@
       <button class="btn btn-action" id="btnBackToMap">🗺 НА КАРТУ АРЕН</button>
     </section>
   </main>
+
+  <!-- ФУТЕР И АВТОРСКИЕ ПРАВА -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="footer-copy">
+        © 2026 <b>AlexandraGes ESL</b>. All rights reserved.
+      </div>
+      <div class="footer-links">
+        <a href="https://t.me/alexandragesESL" target="_blank" rel="noopener noreferrer" class="social-btn tg">
+          <span>✈️ Telegram</span>
+        </a>
+        <a href="https://boosty.to/alexandrages_esl" target="_blank" rel="noopener noreferrer" class="social-btn boosty">
+          <span>🚀 Boosty</span>
+        </a>
+      </div>
+    </div>
+  </footer>
 
   <script>
     /* ==========================================================================
@@ -953,14 +1050,14 @@
        БАЗА ДАННЫХ: МОДУЛИ, ТЕОРИЯ, УНИКАЛЬНЫЕ НАГРАДЫ И ВОПРОСЫ
        ========================================================================== */
     const MODULES = [
-      // MODULE 1: Cardinal Traps (Кольт) -> Награда: Brawl Box
+      // MODULE 1: Cardinal Traps (Аватар: eDWvV | Награда: Brawl Box eDXC1)
       {
         id: 0,
         title: "ARENA 1: CARDINAL TRAPS",
-        avatar: "https://i.yapx.ru/eDP2E.png",
-        rewardImg: "https://i.yapx.ru/eAq0y.png",
+        avatar: "https://i.yapx.ru/eDWvV.jpg",
+        rewardImg: "https://i.yapx.ru/eDXC1.jpg",
         rewardTitle: "🎁 BRAWL BOX UNLOCKED!",
-        rewardDesc: "Отличная работа! Ты разгромил все ловушки в 40, 14 и 80 и получил первый Бокс!",
+        rewardDesc: "Отличная работа! Ты разгромил все ловушки в 40, 14 и 80 и получил Синий Бокс!",
         theory: [
           {
             title: "🔥 Ловушка 40 vs 14",
@@ -1029,12 +1126,12 @@
         ]
       },
 
-      // MODULE 2: Ordinal Suffixes (Джесси) -> Награда: Big Box
+      // MODULE 2: Ordinal Suffixes (Аватар: eDWvW | Награда: Big Box eDXCz)
       {
         id: 1,
         title: "ARENA 2: ORDINAL SUFFIXES",
-        avatar: "https://i.yapx.ru/eDP2C.png",
-        rewardImg: "https://i.yapx.ru/d9H4q.png",
+        avatar: "https://i.yapx.ru/eDWvW.jpg",
+        rewardImg: "https://i.yapx.ru/eDXCz.jpg",
         rewardTitle: "📦 BIG BOX UNLOCKED!",
         rewardDesc: "Супер! Джесси гордится тобой. Окончания 1st, 2nd, 3rd, 5th освоены!",
         theory: [
@@ -1106,12 +1203,12 @@
         ]
       },
 
-      // MODULE 3: Dates & Context (Колетт) -> Награда: Starr Drop
+      // MODULE 3: Dates & Context (Аватар: eDWzD | Награда: Starr Drop eDXCy)
       {
         id: 2,
         title: "ARENA 3: DATES & CONTEXT",
-        avatar: "https://i.yapx.ru/eDP2A.jpg",
-        rewardImg: "https://i.yapx.ru/eDP15.png",
+        avatar: "https://i.yapx.ru/eDWzD.png",
+        rewardImg: "https://i.yapx.ru/eDXCy.jpg",
         rewardTitle: "⭐ STARR DROP UNLOCKED!",
         rewardDesc: "Ура! Ты научился правильно ставить даты и отличать их от штук предметов!",
         theory: [
@@ -1182,12 +1279,12 @@
         ]
       },
 
-      // MODULE 4: Years & Big Numbers (Сёрдж) -> Награда: Mega Box
+      // MODULE 4: Years & Big Numbers (Аватар: eDW0c | Награда: Mega Box eDXC0)
       {
         id: 3,
         title: "ARENA 4: YEARS & BIG NUMBERS",
-        avatar: "https://i.yapx.ru/eDP16.png",
-        rewardImg: "https://i.yapx.ru/d9H4u.png",
+        avatar: "https://i.yapx.ru/eDW0c.png",
+        rewardImg: "https://i.yapx.ru/eDXC0.jpg",
         rewardTitle: "💎 MEGA BOX UNLOCKED!",
         rewardDesc: "Мега-результат! Чтение годов (1998, 2024, 2005) у тебя от зубов отскакивает!",
         theory: [
@@ -1320,7 +1417,6 @@
       ImageResilience.reloadAll();
     });
 
-    // Проверка разблокировки Босса
     function checkBossUnlock() {
       const allCleared = clearedModules.every(c => c === true);
       if (allCleared) {
@@ -1526,7 +1622,7 @@
         victoryScreen.classList.remove('hidden');
 
         if (isBossMode) {
-          ImageResilience.updateSrc(victoryImgWrap, "https://i.yapx.ru/eDP18.png"); // Golden Trophy
+          ImageResilience.updateSrc(victoryImgWrap, "https://i.yapx.ru/eDP18.png");
           vicTitle.textContent = '👾 BOSS DEFEATED!';
           vicSubtitle.textContent = 'Ты сокрушил Мега-Босса и завоевал Золотой Кубок Бравла!';
           document.getElementById('status-4').textContent = '🏆 VICTORY!';
