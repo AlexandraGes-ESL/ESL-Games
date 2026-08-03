@@ -164,7 +164,6 @@
       margin-top: 0.4rem;
     }
 
-    /* Сетка 2х2 на десктопе */
     .arenas-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -191,7 +190,11 @@
       box-shadow: 0 12px 30px rgba(0, 243, 255, 0.3);
     }
 
-    /* Карточка Босса на всю ширину снизу */
+    .arena-card.completed {
+      border-color: var(--neon-green);
+      background: rgba(0, 255, 102, 0.05);
+    }
+
     .arena-card.boss-card {
       background: linear-gradient(135deg, rgba(255, 42, 85, 0.25), rgba(157, 78, 221, 0.25));
       border-color: var(--neon-red);
@@ -203,7 +206,6 @@
       box-shadow: 0 12px 35px rgba(255, 42, 85, 0.6);
     }
 
-    /* Заблокированный Босс (Locked State) */
     .arena-card.boss-card.locked {
       opacity: 0.65;
       filter: grayscale(0.6);
@@ -372,6 +374,12 @@
     .theory-box i.trap { color: var(--neon-red); font-style: normal; font-weight: bold; }
     .theory-box i.ok { color: var(--neon-green); font-style: normal; font-weight: bold; }
 
+    .theory-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
     /* ==========================================================================
        6. ИГРОВОЙ ЭКРАН И БОСС-БАР (PRACTICE / BOSS FIGHT)
        ========================================================================== */
@@ -429,6 +437,34 @@
       backdrop-filter: blur(14px);
       box-shadow: 0 15px 40px rgba(0,0,0,0.6);
       position: relative;
+    }
+
+    .game-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-back-map {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--panel-border);
+      color: var(--neon-cyan);
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-main);
+    }
+
+    .btn-back-map:hover {
+      background: rgba(0, 243, 255, 0.15);
+      border-color: var(--neon-cyan);
+      transform: translateX(-2px);
     }
 
     .brawler-speech-zone {
@@ -565,6 +601,19 @@
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       letter-spacing: 1px;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      border: 2px solid var(--panel-border);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.4);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      transform: translateY(-2px);
     }
 
     .btn-action {
@@ -753,9 +802,9 @@
 
       <div class="arenas-grid">
         <!-- Module 1 -->
-        <div class="arena-card" onclick="openTheory(0)">
+        <div class="arena-card" id="arena-card-0" onclick="openTheory(0)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDWvV.jpg">
+            <div class="img-wrap arena-icon-wrap" id="arena-icon-wrap-0" data-src="https://i.yapx.ru/eEHAV.png">
               <img alt="Colt">
               <div class="img-placeholder"><span class="ph-icon">🔫</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -769,9 +818,9 @@
         </div>
 
         <!-- Module 2 -->
-        <div class="arena-card" onclick="openTheory(1)">
+        <div class="arena-card" id="arena-card-1" onclick="openTheory(1)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDWvW.jpg">
+            <div class="img-wrap arena-icon-wrap" id="arena-icon-wrap-1" data-src="https://i.yapx.ru/eEHAT.png">
               <img alt="Jessie">
               <div class="img-placeholder"><span class="ph-icon">🔧</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -785,9 +834,9 @@
         </div>
 
         <!-- Module 3 -->
-        <div class="arena-card" onclick="openTheory(2)">
+        <div class="arena-card" id="arena-card-2" onclick="openTheory(2)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDWzD.png">
+            <div class="img-wrap arena-icon-wrap" id="arena-icon-wrap-2" data-src="https://i.yapx.ru/eEHAU.png">
               <img alt="Colette">
               <div class="img-placeholder"><span class="ph-icon">📖</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -801,9 +850,9 @@
         </div>
 
         <!-- Module 4 -->
-        <div class="arena-card" onclick="openTheory(3)">
+        <div class="arena-card" id="arena-card-3" onclick="openTheory(3)">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDW0c.png">
+            <div class="img-wrap arena-icon-wrap" id="arena-icon-wrap-3" data-src="https://i.yapx.ru/eEHAW.png">
               <img alt="Surge">
               <div class="img-placeholder"><span class="ph-icon">⚡</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -812,14 +861,14 @@
               <div class="arena-name">Years & Big Numbers</div>
             </div>
           </div>
-          <div class="arena-desc">Сёрдж покажет, как легко читать годы (1998, 2024, 2005).</div>
+          <div class="arena-desc">Биби покажет, как легко читать годы (1998, 2024, 2005).</div>
           <div class="arena-status" id="status-3">0 / 6 CLEARED</div>
         </div>
 
         <!-- ARENA 5: BOSS FIGHT (Заблокирована) -->
         <div class="arena-card boss-card locked" id="bossCard" onclick="tryStartBoss()">
           <div class="arena-header">
-            <div class="img-wrap arena-icon-wrap" data-src="https://i.yapx.ru/eDP16.png">
+            <div class="img-wrap arena-icon-wrap" id="arena-icon-wrap-4" data-src="https://i.yapx.ru/eDP16.png">
               <img alt="Boss Mech">
               <div class="img-placeholder"><span class="ph-icon">👾</span><span class="ph-retry">Retry</span></div>
             </div>
@@ -849,7 +898,10 @@
 
       <div class="theory-grid" id="theoryContent"></div>
 
-      <button class="btn btn-action" id="btnStartPractice">▶ НАЧАТЬ БОЙ (PRACTICE)</button>
+      <div class="theory-actions">
+        <button class="btn btn-secondary" onclick="returnToMap()">◀ НА КАРТУ</button>
+        <button class="btn btn-action" id="btnStartPractice" style="flex: 1;">▶ НАЧАТЬ БОЙ (PRACTICE)</button>
+      </div>
     </section>
 
     <!-- 3. ИГРОВОЙ ЭКРАН ПРАКТИКИ / БОССА -->
@@ -866,6 +918,11 @@
       </div>
 
       <div class="quest-card">
+        <div class="game-top-bar">
+          <button class="btn-back-map" onclick="returnToMap()">◀ На карту</button>
+          <div style="font-weight: 800; font-size: 0.9rem; color: var(--text-muted);" id="gameProgressText">1 / 6</div>
+        </div>
+
         <div class="brawler-speech-zone">
           <div class="img-wrap brawler-avatar-wrap" id="gameAvatarWrap">
             <img alt="Brawler" id="gameAvatar">
@@ -1154,7 +1211,7 @@
         ],
         quests: [
           {
-            prompt: "Какое окончание у порядкового числа 21st?",
+            prompt: "Какое окончание пишется у порядкового числа 21?",
             sentence: "21...",
             type: "choice",
             options: ["st", "nd", "rd", "th"],
@@ -1162,31 +1219,31 @@
             hint: "💡 21st = twenty-first (окончание <b>-st</b>)!"
           },
           {
-            prompt: "Как правильно пишется '5-й' (5th)?",
-            sentence: "5th",
+            prompt: "Как правильно пишется '5-й' день?",
+            sentence: "5-й день",
             type: "choice",
             options: ["fifth", "fiveth", "fivth"],
             answer: "fifth",
             hint: "💡 Five меняется на <b>fifth</b>!"
           },
           {
-            prompt: "Как правильно пишется '9-й' (9th)?",
-            sentence: "9th",
+            prompt: "Как правильно пишется '9-й' день?",
+            sentence: "9-й день",
             type: "choice",
             options: ["ninth", "nineth", "nine th"],
             answer: "ninth",
             hint: "💡 В слове <b>ninth</b> выпадает буква E (nine → ninth)."
           },
           {
-            prompt: "Как правильно пишется '12-й' (12th)?",
-            sentence: "12th",
+            prompt: "Как правильно пишется '12-й' день?",
+            sentence: "12-й день",
             type: "choice",
             options: ["twelfth", "twelveth", "twelth"],
             answer: "twelfth",
             hint: "💡 Twelve превращается в <b>twelfth</b>!"
           },
           {
-            prompt: "Какое окончание у числа 43 (43rd)?",
+            prompt: "Какое окончание пишется у порядкового числа 43?",
             sentence: "43...",
             type: "choice",
             options: ["rd", "st", "nd", "th"],
@@ -1194,8 +1251,8 @@
             hint: "💡 43rd = forty-third (окончание <b>-rd</b> от third)!"
           },
           {
-            prompt: "Напечатай слово 'третий' (3rd) по-английски:",
-            sentence: "3rd = ___",
+            prompt: "Напечатай слово 'третий' по-английски:",
+            sentence: "3-й = ___",
             type: "type",
             answer: "third",
             hint: "💡 3rd = <b>third</b>!"
@@ -1230,47 +1287,47 @@
         ],
         quests: [
           {
-            prompt: "Вставь правильное число в предложение о дате:",
+            prompt: "Вставь правильное число в предложение о дате (5 мая):",
             sentence: "My birthday is on the ___ of May.",
             type: "choice",
-            options: ["5th (fifth)", "5 (five)", "5st"],
-            answer: "5th (fifth)",
+            options: ["5th", "5", "5st"],
+            answer: "5th",
             hint: "💡 Для дат всегда берем порядковые числа с окончанием -th / -st / -nd / -rd!"
           },
           {
-            prompt: "Вставь число в предложение про количество предметов:",
+            prompt: "Вставь число в предложение про количество предметов (10 бравлеров):",
             sentence: "I have ___ brawlers in my squad.",
             type: "choice",
-            options: ["10 (ten)", "10th (tenth)"],
-            answer: "10 (ten)",
+            options: ["ten", "tenth"],
+            answer: "ten",
             hint: "💡 Для количества используем обычное число (<b>ten</b>)!"
           },
           {
-            prompt: "Какая форма нужна в предложении про день?",
+            prompt: "Какая форма нужна в предложении про первый день?",
             sentence: "Today is the ___ day of autumn.",
             type: "choice",
-            options: ["1st (first)", "1 (one)"],
-            answer: "1st (first)",
+            options: ["first", "one"],
+            answer: "first",
             hint: "💡 'Первый день' = порядковое число <b>first</b>!"
           },
           {
-            prompt: "Выбери верный вариант:",
+            prompt: "Выбери верный вариант для второго места:",
             sentence: "She finished in ___ place!",
             type: "choice",
-            options: ["2nd (second)", "2 (two)"],
-            answer: "2nd (second)",
+            options: ["second", "two"],
+            answer: "second",
             hint: "💡 'Второе место' = <b>second place</b>."
           },
           {
-            prompt: "Напечатай пропущенное слово (3-е число):",
+            prompt: "Напечатай пропущенное слово для даты (3 октября):",
             sentence: "It's the ___ of October.",
             type: "type",
             answer: "third",
             hint: "💡 3-е число = <b>third</b>!"
           },
           {
-            prompt: "Выбери правильный вариант для даты:",
-            sentence: "Today is the 22nd = the twenty-___ of April.",
+            prompt: "Выбери правильное слово для 22-го числа месяца:",
+            sentence: "22 April = the twenty-___ of April.",
             type: "choice",
             options: ["second", "two"],
             answer: "second",
@@ -1339,7 +1396,7 @@
             hint: "💡 Современные годы удобно делить: 20 + 24 (<b>twenty twenty-four</b>)."
           },
           {
-            prompt: "Напечатай пропущенные слова для года 2008 (two thousand ___):",
+            prompt: "Напечатай пропущенные слова для года 2008:",
             sentence: "2008 = two thousand ___",
             type: "type",
             validAnswers: ["and eight", "eight"],
@@ -1390,6 +1447,7 @@
 
     const gameAvatarWrap = document.getElementById('gameAvatarWrap');
     const brawlerSpeech = document.getElementById('brawlerSpeech');
+    const gameProgressText = document.getElementById('gameProgressText');
     const questPrompt = document.getElementById('questPrompt');
     const questSentence = document.getElementById('questSentence');
     const optionsGrid = document.getElementById('optionsGrid');
@@ -1416,6 +1474,14 @@
       setTimeout(() => btnReloadImgs.classList.remove('spinning'), 600);
       ImageResilience.reloadAll();
     });
+
+    function returnToMap() {
+      sfx.click();
+      theoryScreen.classList.add('hidden');
+      gameScreen.classList.add('hidden');
+      victoryScreen.classList.add('hidden');
+      mapScreen.classList.remove('hidden');
+    }
 
     function checkBossUnlock() {
       const allCleared = clearedModules.every(c => c === true);
@@ -1511,6 +1577,7 @@
     function renderQuest() {
       const q = activeQuests[currentQuestIdx];
       feedback.classList.add('hidden');
+      gameProgressText.textContent = `${currentQuestIdx + 1} / ${activeQuests.length}`;
 
       if (isBossMode) {
         ImageResilience.updateSrc(gameAvatarWrap, "https://i.yapx.ru/eDP16.png");
@@ -1631,12 +1698,16 @@
           const mod = MODULES[currentModuleIdx];
           clearedModules[currentModuleIdx] = true;
 
+          // Замена аватара арены на картинку награды на карте
+          ImageResilience.updateSrc(document.getElementById(`arena-icon-wrap-${currentModuleIdx}`), mod.rewardImg);
+          document.getElementById(`arena-card-${currentModuleIdx}`).classList.add('completed');
+
           ImageResilience.updateSrc(victoryImgWrap, mod.rewardImg);
           vicTitle.textContent = mod.rewardTitle;
           vicSubtitle.textContent = mod.rewardDesc;
 
-          document.getElementById(`status-${currentModuleIdx}`).textContent = '✅ CLEARED (6/6)';
-          document.getElementById(`status-${currentModuleIdx}`).style.color = 'var(--neon-green)';
+          document.getElementById(`status-${currentModuleIdx}`).textContent = '🎁 REWARD UNLOCKED!';
+          document.getElementById(`status-${currentModuleIdx}`).style.color = 'var(--neon-yellow)';
 
           checkBossUnlock();
         }
