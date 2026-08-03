@@ -38,12 +38,16 @@
       -webkit-user-select: none;
     }
 
-    body {
+        body {
       background-color: var(--bg-dark);
+      /* Паттерн динамических линий и точек в стиле комиксов/игр */
       background-image: 
-        radial-gradient(circle at 50% 10%, rgba(0, 243, 255, 0.15), transparent 60%),
-        radial-gradient(circle at 80% 80%, rgba(255, 0, 127, 0.15), transparent 60%),
-        linear-gradient(0deg, rgba(7, 9, 19, 0.95), rgba(7, 9, 19, 0.95));
+        radial-gradient(circle at 50% 15%, rgba(0, 243, 255, 0.22), transparent 50%),
+        radial-gradient(circle at 85% 85%, rgba(255, 0, 127, 0.2), transparent 50%),
+        radial-gradient(circle at 15% 75%, rgba(255, 230, 0, 0.15), transparent 45%),
+        radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(7, 9, 19, 0.93), rgba(7, 9, 19, 0.93));
+      background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px, 100% 100%;
       color: var(--text-main);
       font-family: var(--font-main);
       min-height: 100vh;
@@ -51,8 +55,8 @@
       flex-direction: column;
       align-items: center;
       overflow-x: hidden;
+      position: relative;
     }
-
     .hidden { display: none !important; }
 
     /* ==========================================================================
@@ -766,6 +770,50 @@
       .btn-reload-imgs span.label { display: none; }
       .footer-content { flex-direction: column; text-align: center; }
     }
+        /* ==========================================================================
+       ЭФФЕКТИВНЫЙ ФОН: ПАРЯЩИЕ НЕОНОВЫЕ ИСКРЫ (BACKGROUND AMBIENCE)
+       ========================================================================== */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      border-radius: 50%;
+      filter: blur(1px);
+      animation: floatSpark 8s infinite alternate ease-in-out;
+    }
+
+    body::before {
+      width: 12px;
+      height: 12px;
+      top: 20%;
+      left: 8%;
+      background: var(--neon-cyan);
+      box-shadow: 
+        0 0 20px var(--neon-cyan),
+        80vw 30vh 0 -2px var(--neon-yellow),
+        70vw 70vh 0 1px var(--neon-pink),
+        15vw 60vh 0 -1px var(--neon-green);
+    }
+
+    body::after {
+      width: 10px;
+      height: 10px;
+      top: 60%;
+      right: 12%;
+      background: var(--neon-pink);
+      box-shadow: 
+        0 0 20px var(--neon-pink),
+        -75vw -40vh 0 2px var(--neon-cyan),
+        -60vw 20vh 0 -1px var(--neon-yellow);
+      animation-delay: -4s;
+    }
+
+    @keyframes floatSpark {
+      0% { transform: translateY(0) scale(1); opacity: 0.6; }
+      50% { transform: translateY(-25px) scale(1.3); opacity: 0.9; }
+      100% { transform: translateY(15px) scale(0.8); opacity: 0.5; }
+    }
   </style>
 </head>
 <body>
@@ -1111,7 +1159,7 @@
       {
         id: 0,
         title: "ARENA 1: CARDINAL TRAPS",
-        avatar: "https://i.yapx.ru/eDWvV.jpg",
+        avatar: "https://i.yapx.ru/eEHAV.png",
         rewardImg: "https://i.yapx.ru/eDXC1.jpg",
         rewardTitle: "🎁 BRAWL BOX UNLOCKED!",
         rewardDesc: "Отличная работа! Ты разгромил все ловушки в 40, 14 и 80 и получил Синий Бокс!",
@@ -1187,7 +1235,7 @@
       {
         id: 1,
         title: "ARENA 2: ORDINAL SUFFIXES",
-        avatar: "https://i.yapx.ru/eDWvW.jpg",
+        avatar: "https://i.yapx.ru/eEHAT.png",
         rewardImg: "https://i.yapx.ru/eDXCz.jpg",
         rewardTitle: "📦 BIG BOX UNLOCKED!",
         rewardDesc: "Супер! Джесси гордится тобой. Окончания 1st, 2nd, 3rd, 5th освоены!",
@@ -1264,7 +1312,7 @@
       {
         id: 2,
         title: "ARENA 3: DATES & CONTEXT",
-        avatar: "https://i.yapx.ru/eDWzD.png",
+        avatar: "https://i.yapx.ru/eEHAU.png",
         rewardImg: "https://i.yapx.ru/eDXCy.jpg",
         rewardTitle: "⭐ STARR DROP UNLOCKED!",
         rewardDesc: "Ура! Ты научился правильно ставить даты и отличать их от штук предметов!",
@@ -1340,7 +1388,7 @@
       {
         id: 3,
         title: "ARENA 4: YEARS & BIG NUMBERS",
-        avatar: "https://i.yapx.ru/eDW0c.png",
+        avatar: "https://i.yapx.ru/eEHAW.png",
         rewardImg: "https://i.yapx.ru/eDXC0.jpg",
         rewardTitle: "💎 MEGA BOX UNLOCKED!",
         rewardDesc: "Мега-результат! Чтение годов (1998, 2024, 2005) у тебя от зубов отскакивает!",
