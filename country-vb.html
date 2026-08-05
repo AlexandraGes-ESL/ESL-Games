@@ -621,40 +621,47 @@ header p { color: var(--text-muted); font-size: 1.1rem; font-weight: 500; font-s
    ВОТ СЮДА ВСТАВЬ СВОЙ СПИСОК ЛЕКСИКИ, ЕСЛИ ОН БЫЛ ДРУГИМ
    ============================================================ */
 const VOCAB = [
-  { word: "branch",    ipa: "/brɑːntʃ/",     tr: "ветка",        def: "Part of a tree that grows out from the trunk." },
-  { word: "trunk",     ipa: "/trʌŋk/",       tr: "ствол дерева", def: "The thick main stem of a tree." },
-  { word: "root",      ipa: "/ruːt/",        tr: "корень",       def: "The part of a plant below the ground that takes in water." },
-  { word: "hedge",     ipa: "/hedʒ/",        tr: "живая изгородь", def: "A row of bushes forming a border between fields or gardens." },
-  { word: "field",     ipa: "/fiːld/",       tr: "поле",         def: "An area of open land, often used for growing crops." },
-  { word: "crop",      ipa: "/krɒp/",        tr: "урожай, культура", def: "A plant grown in large amounts, especially for food." },
-  { word: "harvest",   ipa: "/ˈhɑːvɪst/",    tr: "урожай, сбор урожая", def: "The process of gathering crops, or the crops gathered." },
-  { word: "soil",      ipa: "/sɔɪl/",        tr: "почва",        def: "The top layer of earth in which plants grow." },
-  { word: "barn",      ipa: "/bɑːn/",        tr: "сарай, амбар", def: "A large farm building used to store crops or house animals." },
-  { word: "stable",    ipa: "/ˈsteɪbl/",     tr: "конюшня",      def: "A building where horses are kept." },
-  { word: "pond",      ipa: "/pɒnd/",        tr: "пруд",         def: "A small area of still water, smaller than a lake." },
-  { word: "stream",    ipa: "/striːm/",      tr: "ручей",        def: "A small narrow river." },
-  { word: "meadow",    ipa: "/ˈmedəʊ/",      tr: "луг",          def: "A field covered in grass, sometimes used for hay." },
-  { word: "cattle",    ipa: "/ˈkætl/",       tr: "крупный рогатый скот", def: "Cows and bulls kept on a farm." },
-  { word: "livestock", ipa: "/ˈlaɪvstɒk/",   tr: "домашний скот", def: "Animals kept on a farm for meat, milk, or other products." },
-  { word: "flock",     ipa: "/flɒk/",        tr: "стадо (овец, птиц)", def: "A group of sheep, goats or birds." },
-  { word: "herd",      ipa: "/hɜːd/",        tr: "стадо (крупного скота)", def: "A large group of animals, especially cows." },
-  { word: "wool",      ipa: "/wʊl/",         tr: "шерсть",       def: "The soft thick hair of sheep, used to make clothing." },
-  { word: "hay",       ipa: "/heɪ/",         tr: "сено",         def: "Grass that has been cut and dried, used to feed animals." },
-  { word: "plough",    ipa: "/plaʊ/",        tr: "плуг, пахать", def: "A farm tool used to turn over soil before planting." },
-  { word: "seed",      ipa: "/siːd/",        tr: "семя",         def: "A small object produced by a plant from which a new plant grows." },
-  { word: "manure",    ipa: "/məˈnjʊə/",     tr: "навоз",        def: "Animal waste used to make soil more fertile." },
-  { word: "orchard",   ipa: "/ˈɔːtʃəd/",     tr: "фруктовый сад", def: "A piece of land where fruit trees are grown." },
-  { word: "vineyard",  ipa: "/ˈvɪnjəd/",     tr: "виноградник",  def: "An area of land where grapes are grown." },
-  { word: "cockerel",  ipa: "/ˈkɒkərəl/",    tr: "петух (молодой)", def: "A young male chicken." },
-  { word: "shepherd",  ipa: "/ˈʃepəd/",      tr: "пастух",       def: "A person who takes care of sheep." },
-  { word: "scarecrow", ipa: "/ˈskeəkrəʊ/",   tr: "чучело",       def: "A figure made to look like a person, used to scare birds away." },
-  { word: "gate",      ipa: "/geɪt/",        tr: "ворота, калитка", def: "A barrier used to open and close an entrance in a fence." },
-  { word: "fence",     ipa: "/fens/",        tr: "забор",        def: "A structure that surrounds an area of land." },
-  { word: "tractor",   ipa: "/ˈtræktə/",     tr: "трактор",      def: "A powerful vehicle used to pull farm machinery." },
-  { word: "irrigate",  ipa: "/ˈɪrɪgeɪt/",    tr: "поливать/оросить", def: "To supply land with water to help crops grow." },
-  { word: "fertile",   ipa: "/ˈfɜːtaɪl/",    tr: "плодородный",  def: "Describes land that is good for growing plants." },
-  { word: "rural",     ipa: "/ˈrʊərəl/",     tr: "сельский",     def: "Relating to the countryside, not the city." },
-  { word: "graze",     ipa: "/greɪz/",       tr: "пастись",      def: "When animals eat grass growing in a field." }
+  // 1. NATURE
+  { word: "branch",   ipa: "/brɑːntʃ/",    tr: "ветка",         def: "A part of a tree that grows out from the trunk." },
+  { word: "bush",     ipa: "/bʊʃ/",        tr: "куст",          def: "A plant with many small branches growing directly from the ground." },
+  { word: "cliff",    ipa: "/klɪf/",       tr: "утес, скала",   def: "A high area of rock with a very steep side, often near the sea." },
+  { word: "fence",    ipa: "/fens/",       tr: "забор",         def: "A structure of wood or wire that divides two areas of land." },
+  { word: "field",    ipa: "/fiːld/",      tr: "поле",          def: "An area of land used for growing crops or keeping animals." },
+  { word: "gate",     ipa: "/geɪt/",       tr: "ворота, калитка", def: "A part of a fence or wall that opens and closes like a door." },
+  { word: "grass",    ipa: "/grɑːs/",      tr: "трава",         def: "A low green plant that covers the ground in fields and gardens." },
+  { word: "hedge",    ipa: "/hedʒ/",       tr: "живая изгородь", def: "A line of bushes planted very close together." },
+  { word: "hill",     ipa: "/hɪl/",        tr: "холм",          def: "An area of land that is higher than the surrounding land." },
+  { word: "lake",     ipa: "/leɪk/",       tr: "озеро",         def: "A large area of water surrounded by land." },
+  { word: "leaf",     ipa: "/liːf/",       tr: "лист (мн.ч. leaves)", def: "One of the flat, green parts of a plant." },
+  { word: "mud",      ipa: "/mʌd/",        tr: "грязь",         def: "Earth that has become wet and sticky." },
+  { word: "path",     ipa: "/pɑːθ/",       tr: "тропинка",      def: "A narrow track for walking on." },
+  { word: "rocks",    ipa: "/rɒks/",       tr: "горные породы, валуны", def: "Large, hard pieces of stone." },
+  { word: "sticks",   ipa: "/stɪks/",      tr: "палки",         def: "Long, thin pieces of wood fallen from trees." },
+  { word: "stones",   ipa: "/stəʊnz/",     tr: "камни (мелкие)", def: "Small, hard pieces of rock found on the ground." },
+  { word: "stream",   ipa: "/striːm/",     tr: "ручей",         def: "A small, narrow river." },
+  { word: "valley",   ipa: "/ˈvæli/",      tr: "долина",        def: "An area of low land between hills or mountains." },
+  { word: "well",     ipa: "/wel/",        tr: "колодец",       def: "A deep hole in the ground to get water." },
+  { word: "wood",     ipa: "/wʊd/",        tr: "лес, роща",     def: "An area of land covered with trees, smaller than a forest." },
+
+  // 2. ON A FARM
+  { word: "barn",      ipa: "/bɑːn/",       tr: "сарай, амбар",  def: "A large farm building for storing grain or keeping animals." },
+  { word: "cockerel",  ipa: "/ˈkɒkərəl/",   tr: "петух",         def: "A young male chicken." },
+  { word: "cow",       ipa: "/kaʊ/",        tr: "корова",        def: "A large female animal kept on farms to produce milk or meat." },
+  { word: "donkey",    ipa: "/ˈdɒŋki/",     tr: "осел",          def: "An animal like a small horse with long ears." },
+  { word: "farmhouse", ipa: "/ˈfɑːmhaʊs/",  tr: "фермерский дом", def: "The main house on a farm where the farmer lives." },
+  { word: "hens",      ipa: "/henz/",       tr: "курицы",        def: "Adult female chickens kept for their eggs." },
+  { word: "lambs",     ipa: "/læmz/",       tr: "ягнята",        def: "Young sheep." },
+  { word: "sheep",     ipa: "/ʃiːp/",       tr: "овца / овцы",   def: "Farm animals with thick wool." },
+  { word: "tractor",   ipa: "/ˈtræktə/",    tr: "трактор",       def: "A strong vehicle with large wheels used on farms." },
+
+  // EXTRA (Verbs and bold words from texts c and d)
+  { word: "wheat",     ipa: "/wiːt/",       tr: "пшеница",       def: "A plant whose grain is used for making flour." },
+  { word: "crops",     ipa: "/krɒps/",      tr: "сельхоз культуры, урожай", def: "Plants such as wheat or potatoes grown in large amounts." },
+  { word: "ripe",      ipa: "/raɪp/",       tr: "спелый",        def: "Ready to be picked and eaten (about fruit or crops)." },
+  { word: "grow",      ipa: "/grəʊ/",       tr: "расти, выращивать", def: "To increase in size, or to plant and look after crops." },
+  { word: "plant",     ipa: "/plɑːnt/",     tr: "сажать",        def: "To put a seed or young plant in the ground so it will grow." },
+  { word: "harvest",   ipa: "/ˈhɑːvɪst/",   tr: "собирать урожай", def: "To collect crops from the fields." },
+  { word: "pick",      ipa: "/pɪk/",        tr: "собирать, срывать (ягоды)", def: "To take flowers or fruit from the plant they grow on." }
 ];
 
 const STORAGE_KEY = "farmVocabProgress";
@@ -860,16 +867,19 @@ function checkMatchPair() {
 let currentGapsSet = [];
 
 const GAP_SENTENCES = [
-  { word: "hedge",     sentence: "They planted a tall ___ around the garden to keep the sheep out." },
-  { word: "harvest",   sentence: "In September, farmers begin the ___ of wheat and barley." },
-  { word: "barn",      sentence: "We keep the tractor and tools inside the old ___." },
-  { word: "flock",     sentence: "The shepherd led a ___ of sheep across the meadow." },
-  { word: "soil",      sentence: "This part of the field has very fertile ___ for growing vegetables." },
-  { word: "orchard",   sentence: "In spring, the apple trees in the ___ are covered in blossom." },
-  { word: "irrigate",  sentence: "They use a system of pipes to ___ the dry fields in summer." },
-  { word: "graze",     sentence: "The cattle ___ peacefully in the meadow all afternoon." },
-  { word: "scarecrow", sentence: "A ___ stood in the middle of the field to frighten away the crows." },
-  { word: "manure",    sentence: "Farmers often use ___ to make the soil richer before planting." }
+  { word: "path",      sentence: "We walked along a narrow ___ through the beautiful green wood." },
+  { word: "tractor",   sentence: "The farmer drives a big red ___ to work in the fields." },
+  { word: "cliff",     sentence: "Don't go near the edge of the ___, it's a very high drop down to the sea!" },
+  { word: "well",      sentence: "Before they had running water, people used a bucket to get water from a ___." },
+  { word: "lambs",     sentence: "In spring, you can see many little ___ running around their mothers." },
+  { word: "cockerel",  sentence: "The ___ wakes everyone up very early in the morning." },
+  { word: "hill",      sentence: "We climbed to the top of the ___ to see the valley below." },
+  { word: "ripe",      sentence: "Strawberries are usually red and ___ in June and July." },
+  { word: "fence",     sentence: "They built a wooden ___ around the garden to keep the animals out." },
+  { word: "barn",      sentence: "We store the wheat and keep the tractor inside the old ___." },
+  { word: "hens",      sentence: "Every morning my grandmother goes to collect fresh eggs from the ___." },
+  { word: "stream",    sentence: "We sat by the small ___ and listened to the water flowing." },
+  { word: "wheat",     sentence: "Farmers grow a lot of ___ in the east of England to make bread." }
 ];
 
 function renderGaps() {
