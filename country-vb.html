@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Country & Farm — Lexical Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-head:'Fraunces',Georgia,serif;
+  --font-body:'Plus Jakarta Sans',system-ui,sans-serif;
+  --font-hand:'Caveat',cursive;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;
+  --r-sm:8px;--r:16px;--r-lg:22px;
+  --t-xs:12px;--t-sm:14px;--t-md:16px;--t-lg:20px;--t-xl:26px;--t-2xl:34px;
+  --tr:.25s cubic-bezier(.22,1,.36,1);
+}
+[data-theme="notebook"]{
+  --bg-1:#c8a87a;--bg-2:#a88660;--bg-3:#8a6a47;
+  --surface:#f4ecd6;--surface-2:#ece0c2;
+  --ink:#2d2a24;--ink-soft:#5f5644;--ink-faint:#9a8c70;
+  --acc:#4a7c4e;--acc-strong:#335c38;
+  --ok:#4a7c4e;--bad:#b94a3b;--brass:#c9a96e;
+  --line:rgba(140,100,60,.28);
+  --paper-tex:repeating-linear-gradient(0deg,transparent 0 31px,rgba(180,150,90,.10) 31px 32px),radial-gradient(circle at 18% 20%,rgba(255,255,255,.5),transparent 45%);
+  --sh-sm:0 1px 2px rgba(80,50,20,.10),0 2px 6px rgba(80,50,20,.08);
+  --sh:0 2px 4px rgba(80,50,20,.10),0 10px 24px rgba(80,50,20,.14);
+  --sh-lg:0 8px 18px rgba(80,50,20,.16),0 24px 48px rgba(80,50,20,.20);
+  --surface-grad:linear-gradient(135deg,#fbf4e0,#ecdfbe);
+  --card-border:1px solid #c8b385;
+}
+[data-theme="fresh"]{
+  --bg-1:#f3f4dd;--bg-2:#eef0e2;--bg-3:#f7f8ec;
+  --surface:#fcfdf4;--surface-2:#f4f6e6;
+  --ink:#2c3318;--ink-soft:#5b6147;--ink-faint:#9ca085;
+  --acc:#2f7fc4;--acc-strong:#1d5e9c;
+  --ok:#5a9e3a;--bad:#d9694a;--brass:#d9d63f;
+  --line:rgba(120,130,70,.18);
+  --paper-tex:none;
+  --sh-sm:3px 3px 6px rgba(180,185,140,.35),-3px -3px 6px rgba(255,255,255,.9);
+  --sh:5px 5px 12px rgba(180,185,140,.4),-5px -5px 12px rgba(255,255,255,.92);
+  --sh-lg:9px 9px 22px rgba(180,185,140,.45),-9px -9px 22px rgba(255,255,255,.95);
+  --surface-grad:linear-gradient(135deg,#fcfdf4,#f4f6e6);
+  --card-border:1px solid rgba(255,255,255,.7);
+}
+[data-theme="focus"]{
+  --bg-1:#222733;--bg-2:#161a22;--bg-3:#1a1f29;
+  --surface:rgba(42,48,60,.55);--surface-2:rgba(52,60,74,.5);
+  --ink:#e8eaed;--ink-soft:#aab2bd;--ink-faint:#6b7382;
+  --acc:#2dd4bf;--acc-strong:#14b8a6;
+  --ok:#2dd4bf;--bad:#f87171;--brass:#2dd4bf;
+  --line:rgba(255,255,255,.12);
+  --paper-tex:none;
+  --sh-sm:0 1px 2px rgba(0,0,0,.4);
+  --sh:0 4px 16px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
+  --sh-lg:0 12px 40px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.1);
+  --surface-grad:linear-gradient(135deg,rgba(58,66,82,.6),rgba(40,46,58,.5));
+  --card-border:1px solid rgba(255,255,255,.12);
+  --glass:blur(14px) saturate(1.2);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:var(--font-body);color:var(--ink);min-height:100vh;padding:var(--s7) var(--s4);
+  background:radial-gradient(ellipse at 30% 15%,var(--bg-1) 0%,transparent 60%),radial-gradient(ellipse at 80% 85%,var(--bg-2) 0%,transparent 60%),var(--bg-3);-webkit-font-smoothing:antialiased;}
+.planner{max-width:1080px;margin:0 auto;background:var(--surface);background-image:var(--paper-tex);
+  border-radius:var(--r-lg);position:relative;padding:var(--s6) var(--s6) var(--s6) var(--s7);
+  box-shadow:var(--sh-lg);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);}
+[data-theme="focus"] .planner{border:var(--card-border);}
+.spine{display:none;}
+[data-theme="notebook"] .spine{display:flex;position:absolute;left:0;top:0;bottom:0;width:42px;
+  background:linear-gradient(90deg,#5a3f28,#7a5638 50%,#5a3f28);border-radius:var(--r-lg) 0 0 var(--r-lg);
+  flex-direction:column;align-items:center;justify-content:space-around;padding:var(--s6) 0;box-shadow:inset -3px 0 6px rgba(0,0,0,.3);}
+.ring{width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#f0d68a,#c9a96e 50%,#6b4f2e);
+  box-shadow:inset 0 -2px 3px rgba(0,0,0,.4),0 2px 3px rgba(0,0,0,.3);border:1px solid #4a3520;}
+[data-theme="fresh"] .planner,[data-theme="focus"] .planner{padding-left:var(--s6);}
+[data-theme="fresh"] .planner::before,[data-theme="focus"] .planner::before{content:'';position:absolute;left:0;top:18px;bottom:18px;width:5px;border-radius:5px;background:linear-gradient(180deg,var(--acc),var(--acc-strong));}
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--s4);margin-bottom:var(--s5);padding-bottom:var(--s4);border-bottom:2px dashed var(--line);}
+.hdr__title h1{font-family:var(--font-head);font-weight:600;font-size:var(--t-2xl);margin:0;color:var(--acc-strong);letter-spacing:-.5px;line-height:1.1;}
+.hdr__title p{margin:var(--s1) 0 0;color:var(--ink-soft);font-size:var(--t-sm);}
+.hdr__right{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;justify-content:flex-end;}
+.audio{display:flex;align-items:center;gap:var(--s2);background:var(--surface-grad);border:var(--card-border);border-radius:var(--r-lg);padding:var(--s1) var(--s3) var(--s1) var(--s1);box-shadow:var(--sh-sm);}
+.audio__toggle{width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,var(--acc),var(--acc-strong));color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm);transition:transform var(--tr);flex-shrink:0;}
+.audio__toggle:hover{transform:scale(1.08);}
+.audio__toggle:active{transform:scale(.94);}
+.audio__toggle.is-off{background:linear-gradient(135deg,#9a9a9a,#6f6f6f);}
+.audio__speed{display:flex;align-items:center;gap:var(--s2);font-size:var(--t-xs);color:var(--ink-soft);}
+.audio__speed input{width:64px;accent-color:var(--acc);cursor:pointer;}
+.audio__speed b{font-variant-numeric:tabular-nums;color:var(--acc-strong);min-width:30px;}
+.stamp{font-family:var(--font-head);text-align:center;line-height:1;padding:8px 14px;border-radius:10px;border:2px solid var(--acc);color:var(--acc-strong);background:color-mix(in srgb,var(--acc) 10%,transparent);transform:rotate(-4deg);box-shadow:var(--sh-sm);}
+.stamp span{display:block;font-size:10px;letter-spacing:2px;opacity:.7;}
+.stamp b{display:block;font-size:20px;}
+[data-theme="fresh"] .stamp{border-color:var(--brass);color:#7a6e10;background:color-mix(in srgb,var(--brass) 22%,transparent);}
+.progress{display:flex;align-items:center;gap:var(--s4);margin-bottom:var(--s4);}
+.progress__bar{flex:1;height:10px;border-radius:10px;overflow:hidden;background:rgba(0,0,0,.12);box-shadow:inset 0 1px 3px rgba(0,0,0,.25);}
+[data-theme="focus"] .progress__bar{background:rgba(0,0,0,.4);}
+.progress__fill{height:100%;border-radius:10px;width:0;background:linear-gradient(90deg,var(--brass),var(--acc));transition:width .5s cubic-bezier(.22,1,.36,1);}
+.progress__label{font-size:16px;color:var(--ink-soft);white-space:nowrap;font-family:var(--font-hand);}
+.tabs{display:flex;gap:var(--s2);margin-bottom:var(--s5);flex-wrap:wrap;}
+.tab{display:flex;align-items:center;gap:var(--s2);background:var(--surface-grad);border:var(--card-border);padding:var(--s2) var(--s4);border-radius:var(--r-sm);font-family:var(--font-body);font-size:var(--t-sm);color:var(--ink-soft);cursor:pointer;transition:all var(--tr);box-shadow:var(--sh-sm);white-space:nowrap;}
+.tab:hover:not(:disabled){transform:translateY(-2px);}
+.tab.is-active{background:linear-gradient(180deg,var(--acc),var(--acc-strong));color:#fff;border-color:transparent;}
+.tab:disabled{opacity:.4;cursor:not-allowed;}
+.tab__num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:700;background:rgba(0,0,0,.08);}
+[data-theme="focus"] .tab__num{background:rgba(255,255,255,.12);}
+.tab.is-active .tab__num{background:rgba(255,255,255,.25);}
+.screen{display:none;animation:fade .4s var(--tr);}
+.screen.is-active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.intro h2{font-family:var(--font-head);font-weight:600;font-size:var(--t-xl);margin:0 0 var(--s1);color:var(--acc-strong);}
+.intro p{margin:0 0 var(--s5);color:var(--ink-soft);font-size:var(--t-sm);}
+.nav{display:flex;justify-content:space-between;gap:var(--s3);margin-top:var(--s6);padding-top:var(--s4);border-top:2px dashed var(--line);}
+.btn{font-family:var(--font-body);font-size:var(--t-md);font-weight:600;padding:var(--s3) var(--s5);border:none;border-radius:var(--r-sm);cursor:pointer;transition:transform .12s,box-shadow var(--tr);}
+.btn--primary{background:linear-gradient(180deg,var(--acc),var(--acc-strong));color:#fff;box-shadow:var(--sh);}
+.btn--primary:hover{transform:translateY(-2px);box-shadow:var(--sh-lg);}
+.btn--primary:active{transform:translateY(1px);}
+.btn--ghost{background:var(--surface-grad);color:var(--ink-soft);border:var(--card-border);box-shadow:var(--sh-sm);}
+.btn--ghost:hover{transform:translateY(-2px);}
+.btn[hidden]{display:none;}
+.spk{position:relative;border:none;cursor:pointer;flex-shrink:0;padding:0;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--acc),var(--acc-strong));box-shadow:var(--sh-sm);transition:transform var(--tr);}
+.spk:hover{transform:scale(1.12);}
+.spk:active{transform:scale(.95);}
+.spk--inline{width:38px;height:38px;font-size:15px;}
+.spk--sm{width:30px;height:30px;font-size:12px;}
+.spk__w{position:absolute;inset:0;border-radius:50%;pointer-events:none;opacity:0;}
+.spk__w i{position:absolute;inset:0;border-radius:50%;border:2px solid var(--acc);opacity:0;}
+.spk.is-on .spk__w{opacity:1;}
+.spk.is-on .spk__w i{animation:wave 1.4s ease-out infinite;}
+.spk.is-on .spk__w i:nth-child(2){animation-delay:.45s;}
+.spk.is-on .spk__w i:nth-child(3){animation-delay:.9s;}
+@keyframes wave{0%{transform:scale(1);opacity:.7;}100%{transform:scale(2.2);opacity:0;}}
+.no-tts .spk,.no-tts .audio{display:none;}
+.fsec{margin-bottom:var(--s6);}
+.fsec:last-child{margin-bottom:0;}
+.fsec__h{font-family:var(--font-head);font-weight:600;font-size:var(--t-lg);color:var(--acc-strong);margin:0 0 var(--s4);padding-bottom:var(--s2);border-bottom:2px dashed var(--line);display:flex;align-items:center;gap:var(--s2);}
+.fsec__count{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 var(--s2);background:var(--acc);color:#fff;border-radius:12px;font-size:var(--t-xs);font-weight:700;}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--s4);}
+.fcard{perspective:1200px;height:152px;cursor:pointer;}
+.fcard__in{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.22,1,.36,1);transform-style:preserve-3d;}
+.fcard:hover .fcard__in{transform:translateY(-4px);}
+.fcard.flip .fcard__in{transform:rotateY(180deg);}
+.fcard.flip:hover .fcard__in{transform:rotateY(180deg) translateY(-4px);}
+.fface{position:absolute;inset:0;border-radius:var(--r);padding:var(--s4);backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;overflow:hidden;border:var(--card-border);box-shadow:var(--sh);}
+.fface--f{justify-content:center;background:var(--surface-grad);}
+.fface--b{justify-content:flex-start;transform:rotateY(180deg);background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 18%,var(--surface)),var(--surface-2));}
+.fhint{position:absolute;top:8px;right:12px;font-size:9px;letter-spacing:1.5px;color:var(--ink-faint);font-weight:700;white-space:nowrap;max-width:60px;overflow:hidden;text-overflow:ellipsis;}
+.frow{display:flex;align-items:center;gap:var(--s3);}
+.frow--top{margin-bottom:var(--s2);}
+.ftext{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+.ftext b{font-family:var(--font-head);font-size:var(--t-lg);color:var(--acc-strong);line-height:1.1;word-break:break-word;}
+.ftext em{font-size:var(--t-xs);color:var(--ink-soft);font-style:normal;opacity:.8;}
+.fbw{font-weight:700;color:var(--acc-strong);font-size:var(--t-sm);}
+.fdef{margin:0;font-size:var(--t-sm);line-height:1.45;color:var(--ink);overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--acc) transparent;}
+.fdef::-webkit-scrollbar{width:4px;}
+.fdef::-webkit-scrollbar-thumb{background:var(--acc);border-radius:4px;}
+.ftr{font-size:var(--t-sm);color:var(--acc-strong);font-weight:600;margin:2px 0 6px;line-height:1.3;word-break:break-word;}
+.match{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--s5);}
+.mdefs{display:flex;flex-direction:column;gap:var(--s3);}
+.mrow{background:var(--surface-grad);padding:var(--s3) var(--s4);border-radius:var(--r);border-left:4px solid var(--bad);box-shadow:var(--sh-sm);display:flex;align-items:center;gap:var(--s3);min-height:60px;border:var(--card-border);}
+.mrow__t{flex:1;font-size:var(--t-sm);line-height:1.4;}
+.mdrop{min-width:108px;min-height:38px;border:2px dashed var(--line);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;padding:0 var(--s2);background:rgba(0,0,0,.04);font-size:var(--t-sm);color:var(--ink-faint);transition:all var(--tr);text-align:center;}
+[data-theme="focus"] .mdrop{background:rgba(0,0,0,.25);}
+.mdrop.over{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 15%,transparent);}
+.mdrop.ok{border-style:solid;border-color:var(--ok);color:var(--acc-strong);font-weight:700;background:color-mix(in srgb,var(--ok) 18%,transparent);}
+.mdrop.bad{border-style:solid;border-color:var(--bad);color:var(--bad);background:color-mix(in srgb,var(--bad) 18%,transparent);animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+.mwords{display:flex;flex-direction:column;gap:var(--s2);align-content:flex-start;}
+.chip{background:linear-gradient(180deg,var(--brass),var(--acc-strong));color:#fff;padding:var(--s2) var(--s4);border-radius:var(--r-sm);font-weight:600;font-size:var(--t-sm);cursor:grab;box-shadow:var(--sh-sm);border:var(--card-border);transition:transform .12s,opacity var(--tr);user-select:none;text-align:center;}
+.chip:active{cursor:grabbing;transform:scale(.96);}
+.chip.is-selected{outline:3px solid var(--acc);outline-offset:2px;transform:scale(1.05);}
+.chip.is-used{opacity:0;pointer-events:none;height:0;padding:0;margin:0;overflow:hidden;}
+.chip.dragging{opacity:.4;}
+.mwords__hint{font-family:var(--font-hand);font-size:16px;color:var(--ink-soft);margin-bottom:var(--s1);}
+.mdrop .chip{box-shadow:none;padding:var(--s1) var(--s3);}
+.gaps{display:flex;flex-direction:column;gap:var(--s4);}
+.grow{background:var(--surface-grad);border:var(--card-border);border-radius:var(--r);padding:var(--s4);box-shadow:var(--sh-sm);display:flex;align-items:center;gap:var(--s3);font-size:var(--t-md);line-height:1.6;flex-wrap:wrap;}
+.grow__num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;font-size:var(--t-xs);font-weight:700;display:flex;align-items:center;justify-content:center;}
+.gtext{flex:1;min-width:200px;}
+.ginput{font-family:var(--font-body);font-size:var(--t-md);font-weight:600;border:none;border-bottom:2px solid var(--acc);background:rgba(0,0,0,.04);color:var(--acc-strong);padding:2px var(--s2);border-radius:var(--r-sm) var(--r-sm) 0 0;min-width:90px;width:120px;text-align:center;outline:none;transition:all var(--tr);}
+[data-theme="focus"] .ginput{background:rgba(0,0,0,.3);}
+.ginput:focus{background:color-mix(in srgb,var(--acc) 12%,transparent);}
+.ginput.ok{border-color:var(--ok);color:var(--acc-strong);background:color-mix(in srgb,var(--ok) 16%,transparent);}
+.ginput.bad{border-color:var(--bad);color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent);animation:shake .3s;}
+.gmark{font-weight:700;font-size:var(--t-lg);width:20px;}
+.gmark.ok{color:var(--ok);}
+.gmark.bad{color:var(--bad);}
+.gaps__foot{display:flex;align-items:center;gap:var(--s4);margin-top:var(--s2);flex-wrap:wrap;}
+.gaps__score{font-family:var(--font-hand);font-size:18px;color:var(--acc-strong);}
+.speak{display:grid;grid-template-columns:1fr 280px;gap:var(--s5);align-items:start;}
+.scards{display:flex;flex-direction:column;gap:var(--s4);}
+.scard{background:var(--surface-grad);border:var(--card-border);border-radius:var(--r);padding:var(--s5);box-shadow:var(--sh);border-left:4px solid var(--acc);}
+.scard__q{display:flex;align-items:flex-start;gap:var(--s3);}
+.scard__q b{font-family:var(--font-head);font-size:var(--t-lg);color:var(--acc-strong);line-height:1.25;flex:1;}
+.scard__hint{margin-top:var(--s3);padding:var(--s2) var(--s3);border-radius:var(--r-sm);background:color-mix(in srgb,var(--brass) 18%,transparent);font-size:var(--t-sm);color:var(--ink-soft);display:flex;align-items:center;gap:var(--s2);}
+.scard__hint .lab{font-family:var(--font-hand);font-size:16px;color:var(--acc-strong);}
+.checklist{position:sticky;top:var(--s4);background:var(--surface-grad);border:var(--card-border);border-radius:var(--r);padding:var(--s5);box-shadow:var(--sh);}
+.checklist h4{font-family:var(--font-head);margin:0 0 var(--s3);color:var(--acc-strong);font-size:var(--t-md);}
+.citem{display:flex;align-items:center;gap:var(--s3);padding:var(--s2) 0;cursor:pointer;font-size:var(--t-sm);user-select:none;transition:opacity var(--tr);}
+.citem__box{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all var(--tr);font-size:14px;color:transparent;background:transparent;}
+.citem.done .citem__box{background:var(--acc);border-color:var(--acc);color:#fff;}
+.citem.done span{text-decoration:line-through;color:var(--ink-faint);}
+.checklist__bar{height:8px;border-radius:8px;background:rgba(0,0,0,.12);overflow:hidden;margin-top:var(--s3);}
+[data-theme="focus"] .checklist__bar{background:rgba(0,0,0,.4);}
+.checklist__fill{height:100%;background:linear-gradient(90deg,var(--brass),var(--acc));width:0;transition:width var(--tr);}
+.finish{text-align:center;padding:var(--s5) var(--s4);}
+.finish__emoji{font-size:64px;animation:pop .5s var(--tr);}
+@keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.2);}100%{transform:scale(1);}}
+.finish h2{font-family:var(--font-head);font-size:var(--t-2xl);color:var(--acc-strong);margin:var(--s3) 0 var(--s2);}
+.finish>p{color:var(--ink-soft);margin:0 0 var(--s5);}
+.stats{display:flex;gap:var(--s4);justify-content:center;flex-wrap:wrap;margin-bottom:var(--s6);}
+.stat{background:var(--surface-grad);border:var(--card-border);border-radius:var(--r);padding:var(--s4) var(--s5);min-width:120px;box-shadow:var(--sh);}
+.stat b{display:block;font-family:var(--font-head);font-size:var(--t-2xl);color:var(--acc-strong);}
+.stat span{font-size:var(--t-xs);color:var(--ink-soft);}
+.credit{text-align:center;margin-top:var(--s5);font-size:var(--t-xs);color:var(--ink-faint);}
+.credit a{color:var(--acc-strong);font-weight:600;text-decoration:none;}
+.credit a:hover{text-decoration:underline;}
+@media (max-width:720px){
+  body{padding:var(--s4) var(--s2);}
+  .planner{padding:var(--s5) var(--s4);}
+  [data-theme="notebook"] .spine{display:none;}
+  [data-theme="notebook"] .planner{padding-left:var(--s4);}
+  .hdr{flex-direction:column;}
+  .hdr__right{justify-content:flex-start;}
+  .match{grid-template-columns:1fr;}
+  .mwords{flex-direction:row;flex-wrap:wrap;}
+  .fgrid{grid-template-columns:1fr;}
+  .speak{grid-template-columns:1fr;}
+  .checklist{position:static;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important;}
+}
+</style>
+</head>
+<body data-theme="fresh">
+<div class="planner" id="app"></div>
+<script>
+const DATA = {
+  "title": "The Country & Farm",
+  "subtitle": "English File Intermediate+ (p. 160)",
+  "language": "en-GB",
+  "unit": "160",
+  "author": {"nick": "@AlexandraGes_ESL", "link": ""},
+  "enabled": ["flashcards", "match", "gaps", "speak"],
+  "quiz": false,
+  "sections": [
+    {
+      "title": "1. Nature",
+      "emoji": "🌲",
+      "words": [
+        {"word": "branch", "ipa": "/brɑːntʃ/", "def": "A part of a tree that grows out from the trunk.", "tr": "ветка"},
+        {"word": "bush", "ipa": "/bʊʃ/", "def": "A shrub with many small branches.", "tr": "куст"},
+        {"word": "cliff", "ipa": "/klɪf/", "def": "A high, steep rock face, especially near the sea.", "tr": "утес"},
+        {"word": "fence", "ipa": "/fens/", "def": "A barrier made of wood or wire around an area.", "tr": "забор"},
+        {"word": "field", "ipa": "/fiːld/", "def": "An area of land used for crops or farm animals.", "tr": "поле"},
+        {"word": "gate", "ipa": "/ɡeɪt/", "def": "A movable barrier in a fence or wall opening.", "tr": "ворота/калитка"},
+        {"word": "grass", "ipa": "/ɡrɑːs/", "def": "Green plants with narrow leaves covering ground.", "tr": "трава"},
+        {"word": "hedge", "ipa": "/hedʒ/", "def": "A row of closely planted bushes forming a boundary.", "tr": "живая изгородь"},
+        {"word": "hill", "ipa": "/hɪl/", "def": "A naturally raised area of land, smaller than a mountain.", "tr": "холм"},
+        {"word": "lake", "ipa": "/leɪk/", "def": "A large body of water surrounded by land.", "tr": "озеро"},
+        {"word": "leaf (leaves)", "ipa": "/liːf/", "def": "The flat green part of a plant growing from a stem.", "tr": "лист (листья)"},
+        {"word": "mud", "ipa": "/mʌd/", "def": "Wet, sticky earth.", "tr": "грязь"},
+        {"word": "path", "ipa": "/pɑːθ/", "def": "A track created by walking for people or animals.", "tr": "тропинка"},
+        {"word": "rocks", "ipa": "/rɒks/", "def": "Solid mineral material forming part of the earth.", "tr": "скалы/камни"},
+        {"word": "sticks", "ipa": "/stɪks/", "def": "Small thin branches fallen from trees.", "tr": "палки"},
+        {"word": "stones", "ipa": "/stəʊnz/", "def": "Small pieces of rock.", "tr": "камни"},
+        {"word": "stream", "ipa": "/striːm/", "def": "A small, narrow natural river.", "tr": "ручей"},
+        {"word": "valley", "ipa": "/ˈvæli/", "def": "Low land between hills or mountains.", "tr": "долина"},
+        {"word": "well", "ipa": /wel/, "def": "A deep hole dug in the ground to get water.", "tr": "колодец"},
+        {"word": "wood", "ipa": "/wʊd/", "def": "A small forest with many trees.", "tr": "лес"}
+      ]
+    },
+    {
+      "title": "2. On a Farm",
+      "emoji": "🚜",
+      "words": [
+        {"word": "barn", "ipa": "/bɑːn/", "def": "A large agricultural building for storage or animals.", "tr": "амбар"},
+        {"word": "cockerel", "ipa": "/ˈkɒkərəl/", "def": "A young male chicken or rooster.", "tr": "петух"},
+        {"word": "cow", "ipa": "/kaʊ/", "def": "A mature female farm animal kept for milk or meat.", "tr": "корова"},
+        {"word": "donkey", "ipa": "/ˈdɒŋki/", "def": "A domesticated hoofed mammal related to the horse.", "tr": "осел"},
+        {"word": "farmhouse", "ipa": "/ˈfɑːmhaʊs/", "def": "The main house on a farm.", "tr": "фермерский дом"},
+        {"word": "hens", "ipa": "/henz/", "def": "Adult female chickens kept for eggs.", "tr": "куры"},
+        {"word": "lambs", "ipa": "/læmz/", "def": "Young sheep under one year old.", "tr": "ягнята"},
+        {"word": "sheep", "ipa": "/ʃiːp/", "def": "Woolly ruminant farm animals.", "tr": "овцы"},
+        {"word": "tractor", "ipa": "/ˈtræktə/", "def": "A powerful motor vehicle used for pulling farm machinery.", "tr": "трактор"},
+        {"word": "grow", "ipa": "/ɡrəʊ/", "def": "To cultivate crops or plants.", "tr": "выращивать"},
+        {"word": "harvest", "ipa": "/ˈhɑːvɪst/", "def": "To gather ripe crops from the fields.", "tr": "собирать урожай"},
+        {"word": "pick", "ipa": "/pɪk/", "def": "To pluck fruit or flowers from a plant.", "tr": "срывать/собирать"},
+        {"word": "ripe", "ipa": "/raɪp/", "def": "Fully developed and ready to be eaten.", "tr": "спелый"}
+      ]
+    }
+  ],
+  "match": {
+    "mode": "tr",
+    "pairs": [
+      {"left": "a sheer / steep", "right": "cliff"},
+      {"left": "a crystal-clear", "right": "stream"},
+      {"left": "an overgrown", "right": "hedge"},
+      {"left": "crunching dry", "right": "leaves underfoot"},
+      {"left": "a winding muddy", "right": "path"},
+      {"left": "harvest cereal", "right": "crops"},
+      {"left": "pick ripe", "right": "strawberries"},
+      {"left": "convert a stone", "right": "barn"}
+    ]
+  },
+  "gaps": [
+    {"text": "We walked along the edge of a sheer {cliff} overlooking the ocean.", "answer": "cliff"},
+    {"text": "A shallow, crystal-clear {stream} runs right behind the garden.", "answer": "stream"},
+    {"text": "The farmhouse is surrounded by an overgrown {hedge}.", "answer": "hedge"},
+    {"text": "After the rain, the winding mountain {path} was thick with mud.", "answer": "path"},
+    {"text": "Farmers harvest cereal {crops} such as wheat and barley in August.", "answer": "crops"},
+    {"text": "The apples are {ripe} enough to be picked directly from the tree.", "answer": "ripe"},
+    {"text": "They renovated an old stone {barn} into a luxury holiday home.", "answer": "barn"},
+    {"text": "In spring, you can see newborn {lambs} playing in the fields.", "answer": "lambs"}
+  ],
+  "speak": [
+    {"q": "If you could spend next weekend with zero phone signal, would you choose a cottage near a cliff or a modern farmhouse?", "hint": "Use: cliff, stream, farmhouse, barn"},
+    {"q": "Did your family grow any fruit or vegetables when you were growing up? Have you ever picked ripe berries?", "hint": "Use: grow crops, pick ripe fruit, orchard"},
+    {"q": "Describe the ideal countryside view for you: rolling hills, a deep valley, or dense woods?", "hint": "Use: valley, wood, hill, stream"},
+    {"q": "Have you ever visited a working farm? What animals did you see there?", "hint": "Use: cows, sheep, lambs, cockerel, tractor"}
+  ]
+};
+
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+function esc(s){const d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML;}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+function norm(s){return (s||'').trim().toLowerCase().replace(/[.,!?;:'"]/g,'');}
+
+let audioOn=true, rate=0.9;
+const ttsOK = 'speechSynthesis' in window;
+function say(text,btn){
+  if(!audioOn||!ttsOK)return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang=DATA.language||'en-GB';u.rate=rate;
+    if(btn){btn.classList.add('is-on');u.onend=u.onerror=()=>btn.classList.remove('is-on');}
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function spkBtn(text,cls){
+  return '<button class="spk '+cls+'" onclick="say(this.dataset.t,this)" data-t="'+esc(text).replace(/"/g,'&quot;')+'">🔊<span class="spk__w"><i></i><i></i><i></i></span></button>';
+}
+
+const SCREENS=[];
+if(DATA.sections.length) SCREENS.push('flashcards');
+if(DATA.quiz && DATA.sections.some(s=>s.words.some(w=>(w.tr||w.def||'').trim())) ) SCREENS.push('quiz');
+if(DATA.match.pairs.length) SCREENS.push('match');
+if(DATA.gaps.length) SCREENS.push('gaps');
+if(DATA.speak.length) SCREENS.push('speak');
+SCREENS.push('finish');
+const ENABLED=DATA.enabled||[];
+const VISIBLE=SCREENS.filter(s=>s==='finish'||s==='quiz'||ENABLED.includes(s));
+let cur=0;
+
+const LABELS={flashcards:'📇 Карточки',quiz:'🎯 Квиз',match:'🔗 Пары',gaps:'✏️ Пропуски',speak:'🎙️ Speaking',finish:'🏁 Итог'};
+
+function header(){
+  const a=DATA.author||{};
+  return '<div class="hdr"><div class="hdr__title"><h1>'+esc(DATA.title)+'</h1>'+
+    (DATA.subtitle?'<p>'+esc(DATA.subtitle)+'</p>':'')+'</div>'+
+    '<div class="hdr__right">'+
+    (DATA.unit?'<div class="stamp"><span>UNIT</span><b>'+esc(DATA.unit)+'</b></div>':'')+
+    (ttsOK?'<div class="audio"><button class="audio__toggle" id="audioToggle" title="Звук">🔊</button>'+
+      '<div class="audio__speed">скорость <input type="range" id="rate" min="0.5" max="1.2" step="0.05" value="0.9"><b id="rateV">0.9×</b></div></div>':'')+
+    '</div></div>';
+}
+function tabsBar(){
+  return '<div class="tabs">'+VISIBLE.map((s,i)=>
+    '<button class="tab'+(i===cur?' is-active':'')+'" data-i="'+i+'"><span class="tab__num">'+(i+1)+'</span>'+LABELS[s]+'</button>').join('')+'</div>';
+}
+function progressBar(){
+  const pct=Math.round(cur/(VISIBLE.length-1)*100);
+  return '<div class="progress"><div class="progress__bar"><div class="progress__fill" style="width:'+pct+'%"></div></div>'+
+    '<span class="progress__label">'+(cur+1)+' / '+VISIBLE.length+'</span></div>';
+}
+function navBar(){
+  return '<div class="nav">'+
+    '<button class="btn btn--ghost" id="prevBtn"'+(cur===0?' hidden':'')+'>← Назад</button>'+
+    '<button class="btn btn--primary" id="nextBtn"'+(cur===VISIBLE.length-1?' hidden':'')+'>Дальше →</button></div>';
+}
+
+function render(){
+  const scr=VISIBLE[cur];
+  let body='';
+  if(scr==='flashcards')body=viewFlash();
+  else if(scr==='match')body=viewMatch();
+  else if(scr==='gaps')body=viewGaps();
+  else if(scr==='quiz')body=viewQuiz();
+  else if(scr==='speak')body=viewSpeak();
+  else if(scr==='finish')body=viewFinish();
+  $('#app').innerHTML=header()+progressBar()+tabsBar()+'<div class="screen is-active">'+body+'</div>'+navBar();
+  bind();
+  if(scr==='match')bindMatch();
+  if(scr==='gaps')bindGaps();
+  if(scr==='speak')bindSpeak();
+  if(scr==='quiz')bindQuiz();
+  if(!ttsOK)document.body.classList.add('no-tts');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function viewFlash(){
+  return '<div class="intro"><h2>📇 Карточки лексики</h2><p>Нажми на карточку, чтобы перевернуть. Слушай произношение 🔊</p></div>'+
+    DATA.sections.map(s=>
+      '<div class="fsec"><h3 class="fsec__h">'+(s.emoji||'📚')+' '+esc(s.title)+'<span class="fsec__count">'+s.words.length+'</span></h3>'+
+      '<div class="fgrid">'+s.words.map(w=>
+        '<div class="fcard" onclick="this.classList.toggle(\'flip\')">'+
+        '<div class="fcard__in">'+
+          '<div class="fface ff-f"><span class="fhint">TAP</span><div class="frow"><div class="ftext"><b>'+esc(w.word)+'</b>'+
+            (w.ipa?'<em>'+esc(w.ipa)+'</em>':'')+'</div>'+(ttsOK?spkBtn(w.word,'spk--inline'):'')+'</div></div>'+
+          '<div class="fface ff-b"><span class="fhint">DEF</span>'+
+  '<div class="frow frow--top"><span class="fbw">'+esc(w.word)+'</span>'+(ttsOK?spkBtn(w.word,'spk--sm'):'')+'</div>'+
+  (w.tr?'<div class="ftr">'+esc(w.tr)+'</div>':'')+
+  '<p class="fdef">'+(w.def?esc(w.def):(w.tr?esc(w.tr):'—'))+'</p></div>'+
+        '</div></div>').join('')+'</div></div>').join('');
+}
+
+function viewMatch(){
+  const pairs=DATA.match.pairs;
+  const defs=pairs.map((p,i)=>'<div class="mrow" data-i="'+i+'"><span class="mrow__t">'+esc(p.right)+'</span>'+
+    '<div class="mdrop" data-i="'+i+'" data-ans="'+esc(p.left).replace(/"/g,'&quot;')+'">?</div></div>').join('');
+  const chips=shuffle(pairs).map(p=>'<div class="chip" draggable="true" data-w="'+esc(p.left).replace(/"/g,'&quot;')+'">'+esc(p.left)+'</div>').join('');
+  return '<div class="intro"><h2>🔗 Соедини словосочетания</h2><p>Перетащи правильное сочетание к существительному (или тапни фразу, затем ячейку).</p></div>'+
+    '<div class="match"><div class="mdefs">'+defs+'</div>'+
+    '<div class="mwords"><div class="mwords__hint">фразы ↓</div>'+chips+'</div></div>';
+}
+
+function viewGaps(){
+  return '<div class="intro"><h2>✏️ Заполни пропуски в предложениях</h2><p>Впиши правильное слово из списка изученной лексики.</p></div>'+
+    '<div class="gaps">'+DATA.gaps.map((g,i)=>{
+      const html=esc(g.text).replace(/\{[^}]+\}/,'<input class="ginput" data-i="'+i+'" placeholder="...">');
+      return '<div class="grow"><span class="grow__num">'+(i+1)+'</span><span class="gtext">'+html+'</span>'+
+        '<span class="gmark" data-m="'+i+'"></span></div>';
+    }).join('')+'</div>'+
+    '<div class="gaps__foot"><button class="btn btn--primary" id="checkGaps">Проверить</button>'+
+    '<span class="gaps__score" id="gapScore"></span></div>';
+}
+
+function viewSpeak(){
+  const cards=DATA.speak.map((s,i)=>'<div class="scard"><div class="scard__q"><b>'+(i+1)+'. '+esc(s.q)+'</b>'+
+    (ttsOK?spkBtn(s.q,'spk--inline'):'')+'</div>'+
+    (s.hint?'<div class="scard__hint"><span class="lab">подсказка:</span>'+esc(s.hint)+'</div>':'')+'</div>').join('');
+  const checks=DATA.speak.map((s,i)=>'<div class="citem" data-i="'+i+'"><span class="citem__box">✓</span><span>Вопрос '+(i+1)+'</span></div>').join('');
+  return '<div class="intro"><h2>🎙️ Speaking Practice</h2><p>Обсудите вопросы со студенткой. Отмечайте выполненные задания справа.</p></div>'+
+    '<div class="speak"><div class="scards">'+cards+'</div>'+
+    '<div class="checklist"><h4>Прогресс урока</h4>'+checks+
+    '<div class="checklist__bar"><div class="checklist__fill" id="ckFill"></div></div></div></div>';
+}
+
+function viewFinish(){
+  const a=DATA.author||{};
+  const credit=a.nick?'<div class="credit">Создано: '+(a.link?'<a href="'+esc(a.link)+'" target="_blank" rel="noopener">'+esc(a.nick)+'</a>':esc(a.nick))+'</div>':'';
+  const wc=DATA.sections.reduce((n,s)=>n+s.words.length,0);
+  return '<div class="finish"><div class="finish__emoji">🎉</div><h2>Отличная работа!</h2>'+
+    '<p>Лексика из урока успешно повторена и отработана в речи.</p>'+
+    '<div class="stats">'+
+      '<div class="stat"><b>'+wc+'</b><span>слов и фраз</span></div>'+
+      (DATA.gaps.length?'<div class="stat"><b>'+(window._gapScore||0)+'/'+DATA.gaps.length+'</b><span>пропусков</span></div>':'')+
+      (DATA.speak.length?'<div class="stat"><b>'+(window._spkDone||0)+'/'+DATA.speak.length+'</b><span>вопросов</span></div>':'')+
+    '</div>'+
+    '<button class="btn btn--primary" onclick="cur=0;render();">↻ Начать сначала</button>'+credit+'</div>';
+}
+
+function bind(){
+  $$('.tab').forEach(t=>t.onclick=()=>{cur=+t.dataset.i;render();});
+  const p=$('#prevBtn'),n=$('#nextBtn');
+  if(p)p.onclick=()=>{if(cur>0){cur--;render();}};
+  if(n)n.onclick=()=>{if(cur<VISIBLE.length-1){cur++;render();}};
+  const at=$('#audioToggle');
+  if(at)at.onclick=()=>{audioOn=!audioOn;at.classList.toggle('is-off',!audioOn);at.textContent=audioOn?'🔊':'🔇';if(!audioOn)speechSynthesis.cancel();};
+  const r=$('#rate');
+  if(r)r.oninput=()=>{rate=+r.value;$('#rateV').textContent=rate.toFixed(2)+'×';};
+}
+
+function bindMatch(){
+  let sel=null;
+  function place(drop,chip){
+    const ok=norm(chip.dataset.w)===norm(drop.dataset.ans);
+    if(ok){
+      drop.innerHTML='';drop.appendChild(chip);drop.classList.add('ok');drop.classList.remove('over');
+      chip.classList.add('is-used-visual');chip.setAttribute('draggable','false');chip.style.cursor='default';
+      checkDone();
+    }else{
+      drop.classList.add('bad');setTimeout(()=>drop.classList.remove('bad'),400);
+    }
+  }
+  $$('.chip').forEach(ch=>{
+    ch.ondragstart=e=>{e.dataTransfer.setData('w',ch.dataset.w);ch.classList.add('dragging');window._dragChip=ch;};
+    ch.ondragend=()=>ch.classList.remove('dragging');
+    ch.onclick=()=>{if(ch.classList.contains('is-used'))return;$$('.chip').forEach(c=>c.classList.remove('is-selected'));ch.classList.add('is-selected');sel=ch;};
+  });
+  $$('.mdrop').forEach(d=>{
+    d.ondragover=e=>{e.preventDefault();d.classList.add('over');};
+    d.ondragleave=()=>d.classList.remove('over');
+    d.ondrop=e=>{e.preventDefault();d.classList.remove('over');if(d.classList.contains('ok'))return;const ch=window._dragChip;if(ch)place(d,ch);};
+    d.onclick=()=>{if(d.classList.contains('ok')||!sel)return;place(d,sel);$$('.chip').forEach(c=>c.classList.remove('is-selected'));sel=null;};
+  });
+}
+function checkDone(){
+  if($$('.mdrop.ok').length===DATA.match.pairs.length){
+    const sc=$('#app').querySelector('.match');
+    if(sc&&!sc.querySelector('.done-msg')){
+      const m=document.createElement('div');m.className='gaps__score done-msg';m.style.cssText='grid-column:1/-1;text-align:center;';m.textContent='🎉 Все сочетания собраны!';sc.appendChild(m);
+    }
+  }
+}
+
+function bindGaps(){
+  $('#checkGaps').onclick=()=>{
+    let ok=0;
+    DATA.gaps.forEach((g,i)=>{
+      const inp=$('.ginput[data-i="'+i+'"]');const mk=$('.gmark[data-m="'+i+'"]');if(!inp)return;
+      const ans=(g.text.match(/\{([^}]+)\}/)||[])[1]||g.answer;
+      if(norm(inp.value)===norm(ans)){inp.className='ginput ok';mk.className='gmark ok';mk.textContent='✓';ok++;}
+      else{inp.className='ginput bad';mk.className='gmark bad';mk.textContent='✗';}
+    });
+    window._gapScore=ok;
+    $('#gapScore').textContent='Результат: '+ok+' / '+DATA.gaps.length;
+  };
+}
+
+function bindSpeak(){
+  let done=0;
+  $$('.citem').forEach(c=>c.onclick=()=>{
+    c.classList.toggle('done');
+    done=$$('.citem.done').length;window._spkDone=done;
+    $('#ckFill').style.width=(done/DATA.speak.length*100)+'%';
+  });
+}
+
+render();
+</script>
+</body>
+</html>
