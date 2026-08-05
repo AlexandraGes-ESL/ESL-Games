@@ -1,144 +1,142 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>На ферме — тренажер лексики</title>
+<title>Countryside Vocabulary Trainer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<!-- Fraunces дает отличный rustic/vintage вайб, Plus Jakarta - современную читаемость -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
 :root {
   --font-head: 'Fraunces', serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
 
-  --bg-main: #f4f3ee;
-  --bg-card: #ffffff;
-  --bg-card-hover: #faf9f5;
-  --border-color: #e2dfd2;
-  --border-active: #2d5a3f;
+  /* Earthy, warm countryside palette */
+  --bg-main: #f3efea; /* Creamy beige */
+  --bg-card: #fcfbfa; /* Off-white for cards */
+  --bg-card-hover: #ffffff;
+  --border-color: #dfd7c8; /* Warm gray/beige */
+  
+  --primary: #2b4c3b; /* Deep forest green */
+  --primary-hover: #1e362a;
+  --accent: #b85d38; /* Terracotta / Rust */
+  --accent-light: #fbece5;
 
-  --primary: #2d5a3f;
-  --primary-hover: #234631;
-  --accent: #c26d38;
-  --accent-light: #fbf2eb;
+  --text-main: #33312e; /* Soft black/brown */
+  --text-muted: #7a7369;
 
-  --text-main: #2b3028;
-  --text-muted: #6b7264;
-
-  --success: #3b7a57;
+  --success: #36704b;
   --error: #a8423b;
 
-  --radius-lg: 20px;
-  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-md: 16px;
   --radius-sm: 8px;
 
-  --shadow-sm: 0 2px 8px rgba(43, 48, 40, 0.04);
-  --shadow-md: 0 8px 24px rgba(43, 48, 40, 0.08);
-  --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Warm brownish shadows instead of harsh black */
+  --shadow-sm: 0 4px 12px rgba(60, 50, 40, 0.05);
+  --shadow-md: 0 12px 32px rgba(60, 50, 40, 0.08);
+  --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   background-color: var(--bg-main);
-  background-image:
-    radial-gradient(circle at 10% 10%, rgba(45, 90, 63, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 90% 90%, rgba(194, 109, 56, 0.05) 0%, transparent 40%);
+  /* SVG Noise texture for a cozy, paper-like feel */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
   color: var(--text-main);
   font-family: var(--font-body);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: clamp(1.2rem, 4vw, 2.5rem) 1rem;
+  padding: clamp(1.5rem, 4vw, 3rem) 1rem;
   -webkit-font-smoothing: antialiased;
 }
 
 .container { max-width: 860px; width: 100%; }
 
-/* Доступность: видимый фокус только при клавиатурной навигации */
-:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
-/* ===== ДЕКОРАТИВНЫЙ "ЗАБОР" — разделитель в стиле countryside, чистый CSS ===== */
+/* ===== DECORATIVE FENCE ===== */
 .fence-divider {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 6px;
-  height: 22px;
-  margin: 1.8rem 0;
-  opacity: 0.5;
+  gap: 8px;
+  height: 28px;
+  margin: 2.5rem 0;
+  opacity: 0.6;
 }
 .fence-divider span {
-  width: 4px;
+  width: 5px;
   height: 100%;
-  background: var(--primary);
-  border-radius: 2px 2px 0 0;
+  background: #c2b59b;
+  border-radius: 3px 3px 0 0;
 }
 .fence-divider span:nth-child(3n) { height: 60%; }
+.fence-divider span:nth-child(4n) { height: 80%; }
 
 /* HEADER */
-header { text-align: center; margin-bottom: 1.8rem; }
+header { text-align: center; margin-bottom: 2rem; }
 header h1 {
   font-family: var(--font-head);
-  font-size: clamp(1.8rem, 5vw, 2.4rem);
-  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 600;
   color: var(--primary);
   letter-spacing: -0.5px;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
 }
-header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
+header p { color: var(--text-muted); font-size: 1.1rem; font-weight: 500; font-style: italic; }
 
-/* ===== ПРОГРЕСС-ДАШБОРД ===== */
+/* ===== PROGRESS DASHBOARD ===== */
 .progress-dash {
   display: flex;
   justify-content: center;
-  gap: clamp(1rem, 4vw, 2.5rem);
+  gap: clamp(1.5rem, 4vw, 3rem);
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 1rem 1.5rem;
-  margin-bottom: 1.8rem;
+  padding: 1.2rem 2rem;
+  margin-bottom: 2rem;
   box-shadow: var(--shadow-sm);
   flex-wrap: wrap;
 }
 .progress-stat { text-align: center; }
 .progress-stat .num {
   font-family: var(--font-head);
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-size: 1.8rem;
+  font-weight: 600;
   color: var(--primary);
   display: block;
 }
 .progress-stat.accent .num { color: var(--accent); }
 .progress-stat .label {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   color: var(--text-muted);
+  font-weight: 700;
 }
 
 /* NAVIGATION TABS */
 .nav-tabs {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 2rem;
+  gap: 12px;
+  margin-bottom: 2.5rem;
   flex-wrap: wrap;
 }
 .tab-btn {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
-  padding: 10px 18px;
+  padding: 12px 20px;
   border-radius: var(--radius-md);
   font-family: var(--font-body);
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
@@ -147,27 +145,27 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
   gap: 8px;
   box-shadow: var(--shadow-sm);
 }
-.tab-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tab-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .tab-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
 .tab-btn.active {
   background: var(--primary);
   border-color: var(--primary);
   color: #ffffff;
-  box-shadow: 0 4px 14px rgba(45, 90, 63, 0.25);
+  box-shadow: 0 6px 16px rgba(43, 76, 59, 0.25);
 }
 
 /* SCREEN SYSTEM */
 .screen { display: none; }
 .screen.active { display: block; animation: fadeIn 0.4s var(--transition); }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ===== 1. FLASHCARDS ===== */
 .flashcard-wrapper {
   perspective: 1000px;
   width: 100%;
-  max-width: 520px;
-  height: clamp(260px, 45vw, 320px);
-  margin: 0 auto 1.2rem;
+  max-width: 540px;
+  height: clamp(280px, 45vw, 340px);
+  margin: 0 auto 1.5rem;
   cursor: pointer;
 }
 .flashcard {
@@ -190,7 +188,7 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(1.4rem, 5vw, 2.5rem);
+  padding: clamp(1.5rem, 5vw, 3rem);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   text-align: center;
@@ -198,26 +196,25 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
 .card-face.back {
   transform: rotateY(180deg);
   background: var(--accent-light);
-  border-color: rgba(194, 109, 56, 0.2);
+  border-color: rgba(184, 93, 56, 0.2);
 }
 .card-word {
   font-family: var(--font-head);
-  font-size: clamp(1.8rem, 6vw, 2.5rem);
-  font-weight: 700;
+  font-size: clamp(2.2rem, 6vw, 3rem);
+  font-weight: 500;
   color: var(--primary);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
 }
-.card-ipa { font-size: 1.05rem; color: var(--text-muted); font-family: monospace; margin-bottom: 1rem; }
-.card-tr { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 1rem; }
-.card-def { font-size: 1.02rem; color: var(--text-main); line-height: 1.5; }
+.card-ipa { font-size: 1.1rem; color: var(--text-muted); font-family: monospace; margin-bottom: 1.2rem; }
+.card-tr { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-bottom: 1rem; }
+.card-def { font-size: 1.1rem; color: var(--text-main); line-height: 1.6; }
 
-/* Кнопка озвучки на карточке */
 .speak-btn {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 36px;
-  height: 36px;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: var(--bg-main);
   border: 1px solid var(--border-color);
@@ -230,61 +227,50 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
 }
 .speak-btn:hover { background: var(--primary); border-color: var(--primary); }
 .speak-btn:hover svg { stroke: #fff; }
-.speak-btn svg { width: 18px; height: 18px; stroke: var(--primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.speak-btn svg { width: 20px; height: 20px; stroke: var(--primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 .card-hint {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-muted);
   position: absolute;
-  bottom: 1.2rem;
+  bottom: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  font-weight: 600;
 }
-.card-hint svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
+.card-hint svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-/* Прогресс-бар флешкарт */
+/* Progress bar inside flashcards */
 .fc-progress-bar {
   width: 100%;
-  max-width: 520px;
-  height: 6px;
-  background: var(--border-color);
+  max-width: 540px;
+  height: 8px;
+  background: #dfd7c8;
   border-radius: 10px;
-  margin: 0 auto 1.4rem;
+  margin: 0 auto 1.5rem;
   overflow: hidden;
 }
 .fc-progress-fill {
   height: 100%;
-  background: var(--primary);
+  background: var(--accent);
   border-radius: 10px;
   transition: width 0.4s ease;
 }
 
-.flashcard-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
-}
-.mastery-controls {
-  display: flex;
-  justify-content: center;
-  gap: 0.8rem;
-  margin-bottom: 1.5rem;
-}
+.flashcard-controls { display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.mastery-controls { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
 
 .btn {
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
   color: var(--text-main);
-  padding: 11px 20px;
+  padding: 12px 24px;
   border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
@@ -293,11 +279,11 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
   gap: 8px;
   font-family: var(--font-body);
 }
-.btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .btn:hover { background: var(--bg-card-hover); border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
 .btn:active { transform: translateY(0); }
 .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
-.btn-primary:hover { background: var(--primary-hover); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); color: #fff; border-color: var(--primary-hover); }
 .btn-success { border-color: var(--success); color: var(--success); }
 .btn-success:hover { background: var(--success); color: #fff; }
 .btn-warn { border-color: var(--accent); color: var(--accent); }
@@ -305,144 +291,132 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
 
 /* ===== 2. MATCHING GAME ===== */
 .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-.match-col { display: flex; flex-direction: column; gap: 10px; }
+.match-col { display: flex; flex-direction: column; gap: 12px; }
 .match-item {
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
   padding: 16px 20px;
   border-radius: var(--radius-md);
   font-weight: 600;
-  font-size: 0.98rem;
+  font-size: 1.05rem;
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  text-align: center;
 }
 .match-item:hover { border-color: var(--primary); background: var(--bg-card-hover); }
-.match-item.selected { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
-.match-item.matched { border-color: var(--success); background: rgba(59, 122, 87, 0.1); color: var(--success); pointer-events: none; }
-.match-item.wrong { border-color: var(--error); background: rgba(168, 66, 59, 0.1); animation: shake 0.3s; }
+.match-item.selected { border-color: var(--accent); background: var(--accent-light); color: var(--accent); transform: scale(1.02); }
+.match-item.matched { border-color: var(--success); background: rgba(54, 112, 75, 0.1); color: var(--success); pointer-events: none; opacity: 0.7; }
+.match-item.wrong { border-color: var(--error); background: rgba(168, 66, 59, 0.1); animation: shake 0.4s; }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
-.match-status {
-  text-align: center;
-  font-weight: 700;
-  color: var(--success);
-  margin-top: 1rem;
-  min-height: 26px;
-}
+.match-status { text-align: center; font-weight: 700; color: var(--success); margin-top: 1.5rem; min-height: 26px; font-size: 1.1rem; }
 
 /* ===== 3. CONTEXT GAPS ===== */
-.gaps-container { display: flex; flex-direction: column; gap: 1.1rem; }
+.gaps-container { display: flex; flex-direction: column; gap: 1.2rem; }
 .gap-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  padding: 1.4rem;
+  padding: 1.5rem;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   line-height: 1.6;
 }
 .gap-input {
   font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 700;
   border: none;
-  border-bottom: 2px solid var(--primary);
-  background: var(--accent-light);
+  border-bottom: 2px dashed var(--primary);
+  background: transparent;
   color: var(--primary);
   padding: 2px 10px;
-  border-radius: 4px 4px 0 0;
   width: 140px;
   text-align: center;
   outline: none;
   transition: var(--transition);
 }
-.gap-input:focus { background: rgba(45, 90, 63, 0.12); }
-.gap-input.ok { border-color: var(--success); color: var(--success); background: rgba(59, 122, 87, 0.1); }
-.gap-input.bad { border-color: var(--error); color: var(--error); background: rgba(168, 66, 59, 0.1); }
+.gap-input:focus { background: rgba(43, 76, 59, 0.05); border-bottom-style: solid; }
+.gap-input.ok { border-color: var(--success); color: var(--success); background: rgba(54, 112, 75, 0.1); border-radius: 4px 4px 0 0; border-bottom-style: solid;}
+.gap-input.bad { border-color: var(--error); color: var(--error); background: rgba(168, 66, 59, 0.1); border-radius: 4px 4px 0 0; border-bottom-style: solid;}
 
-.gaps-result {
-  text-align: center;
-  font-weight: 700;
-  margin-top: 1rem;
-  font-size: 1.05rem;
-  color: var(--primary);
-  min-height: 26px;
-}
+.gaps-result { text-align: center; font-weight: 700; margin-top: 1.5rem; font-size: 1.1rem; color: var(--primary); min-height: 26px; }
 
 /* ===== 4. QUIZ ===== */
 .quiz-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  padding: clamp(1.5rem, 5vw, 2.5rem);
+  padding: clamp(1.5rem, 5vw, 3rem);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   text-align: center;
   max-width: 600px;
   margin: 0 auto;
 }
-.quiz-progress { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.6rem; }
+.quiz-progress { font-size: 0.9rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
 .quiz-question {
   font-family: var(--font-head);
-  font-size: clamp(1.3rem, 4vw, 1.7rem);
+  font-size: clamp(1.8rem, 4vw, 2.2rem);
   color: var(--primary);
-  margin-bottom: 1.5rem;
-  line-height: 1.4;
+  margin-bottom: 2rem;
+  line-height: 1.3;
 }
-.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.5rem; }
 .quiz-opt {
   background: var(--bg-main);
-  border: 1px solid var(--border-color);
-  padding: 14px 18px;
+  border: 2px solid var(--border-color);
+  padding: 16px 20px;
   border-radius: var(--radius-md);
   font-weight: 600;
-  font-size: 0.98rem;
+  font-size: 1.05rem;
   cursor: pointer;
   transition: var(--transition);
   font-family: var(--font-body);
+  color: var(--text-main);
 }
-.quiz-opt:hover:not(:disabled) { border-color: var(--primary); background: var(--bg-card-hover); }
-.quiz-opt.correct { background: rgba(59, 122, 87, 0.15); border-color: var(--success); color: var(--success); }
-.quiz-opt.wrong { background: rgba(168, 66, 59, 0.15); border-color: var(--error); color: var(--error); }
+.quiz-opt:hover:not(:disabled) { border-color: var(--primary); background: #ffffff; }
+.quiz-opt.correct { background: rgba(54, 112, 75, 0.1); border-color: var(--success); color: var(--success); }
+.quiz-opt.wrong { background: rgba(168, 66, 59, 0.1); border-color: var(--error); color: var(--error); }
 .quiz-opt:disabled { cursor: default; }
 
-.quiz-feedback { font-weight: 700; margin-top: 0.4rem; min-height: 24px; font-size: 1rem; }
+.quiz-feedback { font-weight: 700; margin-top: 1rem; min-height: 24px; font-size: 1.1rem; }
 .quiz-score {
   display: inline-flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
   background: var(--accent-light);
   color: var(--accent);
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: 20px;
   font-weight: 700;
-  font-size: 0.85rem;
-  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
 }
 
 /* UTILS */
-.section-header { margin-bottom: 1.5rem; text-align: center; }
+.section-header { margin-bottom: 2rem; text-align: center; }
 .section-header h2 {
   font-family: var(--font-head);
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   color: var(--primary);
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
 }
-.section-header h2 svg { width: 24px; height: 24px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.section-header p { color: var(--text-muted); font-size: 0.92rem; }
-.action-row { display: flex; justify-content: center; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap; }
+.section-header h2 svg { width: 28px; height: 28px; stroke: var(--accent); fill: none; stroke-width: 2.5; }
+.section-header p { color: var(--text-muted); font-size: 1rem; font-weight: 500; }
+.action-row { display: flex; justify-content: center; gap: 12px; margin-top: 2rem; flex-wrap: wrap; }
 
 @media(max-width: 700px) {
   .match-grid, .quiz-options { grid-template-columns: 1fr; }
-  .progress-dash { gap: 1.2rem; padding: 0.9rem 1.2rem; }
-  .progress-stat .num { font-size: 1.3rem; }
+  .progress-dash { gap: 1.5rem; padding: 1rem 1.5rem; }
+  .progress-stat .num { font-size: 1.5rem; }
 }
 </style>
 </head>
@@ -450,42 +424,41 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
 
 <div class="container">
   <header>
-    <h1>На ферме и в деревне</h1>
-    <p>English File Intermediate+ (стр. 160) — тренажер для самостоятельной практики</p>
+    <h1>On the Farm & In the Countryside</h1>
+    <p>Vocabulary practice and self-study trainer</p>
   </header>
 
-  <!-- ПРОГРЕСС-ДАШБОРД: мотивирующая статистика, читается из localStorage -->
   <div class="progress-dash">
     <div class="progress-stat">
       <span class="num" id="statKnown">0</span>
-      <span class="label">Выучено слов</span>
+      <span class="label">Words Learned</span>
     </div>
     <div class="progress-stat accent">
       <span class="num" id="statLearning">33</span>
-      <span class="label">В процессе</span>
+      <span class="label">In Progress</span>
     </div>
     <div class="progress-stat">
       <span class="num" id="statQuizBest">0%</span>
-      <span class="label">Лучший результат квиза</span>
+      <span class="label">Best Quiz Score</span>
     </div>
   </div>
 
   <nav class="nav-tabs">
     <button class="tab-btn active" data-tab="flashcards" onclick="switchTab('flashcards', this)">
       <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>
-      Карточки
+      Flashcards
     </button>
     <button class="tab-btn" data-tab="match" onclick="switchTab('match', this)">
       <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><path d="M10 12h4"/></svg>
-      Соответствия
+      Match
     </button>
     <button class="tab-btn" data-tab="gaps" onclick="switchTab('gaps', this)">
       <svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M14.5 3.5l4 4L8 18l-4.5 1L4.5 14.5z"/></svg>
-      Пропуски
+      Fill in
     </button>
     <button class="tab-btn" data-tab="quiz" onclick="switchTab('quiz', this)">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
-      Квиз
+      Quiz
     </button>
   </nav>
 
@@ -494,9 +467,9 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
     <div class="section-header">
       <h2>
         <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>
-        Карточки для запоминания
+        Vocabulary Flashcards
       </h2>
-      <p>Кликните на карточку, чтобы увидеть перевод. Затем оцените, знаете ли вы слово.</p>
+      <p>Click the card to see the translation. Then evaluate your knowledge.</p>
     </div>
 
     <div class="fc-progress-bar"><div class="fc-progress-fill" id="fcProgressFill"></div></div>
@@ -504,14 +477,14 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
     <div class="flashcard-wrapper" id="flashcardWrapper" onclick="toggleCard()">
       <div class="flashcard" id="flashcard">
         <div class="card-face front">
-          <button class="speak-btn" onclick="speakWord(event)" aria-label="Прослушать произношение">
+          <button class="speak-btn" onclick="speakWord(event)" aria-label="Listen to pronunciation">
             <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a4 4 0 0 1 0 7"/></svg>
           </button>
           <div class="card-word" id="fcWord">branch</div>
           <div class="card-ipa" id="fcIpa">/brɑːntʃ/</div>
           <div class="card-hint">
             <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
-            Нажмите, чтобы перевернуть
+            Click to flip
           </div>
         </div>
         <div class="card-face back">
@@ -519,7 +492,7 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
           <div class="card-def" id="fcDef">Part of a tree that grows out from the trunk.</div>
           <div class="card-hint">
             <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
-            Нажмите, чтобы перевернуть
+            Click to flip
           </div>
         </div>
       </div>
@@ -527,116 +500,115 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
 
     <div class="mastery-controls">
       <button class="btn btn-success" onclick="markCard(true)">
-              <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
-              Знаю
-            </button>
-            <button class="btn btn-warn" onclick="markCard(false)">
-              <svg viewBox="0 0 24 24"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
-              Учу ещё
-            </button>
-          </div>
+        <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+        I know it
+      </button>
+      <button class="btn btn-warn" onclick="markCard(false)">
+        <svg viewBox="0 0 24 24"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
+        Still learning
+      </button>
+    </div>
 
-          <div class="flashcard-controls">
-            <button class="btn" onclick="prevCard()">
-              <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
-              Назад
-            </button>
-            <button class="btn" onclick="shuffleCards()">
-              <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-              Перемешать
-            </button>
-            <button class="btn" onclick="nextCard()">
-              Далее
-              <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-          </div>
-        </div>
+    <div class="flashcard-controls">
+      <button class="btn" onclick="prevCard()">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        Back
+      </button>
+      <button class="btn" onclick="shuffleCards()">
+        <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+        Shuffle
+      </button>
+      <button class="btn" onclick="nextCard()">
+        Next
+        <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
 
-        <!-- 2. MATCHING GAME -->
-        <div id="screen-match" class="screen">
-          <div class="section-header">
-            <h2>
-              <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><path d="M10 12h4"/></svg>
-              Найди пару
-            </h2>
-            <p>Выберите слово слева, затем его перевод справа.</p>
-          </div>
+  <!-- 2. MATCHING GAME -->
+  <div id="screen-match" class="screen">
+    <div class="section-header">
+      <h2>
+        <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><path d="M10 12h4"/></svg>
+        Match the Pairs
+      </h2>
+      <p>Select a word on the left, then find its translation on the right.</p>
+    </div>
 
-          <div class="match-grid">
-            <div class="match-col" id="matchColWords"></div>
-            <div class="match-col" id="matchColTr"></div>
-          </div>
+    <div class="match-grid">
+      <div class="match-col" id="matchColWords"></div>
+      <div class="match-col" id="matchColTr"></div>
+    </div>
 
-          <div class="match-status" id="matchStatus"></div>
+    <div class="match-status" id="matchStatus"></div>
 
-          <div class="action-row">
-            <button class="btn btn-primary" onclick="initMatchGame()">
-              <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-              Новый раунд
-            </button>
-          </div>
-        </div>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="initMatchGame()">
+        <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+        New Round
+      </button>
+    </div>
+  </div>
 
-        <!-- 3. CONTEXT GAPS -->
-        <div id="screen-gaps" class="screen">
-          <div class="section-header">
-            <h2>
-              <svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M14.5 3.5l4 4L8 18l-4.5 1L4.5 14.5z"/></svg>
-              Вставь слово
-            </h2>
-            <p>Заполните пропуски подходящим словом из темы.</p>
-          </div>
+  <!-- 3. CONTEXT GAPS -->
+  <div id="screen-gaps" class="screen">
+    <div class="section-header">
+      <h2>
+        <svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M14.5 3.5l4 4L8 18l-4.5 1L4.5 14.5z"/></svg>
+        Fill in the Gaps
+      </h2>
+      <p>Type the correct word to complete the sentence.</p>
+    </div>
 
-          <div class="gaps-container" id="gapsContainer"></div>
+    <div class="gaps-container" id="gapsContainer"></div>
 
-          <div class="gaps-result" id="gapsResult"></div>
+    <div class="gaps-result" id="gapsResult"></div>
 
-          <div class="action-row">
-            <button class="btn btn-primary" onclick="checkGaps()">
-              <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
-              Проверить
-            </button>
-            <button class="btn" onclick="renderGaps()">
-              <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-              Новый набор
-            </button>
-          </div>
-        </div>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="checkGaps()">
+        <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+        Check Answers
+      </button>
+      <button class="btn" onclick="renderGaps()">
+        <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+        New Set
+      </button>
+    </div>
+  </div>
 
-        <!-- 4. QUIZ -->
-        <div id="screen-quiz" class="screen">
-          <div class="section-header">
-            <h2>
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
-              Финальный квиз
-            </h2>
-            <p>10 вопросов вперемешку — перевод и определения.</p>
-          </div>
+  <!-- 4. QUIZ -->
+  <div id="screen-quiz" class="screen">
+    <div class="section-header">
+      <h2>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
+        Final Quiz
+      </h2>
+      <p>10 random questions to test your memory.</p>
+    </div>
 
-          <div class="quiz-card">
-            <div class="quiz-score" id="quizScoreBadge">
-              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z"/></svg>
-              <span id="quizScoreText">0 / 0</span>
-            </div>
-            <div class="quiz-progress" id="quizProgress">Вопрос 1 из 10</div>
-            <div class="quiz-question" id="quizQuestion">Загрузка...</div>
-            <div class="quiz-options" id="quizOptions"></div>
-            <div class="quiz-feedback" id="quizFeedback"></div>
-          </div>
+    <div class="quiz-card">
+      <div class="quiz-score" id="quizScoreBadge">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z"/></svg>
+        <span id="quizScoreText">0 / 0</span>
+      </div>
+      <div class="quiz-progress" id="quizProgress">Question 1 of 10</div>
+      <div class="quiz-question" id="quizQuestion">Loading...</div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+    </div>
 
-          <div class="action-row">
-            <button class="btn btn-primary" id="quizNextBtn" onclick="nextQuestion()" style="display:none;">
-              Следующий вопрос
-              <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-            <button class="btn" onclick="startQuiz()">
-              <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-              Начать заново
-            </button>
-          </div>
-        </div>
+    <div class="action-row">
+      <button class="btn btn-primary" id="quizNextBtn" onclick="nextQuestion()" style="display:none;">
+        Next Question
+        <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+      <button class="btn" onclick="startQuiz()">
+        <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+        Restart Quiz
+      </button>
+    </div>
+  </div>
 
-  <!-- Декоративный забор — визуальный якорь в стиле countryside -->
   <div class="fence-divider">
     <span></span><span></span><span></span><span></span><span></span>
     <span></span><span></span><span></span><span></span><span></span>
@@ -646,8 +618,7 @@ header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
 
 <script>
 /* ============================================================
-   БАЗА ДАННЫХ ЛЕКСИКИ
-   Каждое слово: word, ipa, tr (перевод), def (определение на EN)
+   ВОТ СЮДА ВСТАВЬ СВОЙ СПИСОК ЛЕКСИКИ, ЕСЛИ ОН БЫЛ ДРУГИМ
    ============================================================ */
 const VOCAB = [
   { word: "branch",    ipa: "/brɑːntʃ/",     tr: "ветка",        def: "Part of a tree that grows out from the trunk." },
@@ -686,10 +657,6 @@ const VOCAB = [
   { word: "graze",     ipa: "/greɪz/",       tr: "пастись",      def: "When animals eat grass growing in a field." }
 ];
 
-/* ============================================================
-   ХРАНИЛИЩЕ ПРОГРЕССА (localStorage)
-   Формат: { known: ["branch","hedge",...] }
-   ============================================================ */
 const STORAGE_KEY = "farmVocabProgress";
 
 function loadProgress() {
@@ -697,7 +664,6 @@ function loadProgress() {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : { known: [], quizBest: 0 };
   } catch (e) {
-    // если данные повреждены — начинаем с чистого листа, а не роняем приложение
     return { known: [], quizBest: 0 };
   }
 }
@@ -714,9 +680,11 @@ function updateDashboard() {
   document.getElementById("statQuizBest").textContent = progress.quizBest + "%";
 }
 
-/* ============================================================
-   ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
-   ============================================================ */
+/* ================== TABS ================== */
+let matchInitialized = false;
+let gapsInitialized = false;
+let quizInitialized = false;
+
 function switchTab(tabId, btnEl) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById("screen-" + tabId).classList.add("active");
@@ -724,21 +692,17 @@ function switchTab(tabId, btnEl) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   btnEl.classList.add("active");
 
-  // Ленивая инициализация экрана при первом открытии
   if (tabId === "match" && !matchInitialized) initMatchGame();
   if (tabId === "gaps" && !gapsInitialized) renderGaps();
   if (tabId === "quiz" && !quizInitialized) startQuiz();
 }
 
-/* ============================================================
-   1. FLASHCARDS
-   ============================================================ */
+/* ================== FLASHCARDS ================== */
 let fcDeck = [...VOCAB];
 let fcIndex = 0;
 let fcFlipped = false;
 
 function shuffleArray(arr) {
-  // Fisher-Yates — равномерное перемешивание без смещения
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -797,22 +761,17 @@ function markCard(isKnown) {
   nextCard();
 }
 
-// Озвучка через нативный Web Speech API — без сторонних библиотек
 function speakWord(e) {
-  e.stopPropagation(); // не даём клику по кнопке перевернуть карточку
+  e.stopPropagation(); 
   if (!("speechSynthesis" in window)) return;
-
   const utter = new SpeechSynthesisUtterance(fcDeck[fcIndex].word);
   utter.lang = "en-GB";
   utter.rate = 0.9;
-  window.speechSynthesis.cancel(); // прерываем предыдущую озвучку, если была
+  window.speechSynthesis.cancel(); 
   window.speechSynthesis.speak(utter);
 }
 
-/* ============================================================
-   2. MATCHING GAME
-   ============================================================ */
-let matchInitialized = false;
+/* ================== MATCHING ================== */
 let matchSelectedWord = null;
 let matchSelectedTr = null;
 let matchPairsLeft = 0;
@@ -823,7 +782,6 @@ function initMatchGame() {
   matchSelectedTr = null;
   document.getElementById("matchStatus").textContent = "";
 
-  // Берём случайные 6 слов на раунд — так игра не перегружена
   const pool = shuffleArray(VOCAB).slice(0, 6);
   matchPairsLeft = pool.length;
 
@@ -840,7 +798,7 @@ function initMatchGame() {
     el.className = "match-item";
     el.dataset.word = item.word;
     el.textContent = item.word;
-    el.onclick = () => selectMatchItem(el, "word", item.word);
+    el.onclick = () => selectMatchItem(el, "word");
     wordsCol.appendChild(el);
   });
 
@@ -849,12 +807,12 @@ function initMatchGame() {
     el.className = "match-item";
     el.dataset.word = item.word;
     el.textContent = item.tr;
-    el.onclick = () => selectMatchItem(el, "tr", item.word);
+    el.onclick = () => selectMatchItem(el, "tr");
     trCol.appendChild(el);
   });
 }
 
-function selectMatchItem(el, type, word) {
+function selectMatchItem(el, type) {
   if (el.classList.contains("matched")) return;
 
   if (type === "word") {
@@ -883,8 +841,7 @@ function checkMatchPair() {
     matchPairsLeft--;
 
     if (matchPairsLeft === 0) {
-      document.getElementById("matchStatus").textContent = "Отлично! Все пары найдены 🎯".replace("🎯", "");
-      document.getElementById("matchStatus").textContent = "Отлично! Все пары найдены.";
+      document.getElementById("matchStatus").textContent = "Perfect! You found all pairs.";
     }
   } else {
     wordEl.classList.add("wrong");
@@ -899,13 +856,9 @@ function checkMatchPair() {
   matchSelectedTr = null;
 }
 
-/* ============================================================
-   3. CONTEXT GAPS
-   ============================================================ */
-let gapsInitialized = false;
+/* ================== GAPS ================== */
 let currentGapsSet = [];
 
-// Простые контекстные предложения — каждое использует одно слово из темы
 const GAP_SENTENCES = [
   { word: "hedge",     sentence: "They planted a tall ___ around the garden to keep the sheep out." },
   { word: "harvest",   sentence: "In September, farmers begin the ___ of wheat and barley." },
@@ -921,7 +874,7 @@ const GAP_SENTENCES = [
 
 function renderGaps() {
   gapsInitialized = true;
-  currentGapsSet = shuffleArray(GAP_SENTENCES).slice(0, 6);
+  currentGapsSet = shuffleArray(GAP_SENTENCES).slice(0, 5);
   const container = document.getElementById("gapsContainer");
   container.innerHTML = "";
   document.getElementById("gapsResult").textContent = "";
@@ -956,34 +909,26 @@ function checkGaps() {
   });
 
   const resultEl = document.getElementById("gapsResult");
-  resultEl.textContent = `Правильно: ${correctCount} из ${currentGapsSet.length}`;
+  resultEl.textContent = `Correct: ${correctCount} out of ${currentGapsSet.length}`;
   resultEl.style.color = correctCount === currentGapsSet.length ? "var(--success)" : "var(--primary)";
 }
 
-/* ============================================================
-   4. QUIZ
-   ============================================================ */
-let quizInitialized = false;
+/* ================== QUIZ ================== */
 let quizQuestions = [];
 let quizIndex = 0;
 let quizScore = 0;
 let quizAnswered = false;
 
-function buildQuizQuestions() {
-  // Берём 10 случайных слов и для каждого генерируем 4 варианта ответа
+// ОДНА правильная функция генерации вопросов (в прошлом ответе она сдублировалась)
 function buildQuizQuestions() {
   const pool = shuffleArray(VOCAB).slice(0, 10);
-
   return pool.map(correctItem => {
-    // Собираем 3 неправильных варианта из остальных слов темы
     const wrongPool = VOCAB.filter(v => v.word !== correctItem.word);
     const wrongOptions = shuffleArray(wrongPool).slice(0, 3).map(v => v.tr);
-
     const options = shuffleArray([correctItem.tr, ...wrongOptions]);
 
     return {
       question: correctItem.word,
-      ipa: correctItem.ipa,
       correctAnswer: correctItem.tr,
       options: options
     };
@@ -1005,8 +950,7 @@ function renderQuestion() {
   const q = quizQuestions[quizIndex];
   quizAnswered = false;
 
-  document.getElementById("quizProgress").textContent =
-    `Вопрос ${quizIndex + 1} из ${quizQuestions.length}`;
+  document.getElementById("quizProgress").textContent = `Question ${quizIndex + 1} of ${quizQuestions.length}`;
   document.getElementById("quizQuestion").textContent = q.question;
   document.getElementById("quizFeedback").textContent = "";
   document.getElementById("quizScoreText").textContent = `${quizScore} / ${quizQuestions.length}`;
@@ -1025,7 +969,7 @@ function renderQuestion() {
 }
 
 function selectAnswer(btnEl, chosen, correctAnswer) {
-  if (quizAnswered) return; // защита от повторного клика после ответа
+  if (quizAnswered) return; 
   quizAnswered = true;
 
   const allButtons = document.querySelectorAll(".quiz-opt");
@@ -1035,15 +979,14 @@ function selectAnswer(btnEl, chosen, correctAnswer) {
 
   if (chosen === correctAnswer) {
     btnEl.classList.add("correct");
-    feedbackEl.textContent = "Верно! 🎉";
+    feedbackEl.textContent = "Correct! 🌿";
     feedbackEl.style.color = "var(--success)";
     quizScore++;
   } else {
     btnEl.classList.add("wrong");
-    feedbackEl.textContent = `Неверно. Правильный ответ: ${correctAnswer}`;
+    feedbackEl.textContent = `Incorrect. The right answer is: ${correctAnswer}`;
     feedbackEl.style.color = "var(--error)";
 
-    // Подсвечиваем правильный вариант зелёным для наглядности
     allButtons.forEach(b => {
       if (b.textContent === correctAnswer) b.classList.add("correct");
     });
@@ -1054,10 +997,9 @@ function selectAnswer(btnEl, chosen, correctAnswer) {
   const nextBtn = document.getElementById("quizNextBtn");
   if (quizIndex < quizQuestions.length - 1) {
     nextBtn.textContent = "";
-    nextBtn.innerHTML = `Следующий вопрос <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>`;
+    nextBtn.innerHTML = `Next Question <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>`;
     nextBtn.style.display = "inline-flex";
   } else {
-    // Последний вопрос — показываем итоговый результат и сохраняем рекорд
     finishQuiz();
   }
 }
@@ -1072,10 +1014,8 @@ function finishQuiz() {
   }
 
   const feedbackEl = document.getElementById("quizFeedback");
-  feedbackEl.innerHTML += `<br><span style="font-size:0.9rem;color:var(--text-muted);">Квиз завершён! Результат: ${percent}%</span>`;
-
-  const nextBtn = document.getElementById("quizNextBtn");
-  nextBtn.style.display = "none";
+  feedbackEl.innerHTML += `<br><span style="font-size:0.95rem;color:var(--text-muted);font-weight:500;">Quiz completed! Your score: ${percent}%</span>`;
+  document.getElementById("quizNextBtn").style.display = "none";
 }
 
 function nextQuestion() {
@@ -1083,9 +1023,7 @@ function nextQuestion() {
   renderQuestion();
 }
 
-/* ============================================================
-   ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
-   ============================================================ */
+/* ================== INIT ================== */
 function init() {
   updateDashboard();
   fcDeck = shuffleArray(VOCAB);
