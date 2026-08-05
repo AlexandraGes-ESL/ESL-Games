@@ -3,37 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Country & Farm — Lexical Trainer</title>
+<title>На ферме — тренажер лексики</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
 :root {
   --font-head: 'Fraunces', serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
-  
-  /* Cozy Countryside Palette */
+
   --bg-main: #f4f3ee;
   --bg-card: #ffffff;
   --bg-card-hover: #faf9f5;
   --border-color: #e2dfd2;
   --border-active: #2d5a3f;
-  
-  --primary: #2d5a3f; /* Deep Forest Green */
+
+  --primary: #2d5a3f;
   --primary-hover: #234631;
-  --accent: #c26d38; /* Warm Terracotta */
+  --accent: #c26d38;
   --accent-light: #fbf2eb;
-  
+
   --text-main: #2b3028;
   --text-muted: #6b7264;
-  
+
   --success: #3b7a57;
   --error: #a8423b;
-  
+
   --radius-lg: 20px;
   --radius-md: 14px;
   --radius-sm: 8px;
-  
+
   --shadow-sm: 0 2px 8px rgba(43, 48, 40, 0.04);
   --shadow-md: 0 8px 24px rgba(43, 48, 40, 0.08);
   --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -43,41 +42,85 @@
 
 body {
   background-color: var(--bg-main);
-  background-image: 
-    radial-gradient(circle at 10% 10%, rgba(45, 90, 63, 0.04) 0%, transparent 40%),
-    radial-gradient(circle at 90% 90%, rgba(194, 109, 56, 0.04) 0%, transparent 40%);
+  background-image:
+    radial-gradient(circle at 10% 10%, rgba(45, 90, 63, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(194, 109, 56, 0.05) 0%, transparent 40%);
   color: var(--text-main);
   font-family: var(--font-body);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2.5rem 1rem;
+  padding: clamp(1.2rem, 4vw, 2.5rem) 1rem;
   -webkit-font-smoothing: antialiased;
 }
 
-.container {
-  max-width: 860px;
-  width: 100%;
+.container { max-width: 860px; width: 100%; }
+
+/* Доступность: видимый фокус только при клавиатурной навигации */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
-/* HEADER */
-header {
-  text-align: center;
-  margin-bottom: 2rem;
+/* ===== ДЕКОРАТИВНЫЙ "ЗАБОР" — разделитель в стиле countryside, чистый CSS ===== */
+.fence-divider {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px;
+  height: 22px;
+  margin: 1.8rem 0;
+  opacity: 0.5;
 }
+.fence-divider span {
+  width: 4px;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 2px 2px 0 0;
+}
+.fence-divider span:nth-child(3n) { height: 60%; }
+
+/* HEADER */
+header { text-align: center; margin-bottom: 1.8rem; }
 header h1 {
   font-family: var(--font-head);
-  font-size: 2.4rem;
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
   font-weight: 700;
   color: var(--primary);
   letter-spacing: -0.5px;
   margin-bottom: 0.3rem;
 }
-header p {
+header p { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
+
+/* ===== ПРОГРЕСС-ДАШБОРД ===== */
+.progress-dash {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1rem, 4vw, 2.5rem);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.8rem;
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+.progress-stat { text-align: center; }
+.progress-stat .num {
+  font-family: var(--font-head);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: block;
+}
+.progress-stat.accent .num { color: var(--accent); }
+.progress-stat .label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   color: var(--text-muted);
-  font-size: 1.05rem;
-  font-weight: 500;
 }
 
 /* NAVIGATION TABS */
@@ -95,7 +138,7 @@ header p {
   padding: 10px 18px;
   border-radius: var(--radius-md);
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
@@ -104,16 +147,8 @@ header p {
   gap: 8px;
   box-shadow: var(--shadow-sm);
 }
-.tab-btn svg {
-  width: 18px;
-  height: 18px;
-  fill: currentColor;
-}
-.tab-btn:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  transform: translateY(-2px);
-}
+.tab-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tab-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
 .tab-btn.active {
   background: var(--primary);
   border-color: var(--primary);
@@ -126,13 +161,13 @@ header p {
 .screen.active { display: block; animation: fadeIn 0.4s var(--transition); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-/* 1. FLASHCARDS */
+/* ===== 1. FLASHCARDS ===== */
 .flashcard-wrapper {
   perspective: 1000px;
   width: 100%;
   max-width: 520px;
-  height: 320px;
-  margin: 0 auto 1.5rem;
+  height: clamp(260px, 45vw, 320px);
+  margin: 0 auto 1.2rem;
   cursor: pointer;
 }
 .flashcard {
@@ -155,7 +190,7 @@ header p {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2.5rem;
+  padding: clamp(1.4rem, 5vw, 2.5rem);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   text-align: center;
@@ -167,88 +202,117 @@ header p {
 }
 .card-word {
   font-family: var(--font-head);
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 6vw, 2.5rem);
   font-weight: 700;
   color: var(--primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
-.card-ipa {
-  font-size: 1.1rem;
-  color: var(--text-muted);
-  font-family: monospace;
-  margin-bottom: 1.5rem;
+.card-ipa { font-size: 1.05rem; color: var(--text-muted); font-family: monospace; margin-bottom: 1rem; }
+.card-tr { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 1rem; }
+.card-def { font-size: 1.02rem; color: var(--text-main); line-height: 1.5; }
+
+/* Кнопка озвучки на карточке */
+.speak-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  z-index: 5;
 }
-.card-tr {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 1rem;
-}
-.card-def {
-  font-size: 1.05rem;
-  color: var(--text-main);
-  line-height: 1.5;
-}
+.speak-btn:hover { background: var(--primary); border-color: var(--primary); }
+.speak-btn:hover svg { stroke: #fff; }
+.speak-btn svg { width: 18px; height: 18px; stroke: var(--primary); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
 .card-hint {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-muted);
   position: absolute;
-  bottom: 1.5rem;
+  bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.card-hint svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+/* Прогресс-бар флешкарт */
+.fc-progress-bar {
+  width: 100%;
+  max-width: 520px;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 10px;
+  margin: 0 auto 1.4rem;
+  overflow: hidden;
+}
+.fc-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 10px;
+  transition: width 0.4s ease;
 }
 
 .flashcard-controls {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
 }
+.mastery-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
 .btn {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   color: var(--text-main);
-  padding: 12px 24px;
+  padding: 11px 20px;
   border-radius: var(--radius-md);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  font-family: var(--font-body);
 }
-.btn svg { width: 18px; height: 18px; fill: currentColor; }
+.btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .btn:hover { background: var(--bg-card-hover); border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
-.btn-primary {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #fff;
-}
-.btn-primary:hover {
-  background: var(--primary-hover);
-  color: #fff;
-}
+.btn:active { transform: translateY(0); }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); color: #fff; }
+.btn-success { border-color: var(--success); color: var(--success); }
+.btn-success:hover { background: var(--success); color: #fff; }
+.btn-warn { border-color: var(--accent); color: var(--accent); }
+.btn-warn:hover { background: var(--accent); color: #fff; }
 
-/* 2. MATCHING GAME */
-.match-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-}
-.match-col {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+/* ===== 2. MATCHING GAME ===== */
+.match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.match-col { display: flex; flex-direction: column; gap: 10px; }
 .match-item {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   padding: 16px 20px;
   border-radius: var(--radius-md);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.98rem;
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
@@ -262,24 +326,28 @@ header p {
 .match-item.wrong { border-color: var(--error); background: rgba(168, 66, 59, 0.1); animation: shake 0.3s; }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
-/* 3. GAPS (CONTEXT) */
-.gaps-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
+.match-status {
+  text-align: center;
+  font-weight: 700;
+  color: var(--success);
+  margin-top: 1rem;
+  min-height: 26px;
 }
+
+/* ===== 3. CONTEXT GAPS ===== */
+.gaps-container { display: flex; flex-direction: column; gap: 1.1rem; }
 .gap-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  padding: 1.5rem;
+  padding: 1.4rem;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   line-height: 1.6;
 }
 .gap-input {
   font-family: var(--font-body);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   border: none;
   border-bottom: 2px solid var(--primary);
@@ -292,71 +360,89 @@ header p {
   outline: none;
   transition: var(--transition);
 }
-.gap-input:focus { background: rgba(45, 90, 63, 0.1); }
+.gap-input:focus { background: rgba(45, 90, 63, 0.12); }
 .gap-input.ok { border-color: var(--success); color: var(--success); background: rgba(59, 122, 87, 0.1); }
 .gap-input.bad { border-color: var(--error); color: var(--error); background: rgba(168, 66, 59, 0.1); }
 
-/* 4. QUIZ */
+.gaps-result {
+  text-align: center;
+  font-weight: 700;
+  margin-top: 1rem;
+  font-size: 1.05rem;
+  color: var(--primary);
+  min-height: 26px;
+}
+
+/* ===== 4. QUIZ ===== */
 .quiz-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  padding: 2.5rem;
+  padding: clamp(1.5rem, 5vw, 2.5rem);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   text-align: center;
   max-width: 600px;
   margin: 0 auto;
 }
+.quiz-progress { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.6rem; }
 .quiz-question {
   font-family: var(--font-head);
-  font-size: 1.8rem;
+  font-size: clamp(1.3rem, 4vw, 1.7rem);
   color: var(--primary);
   margin-bottom: 1.5rem;
+  line-height: 1.4;
 }
-.quiz-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 1.5rem;
-}
+.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
 .quiz-opt {
   background: var(--bg-main);
   border: 1px solid var(--border-color);
-  padding: 14px 20px;
+  padding: 14px 18px;
   border-radius: var(--radius-md);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.98rem;
   cursor: pointer;
   transition: var(--transition);
+  font-family: var(--font-body);
 }
-.quiz-opt:hover { border-color: var(--primary); background: var(--bg-card-hover); }
+.quiz-opt:hover:not(:disabled) { border-color: var(--primary); background: var(--bg-card-hover); }
 .quiz-opt.correct { background: rgba(59, 122, 87, 0.15); border-color: var(--success); color: var(--success); }
 .quiz-opt.wrong { background: rgba(168, 66, 59, 0.15); border-color: var(--error); color: var(--error); }
+.quiz-opt:disabled { cursor: default; }
+
+.quiz-feedback { font-weight: 700; margin-top: 0.4rem; min-height: 24px; font-size: 1rem; }
+.quiz-score {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  background: var(--accent-light);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
 
 /* UTILS */
-.section-header {
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
+.section-header { margin-bottom: 1.5rem; text-align: center; }
 .section-header h2 {
   font-family: var(--font-head);
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   color: var(--primary);
   margin-bottom: 0.3rem;
-}
-.section-header p {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-}
-.action-row {
   display: flex;
+  align-items: center;
   justify-content: center;
-  margin-top: 1.5rem;
+  gap: 10px;
 }
+.section-header h2 svg { width: 24px; height: 24px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.section-header p { color: var(--text-muted); font-size: 0.92rem; }
+.action-row { display: flex; justify-content: center; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap; }
 
 @media(max-width: 700px) {
   .match-grid, .quiz-options { grid-template-columns: 1fr; }
-  .flashcard-wrapper { height: 280px; }
+  .progress-dash { gap: 1.2rem; padding: 0.9rem 1.2rem; }
+  .progress-stat .num { font-size: 1.3rem; }
 }
 </style>
 </head>
@@ -364,374 +450,651 @@ header p {
 
 <div class="container">
   <header>
-    <h1>The Country & Farm</h1>
-    <p>English File Intermediate+ (p. 160) — Self-Study Trainer</p>
+    <h1>На ферме и в деревне</h1>
+    <p>English File Intermediate+ (стр. 160) — тренажер для самостоятельной практики</p>
   </header>
 
-  <!-- NAVIGATION TABS -->
+  <!-- ПРОГРЕСС-ДАШБОРД: мотивирующая статистика, читается из localStorage -->
+  <div class="progress-dash">
+    <div class="progress-stat">
+      <span class="num" id="statKnown">0</span>
+      <span class="label">Выучено слов</span>
+    </div>
+    <div class="progress-stat accent">
+      <span class="num" id="statLearning">33</span>
+      <span class="label">В процессе</span>
+    </div>
+    <div class="progress-stat">
+      <span class="num" id="statQuizBest">0%</span>
+      <span class="label">Лучший результат квиза</span>
+    </div>
+  </div>
+
   <nav class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('flashcards')">
-      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14v14z"/></svg>
-      Flashcards
+    <button class="tab-btn active" data-tab="flashcards" onclick="switchTab('flashcards', this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>
+      Карточки
     </button>
-    <button class="tab-btn" onclick="switchTab('match')">
-      <svg viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
-      Matching Game
+    <button class="tab-btn" data-tab="match" onclick="switchTab('match', this)">
+      <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><path d="M10 12h4"/></svg>
+      Соответствия
     </button>
-    <button class="tab-btn" onclick="switchTab('gaps')">
-      <svg viewBox="0 0 24 24"><path d="M3 172.5V21h18.5V172.5H3M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
-      Context Gaps
+    <button class="tab-btn" data-tab="gaps" onclick="switchTab('gaps', this)">
+      <svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M14.5 3.5l4 4L8 18l-4.5 1L4.5 14.5z"/></svg>
+      Пропуски
     </button>
-    <button class="tab-btn" onclick="switchTab('quiz')">
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.03-.42 1.98-1.07 2.75z"/></svg>
-      Quick Quiz
+    <button class="tab-btn" data-tab="quiz" onclick="switchTab('quiz', this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
+      Квиз
     </button>
   </nav>
 
-  <!-- 1. FLASHCARDS SCREEN -->
+  <!-- 1. FLASHCARDS -->
   <div id="screen-flashcards" class="screen active">
     <div class="section-header">
-      <h2>📇 Vocabulary Flashcards</h2>
-      <p>Click the card to flip between English and Russian translation.</p>
+      <h2>
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg>
+        Карточки для запоминания
+      </h2>
+      <p>Кликните на карточку, чтобы увидеть перевод. Затем оцените, знаете ли вы слово.</p>
     </div>
-    
-    <div class="flashcard-wrapper" onclick="toggleCard()">
+
+    <div class="fc-progress-bar"><div class="fc-progress-fill" id="fcProgressFill"></div></div>
+
+    <div class="flashcard-wrapper" id="flashcardWrapper" onclick="toggleCard()">
       <div class="flashcard" id="flashcard">
         <div class="card-face front">
+          <button class="speak-btn" onclick="speakWord(event)" aria-label="Прослушать произношение">
+            <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a4 4 0 0 1 0 7"/></svg>
+          </button>
           <div class="card-word" id="fcWord">branch</div>
           <div class="card-ipa" id="fcIpa">/brɑːntʃ/</div>
-          <div class="card-hint">Click to flip ↻</div>
+          <div class="card-hint">
+            <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+            Нажмите, чтобы перевернуть
+          </div>
         </div>
         <div class="card-face back">
           <div class="card-tr" id="fcTr">ветка</div>
           <div class="card-def" id="fcDef">Part of a tree that grows out from the trunk.</div>
-          <div class="card-hint">Click to flip ↻</div>
+          <div class="card-hint">
+            <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+            Нажмите, чтобы перевернуть
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="flashcard-controls">
-      <button class="btn" onclick="prevCard()">← Prev</button>
-      <span id="fcCounter" style="font-weight: 600; color: var(--text-muted);">1 / 33</span>
-      <button class="btn" onclick="nextCard()">Next →</button>
-    </div>
+    <div class="mastery-controls">
+      <button class="btn btn-success" onclick="markCard(true)">
+              <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+              Знаю
+            </button>
+            <button class="btn btn-warn" onclick="markCard(false)">
+              <svg viewBox="0 0 24 24"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>
+              Учу ещё
+            </button>
+          </div>
+
+          <div class="flashcard-controls">
+            <button class="btn" onclick="prevCard()">
+              <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+              Назад
+            </button>
+            <button class="btn" onclick="shuffleCards()">
+              <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+              Перемешать
+            </button>
+            <button class="btn" onclick="nextCard()">
+              Далее
+              <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. MATCHING GAME -->
+        <div id="screen-match" class="screen">
+          <div class="section-header">
+            <h2>
+              <svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><path d="M10 12h4"/></svg>
+              Найди пару
+            </h2>
+            <p>Выберите слово слева, затем его перевод справа.</p>
+          </div>
+
+          <div class="match-grid">
+            <div class="match-col" id="matchColWords"></div>
+            <div class="match-col" id="matchColTr"></div>
+          </div>
+
+          <div class="match-status" id="matchStatus"></div>
+
+          <div class="action-row">
+            <button class="btn btn-primary" onclick="initMatchGame()">
+              <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+              Новый раунд
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. CONTEXT GAPS -->
+        <div id="screen-gaps" class="screen">
+          <div class="section-header">
+            <h2>
+              <svg viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M14.5 3.5l4 4L8 18l-4.5 1L4.5 14.5z"/></svg>
+              Вставь слово
+            </h2>
+            <p>Заполните пропуски подходящим словом из темы.</p>
+          </div>
+
+          <div class="gaps-container" id="gapsContainer"></div>
+
+          <div class="gaps-result" id="gapsResult"></div>
+
+          <div class="action-row">
+            <button class="btn btn-primary" onclick="checkGaps()">
+              <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+              Проверить
+            </button>
+            <button class="btn" onclick="renderGaps()">
+              <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+              Новый набор
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. QUIZ -->
+        <div id="screen-quiz" class="screen">
+          <div class="section-header">
+            <h2>
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .9-1 1.7"/><path d="M12 17h.01"/></svg>
+              Финальный квиз
+            </h2>
+            <p>10 вопросов вперемешку — перевод и определения.</p>
+          </div>
+
+          <div class="quiz-card">
+            <div class="quiz-score" id="quizScoreBadge">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z"/></svg>
+              <span id="quizScoreText">0 / 0</span>
+            </div>
+            <div class="quiz-progress" id="quizProgress">Вопрос 1 из 10</div>
+            <div class="quiz-question" id="quizQuestion">Загрузка...</div>
+            <div class="quiz-options" id="quizOptions"></div>
+            <div class="quiz-feedback" id="quizFeedback"></div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="quizNextBtn" onclick="nextQuestion()" style="display:none;">
+              Следующий вопрос
+              <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <button class="btn" onclick="startQuiz()">
+              <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+              Начать заново
+            </button>
+          </div>
+        </div>
+
+  <!-- Декоративный забор — визуальный якорь в стиле countryside -->
+  <div class="fence-divider">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
   </div>
-
-  <!-- 2. MATCHING GAME SCREEN -->
-  <div id="screen-match" class="screen">
-    <div class="section-header">
-      <h2>🔗 Collocation & Word Matching</h2>
-      <p>Pair English words with their correct definitions or translations.</p>
-    </div>
-    
-    <div class="match-grid">
-      <div class="match-col" id="matchLeft"></div>
-      <div class="match-col" id="matchRight"></div>
-    </div>
-
-    <div class="action-row">
-      <button class="btn btn-primary" onclick="initMatching()">🔄 Reset Game</button>
-    </div>
-  </div>
-
-  <!-- 3. CONTEXT GAPS SCREEN -->
-  <div id="screen-gaps" class="screen">
-    <div class="section-header">
-      <h2>✏️ Context Gaps</h2>
-      <p>Fill in the blanks with the correct words from the lesson.</p>
-    </div>
-
-    <div class="gaps-container" id="gapsContainer"></div>
-
-    <div class="action-row">
-      <button class="btn btn-primary" onclick="checkGaps()">Check Answers ✓</button>
-    </div>
-  </div>
-
-  <!-- 4. QUICK QUIZ SCREEN -->
-  <div id="screen-quiz" class="screen">
-    <div class="section-header">
-      <h2>🎯 Quick Vocabulary Quiz</h2>
-      <p>Test your active recall of the lesson's vocabulary.</p>
-    </div>
-
-    <div class="quiz-card" id="quizCard">
-      <div class="quiz-question" id="quizQuestion">Loading...</div>
-      <div class="quiz-options" id="quizOptions"></div>
-      <div id="quizFeedback" style="font-weight: 700; margin-top: 1rem; min-height: 24px;"></div>
-      <button class="btn btn-primary" id="quizNextBtn" style="display: none; margin: 1rem auto 0;" onclick="nextQuizQuestion()">Next Question →</button>
-    </div>
-  </div>
-
 </div>
 
 <script>
-/* ==========================================================================
-   DATASET: ENGLISH FILE INTERMEDIATE+ (PAGE 160)
-   ========================================================================== */
-const VOCABULARY = [
-  { word: "branch", ipa: "/brɑːntʃ/", tr: "ветка", def: "Part of a tree that grows out from the trunk." },
-  { word: "bush", ipa: "/bʊʃ/", tr: "куст", def: "A shrub with many small branches." },
-  { word: "cliff", ipa: "/klɪf/", tr: "утес", def: "A high, steep rock face, especially near the sea." },
-  { word: "fence", ipa: "/fens/", tr: "забор", def: "A barrier made of wood or wire around an area." },
-  { word: "field", ipa: "/fiːld/", tr: "поле", def: "An area of land used for crops or farm animals." },
-  { word: "gate", ipa: "/ɡeɪt/", tr: "ворота / калитка", def: "A movable barrier in a fence or wall opening." },
-  { word: "grass", ipa: "/ɡrɑːs/", tr: "трава", def: "Green plants with narrow leaves covering ground." },
-  { word: "hedge", ipa: "/hedʒ/", tr: "живая изгородь", def: "A row of closely planted bushes forming a boundary." },
-  { word: "hill", ipa: "/hɪl/", tr: "холм", def: "A naturally raised area of land, smaller than a mountain." },
-  { word: "lake", ipa: "/leɪk/", tr: "озеро", def: "A large body of water surrounded by land." },
-  { word: "leaf (leaves)", ipa: "/liːf/", tr: "лист (листья)", def: "The flat green part of a plant growing from a stem." },
-  { word: "mud", ipa: "/mʌd/", tr: "грязь", def: "Wet, sticky earth." },
-  { word: "path", ipa: "/pɑːθ/", tr: "тропинка", def: "A track created by walking for people or animals." },
-  { word: "rocks", ipa: "/rɒks/", tr: "скалы / камни", def: "Solid mineral material forming part of the earth." },
-  { word: "sticks", ipa: "/stɪks/", tr: "палки", def: "Small thin branches fallen from trees." },
-  { word: "stones", ipa: "/stəʊnz/", tr: "камни", def: "Small pieces of rock." },
-  { word: "stream", ipa: "/striːm/", tr: "ручей", def: "A small, narrow natural river." },
-  { word: "valley", ipa: "/ˈvæli/", tr: "долина", def: "Low land between hills or mountains." },
-  { word: "well", ipa: "/wel/", tr: "колодец", def: "A deep hole dug in the ground to get water." },
-  { word: "wood", ipa: "/wʊd/", tr: "лес", def: "A small forest with many trees." },
-  { word: "barn", ipa: "/bɑːn/", tr: "амбар", def: "A large agricultural building for storage or animals." },
-  { word: "cockerel", ipa: "/ˈkɒkərəl/", tr: "петух", def: "A young male chicken or rooster." },
-  { word: "cow", ipa: "/kaʊ/", tr: "корова", def: "A mature female farm animal kept for milk or meat." },
-  { word: "donkey", ipa: "/ˈdɒŋki/", tr: "осел", def: "A domesticated hoofed mammal related to the horse." },
-  { word: "farmhouse", ipa: "/ˈfɑːmhaʊs/", tr: "фермерский дом", def: "The main house on a farm." },
-  { word: "hens", ipa: "/henz/", tr: "куры", def: "Adult female chickens kept for eggs." },
-  { word: "lambs", ipa: "/læmz/", "tr": "ягнята", def: "Young sheep under one year old." },
-  { word: "sheep", ipa: "/ʃiːp/", tr: "овцы", def: "Woolly ruminant farm animals." },
-  { word: "tractor", ipa: "/ˈtræktə/", tr: "трактор", def: "A powerful motor vehicle used for pulling farm machinery." },
-  { word: "grow", ipa: "/ɡrəʊ/", tr: "выращивать", def: "To cultivate crops or plants." },
-  { word: "harvest", ipa: "/ˈhɑːvɪst/", tr: "собирать урожай", def: "To gather ripe crops from the fields." },
-  { word: "pick", ipa: "/pɪk/", tr: "срывать / собирать", def: "To pluck fruit or flowers from a plant." },
-  { word: "ripe", ipa: "/raɪp/", tr: "спелый", def: "Fully developed and ready to be eaten." }
+/* ============================================================
+   БАЗА ДАННЫХ ЛЕКСИКИ
+   Каждое слово: word, ipa, tr (перевод), def (определение на EN)
+   ============================================================ */
+const VOCAB = [
+  { word: "branch",    ipa: "/brɑːntʃ/",     tr: "ветка",        def: "Part of a tree that grows out from the trunk." },
+  { word: "trunk",     ipa: "/trʌŋk/",       tr: "ствол дерева", def: "The thick main stem of a tree." },
+  { word: "root",      ipa: "/ruːt/",        tr: "корень",       def: "The part of a plant below the ground that takes in water." },
+  { word: "hedge",     ipa: "/hedʒ/",        tr: "живая изгородь", def: "A row of bushes forming a border between fields or gardens." },
+  { word: "field",     ipa: "/fiːld/",       tr: "поле",         def: "An area of open land, often used for growing crops." },
+  { word: "crop",      ipa: "/krɒp/",        tr: "урожай, культура", def: "A plant grown in large amounts, especially for food." },
+  { word: "harvest",   ipa: "/ˈhɑːvɪst/",    tr: "урожай, сбор урожая", def: "The process of gathering crops, or the crops gathered." },
+  { word: "soil",      ipa: "/sɔɪl/",        tr: "почва",        def: "The top layer of earth in which plants grow." },
+  { word: "barn",      ipa: "/bɑːn/",        tr: "сарай, амбар", def: "A large farm building used to store crops or house animals." },
+  { word: "stable",    ipa: "/ˈsteɪbl/",     tr: "конюшня",      def: "A building where horses are kept." },
+  { word: "pond",      ipa: "/pɒnd/",        tr: "пруд",         def: "A small area of still water, smaller than a lake." },
+  { word: "stream",    ipa: "/striːm/",      tr: "ручей",        def: "A small narrow river." },
+  { word: "meadow",    ipa: "/ˈmedəʊ/",      tr: "луг",          def: "A field covered in grass, sometimes used for hay." },
+  { word: "cattle",    ipa: "/ˈkætl/",       tr: "крупный рогатый скот", def: "Cows and bulls kept on a farm." },
+  { word: "livestock", ipa: "/ˈlaɪvstɒk/",   tr: "домашний скот", def: "Animals kept on a farm for meat, milk, or other products." },
+  { word: "flock",     ipa: "/flɒk/",        tr: "стадо (овец, птиц)", def: "A group of sheep, goats or birds." },
+  { word: "herd",      ipa: "/hɜːd/",        tr: "стадо (крупного скота)", def: "A large group of animals, especially cows." },
+  { word: "wool",      ipa: "/wʊl/",         tr: "шерсть",       def: "The soft thick hair of sheep, used to make clothing." },
+  { word: "hay",       ipa: "/heɪ/",         tr: "сено",         def: "Grass that has been cut and dried, used to feed animals." },
+  { word: "plough",    ipa: "/plaʊ/",        tr: "плуг, пахать", def: "A farm tool used to turn over soil before planting." },
+  { word: "seed",      ipa: "/siːd/",        tr: "семя",         def: "A small object produced by a plant from which a new plant grows." },
+  { word: "manure",    ipa: "/məˈnjʊə/",     tr: "навоз",        def: "Animal waste used to make soil more fertile." },
+  { word: "orchard",   ipa: "/ˈɔːtʃəd/",     tr: "фруктовый сад", def: "A piece of land where fruit trees are grown." },
+  { word: "vineyard",  ipa: "/ˈvɪnjəd/",     tr: "виноградник",  def: "An area of land where grapes are grown." },
+  { word: "cockerel",  ipa: "/ˈkɒkərəl/",    tr: "петух (молодой)", def: "A young male chicken." },
+  { word: "shepherd",  ipa: "/ˈʃepəd/",      tr: "пастух",       def: "A person who takes care of sheep." },
+  { word: "scarecrow", ipa: "/ˈskeəkrəʊ/",   tr: "чучело",       def: "A figure made to look like a person, used to scare birds away." },
+  { word: "gate",      ipa: "/geɪt/",        tr: "ворота, калитка", def: "A barrier used to open and close an entrance in a fence." },
+  { word: "fence",     ipa: "/fens/",        tr: "забор",        def: "A structure that surrounds an area of land." },
+  { word: "tractor",   ipa: "/ˈtræktə/",     tr: "трактор",      def: "A powerful vehicle used to pull farm machinery." },
+  { word: "irrigate",  ipa: "/ˈɪrɪgeɪt/",    tr: "поливать/оросить", def: "To supply land with water to help crops grow." },
+  { word: "fertile",   ipa: "/ˈfɜːtaɪl/",    tr: "плодородный",  def: "Describes land that is good for growing plants." },
+  { word: "rural",     ipa: "/ˈrʊərəl/",     tr: "сельский",     def: "Relating to the countryside, not the city." },
+  { word: "graze",     ipa: "/greɪz/",       tr: "пастись",      def: "When animals eat grass growing in a field." }
 ];
 
-const GAPS_DATA = [
-  { text: "We walked along the edge of a sheer {cliff} overlooking the ocean.", answer: "cliff" },
-  { text: "A shallow, crystal-clear {stream} runs right behind the garden.", answer: "stream" },
-  { text: "The farmhouse is surrounded by an overgrown {hedge}.", answer: "hedge" },
-  { text: "After the rain, the winding mountain {path} was thick with mud.", answer: "path" },
-  { text: "Local farmers harvest cereal crops such as wheat in August.", answer: "harvest" },
-  { text: "The apples are {ripe} enough to be picked directly from the tree.", answer: "ripe" },
-  { text: "They renovated an old stone {barn} into a luxury holiday home.", answer: "barn" },
-  { text: "In spring, you can see newborn {lambs} playing in the fields.", answer: "lambs" }
-];
+/* ============================================================
+   ХРАНИЛИЩЕ ПРОГРЕССА (localStorage)
+   Формат: { known: ["branch","hedge",...] }
+   ============================================================ */
+const STORAGE_KEY = "farmVocabProgress";
 
-/* ==========================================================================
-   TABS CONTROLLER
-   ========================================================================== */
-function switchTab(tabId) {
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.screen').forEach(scr => scr.classList.remove('active'));
-  
-  event.currentTarget.classList.add('active');
-  document.getElementById(`screen-${tabId}`).classList.add('active');
-
-  if (tabId === 'match') initMatching();
-  if (tabId === 'gaps') initGaps();
-  if (tabId === 'quiz') initQuiz();
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { known: [], quizBest: 0 };
+  } catch (e) {
+    // если данные повреждены — начинаем с чистого листа, а не роняем приложение
+    return { known: [], quizBest: 0 };
+  }
 }
 
-/* ==========================================================================
-   1. FLASHCARDS ENGINE
-   ========================================================================== */
-let currentCardIdx = 0;
+function saveProgress(progress) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
 
-function updateFlashcard() {
-  const item = VOCABULARY[currentCardIdx];
-  document.getElementById('fcWord').textContent = item.word;
-  document.getElementById('fcIpa').textContent = item.ipa;
-  document.getElementById('fcTr').textContent = item.tr;
-  document.getElementById('fcDef').textContent = item.def;
-  document.getElementById('fcCounter').textContent = `${currentCardIdx + 1} / ${VOCABULARY.length}`;
-  document.getElementById('flashcard').classList.remove('flipped');
+let progress = loadProgress();
+
+function updateDashboard() {
+  document.getElementById("statKnown").textContent = progress.known.length;
+  document.getElementById("statLearning").textContent = VOCAB.length - progress.known.length;
+  document.getElementById("statQuizBest").textContent = progress.quizBest + "%";
+}
+
+/* ============================================================
+   ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+   ============================================================ */
+function switchTab(tabId, btnEl) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById("screen-" + tabId).classList.add("active");
+
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  btnEl.classList.add("active");
+
+  // Ленивая инициализация экрана при первом открытии
+  if (tabId === "match" && !matchInitialized) initMatchGame();
+  if (tabId === "gaps" && !gapsInitialized) renderGaps();
+  if (tabId === "quiz" && !quizInitialized) startQuiz();
+}
+
+/* ============================================================
+   1. FLASHCARDS
+   ============================================================ */
+let fcDeck = [...VOCAB];
+let fcIndex = 0;
+let fcFlipped = false;
+
+function shuffleArray(arr) {
+  // Fisher-Yates — равномерное перемешивание без смещения
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderCard() {
+  const card = fcDeck[fcIndex];
+  document.getElementById("fcWord").textContent = card.word;
+  document.getElementById("fcIpa").textContent = card.ipa;
+  document.getElementById("fcTr").textContent = card.tr;
+  document.getElementById("fcDef").textContent = card.def;
+
+  fcFlipped = false;
+  document.getElementById("flashcard").classList.remove("flipped");
+
+  const pct = ((fcIndex + 1) / fcDeck.length) * 100;
+  document.getElementById("fcProgressFill").style.width = pct + "%";
 }
 
 function toggleCard() {
-  document.getElementById('flashcard').classList.toggle('flipped');
+  fcFlipped = !fcFlipped;
+  document.getElementById("flashcard").classList.toggle("flipped", fcFlipped);
 }
 
 function nextCard() {
-  currentCardIdx = (currentCardIdx + 1) % VOCABULARY.length;
-  updateFlashcard();
+  fcIndex = (fcIndex + 1) % fcDeck.length;
+  renderCard();
 }
 
 function prevCard() {
-  currentCardIdx = (currentCardIdx - 1 + VOCABULARY.length) % VOCABULARY.length;
-  updateFlashcard();
+  fcIndex = (fcIndex - 1 + fcDeck.length) % fcDeck.length;
+  renderCard();
 }
 
-/* ==========================================================================
-   2. MATCHING GAME ENGINE
-   ========================================================================== */
-let selectedLeft = null;
-let selectedRight = null;
+function shuffleCards() {
+  fcDeck = shuffleArray(fcDeck);
+  fcIndex = 0;
+  renderCard();
+}
 
-function initMatching() {
-  const leftCol = document.getElementById('matchLeft');
-  const rightCol = document.getElementById('matchRight');
-  leftCol.innerHTML = '';
-  rightCol.innerHTML = '';
-  selectedLeft = null;
-  selectedRight = null;
+function markCard(isKnown) {
+  const word = fcDeck[fcIndex].word;
+  const idx = progress.known.indexOf(word);
 
-  // Pick 6 random items for the game session
-  const shuffled = [...VOCABULARY].sort(() => 0.5 - Math.random()).slice(0, 6);
-  
-  const leftItems = shuffled.map(item => ({ word: item.word, id: item.word }));
-  const rightItems = shuffled.map(item => ({ text: item.tr, id: item.word })).sort(() => 0.5 - Math.random());
+  if (isKnown && idx === -1) {
+    progress.known.push(word);
+  } else if (!isKnown && idx !== -1) {
+    progress.known.splice(idx, 1);
+  }
 
-  leftItems.forEach(item => {
-    const el = document.createElement('div');
-    el.className = 'match-item';
-    el.dataset.id = item.id;
-    el.innerHTML = `<span>${item.word}</span>`;
-    el.onclick = () => selectMatchItem(el, 'left');
-    leftCol.appendChild(el);
+  saveProgress(progress);
+  updateDashboard();
+  nextCard();
+}
+
+// Озвучка через нативный Web Speech API — без сторонних библиотек
+function speakWord(e) {
+  e.stopPropagation(); // не даём клику по кнопке перевернуть карточку
+  if (!("speechSynthesis" in window)) return;
+
+  const utter = new SpeechSynthesisUtterance(fcDeck[fcIndex].word);
+  utter.lang = "en-GB";
+  utter.rate = 0.9;
+  window.speechSynthesis.cancel(); // прерываем предыдущую озвучку, если была
+  window.speechSynthesis.speak(utter);
+}
+
+/* ============================================================
+   2. MATCHING GAME
+   ============================================================ */
+let matchInitialized = false;
+let matchSelectedWord = null;
+let matchSelectedTr = null;
+let matchPairsLeft = 0;
+
+function initMatchGame() {
+  matchInitialized = true;
+  matchSelectedWord = null;
+  matchSelectedTr = null;
+  document.getElementById("matchStatus").textContent = "";
+
+  // Берём случайные 6 слов на раунд — так игра не перегружена
+  const pool = shuffleArray(VOCAB).slice(0, 6);
+  matchPairsLeft = pool.length;
+
+  const wordsCol = document.getElementById("matchColWords");
+  const trCol = document.getElementById("matchColTr");
+  wordsCol.innerHTML = "";
+  trCol.innerHTML = "";
+
+  const shuffledWords = shuffleArray(pool);
+  const shuffledTr = shuffleArray(pool);
+
+  shuffledWords.forEach(item => {
+    const el = document.createElement("div");
+    el.className = "match-item";
+    el.dataset.word = item.word;
+    el.textContent = item.word;
+    el.onclick = () => selectMatchItem(el, "word", item.word);
+    wordsCol.appendChild(el);
   });
 
-  rightItems.forEach(item => {
-    const el = document.createElement('div');
-    el.className = 'match-item';
-    el.dataset.id = item.id;
-    el.innerHTML = `<span>${item.text}</span>`;
-    el.onclick = () => selectMatchItem(el, 'right');
-    rightCol.appendChild(el);
+  shuffledTr.forEach(item => {
+    const el = document.createElement("div");
+    el.className = "match-item";
+    el.dataset.word = item.word;
+    el.textContent = item.tr;
+    el.onclick = () => selectMatchItem(el, "tr", item.word);
+    trCol.appendChild(el);
   });
 }
 
-function selectMatchItem(el, side) {
-  if (el.classList.contains('matched')) return;
+function selectMatchItem(el, type, word) {
+  if (el.classList.contains("matched")) return;
 
-  if (side === 'left') {
-    document.querySelectorAll('#matchLeft .match-item').forEach(i => i.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedLeft = el;
+  if (type === "word") {
+    if (matchSelectedWord) matchSelectedWord.classList.remove("selected");
+    matchSelectedWord = el;
   } else {
-    document.querySelectorAll('#matchRight .match-item').forEach(i => i.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedRight = el;
+    if (matchSelectedTr) matchSelectedTr.classList.remove("selected");
+    matchSelectedTr = el;
   }
+  el.classList.add("selected");
 
-  if (selectedLeft && selectedRight) {
-    if (selectedLeft.dataset.id === selectedRight.dataset.id) {
-      selectedLeft.classList.remove('selected');
-      selectedRight.classList.remove('selected');
-      selectedLeft.classList.add('matched');
-      selectedRight.classList.add('matched');
-      selectedLeft = null;
-      selectedRight = null;
-    } else {
-      selectedLeft.classList.add('wrong');
-      selectedRight.classList.add('wrong');
-      const l = selectedLeft; const r = selectedRight;
-      setTimeout(() => {
-        l.classList.remove('selected', 'wrong');
-        r.classList.remove('selected', 'wrong');
-      }, 500);
-      selectedLeft = null;
-      selectedRight = null;
-    }
+  if (matchSelectedWord && matchSelectedTr) {
+    checkMatchPair();
   }
 }
 
-/* ==========================================================================
-   3. CONTEXT GAPS ENGINE
-   ========================================================================== */
-function initGaps() {
-  const container = document.getElementById('gapsContainer');
-  container.innerHTML = '';
+function checkMatchPair() {
+  const wordEl = matchSelectedWord;
+  const trEl = matchSelectedTr;
 
-  GAPS_DATA.forEach((item, idx) => {
-    const card = document.createElement('div');
-    card.className = 'gap-card';
-    const htmlText = item.text.replace(/\{([^}]+)\}/, `<input class="gap-input" data-answer="$1" data-idx="${idx}" placeholder="...">`);
-    card.innerHTML = `${idx + 1}. ${htmlText}`;
-    container.appendChild(card);
+  if (wordEl.dataset.word === trEl.dataset.word) {
+    wordEl.classList.remove("selected");
+    trEl.classList.remove("selected");
+    wordEl.classList.add("matched");
+    trEl.classList.add("matched");
+    matchPairsLeft--;
+
+    if (matchPairsLeft === 0) {
+      document.getElementById("matchStatus").textContent = "Отлично! Все пары найдены 🎯".replace("🎯", "");
+      document.getElementById("matchStatus").textContent = "Отлично! Все пары найдены.";
+    }
+  } else {
+    wordEl.classList.add("wrong");
+    trEl.classList.add("wrong");
+    setTimeout(() => {
+      wordEl.classList.remove("wrong", "selected");
+      trEl.classList.remove("wrong", "selected");
+    }, 450);
+  }
+
+  matchSelectedWord = null;
+  matchSelectedTr = null;
+}
+
+/* ============================================================
+   3. CONTEXT GAPS
+   ============================================================ */
+let gapsInitialized = false;
+let currentGapsSet = [];
+
+// Простые контекстные предложения — каждое использует одно слово из темы
+const GAP_SENTENCES = [
+  { word: "hedge",     sentence: "They planted a tall ___ around the garden to keep the sheep out." },
+  { word: "harvest",   sentence: "In September, farmers begin the ___ of wheat and barley." },
+  { word: "barn",      sentence: "We keep the tractor and tools inside the old ___." },
+  { word: "flock",     sentence: "The shepherd led a ___ of sheep across the meadow." },
+  { word: "soil",      sentence: "This part of the field has very fertile ___ for growing vegetables." },
+  { word: "orchard",   sentence: "In spring, the apple trees in the ___ are covered in blossom." },
+  { word: "irrigate",  sentence: "They use a system of pipes to ___ the dry fields in summer." },
+  { word: "graze",     sentence: "The cattle ___ peacefully in the meadow all afternoon." },
+  { word: "scarecrow", sentence: "A ___ stood in the middle of the field to frighten away the crows." },
+  { word: "manure",    sentence: "Farmers often use ___ to make the soil richer before planting." }
+];
+
+function renderGaps() {
+  gapsInitialized = true;
+  currentGapsSet = shuffleArray(GAP_SENTENCES).slice(0, 6);
+  const container = document.getElementById("gapsContainer");
+  container.innerHTML = "";
+  document.getElementById("gapsResult").textContent = "";
+
+  currentGapsSet.forEach((item, i) => {
+    const div = document.createElement("div");
+    div.className = "gap-card";
+    const parts = item.sentence.split("___");
+    div.innerHTML =
+      parts[0] +
+      `<input type="text" class="gap-input" id="gapInput${i}" autocomplete="off" spellcheck="false">` +
+      parts[1];
+    container.appendChild(div);
   });
 }
 
 function checkGaps() {
-  document.querySelectorAll('.gap-input').forEach(inp => {
-    const ans = inp.dataset.answer.toLowerCase().trim();
-    const val = inp.value.toLowerCase().trim();
-    if (val === ans) {
-      inp.classList.remove('bad');
-      inp.classList.add('ok');
-    } else {
-      inp.classList.remove('ok');
-      inp.classList.add('bad');
+  let correctCount = 0;
+
+  currentGapsSet.forEach((item, i) => {
+    const input = document.getElementById("gapInput" + i);
+    const userValue = input.value.trim().toLowerCase();
+
+    input.classList.remove("ok", "bad");
+
+    if (userValue === item.word.toLowerCase()) {
+      input.classList.add("ok");
+      correctCount++;
+    } else if (userValue.length > 0) {
+      input.classList.add("bad");
     }
   });
+
+  const resultEl = document.getElementById("gapsResult");
+  resultEl.textContent = `Правильно: ${correctCount} из ${currentGapsSet.length}`;
+  resultEl.style.color = correctCount === currentGapsSet.length ? "var(--success)" : "var(--primary)";
 }
 
-/* ==========================================================================
-   4. QUICK QUIZ ENGINE
-   ========================================================================== */
-let quizPool = [];
-let quizCurrentIdx = 0;
+/* ============================================================
+   4. QUIZ
+   ============================================================ */
+let quizInitialized = false;
+let quizQuestions = [];
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
 
-function initQuiz() {
-  quizPool = [...VOCABULARY].sort(() => 0.5 - Math.random()).slice(0, 8);
-  quizCurrentIdx = 0;
-  loadQuizQuestion();
-}
+function buildQuizQuestions() {
+  // Берём 10 случайных слов и для каждого генерируем 4 варианта ответа
+function buildQuizQuestions() {
+  const pool = shuffleArray(VOCAB).slice(0, 10);
 
-function loadQuizQuestion() {
-  if (quizCurrentIdx >= quizPool.length) {
-    document.getElementById('quizCard').innerHTML = `
-      <div style="font-family: var(--font-head); font-size: 2rem; color: var(--primary); margin-bottom: 1rem;">🎉 Quiz Completed!</div>
-      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Great job reviewing the vocabulary.</p>
-      <button class="btn btn-primary" onclick="initQuiz()">Restart Quiz</button>
-    `;
-    return;
-  }
+  return pool.map(correctItem => {
+    // Собираем 3 неправильных варианта из остальных слов темы
+    const wrongPool = VOCAB.filter(v => v.word !== correctItem.word);
+    const wrongOptions = shuffleArray(wrongPool).slice(0, 3).map(v => v.tr);
 
-  const current = quizPool[quizCurrentIdx];
-  document.getElementById('quizQuestion').textContent = `What is the translation for "${current.word}"?`;
-  
-  // Generate 3 wrong options + 1 correct
-  let wrongs = VOCABULARY.filter(v => v.word !== current.word).sort(() => 0.5 - Math.random()).slice(0, 3);
-  let options = [...wrongs, current].sort(() => 0.5 - Math.random());
+    const options = shuffleArray([correctItem.tr, ...wrongOptions]);
 
-  const optContainer = document.getElementById('quizOptions');
-  optContainer.innerHTML = '';
-  document.getElementById('quizFeedback').textContent = '';
-  document.getElementById('quizNextBtn').style.display = 'none';
-
-  options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'quiz-opt';
-    btn.textContent = opt.tr;
-    btn.onclick = () => checkQuizAnswer(opt.word === current.word, btn);
-    optContainer.appendChild(btn);
+    return {
+      question: correctItem.word,
+      ipa: correctItem.ipa,
+      correctAnswer: correctItem.tr,
+      options: options
+    };
   });
 }
 
-function checkQuizAnswer(isCorrect, btn) {
-  document.querySelectorAll('.quiz-opt').forEach(b => b.style.pointerEvents = 'none');
-  if (isCorrect) {
-    btn.classList.add('correct');
-    document.getElementById('quizFeedback').style.color = 'var(--success)';
-    document.getElementById('quizFeedback').textContent = 'Correct! 🎉';
+function startQuiz() {
+  quizInitialized = true;
+  quizQuestions = buildQuizQuestions();
+  quizIndex = 0;
+  quizScore = 0;
+  quizAnswered = false;
+
+  document.getElementById("quizNextBtn").style.display = "none";
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quizQuestions[quizIndex];
+  quizAnswered = false;
+
+  document.getElementById("quizProgress").textContent =
+    `Вопрос ${quizIndex + 1} из ${quizQuestions.length}`;
+  document.getElementById("quizQuestion").textContent = q.question;
+  document.getElementById("quizFeedback").textContent = "";
+  document.getElementById("quizScoreText").textContent = `${quizScore} / ${quizQuestions.length}`;
+  document.getElementById("quizNextBtn").style.display = "none";
+
+  const optionsContainer = document.getElementById("quizOptions");
+  optionsContainer.innerHTML = "";
+
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.className = "quiz-opt";
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(btn, opt, q.correctAnswer);
+    optionsContainer.appendChild(btn);
+  });
+}
+
+function selectAnswer(btnEl, chosen, correctAnswer) {
+  if (quizAnswered) return; // защита от повторного клика после ответа
+  quizAnswered = true;
+
+  const allButtons = document.querySelectorAll(".quiz-opt");
+  allButtons.forEach(b => b.disabled = true);
+
+  const feedbackEl = document.getElementById("quizFeedback");
+
+  if (chosen === correctAnswer) {
+    btnEl.classList.add("correct");
+    feedbackEl.textContent = "Верно! 🎉";
+    feedbackEl.style.color = "var(--success)";
+    quizScore++;
   } else {
-    btn.classList.add('wrong');
-    document.querySelectorAll('.quiz-opt').forEach(b => {
-      // highlight correct
-      if (b.textContent === quizPool[quizCurrentIdx].tr) b.classList.add('correct');
+    btnEl.classList.add("wrong");
+    feedbackEl.textContent = `Неверно. Правильный ответ: ${correctAnswer}`;
+    feedbackEl.style.color = "var(--error)";
+
+    // Подсвечиваем правильный вариант зелёным для наглядности
+    allButtons.forEach(b => {
+      if (b.textContent === correctAnswer) b.classList.add("correct");
     });
-    document.getElementById('quizFeedback').style.color = 'var(--error)';
-    document.getElementById('quizFeedback').textContent = 'Incorrect ❌';
   }
-  document.getElementById('quizNextBtn').style.display = 'inline-block';
+
+  document.getElementById("quizScoreText").textContent = `${quizScore} / ${quizQuestions.length}`;
+
+  const nextBtn = document.getElementById("quizNextBtn");
+  if (quizIndex < quizQuestions.length - 1) {
+    nextBtn.textContent = "";
+    nextBtn.innerHTML = `Следующий вопрос <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>`;
+    nextBtn.style.display = "inline-flex";
+  } else {
+    // Последний вопрос — показываем итоговый результат и сохраняем рекорд
+    finishQuiz();
+  }
 }
 
-function nextQuizQuestion() {
-  quizCurrentIdx++;
-  loadQuizQuestion();
+function finishQuiz() {
+  const percent = Math.round((quizScore / quizQuestions.length) * 100);
+
+  if (percent > progress.quizBest) {
+    progress.quizBest = percent;
+    saveProgress(progress);
+    updateDashboard();
+  }
+
+  const feedbackEl = document.getElementById("quizFeedback");
+  feedbackEl.innerHTML += `<br><span style="font-size:0.9rem;color:var(--text-muted);">Квиз завершён! Результат: ${percent}%</span>`;
+
+  const nextBtn = document.getElementById("quizNextBtn");
+  nextBtn.style.display = "none";
 }
 
-// Initial boot
-updateFlashcard();
+function nextQuestion() {
+  quizIndex++;
+  renderQuestion();
+}
+
+/* ============================================================
+   ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
+   ============================================================ */
+function init() {
+  updateDashboard();
+  fcDeck = shuffleArray(VOCAB);
+  fcIndex = 0;
+  renderCard();
+}
+
+init();
 </script>
+
 </body>
 </html>
