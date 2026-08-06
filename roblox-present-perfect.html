@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roblox Animal Hospital: Present Perfect Quest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-0: #070b14;
+      --bg-1: #0e1626;
+      --bg-2: #162238;
+      --panel: rgba(18, 28, 48, 0.92);
+      --panel-2: #1d2c47;
+      --neon-green: #00ff66;
+      --neon-cyan: #00e5ff;
+      --neon-purple: #b14dff;
+      --neon-pink: #ff3d81;
+      --neon-yellow: #ffd60a;
+      --neon-red: #ff2a55;
+      --txt: #eaf0ff;
+      --txt-dim: #8a96c0;
+      --ok: #00ff66;
+      --no: #ff3d5e;
+      --radius: 18px;
+      --radius-sm: 12px;
+      --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-display: 'Fredoka One', cursive;
+      --font-mono: 'Share Tech Mono', monospace;
+      --shadow-neon: 0 0 20px rgba(0, 229, 255, 0.35);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font);
+      color: var(--txt);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(0, 229, 255, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 80% 85%, rgba(177, 77, 255, 0.12) 0%, transparent 40%),
+        linear-gradient(160deg, #070b14 0%, #0e1626 50%, #162238 100%);
+    }
+
+    .scanlines {
+      position: fixed; inset: 0; pointer-events: none; z-index: 999;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,.15) 0 1px, transparent 1px 3px);
+      opacity: .4; mix-blend-mode: overlay;
+    }
+
+    .ico { width: 14px; height: 14px; fill: currentColor; vertical-align: -2px; margin-right: 3px; }
+
+    /* TOP HUD */
+    .hud-top {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.9rem 1.4rem; gap: 1rem; flex-wrap: wrap;
+      border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+      background: rgba(7, 11, 20, 0.85); backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 50;
+    }
+
+    .server-badge {
+      font-family: var(--font-display);
+      font-size: 1rem; letter-spacing: 0.5px;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .hud-stats { display: flex; align-items: center; gap: 1rem; }
+
+    .energy-wrap { display: flex; flex-direction: column; gap: 3px; min-width: 140px; }
+    .energy-label {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700;
+      color: var(--neon-green); letter-spacing: 1px; display: flex; align-items: center;
+    }
+    .energy-bar {
+      height: 14px; border-radius: 20px; background: #070b14;
+      border: 1px solid rgba(0, 255, 102, 0.4); overflow: hidden;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+    }
+    .energy-fill {
+      height: 100%; width: 100%;
+      background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+      box-shadow: 0 0 12px var(--neon-green);
+      transition: width .4s cubic-bezier(.4, 1.4, .5, 1);
+    }
+    .energy-fill.low {
+      background: linear-gradient(90deg, #ff9500, var(--no));
+      box-shadow: 0 0 12px var(--no);
+    }
+
+    .xp-chip {
+      font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700;
+      padding: 0.4rem 0.8rem; border-radius: 20px;
+      background: var(--panel-2); border: 1px solid var(--neon-yellow);
+      color: var(--neon-yellow); box-shadow: 0 0 10px rgba(255, 214, 10, 0.25);
+      display: flex; align-items: center;
+    }
+    .xp-chip b { font-size: 1rem; margin-left: 4px; }
+    .xp-chip.pop { animation: pop .4s ease; }
+    @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.3)} 100%{transform:scale(1)} }
+
+    .mute-btn {
+      background: var(--panel-2); border: 1px solid rgba(0, 229, 255, 0.3);
+      color: var(--txt); width: 40px; height: 40px; border-radius: 50%;
+      cursor: pointer; font-size: 1.1rem; transition: all .25s ease;
+    }
+    .mute-btn:hover { transform: scale(1.1); box-shadow: var(--shadow-neon); }
+    .mute-btn.off { opacity: 0.5; }
+
+    main { max-width: 780px; width: 100%; margin: 0 auto; padding: 1.5rem 1.2rem 3rem; flex: 1; }
+    .hidden { display: none !important; }
+
+    /* BUTTONS */
+    .btn {
+      font-family: var(--font); font-weight: 800; cursor: pointer; border: none;
+      border-radius: var(--radius-sm); letter-spacing: .5px;
+      transition: all .2s cubic-bezier(.4, 1.4, .5, 1); position: relative;
+    }
+    .btn:active { transform: translateY(2px) scale(.98); }
+    .btn-play {
+      font-family: var(--font-display); font-size: 1.3rem; padding: 1rem 3rem; color: #070b14;
+      background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+      box-shadow: 0 6px 0 #00a843, 0 0 25px rgba(0, 255, 102, 0.5);
+    }
+    .btn-play:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #00a843, 0 0 35px rgba(0, 255, 102, 0.7); }
+    .btn-play:active { box-shadow: 0 2px 0 #00a843; }
+    .btn-check { padding: .9rem 1.8rem; color: #070b14; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); box-shadow: 0 4px 0 #5a2b8a; }
+    .btn-check:hover { transform: translateY(-1px); }
+    .btn-next { padding: .9rem 2.4rem; color: #070b14; margin-top: 1rem; background: linear-gradient(90deg, var(--neon-yellow), #ff9500); box-shadow: 0 4px 0 #b36b00; }
+    .btn-next:hover { transform: translateY(-1px); }
+    .btn-ghost { padding: .9rem 2rem; color: var(--txt); background: transparent; border: 2px solid var(--txt-dim); }
+    .btn-ghost:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+
+    /* LOBBY */
+    .lobby { text-align: center; padding: 2rem 0; position: relative; }
+    .lobby-glow {
+      position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
+      width: 340px; height: 340px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 229, 255, 0.3), transparent 70%);
+      filter: blur(35px); z-index: -1;
+    }
+    .lobby-tag {
+      display: inline-block; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 2px; color: var(--neon-cyan); border: 1px solid var(--neon-cyan);
+      padding: 0.4rem 1.2rem; border-radius: 20px; margin-bottom: 1.2rem;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); background: rgba(0, 229, 255, 0.08);
+    }
+    .lobby h1 { font-family: var(--font-display); font-size: 2.8rem; line-height: 1.05; letter-spacing: -1px; }
+    .neon { color: var(--neon-green); text-shadow: 0 0 20px rgba(0, 255, 102, 0.7); }
+    .lobby-sub { max-width: 520px; margin: 1.2rem auto 2rem; color: var(--txt-dim); line-height: 1.6; font-size: 1.05rem; }
+    .lobby-sub b { color: var(--txt); }
+
+    .mission-preview { display: grid; grid-template-columns: repeat(4, 1fr); gap: .8rem; max-width: 640px; margin: 0 auto 2.2rem; }
+    .mp-card {
+      background: var(--panel); border-radius: var(--radius-sm); padding: 1rem .6rem;
+      font-size: .8rem; font-weight: 700; line-height: 1.3; position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.08); transition: all .25s ease; backdrop-filter: blur(6px);
+    }
+    .mp-card:hover { transform: translateY(-4px); border-color: var(--neon-cyan); }
+    .mp-card i { font-weight: 400; color: var(--txt-dim); font-size: .7rem; font-style: normal; display: block; margin-top: 2px; }
+    .mp-card span {
+      display: block; width: 28px; height: 28px; line-height: 28px; margin: 0 auto .5rem;
+      border-radius: 50%; font-family: var(--font-display); font-size: 1rem; color: #070b14;
+    }
+    .mp-1 span { background: var(--neon-green); }
+    .mp-2 span { background: var(--neon-cyan); }
+    .mp-3 span { background: var(--neon-yellow); }
+    .mp-4 span { background: var(--neon-pink); }
+
+    /* CHEAT SHEET SUMMARY CARD */
+    .cheat-sheet-box {
+      background: rgba(14, 22, 38, 0.85); border: 1px solid rgba(0, 229, 255, 0.25);
+      border-radius: var(--radius); padding: 1.2rem 1.4rem; max-width: 640px; margin: 0 auto 2rem;
+      text-align: left; font-size: 0.9rem; line-height: 1.5; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .cs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.6rem; }
+    .cs-item { background: rgba(7, 11, 20, 0.6); padding: 0.8rem; border-radius: 10px; }
+    .cs-title-for { color: var(--neon-green); font-weight: 800; font-family: var(--font-mono); }
+    .cs-title-since { color: var(--neon-cyan); font-weight: 800; font-family: var(--font-mono); }
+    .cs-title-past { color: var(--neon-pink); font-weight: 800; font-family: var(--font-mono); }
+    .cs-title-perf { color: var(--neon-yellow); font-weight: 800; font-family: var(--font-mono); }
+
+    /* GAME SECTION */
+    .mission-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 0 .3rem; }
+    .mission-name { font-family: var(--font-mono); font-weight: 700; letter-spacing: 1px; color: var(--neon-cyan); font-size: 1rem; }
+    .q-progress { font-family: var(--font-mono); font-weight: 700; color: var(--txt-dim); font-size: .9rem; }
+
+    .quest-card {
+      background: linear-gradient(160deg, var(--panel), rgba(29, 44, 71, 0.95));
+      border: 1px solid rgba(0, 229, 255, 0.2); border-radius: var(--radius);
+      padding: 1.8rem 1.6rem; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      animation: cardIn .4s ease; backdrop-filter: blur(10px);
+    }
+    @keyframes cardIn { from{opacity:0; transform:translateY(20px)} to{opacity:1; transform:none} }
+
+    .char-stage { text-align: center; margin-bottom: 1.2rem; }
+    .char-avatar {
+      width: 150px; height: 150px; margin: 0 auto; border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at 40% 30%, var(--panel-2), var(--bg-0));
+      border: 2px solid var(--neon-cyan); box-shadow: 0 0 25px rgba(0, 229, 255, 0.3);
+      animation: float 3s ease-in-out infinite; overflow: hidden; position: relative;
+    }
+    .char-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+    .char-name {
+      margin-top: .7rem; font-family: var(--font-display); font-size: 1.1rem;
+      color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+    }
+
+    .quest-prompt {
+      text-align: center; font-family: var(--font-mono); font-size: .85rem; font-weight: 700;
+      letter-spacing: 1px; color: var(--neon-yellow); margin-bottom: .8rem; text-transform: uppercase;
+    }
+
+    .quest-sentence {
+      text-align: center; font-size: 1.3rem; font-weight: 600; line-height: 1.6; margin-bottom: 1.5rem;
+    }
+    .quest-sentence .gap {
+      display: inline-block; min-width: 65px; padding: 0 .4rem; margin: 0 .2rem;
+      border-bottom: 3px solid var(--neon-purple); color: var(--neon-purple);
+      font-weight: 800; text-align: center; text-shadow: 0 0 10px rgba(177, 77, 255, 0.5);
+    }
+
+    .options { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .8rem; }
+    .opt {
+      padding: 1.1rem .8rem; font-size: 1.1rem; font-weight: 700;
+      background: var(--panel-2); color: var(--txt); cursor: pointer;
+      border: 2px solid rgba(0, 229, 255, 0.2); border-radius: var(--radius-sm);
+      transition: all .18s cubic-bezier(.4, 1.4, .5, 1);
+    }
+    .opt:hover:not(:disabled) {
+      border-color: var(--neon-cyan); transform: translateY(-3px);
+      box-shadow: 0 6px 0 rgba(0, 229, 255, 0.2), var(--shadow-neon);
+    }
+    .opt:active { transform: translateY(0); }
+    .opt:disabled { cursor: default; }
+    .opt.correct { border-color: var(--ok); background: rgba(0, 255, 102, 0.15); color: var(--ok); box-shadow: 0 0 20px rgba(0, 255, 102, 0.4); }
+    .opt.wrong { border-color: var(--no); background: rgba(255, 61, 94, 0.15); color: var(--no); animation: shake .4s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+
+    .type-zone { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: .5rem; }
+    #typeInput {
+      flex: 1; min-width: 180px; padding: 1rem 1.2rem; font-size: 1.2rem; font-weight: 600;
+      background: var(--bg-0); color: var(--txt); border-radius: var(--radius-sm);
+      border: 2px solid rgba(0, 229, 255, 0.3); outline: none; font-family: var(--font); transition: all .2s ease;
+    }
+    #typeInput:focus { border-color: var(--neon-cyan); box-shadow: var(--shadow-neon); }
+    #typeInput.correct { border-color: var(--ok); color: var(--ok); }
+    #typeInput.wrong { border-color: var(--no); color: var(--no); animation: shake .4s ease; }
+
+    .feedback { margin-top: 1.5rem; text-align: center; animation: cardIn .3s ease; }
+    .fb-icon { font-size: 2.5rem; margin-bottom: .3rem; }
+    .fb-title { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: .5rem; }
+    .feedback.ok .fb-title { color: var(--ok); }
+    .feedback.no .fb-title { color: var(--no); }
+    .fb-text { color: var(--txt-dim); line-height: 1.6; max-width: 460px; margin: 0 auto; font-size: 0.95rem; }
+    .fb-text b { color: var(--neon-cyan); }
+    .fb-text .ru { display: block; margin-top: .4rem; font-size: .88rem; color: var(--neon-yellow); }
+
+    /* MECHANICS: ORDER & MATCH */
+    #answerArea { margin-top: 0.5rem; }
+    .order-title { display: inline-block; font-size: 1rem; font-weight: 700; color: var(--neon-yellow); letter-spacing: .5px; }
+
+    .order-drop {
+      min-height: 66px; display: flex; flex-wrap: wrap; gap: .5rem;
+      align-items: center; justify-content: center; padding: 1rem; margin-bottom: 1.2rem;
+      border-radius: var(--radius-sm); border: 2px dashed rgba(0, 229, 255, 0.4);
+      background: rgba(0, 0, 0, 0.3); transition: border-color .25s ease, box-shadow .25s ease;
+    }
+    .order-drop:has(.placed) { border-style: solid; border-color: rgba(0, 229, 255, 0.6); box-shadow: inset 0 0 18px rgba(0, 229, 255, 0.15); }
+    .order-hint { color: var(--txt-dim); font-style: italic; font-size: .85rem; }
+
+    .order-bank { display: flex; flex-wrap: wrap; gap: .55rem; justify-content: center; }
+    .order-chip {
+      padding: .75rem 1.15rem; border-radius: 10px; cursor: pointer;
+      font-size: 1.05rem; font-weight: 700; font-family: var(--font);
+      color: var(--txt); background: var(--panel-2); border: 2px solid rgba(0, 229, 255, 0.4);
+      transition: all .18s cubic-bezier(.4, 1.4, .5, 1);
+    }
+    .order-chip:hover:not(:disabled) { transform: translateY(-3px); border-color: var(--neon-cyan); box-shadow: 0 6px 0 rgba(0, 229, 255, 0.2), var(--shadow-neon); }
+    .order-chip.placed { border-color: var(--neon-purple); background: rgba(177, 77, 255, 0.25); }
+    .order-chip.correct { border-color: var(--ok); background: rgba(0, 255, 102, 0.15); color: var(--ok); box-shadow: 0 0 16px rgba(0, 255, 102, 0.35); cursor: default; }
+
+    .match-wrap { display: flex; gap: 1.4rem; justify-content: center; margin-top: .3rem; }
+    .match-col { display: flex; flex-direction: column; gap: .65rem; flex: 1; max-width: 240px; }
+    .match-item {
+      padding: .95rem 1rem; border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: 700;
+      font-family: var(--font); color: var(--txt); background: var(--panel-2);
+      border: 2px solid rgba(0, 229, 255, 0.3); cursor: pointer; transition: all .22s cubic-bezier(.4, 1.4, .5, 1); text-align: center;
+    }
+    .match-item:hover:not(.done) { border-color: var(--neon-cyan); transform: translateY(-2px); box-shadow: var(--shadow-neon); }
+    .match-item.sel { border-color: var(--neon-yellow); box-shadow: 0 0 14px rgba(255, 214, 10, 0.5); background: rgba(255, 214, 10, 0.1); }
+    .match-item.done { border-color: var(--ok); background: rgba(0, 255, 102, 0.14); color: var(--ok); cursor: default; opacity: .85; box-shadow: 0 0 12px rgba(0, 255, 102, 0.25); }
+
+    .tf-statement { font-style: italic; color: var(--neon-cyan); text-shadow: 0 0 12px rgba(0, 229, 255, 0.3); }
+    .opt.tf-opt { font-size: 1.2rem; letter-spacing: .5px; }
+
+    /* LEVEL UP TOAST */
+    .levelup-toast {
+      position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center;
+      background: rgba(7, 11, 20, 0.88); backdrop-filter: blur(8px); animation: cardIn .3s ease;
+    }
+    .lt-inner { text-align: center; }
+    .lt-star { width: 80px; height: 80px; fill: var(--neon-yellow); filter: drop-shadow(0 0 20px rgba(255, 214, 10, 0.8)); animation: spin 1s ease; }
+    @keyframes spin { from{transform:rotate(-180deg) scale(0)} to{transform:rotate(0) scale(1)} }
+    .lt-text { font-family: var(--font-display); font-size: 2.4rem; color: var(--neon-yellow); text-shadow: 0 0 25px rgba(255, 214, 10, 0.7); letter-spacing: 2px; margin-top: .5rem; }
+    .lt-sub { color: var(--txt); margin-top: .3rem; font-weight: 600; font-size: 1.1rem; }
+
+    /* VICTORY */
+    .victory { text-align: center; padding: 2rem 0; position: relative; }
+    .victory-glow {
+      position: absolute; top: 5%; left: 50%; transform: translateX(-50%);
+      width: 360px; height: 360px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 214, 10, 0.3), transparent 70%);
+      filter: blur(35px); z-index: -1;
+    }
+    .trophy { font-size: 5rem; animation: float 3s ease-in-out infinite; }
+    .victory h2 { font-family: var(--font-display); font-size: 2.2rem; color: var(--neon-yellow); text-shadow: 0 0 20px rgba(255, 214, 10, 0.6); margin: .5rem 0 1.5rem; }
+    .vic-stats { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .vic-stat { background: var(--panel); padding: 1.2rem 1.8rem; border-radius: var(--radius-sm); border: 1px solid rgba(0, 229, 255, 0.2); backdrop-filter: blur(6px); }
+    .vic-stat span { display: block; font-family: var(--font-mono); font-size: 2rem; font-weight: 900; color: var(--neon-cyan); }
+    .vic-stat i { font-size: .75rem; color: var(--txt-dim); font-style: normal; letter-spacing: .5px; }
+    .vic-msg { max-width: 480px; margin: 0 auto 2rem; color: var(--txt-dim); line-height: 1.6; font-size: 1.05rem; }
+    .vic-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* FOOTER */
+    .app-footer {
+      width: 100%; margin-top: auto; padding: 1.2rem 1rem;
+      display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .6rem 1.4rem;
+      border-top: 1px solid rgba(0, 229, 255, 0.15); background: rgba(4, 10, 20, 0.6); backdrop-filter: blur(6px);
+    }
+    .footer-by { font-size: .8rem; font-weight: 600; color: var(--txt-dim); letter-spacing: .5px; }
+    .footer-links { display: flex; gap: .7rem; }
+    .footer-link {
+      display: inline-flex; align-items: center; gap: .4rem; padding: .45rem 1rem;
+      border-radius: var(--radius-sm); font-family: var(--font); font-weight: 700; font-size: .82rem;
+      text-decoration: none; cursor: pointer; border: 1.5px solid transparent; transition: all .25s cubic-bezier(.4, 1.4, .5, 1);
+    }
+    .footer-link .ico { width: 16px; height: 16px; fill: currentColor; }
+    .footer-link.boosty { color: #ff7a2f; background: rgba(255, 122, 47, 0.08); border-color: rgba(255, 122, 47, 0.35); }
+    .footer-link.boosty:hover { color: #fff; background: rgba(255, 122, 47, 0.9); box-shadow: 0 0 16px rgba(255, 122, 47, 0.45); transform: translateY(-2px); }
+    .footer-link.tg { color: var(--neon-cyan); background: rgba(0, 229, 255, 0.06); border-color: rgba(0, 229, 255, 0.35); }
+    .footer-link.tg:hover { color: #04121a; background: var(--neon-cyan); box-shadow: var(--shadow-neon); transform: translateY(-2px); }
+
+    @media(max-width: 600px) {
+      .lobby h1 { font-size: 2.1rem; }
+      .mission-preview { grid-template-columns: repeat(2, 1fr); }
+      .cs-grid { grid-template-columns: 1fr; }
+      .quest-sentence { font-size: 1.15rem; }
+      .hud-top { padding: .7rem .9rem; }
+      .server-badge { font-size: .8rem; }
+      .energy-wrap { min-width: 110px; }
+      .vic-stats { flex-direction: column; align-items: center; }
+      .app-footer { flex-direction: column; gap: .8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <!-- ═══ TOP HUD ═══ -->
+  <header class="hud-top">
+    <div class="server-badge">🏥 ROBLOX ANIMAL HOSPITAL</div>
+    <div class="hud-stats">
+      <div class="energy-wrap" title="Doctor Sanity & Energy">
+        <span class="energy-label">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>SANITY &amp; ENERGY
+        </span>
+        <div class="energy-bar"><div class="energy-fill" id="energyFill"></div></div>
+      </div>
+      <div class="xp-chip" id="xpChip">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.3 5.8 20.9l1.6-6.8L2.2 8.9l6.9-.6z"/></svg>
+        XP <b id="xpVal">0</b>
+      </div>
+      <button class="mute-btn" id="muteBtn" aria-label="Sound Toggle">🔊</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ═══ LOBBY ═══ -->
+    <section class="lobby" id="lobby">
+      <div class="lobby-glow"></div>
+      <div class="lobby-tag">B1 GRAMMAR QUEST · PRESENT PERFECT</div>
+      <h1>Roblox Animal Hospital:<br><span class="neon">Night Shift Quest</span></h1>
+      <p class="lobby-sub">Complete <b>4 shift missions</b>, master <b>FOR vs. SINCE</b> and <b>Present Perfect vs. Past Simple</b>, and keep your clinic safe! 💪</p>
+
+      <div class="cheat-sheet-box">
+        <div style="font-weight: 800; color: var(--neon-yellow); text-align: center; text-transform: uppercase; font-size: 0.85rem; font-family: var(--font-mono);">
+          ⚡ Quick Grammar Scanner
+        </div>
+        <div class="cs-grid">
+          <div class="cs-item">
+            <div class="cs-title-for">⏳ FOR = DURATION</div>
+            <div>Count the time period: <i>for 3 hours, for 5 days</i>.</div>
+          </div>
+          <div class="cs-item">
+            <div class="cs-title-since">📍 SINCE = START POINT</div>
+            <div>Exact clock/date: <i>since 8:00 AM, since Tuesday</i>.</div>
+          </div>
+          <div class="cs-item">
+            <div class="cs-title-past">🛑 PAST SIMPLE</div>
+            <div>Finished time + specific past: <i>yesterday, 2 hours ago</i>.</div>
+          </div>
+          <div class="cs-item">
+            <div class="cs-title-perf">🔄 PRESENT PERFECT</div>
+            <div>Result NOW / Unfinished duration: <i>already, just, so far, since, for</i>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mission-preview">
+        <div class="mp-card mp-1"><span>1</span>FOR vs. SINCE<br><i>Duration vs. Start</i></div>
+        <div class="mp-card mp-2"><span>2</span>Patient Logs<br><i>have / has + V3</i></div>
+        <div class="mp-card mp-3"><span>3</span>Time Contrast<br><i>Past vs. Perfect</i></div>
+        <div class="mp-card mp-4"><span>4</span>Boss Triage<br><i>Shift Report Log</i></div>
+      </div>
+
+      <button class="btn btn-play" id="btnPlay">▶ START SHIFT</button>
+      <p class="lobby-hint" style="margin-top: 1rem; font-size: .85rem; color: var(--txt-dim);">🎧 Turn sound on for retro game audio</p>
+    </section>
+
+    <!-- ═══ GAME STAGE ═══ -->
+    <section class="game hidden" id="game">
+      <div class="mission-bar">
+        <div class="mission-name" id="missionName">MISSION 1</div>
+        <div class="q-progress" id="qProgress">1 / 8</div>
+      </div>
+
+      <div class="quest-card" id="questCard">
+        <div class="char-stage" id="charStage">
+          <div class="char-avatar" id="charAvatar"></div>
+          <div class="char-name" id="charName"></div>
+        </div>
+
+        <div class="quest-prompt" id="questPrompt"></div>
+        <div class="quest-sentence" id="questSentence"></div>
+
+        <div class="options" id="options"></div>
+        <div id="answerArea" class="hidden"></div>
+
+        <div class="type-zone hidden" id="typeZone">
+          <input type="text" id="typeInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="type the answer…">
+          <button class="btn btn-check" id="btnCheck">CHECK</button>
+        </div>
+
+        <div class="feedback hidden" id="feedback">
+          <div class="fb-icon" id="fbIcon"></div>
+          <div class="fb-title" id="fbTitle"></div>
+          <div class="fb-text" id="fbText"></div>
+          <button class="btn btn-next" id="btnNext">NEXT LOG ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ LEVEL UP TOAST ═══ -->
+    <div class="levelup-toast hidden" id="levelToast">
+      <div class="lt-inner">
+        <svg class="lt-star" viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17.3 5.8 20.9l1.6-6.8L2.2 8.9l6.9-.6z"/></svg>
+        <div class="lt-text">MISSION CLEARED!</div>
+        <div class="lt-sub" id="ltSub">Night shift progressing</div>
+      </div>
+    </div>
+
+    <!-- ═══ VICTORY SCREEN ═══ -->
+    <section class="victory hidden" id="victory">
+      <div class="victory-glow"></div>
+      <div class="trophy">🏆</div>
+      <h2 id="vicTitle">SHIFT COMPLETED!</h2>
+      <div class="vic-stats">
+        <div class="vic-stat"><span id="vicXP">0</span><i>⭐ TOTAL XP</i></div>
+        <div class="vic-stat"><span id="vicAcc">0%</span><i>🎯 ACCURACY</i></div>
+      </div>
+      <p class="vic-msg" id="vicMsg"></p>
+      <div class="vic-btns">
+        <button class="btn btn-play hidden" id="btnReview">🔧 FIX MISTAKES</button>
+        <button class="btn btn-ghost" id="btnRestart">↻ RESTART SHIFT</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ═══ PERMANENT FOOTER ═══ -->
+  <footer class="app-footer">
+    <span class="footer-by">Made with ❤️ by Alexandra Ges · ESL</span>
+    <div class="footer-links">
+      <a class="footer-link boosty" href="https://boosty.to/alexandrages_esl" target="_blank" rel="noopener" aria-label="Boosty">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5zm0 2.2 6.5 3.6-6.5 3.6-6.5-3.6L12 4.2z"/></svg>
+        Boosty
+      </a>
+      <a class="footer-link tg" href="https://t.me/alexandragesESL" target="_blank" rel="noopener" aria-label="Telegram">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M9.8 15.6 9.6 19c.4 0 .6-.2.8-.4l1.9-1.8 4 2.9c.7.4 1.3.2 1.5-.7l2.7-12.6c.3-1.1-.4-1.6-1.1-1.3L2.3 9.3c-1.1.4-1.1 1-.2 1.3l4.4 1.4L17 5.5c.5-.3.9-.1.6.2z"/></svg>
+        Telegram
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    /* ═══════════ ЯПИКС ИЛЛЮСТРАЦИИ ПЕРСОНАЖЕЙ (ROBLOX 1:1) ═══════════ */
+    const CHARS = {
+      barnaby:  { name: 'Barnaby the Blue Puppy', svg: '<img src="https://i.yapx.ru/eEicG.png" alt="Barnaby">' },
+      stalker:  { name: 'The Stalker Anomaly',    svg: '<img src="https://i.yapx.ru/eEicH.png" alt="Stalker">' },
+      drharlow: { name: 'Dr. Harlow (Chief Vet)', svg: '<img src="https://i.yapx.ru/eEicI.png" alt="Dr. Harlow">' },
+      buster:   { name: 'Buster Monster-Rabbit',   svg: '<img src="https://i.yapx.ru/eEicJ.jpg" alt="Buster">' },
+      cleo:     { name: 'Cleo the Green Cat',     svg: '<img src="https://i.yapx.ru/eEicK.png" alt="Cleo">' }
+    };
+
+    /* ═══════════ QUESTIONS DATA (B1 PRESENT PERFECT & PAST SIMPLE) ═══════════ */
+    const MISSIONS = [
+      {
+        name: 'MISSION 1 · FOR vs. SINCE (TIME MARKERS)',
+        questions: [
+          { char: 'barnaby', type: 'choice', prompt: 'FOR or SINCE?', sentence: 'Barnaby has been in Room 1 {} 8:00 AM this morning.', opts: ['for', 'since'], correct: 1, ru: 'since + точка отсчёта времени (8:00 AM).' },
+          { char: 'cleo', type: 'choice', prompt: 'FOR or SINCE?', sentence: 'Cleo has rested in her bed {} three hours.', opts: ['for', 'since'], correct: 0, ru: 'for + длительность (3 hours).' },
+          { char: 'buster', type: 'choice', prompt: 'FOR or SINCE?', sentence: 'Buster has waited for the doctor {} last Tuesday.', opts: ['for', 'since'], correct: 1, ru: 'since + день недели / точное время (last Tuesday).' },
+          { char: 'drharlow', type: 'choice', prompt: 'FOR or SINCE?', sentence: 'Dr. Harlow has worked at Roblox Hospital {} 2024.', opts: ['for', 'since'], correct: 1, ru: 'since + конкретный год (2024).' },
+          { type: 'match', prompt: 'Match time expressions to FOR or SINCE',
+            pairs: [['3 hours', 'FOR'], ['this morning', 'SINCE'], ['a long time', 'FOR'], ['yesterday', 'SINCE']],
+            ru: 'Duration (3 hours, a long time) = FOR. Starting point (this morning, yesterday) = SINCE.' },
+          { char: 'barnaby', type: 'truefalse', prompt: 'True or False?', statement: 'We use "since" to count a period of 5 days.', correct: false, ru: 'Неверно! 5 days — это период времени, с ним нужно говорить "for 5 days".' },
+          { char: 'cleo', type: 'gap', prompt: 'Fill in FOR or SINCE', word: 's_nce', answer: 'since', ru: 'Пропущены буквы i: SINCE (since last week).' },
+          { char: 'drharlow', type: 'order', prompt: 'Build the sentence', words: ['He', 'has', 'been', 'here', 'for', 'two', 'hours'], answer: 'He has been here for two hours', ru: 'Порядок слов: Subject + has been + location + for + duration.' }
+        ]
+      },
+      {
+        name: 'MISSION 2 · PATIENT LOGS (PRESENT PERFECT FORMS)',
+        questions: [
+          { char: 'barnaby', type: 'choice', prompt: 'Present Perfect Form', sentence: 'Barnaby {} his medicine already.', opts: ['has taken', 'have taken', 'took'], correct: 0, ru: 'He (Barnaby) -> HAS taken. Already указывает на результат к этому моменту.' },
+          { char: 'cleo', type: 'choice', prompt: 'Present Perfect Form', sentence: 'Cleo and Rex {} at the clinic for two days.', opts: ['has stayed', 'have stayed', 'stayed'], correct: 1, ru: 'Cleo and Rex = They -> HAVE stayed.' },
+          { char: 'buster', type: 'type', prompt: 'Type the Present Perfect form of "not eat"', sentence: 'Buster {} any snacks since yesterday.', answer: 'has not eaten', accept: ['has not eaten', 'hasn\'t eaten'], ru: 'Present Perfect отрицание: has not eaten / hasn\'t eaten.' },
+          { char: 'drharlow', type: 'choice', prompt: 'Ever / Never / Just', sentence: 'Dr. Harlow has {} finished a difficult surgery!', opts: ['just', 'ever', 'since'], correct: 0, ru: 'just = только что (произошло совсем недавно).' },
+          { type: 'match', prompt: 'Match Subject to Have / Has',
+            pairs: [['Barnaby (he)', 'has been'], ['The doctors (they)', 'have worked'], ['I', 'have seen'], ['The pet (it)', 'has rested']],
+            ru: 'He/she/it -> HAS. I/you/we/they -> HAVE.' },
+          { char: 'cleo', type: 'order', prompt: 'Build the sentence', words: ['She', 'has', 'worn', 'her', 'bandage', 'since', 'Monday'], answer: 'She has worn her bandage since Monday', ru: 'She + has + V3 (worn) + object + since Monday.' },
+          { char: 'barnaby', type: 'truefalse', prompt: 'True or False?', statement: 'The Past Participle (V3) of "be" is "been".', correct: true, ru: 'Верно! be -> was/were -> been.' }
+        ]
+      },
+      {
+        name: 'MISSION 3 · PRESENT PERFECT vs. PAST SIMPLE',
+        questions: [
+          { char: 'stalker', type: 'choice', prompt: 'Past Simple (Specific Time)', sentence: 'At 2:00 AM, the anomaly {} through the hallway wall.', opts: ['glitched', 'has glitched', 'is glitching'], correct: 0, ru: 'At 2:00 AM — точное время в прошлом -> Past Simple (glitched).' },
+          { char: 'cleo', type: 'choice', prompt: 'Present Perfect (Result NOW)', sentence: 'Look at Cleo! Her health {} much better now.', opts: ['became', 'has become', 'becomes'], correct: 1, ru: 'Result NOW (сейчас ей лучше) -> Present Perfect (has become).' },
+          { char: 'barnaby', type: 'choice', prompt: 'Past Simple vs Present Perfect', sentence: 'Yesterday, Barney {} his leg during a Roblox obby.', opts: ['broke', 'has broken', 'break'], correct: 0, ru: 'Yesterday = зафиксированное прошедшее время -> Past Simple (broke).' },
+          { char: 'drharlow', type: 'choice', prompt: 'Past Simple vs Present Perfect', sentence: 'Dr. Harlow can\'t enter the ICU because he {} his keys!', opts: ['lost', 'has lost', 'loses'], correct: 1, ru: 'Он не может войти ПРЯМО СЕЙЧАС (результат в настоящем) -> has lost.' },
+          { type: 'match', prompt: 'Match Signal Words to Correct Tense',
+            pairs: [['yesterday / 2 hours ago', 'Past Simple'], ['already / so far', 'Present Perfect'], ['in 2023', 'Past Simple'], ['for 3 years (until now)', 'Present Perfect']],
+            ru: 'Конкретное время в прошлом (yesterday, ago, in 2023) -> Past Simple. Связь с настоящим (already, so far, since, for) -> Present Perfect.' },
+          { char: 'buster', type: 'truefalse', prompt: 'True or False?', statement: 'We can use "yesterday" with Present Perfect.', correct: false, ru: 'Неверно! "Yesterday" используется только с Past Simple!' },
+          { char: 'stalker', type: 'order', prompt: 'Build the sentence', words: ['I', 'saw', 'an', 'anomaly', 'two', 'hours', 'ago'], answer: 'I saw an anomaly two hours ago', ru: 'Two hours ago -> Past Simple: I saw an anomaly two hours ago.' }
+        ]
+      },
+      {
+        name: 'MISSION 4 · BOSS FIGHT (SHIFT TRIAGE LOGS)',
+        questions: [
+          { char: 'drharlow', type: 'choice', prompt: 'Boss Challenge: Mixed Tenses', sentence: 'Dr. Harlow {} at the hospital since 2022, but yesterday he {} a break.', opts: ['has worked / took', 'worked / has taken', 'has worked / has taken'], correct: 0, ru: 'Первая часть: since 2022 -> Present Perfect (has worked). Вторая: yesterday -> Past Simple (took).' },
+          { char: 'barnaby', type: 'order', prompt: 'Build the Doctor\'s Log', words: ['Barnaby', 'has', 'rested', 'here', 'for', 'three', 'hours'], answer: 'Barnaby has rested here for three hours', ru: 'Subject + has + V3 + location + for duration.' },
+          { char: 'cleo', type: 'type', prompt: 'Type the correct verb form (see)', sentence: 'I have never {} such a strange patient before!', answer: 'seen', accept: ['seen'], ru: 'Never + Present Perfect (have + V3): see -> saw -> seen.' },
+          { char: 'stalker', type: 'choice', prompt: 'Anomaly Alarm', sentence: 'The security camera {} off 10 minutes ago.', opts: ['went', 'has gone', 'goes'], correct: 0, ru: '10 minutes ago -> Past Simple (went).' },
+          { type: 'match', prompt: 'Match Doctor Prompts',
+            pairs: [['How long has Barnaby been here?', 'Since 8:00 AM'], ['When did the anomaly happen?', '2 hours ago'], ['Has Cleo eaten her food yet?', 'Yes, she has already eaten'], ['Did you lock the emergency door?', 'Yes, I locked it at midnight']],
+            ru: 'Обрати внимание на разницу вопросов в Present Perfect и Past Simple!' },
+          { char: 'drharlow', type: 'truefalse', prompt: 'True or False?', statement: '"I have visited Roblox Hospital 3 times so far" is grammatically correct.', correct: true, ru: 'Верно! "so far" (к настоящему моменту) используется с Present Perfect.' }
+        ]
+      }
+    ];
+
+    /* ═══════════ STATE & SOUND ═══════════ */
+    const START_ENERGY = 100;
+    const ENERGY_LOSS = 10;
+    const XP_WIN = 15;
+
+    let mIdx = 0;
+    let qIdx = 0;
+    let xp = 0;
+    let energy = START_ENERGY;
+    let answered = 0;
+    let correctCount = 0;
+
+    let soundOn = true;
+    let currentQ = null;
+    let mistakes = [];
+    let reviewMode = false;
+    let reviewQueue = [];
+    let answerLocked = false;
+    let actx = null;
+
+    function $(id) { return document.getElementById(id); }
+    function escapeHtml(v) { return String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll('\'','&#39;'); }
+    function norm(v) { return String(v||'').trim().toLowerCase().replace(/[’‘‛′`´]/g,'\'').replace(/\s+/g,' '); }
+    function safeArray(v) { return Array.isArray(v) ? v : []; }
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function getMissionQuestions() {
+      if (reviewMode) return reviewQueue;
+      return (MISSIONS[mIdx] && MISSIONS[mIdx].questions) || [];
+    }
+
+    function renderSentence(text) {
+      return escapeHtml(text || '').replace('{}', '<span class="gap">?</span>');
+    }
+
+    function setText(id, value) { const el = $(id); if (el) el.textContent = value; }
+    function show(el) { if (el) el.classList.remove('hidden'); }
+    function hide(el) { if (el) el.classList.add('hidden'); }
+
+    /* Web Audio Retro Sound Synth */
+    function beep(freq, dur = 0.12, type = 'sine', vol = 0.15) {
+      if (!soundOn) return;
+      try {
+        actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+        const osc = actx.createOscillator();
+        const gain = actx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(actx.destination);
+        gain.gain.setValueAtTime(vol, actx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+        osc.start(); osc.stop(actx.currentTime + dur);
+      } catch (e) {}
+    }
+
+    const sfx = {
+      click: () => beep(500, 0.05, 'triangle', 0.08),
+      ok: () => { beep(587.33, 0.1, 'sine'); setTimeout(() => beep(880, 0.16, 'sine'), 90); },
+      no: () => { beep(180, 0.2, 'sawtooth', 0.12); },
+      level: () => { beep(523, 0.12); setTimeout(() => beep(659, 0.12), 110); setTimeout(() => beep(784, 0.22), 220); },
+      win: () => { [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => beep(f, 0.18, 'triangle'), i * 120)); }
+    };
+
+    /* CHARACTER RENDERER */
+    function setChar(charKey) {
+      const avatar = $('charAvatar');
+      const name = $('charName');
+      const stage = $('charStage');
+      if (!avatar || !name) return;
+
+      if (!charKey || !CHARS[charKey]) {
+        if (stage) hide(stage);
+        return;
+      }
+
+      if (stage) show(stage);
+      const c = CHARS[charKey];
+      avatar.innerHTML = c.svg;
+      name.textContent = c.name;
+    }
+
+    function updateEnergy() {
+      const fill = $('energyFill');
+      if (!fill) return;
+      const safeEnergy = Math.max(0, Math.min(100, energy));
+      fill.style.width = `${safeEnergy}%`;
+      fill.classList.toggle('low', safeEnergy <= 30);
+    }
+
+    function addXP(amount) {
+      xp += amount;
+      setText('xpVal', String(xp));
+      const chip = $('xpChip');
+      if (chip) { chip.classList.remove('pop'); void chip.offsetWidth; chip.classList.add('pop'); }
+    }
+
+    function resetAnswerUI() {
+      answerLocked = false;
+      const feedback = $('feedback');
+      const optionsBox = $('options');
+      const typeZone = $('typeZone');
+      const typeInput = $('typeInput');
+      const btnCheck = $('btnCheck');
+      const answerArea = $('answerArea');
+
+      if (feedback) feedback.className = 'feedback hidden';
+      if (optionsBox) { optionsBox.innerHTML = ''; optionsBox.style.display = 'grid'; }
+      if (typeZone) typeZone.classList.add('hidden');
+      if (typeInput) { typeInput.value = ''; typeInput.disabled = false; typeInput.className = ''; }
+      if (btnCheck) btnCheck.disabled = false;
+      if (answerArea) { answerArea.innerHTML = ''; answerArea.classList.add('hidden'); }
+    }
+
+    /* QUESTION LOADER */
+    function loadQuestion() {
+      const questions = getMissionQuestions();
+      currentQ = questions[qIdx];
+
+      if (!currentQ) { finishGame(); return; }
+
+      resetAnswerUI();
+
+      setText('missionName', reviewMode ? '🔧 FIX MISTAKES MODE' : MISSIONS[mIdx].name);
+      setText('qProgress', `${qIdx + 1} / ${questions.length}`);
+      setChar(currentQ.char);
+      setText('questPrompt', currentQ.prompt || '');
+
+      const questSentence = $('questSentence');
+
+      switch (currentQ.type) {
+        case 'choice':    renderChoice(questSentence);    break;
+        case 'type':      renderType(questSentence);      break;
+        case 'gap':       renderGap(questSentence);       break;
+        case 'truefalse': renderTrueFalse(questSentence); break;
+        case 'order':     renderOrder(questSentence);     break;
+        case 'match':     renderMatch(questSentence);     break;
+        default:          renderChoice(questSentence);
+      }
+    }
+
+    function renderChoice(questSentence) {
+      if (questSentence) questSentence.innerHTML = renderSentence(currentQ.sentence);
+      const optionsBox = $('options'); if (!optionsBox) return;
+
+      const correctText = currentQ.opts[currentQ.correct];
+      shuffle(currentQ.opts).forEach((optText) => {
+        const btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'opt'; btn.textContent = optText;
+        btn.onclick = () => checkChoice(optText === correctText, btn, correctText);
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function renderType(questSentence) {
+      if (questSentence) questSentence.innerHTML = renderSentence(currentQ.sentence);
+      if ($('options')) $('options').style.display = 'none';
+      if ($('typeZone')) $('typeZone').classList.remove('hidden');
+      if ($('typeInput')) $('typeInput').focus();
+    }
+
+    function renderGap(questSentence) {
+      if ($('options')) $('options').style.display = 'none';
+      const maskHtml = currentQ.word.split('').map(ch => ch === '_' ? '<span class="gap" style="min-width:20px;border-bottom:3px solid var(--neon-purple);">_</span>' : `<span>${escapeHtml(ch)}</span>`).join('');
+      if (questSentence) questSentence.innerHTML = `<div style="letter-spacing:2px; font-size:1.5rem; font-weight:800;">${maskHtml}</div>`;
+      if ($('typeZone')) $('typeZone').classList.remove('hidden');
+      if ($('typeInput')) { $('typeInput').placeholder = 'type the missing word / letters…'; $('typeInput').focus(); }
+    }
+
+    function renderTrueFalse(questSentence) {
+      if (questSentence) questSentence.innerHTML = `<span class="tf-statement">"${escapeHtml(currentQ.statement)}"</span>`;
+      const optionsBox = $('options'); if (!optionsBox) return;
+
+      [{ label: '✅ TRUE', value: true }, { label: '❌ FALSE', value: false }].forEach(({ label, value }) => {
+        const btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'opt tf-opt'; btn.textContent = label;
+        btn.onclick = () => {
+          const isRight = value === currentQ.correct;
+          const correctLabel = currentQ.correct ? '✅ TRUE' : '❌ FALSE';
+          safeArray(document.querySelectorAll('#options .opt')).forEach(b => {
+            b.disabled = true;
+            if (b.textContent === correctLabel) b.classList.add('correct');
+          });
+          if (!isRight) btn.classList.add('wrong');
+          sfx.click();
+          resolveAnswer(isRight, correctLabel);
+        };
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function renderOrder(questSentence) {
+      if ($('options')) $('options').style.display = 'none';
+      if (questSentence) questSentence.innerHTML = '<span class="order-title">Tap the words in the correct order</span>';
+
+      const answerArea = $('answerArea'); if (!answerArea) return;
+      answerArea.classList.remove('hidden'); answerArea.innerHTML = '';
+
+      const drop = document.createElement('div'); drop.className = 'order-drop';
+      drop.innerHTML = '<span class="order-hint">tap words below to build sentence…</span>';
+      const bank = document.createElement('div'); bank.className = 'order-bank';
+
+      const built = [];
+      shuffle(currentQ.words).forEach((word) => {
+        const chip = document.createElement('button');
+        chip.type = 'button'; chip.className = 'order-chip'; chip.textContent = word;
+        chip.onclick = () => {
+          if (answerLocked) return;
+          sfx.click();
+          chip.remove(); built.push(word);
+          drop.querySelector('.order-hint')?.remove();
+
+          const placed = document.createElement('button');
+          placed.type = 'button'; placed.className = 'order-chip placed'; placed.textContent = word;
+          placed.onclick = () => {
+            if (answerLocked) return;
+            sfx.click();
+            placed.remove(); built.splice(built.indexOf(word), 1);
+            bank.appendChild(chip);
+            if (!built.length) drop.innerHTML = '<span class="order-hint">tap words below to build sentence…</span>';
+          };
+          drop.appendChild(placed);
+
+          if (built.length === currentQ.words.length) {
+            const isRight = built.join(' ') === currentQ.answer;
+            if (isRight) {
+              safeArray(drop.querySelectorAll('.order-chip')).forEach(c => { c.disabled = true; c.classList.add('correct'); });
+              resolveAnswer(true, currentQ.answer);
+            } else {
+              drop.classList.add('shake');
+              setTimeout(() => {
+                drop.classList.remove('shake');
+                renderOrder(questSentence);
+                sfx.no();
+              }, 450);
+            }
+          }
+        };
+        bank.appendChild(chip);
+      });
+
+      answerArea.append(drop, bank);
+    }
+
+    function renderMatch(questSentence) {
+      if ($('options')) $('options').style.display = 'none';
+      if (questSentence) questSentence.innerHTML = '<span class="order-title">Tap a phrase, then match its pair</span>';
+
+      const answerArea = $('answerArea'); if (!answerArea) return;
+      answerArea.classList.remove('hidden'); answerArea.innerHTML = '';
+
+      const wrap = document.createElement('div'); wrap.className = 'match-wrap';
+      const colL = document.createElement('div'); colL.className = 'match-col';
+      const colR = document.createElement('div'); colR.className = 'match-col';
+
+      const left = currentQ.pairs.map(p => p[0]);
+      const right = shuffle(currentQ.pairs.map(p => p[1]));
+
+      let selectedLeft = null;
+      let matched = 0;
+
+      left.forEach((word) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'match-item'; b.textContent = word; b.dataset.key = word;
+        b.onclick = () => {
+          if (answerLocked || b.classList.contains('done')) return;
+          sfx.click();
+          colL.querySelectorAll('.match-item').forEach(x => x.classList.remove('sel'));
+          b.classList.add('sel'); selectedLeft = b;
+        };
+        colL.appendChild(b);
+      });
+
+      right.forEach((tr) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'match-item'; b.textContent = tr;
+        b.onclick = () => {
+          if (answerLocked || !selectedLeft || b.classList.contains('done')) return;
+          const correctTr = currentQ.pairs.find(p => p[0] === selectedLeft.dataset.key)[1];
+
+          if (tr === correctTr) {
+            selectedLeft.classList.add('done'); selectedLeft.classList.remove('sel');
+            b.classList.add('done'); selectedLeft = null; matched += 1;
+            sfx.ok();
+            if (matched === currentQ.pairs.length) resolveAnswer(true, 'All pairs matched correctly!');
+          } else {
+            b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 400);
+            sfx.no();
+          }
+        };
+        colR.appendChild(b);
+      });
+
+      wrap.append(colL, colR);
+      answerArea.appendChild(wrap);
+    }
+
+    /* ANSWER RESOLUTION */
+    function showFeedback(isRight, correctText) {
+      const feedback = $('feedback'); if (!feedback) return;
+      show(feedback);
+
+      if (isRight) {
+        feedback.className = 'feedback ok';
+        setText('fbIcon', '✅'); setText('fbTitle', 'CORRECT LOG!');
+        $('fbText').innerHTML = `<b>${escapeHtml(correctText)}</b> — Well done, Doctor!${currentQ.ru ? `<span class="ru">💡 ${escapeHtml(currentQ.ru)}</span>` : ''}`;
+      } else {
+        feedback.className = 'feedback no';
+        setText('fbIcon', '💥'); setText('fbTitle', energy <= 0 ? 'SANITY CRITICAL! ⚡' : 'LOG ERROR! -⚡');
+        $('fbText').innerHTML = `Correct log: <b>${escapeHtml(correctText)}</b>${currentQ.ru ? `<span class="ru">💡 ${escapeHtml(currentQ.ru)}</span>` : ''}`;
+      }
+    }
+
+    function resolveAnswer(isRight, correctText) {
+      if (answerLocked) return;
+      answerLocked = true;
+      answered += 1;
+
+      if (isRight) {
+        correctCount += 1;
+        if (!reviewMode) addXP(XP_WIN);
+        sfx.ok();
+      } else {
+        energy = Math.max(0, energy - ENERGY_LOSS);
+        updateEnergy();
+        if (!reviewMode) mistakes.push(currentQ);
+        sfx.no();
+      }
+
+      showFeedback(isRight, correctText);
+    }
+
+    function checkChoice(isRight, selectedButton, correctText) {
+      if (answerLocked || !currentQ || currentQ.type !== 'choice') return;
+      sfx.click();
+      safeArray(document.querySelectorAll('#options .opt')).forEach(b => {
+        b.disabled = true;
+        if (b.textContent === correctText) b.classList.add('correct');
+      });
+      if (!isRight && selectedButton) selectedButton.classList.add('wrong');
+      resolveAnswer(isRight, correctText);
+    }
+
+    function checkType() {
+      if (answerLocked || !currentQ || (currentQ.type !== 'type' && currentQ.type !== 'gap')) return;
+      const typeInput = $('typeInput'); const btnCheck = $('btnCheck');
+      if (!typeInput || !btnCheck) return;
+
+      const userVal = norm(typeInput.value);
+      if (!userVal) { typeInput.classList.add('wrong'); typeInput.focus(); return; }
+
+      let isRight;
+      if (currentQ.type === 'gap') {
+        const fullAns = norm(currentQ.answer);
+        isRight = userVal === fullAns;
+      } else {
+        const accepted = (currentQ.accept || [currentQ.answer]).map(norm);
+        isRight = accepted.includes(userVal);
+      }
+
+      typeInput.disabled = true; btnCheck.disabled = true;
+      typeInput.classList.add(isRight ? 'correct' : 'wrong');
+      resolveAnswer(isRight, currentQ.answer);
+    }
+
+    /* GAME FLOW */
+    function showLevelUp(callback) {
+      const toast = $('levelToast');
+      if (!toast) { callback(); return; }
+      sfx.level();
+      setText('ltSub', `Mission ${mIdx + 1} Cleared! Preparing Mission ${mIdx + 2}...`);
+      show(toast);
+      setTimeout(() => { hide(toast); callback(); }, 1800);
+    }
+
+    function nextQuestion() {
+      if (!currentQ || !answerLocked) return;
+      sfx.click();
+      qIdx += 1;
+
+      const questions = getMissionQuestions();
+      if (qIdx < questions.length) { loadQuestion(); return; }
+      if (reviewMode) { finishGame(true); return; }
+
+      if (mIdx < MISSIONS.length - 1) {
+        showLevelUp(() => { mIdx += 1; qIdx = 0; loadQuestion(); });
+        return;
+      }
+
+      finishGame(false);
+    }
+
+    function finishGame(fromReview = false) {
+      hide($('lobby')); hide($('game')); show($('victory'));
+
+      const total = answered || 1;
+      const acc = Math.round((correctCount / total) * 100);
+
+      setText('vicXP', String(xp));
+      setText('vicAcc', `${acc}%`);
+
+      let title = 'NIGHT SHIFT COMPLETED! 🏆';
+      let msg = 'Awesome job! You mastered B1 Present Perfect vs Past Simple and kept the Roblox Hospital safe.';
+
+      if (fromReview) {
+        title = acc >= 80 ? 'MISTAKES FIXED! 🛠️' : 'GOOD EFFORT! 💪';
+        msg = acc >= 80 ? 'Excellent review! You cleared your hospital log errors.' : 'Keep practicing the tricky time markers!';
+      } else if (acc >= 90) {
+        title = 'LEGENDARY DOCTOR! 🌟';
+        msg = 'Flawless performance! You handled FOR vs SINCE and Past Simple vs Present Perfect with 100% accuracy!';
+      }
+
+      setText('vicTitle', title);
+      setText('vicMsg', msg);
+
+      const uniqueMistakes = [...new Set(mistakes)];
+      if ($('btnReview')) $('btnReview').classList.toggle('hidden', uniqueMistakes.length === 0 || fromReview);
+
+      reviewMode = false;
+      sfx.win();
+    }
+
+    function startReview() {
+      const uniqueMistakes = [...new Set(mistakes)];
+      if (uniqueMistakes.length === 0) return;
+      sfx.click();
+      reviewQueue = uniqueMistakes; reviewMode = true;
+      qIdx = 0; answered = 0; correctCount = 0; mistakes = [];
+      hide($('victory')); show($('game'));
+      loadQuestion();
+    }
+
+    function startGame() {
+      sfx.click();
+      mIdx = 0; qIdx = 0; xp = 0; energy = START_ENERGY;
+      answered = 0; correctCount = 0; currentQ = null; mistakes = [];
+      reviewMode = false; reviewQueue = []; answerLocked = false;
+
+      setText('xpVal', '0'); updateEnergy();
+      hide($('victory')); hide($('lobby')); show($('game'));
+      loadQuestion();
+    }
+
+    /* EVENTS */
+    document.addEventListener('DOMContentLoaded', () => {
+      if ($('btnPlay')) $('btnPlay').onclick = startGame;
+      if ($('btnNext')) $('btnNext').onclick = nextQuestion;
+      if ($('btnCheck')) $('btnCheck').onclick = checkType;
+      if ($('btnRestart')) $('btnRestart').onclick = startGame;
+      if ($('btnReview')) $('btnReview').onclick = startReview;
+
+      if ($('typeInput')) {
+        $('typeInput').onkeydown = (e) => {
+          if (e.key === 'Enter' && !$('typeInput').disabled) checkType();
+        };
+      }
+
+      if ($('muteBtn')) {
+        $('muteBtn').onclick = () => {
+          soundOn = !soundOn;
+          $('muteBtn').textContent = soundOn ? '🔊' : '🔇';
+          $('muteBtn').classList.toggle('off', !soundOn);
+          if (soundOn) sfx.click();
+        };
+      }
+
+      updateEnergy();
+    });
+  </script>
+</body>
+</html>
