@@ -120,26 +120,38 @@ body {
   text-align: right;
 }
 
-.help-btn {
+.help-btn-v2 {
   position: absolute;
-  top: -14px;
-  right: -10px;
-  width: 48px;
-  height: 48px;
-  background: var(--ui-yellow);
-  border: var(--border);
-  border-radius: 10px;
+  top: 12px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--grass-light);
+  border: 3px solid #17130f;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.1s;
+  transition: all 0.15s;
   z-index: 20;
 }
-.help-btn:hover { transform: translate(-2px,-2px); }
-.help-btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 rgba(0,0,0,0.55); }
-.help-btn svg { width: 26px; height: 26px; fill: var(--ui-dark); }
+.help-btn-v2:hover {
+  background: var(--grass);
+  transform: scale(1.08);
+}
+.help-btn-v2:active {
+  transform: scale(0.96);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.55);
+}
+.help-btn-v2 svg {
+  width: 24px;
+  height: 24px;
+  stroke: #fff;
+  fill: none;
+  stroke-width: 2;
+}
 
 /* ================= QUEST MAP ================= */
 .quest-map {
