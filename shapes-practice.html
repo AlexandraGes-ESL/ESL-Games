@@ -711,6 +711,36 @@ body {
   text-align: center;
   line-height: 1.6;
 }
+  /* ================= FOOTER ================= */
+.footer {
+  margin-top: 2rem;
+  padding: 1.2rem;
+  text-align: center;
+  background: rgba(0,0,0,0.25);
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.1);
+}
+.footer-text {
+  font-size: 0.82rem;
+  color: #f3e9de;
+  margin-bottom: 10px;
+}
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  color: var(--ui-yellow);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+.footer-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
 </style>
 </head>
 <body>
@@ -733,8 +763,8 @@ body {
   <!-- ===== HUD ===== -->
   <div class="hud">
     <button class="help-btn-v2" onclick="openCodexModal()" aria-label="Справочник форм">
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.03-.42 1.98-1.07 2.75z"/></svg>
-    </button>
+  <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmJzZGQ5YWZzNG53c3Z5enhtZXlxbDkwZ2Exa3pjMTMycTM3MHp6MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/15FTMzcMzpAkcDpKJw/giphy.gif" alt="?">
+</button>
     <div class="hud-top">
       <div>
         <div class="game-title">VOXEL SHAPE QUEST</div>
@@ -887,6 +917,15 @@ body {
     </div>
   </div>
 </div>
+  <!-- ===== FOOTER ===== -->
+  <div class="footer">
+    <div class="footer-text">© 2026 Created by <strong>@AlexandraGes_ESL</strong></div>
+    <div class="footer-links">
+      <a href="https://boosty.to/alexandrages_esl" target="_blank">💜 Boosty</a>
+      <a href="https://t.me/alexandragesESL" target="_blank">🚀 Telegram</a>
+    </div>
+  </div>
+</div>
 
 <!-- CODEX MODAL -->
 <div class="modal" id="codexModal">
@@ -969,16 +1008,25 @@ const SCAN_ITEMS = [
 ];
 
 const RECIPES = [
-  { name: "HOUSE",      img: "craft_house.png", parts: [
-      { shape: "square",   ru: "стены" },
-      { shape: "triangle", ru: "крыша" } ] },
-  { name: "SWORD",      img: "craft_sword.png", parts: [
-      { shape: "triangle",  ru: "клинок" },
-      { shape: "rectangle", ru: "рукоять" },
-      { shape: "circle",    ru: "навершие" } ] },
-  { name: "WIZARD HAT", img: "craft_hat.png", parts: [
-      { shape: "triangle", ru: "конус" },
-      { shape: "oval",     ru: "поля шляпы" } ] }
+  { name: "ROBOT",   img: "https://i.yapx.ru/eFg66.jpg", parts: [
+      { shape: "rectangle", ru: "тело" },
+      { shape: "circle",    ru: "глаза" },
+      { shape: "square",    ru: "голова" } ] },
+  { name: "HOUSE",   img: "https://i.yapx.ru/eFg67.jpg", parts: [
+      { shape: "square",    ru: "стены" },
+      { shape: "triangle",  ru: "крыша" },
+      { shape: "rectangle", ru: "дымоход" } ] },
+  { name: "TREE",    img: "https://i.yapx.ru/eFg68.jpg", parts: [
+      { shape: "circle",    ru: "листва" },
+      { shape: "hexagon",   ru: "основание" },
+      { shape: "rectangle", ru: "ствол" } ] },
+  { name: "ROCKET",  img: "https://i.yapx.ru/eFg69.jpg", parts: [
+      { shape: "triangle",  ru: "нос" },
+      { shape: "circle",    ru: "иллюминатор" },
+      { shape: "rectangle", ru: "корпус" } ] },
+  { name: "CAR",     img: "https://i.yapx.ru/eFg7A.jpg", parts: [
+      { shape: "rectangle", ru: "кузов" },
+      { shape: "circle",    ru: "колеса" } ] }
 ];
 
 /* ============================================================
@@ -1270,21 +1318,18 @@ function renderRecipe() {
   const recipe = RECIPES[recipeIndex];
   document.getElementById("craftCounter").textContent = `ЧЕРТЁЖ ${recipeIndex + 1} / ${RECIPES.length}`;
   document.getElementById("bpName").textContent = recipe.name;
-  setImg(document.getElementById("bpImg"), recipe.img);
+  document.getElementById("bpImg").src = recipe.img;
 
   const msg = document.getElementById("craftMsg");
   msg.textContent = `Эта вещь состоит из ${recipe.parts.length} фигур. Собери её!`;
   msg.className = "craft-msg";
 
-  // СКРЫВАЕМ чек-лист слева — ребёнок должен сам угадать
   const slots = document.getElementById("bpSlots");
   slots.innerHTML = "";
-  // Для отладки можно оставить скрытый список, но визуально его не показываем
 
   const pal = document.getElementById("craftPalette");
   pal.innerHTML = "";
   
-  // Перемешиваем палитру, чтобы не было видно сразу ответ
   const shuffledShapes = shuffle(SHAPE_KEYS);
   
   shuffledShapes.forEach(key => {
@@ -1299,14 +1344,12 @@ function renderRecipe() {
       const alreadyPlaced = placedParts.includes(key);
 
       if (isNeeded && !alreadyPlaced) {
-        // ✅ ПРАВИЛЬНО
         placedParts.push(key);
         el.classList.add("used");
         FX.good();
         msg.textContent = `Верно! Фигура "${key}" добавлена (${placedParts.length}/${recipe.parts.length})`;
         msg.className = "craft-msg good";
 
-        // Проверяем, собраны ли все фигуры
         if (placedParts.length === recipe.parts.length) {
           msg.textContent = `Готово! Ты крафтил: ${recipe.name}!`;
           addXP(50);
@@ -1320,14 +1363,12 @@ function renderRecipe() {
             }
           }, 1400);
         } else {
-          // Продолжаем, ждём следующую фигуру
           setTimeout(() => {
             msg.textContent = `Эта вещь состоит из ${recipe.parts.length} фигур. Собери её!`;
             msg.className = "craft-msg";
           }, 1800);
         }
       } else {
-        // ❌ НЕПРАВИЛЬНО
         FX.bad();
         if (alreadyPlaced) {
           msg.textContent = `Эту фигуру уже добавил!`;
