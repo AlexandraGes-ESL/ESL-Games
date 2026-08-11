@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voxel Shape Crafting Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-main: 'Rubik', sans-serif;
+
+  /* Minecraft / Roblox Earthy & Bold Theme */
+  --bg-sky: #75b4e3;
+  --bg-grass: #5b8731;
+  --bg-grass-light: #7ea955;
+  --bg-dirt: #866043;
+  --bg-dirt-dark: #573d2a;
+  
+  --ui-yellow: #f8c523;
+  --ui-blue: #00a2ff;
+  --ui-red: #e22226;
+  --ui-dark: #1e1e1e;
+  --ui-light: #f5f5f5;
+  --ui-border: #000000;
+
+  --transition: all 0.2s steps(4); /* Retro step transitions */
+  --shadow: 6px 6px 0px var(--ui-border);
+  --shadow-sm: 4px 4px 0px var(--ui-border);
+  --shadow-active: 2px 2px 0px var(--ui-border);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: #312115;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.15) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.15) 2px, transparent 2px);
+  background-size: 32px 32px;
+  color: #ffffff;
+  font-family: var(--font-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem 3rem;
+  overflow-x: hidden;
+}
+
+.game-container {
+  max-width: 900px;
+  width: 100%;
+  position: relative;
+}
+
+/* TOP STATUS CONSOLE */
+.console-header {
+  background: var(--bg-dirt);
+  border: 4px solid var(--ui-border);
+  box-shadow: var(--shadow);
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  position: relative;
+}
+.console-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 6px;
+  background: var(--bg-dirt-dark);
+  border-radius: 0 0 8px 8px;
+}
+
+.logo-area h1 {
+  font-family: var(--font-pixel);
+  font-size: 1.1rem;
+  color: var(--ui-yellow);
+  text-shadow: 3px 3px 0 #000;
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+.logo-area p {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f0e6df;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stats-panel {
+  display: flex;
+  gap: 20px;
+}
+.stat-indicator {
+  background: rgba(0, 0, 0, 0.4);
+  border: 3px solid var(--ui-border);
+  padding: 8px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.stat-val {
+  font-family: var(--font-pixel);
+  font-size: 0.9rem;
+  color: #fff;
+}
+.stat-val span {
+  color: var(--ui-yellow);
+}
+
+/* HELP CODEX BUTTON */
+.help-trigger {
+  background: var(--ui-yellow);
+  border: 4px solid var(--ui-border);
+  box-shadow: var(--shadow-sm);
+  border-radius: 8px;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  z-index: 10;
+}
+.help-trigger:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--ui-border);
+}
+.help-trigger:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-active);
+}
+.help-trigger svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--ui-dark);
+}
+
+/* MAIN LEVEL CARD */
+.stage-card {
+  background: #ffffff;
+  color: var(--ui-dark);
+  border: 5px solid var(--ui-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+.stage-banner {
+  background: var(--bg-grass);
+  border-bottom: 5px solid var(--ui-border);
+  padding: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+}
+.stage-title {
+  font-family: var(--font-pixel);
+  font-size: 0.95rem;
+  text-shadow: 2px 2px 0px #000;
+}
+.stage-xp-reward {
+  background: var(--ui-dark);
+  color: var(--ui-yellow);
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 2px solid #fff;
+}
+
+.stage-content {
+  padding: 2rem;
+  min-height: 380px;
+}
+
+/* LEVEL SELECTION FOOTER */
+.level-nav {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.nav-node {
+  background: #4a3b32;
+  border: 4px solid var(--ui-border);
+  border-radius: 8px;
+  color: #fff;
+  padding: 12px 20px;
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.nav-node:hover:not(.disabled) {
+  background: var(--bg-dirt);
+  transform: translateY(-2px);
+}
+.nav-node.active {
+  background: var(--bg-grass-light);
+  color: #fff;
+  transform: translateY(2px);
+  box-shadow: var(--shadow-active);
+}
+.nav-node.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* SCREEN MODAL: SHAPE CODEX */
+.codex-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.codex-modal.active {
+  display: flex;
+}
+.codex-box {
+  background: #ffffff;
+  color: var(--ui-dark);
+  border: 5px solid var(--ui-border);
+  box-shadow: 8px 8px 0 #000;
+  border-radius: 16px;
+  max-width: 650px;
+  width: 100%;
+  overflow: hidden;
+  animation: popOpen 0.2s steps(3);
+}
+@keyframes popOpen {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.codex-header {
+  background: var(--bg-dirt);
+  border-bottom: 5px solid var(--ui-border);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+.codex-header h2 {
+  font-family: var(--font-pixel);
+  font-size: 0.9rem;
+  text-shadow: 2px 2px 0 #000;
+}
+.codex-close {
+  background: var(--ui-red);
+  border: 3px solid var(--ui-border);
+  color: #fff;
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.codex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 15px;
+  padding: 1.5rem;
+  max-height: 450px;
+  overflow-y: auto;
+}
+.codex-item {
+  border: 3px solid var(--ui-border);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--ui-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+.codex-item:hover {
+  background: #fff;
+  transform: translateY(-2px);
+}
+.codex-item svg {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 10px;
+}
+.codex-name {
+  font-weight: 900;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.codex-name svg {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  fill: var(--text-muted);
+}
+
+/* ZONE 1: SCAN THE BLOCKS */
+.scan-layout {
+  text-align: center;
+}
+.scan-instruction {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.instruction-btn {
+  background: var(--ui-yellow);
+  border: 2px solid var(--ui-border);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.instruction-btn svg { width: 16px; height: 16px; fill: var(--ui-dark); }
+.scan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 15px;
+  margin-bottom: 1.5rem;
+}
+.scan-node {
+  background: var(--ui-light);
+  border: 3px solid var(--ui-border);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.scan-node:hover {
+  background: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0px var(--ui-border);
+}
+.scan-node.correct {
+  background: #e2fcdb;
+  border-color: var(--success);
+}
+.scan-node.wrong {
+  background: #ffe3e1;
+  border-color: var(--error);
+  animation: shake 0.3s steps(4);
+}
+.scan-node svg {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+}
+.scan-label {
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* ZONE 2: CRAFTING TABLE */
+.craft-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 30px;
+}
+.craft-recipe-card {
+  background: var(--ui-light);
+  border: 4px solid var(--ui-border);
+  border-radius: 12px;
+  padding: 1.2rem;
+  box-shadow: var(--shadow-sm);
+}
+.recipe-title {
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  color: var(--bg-dirt-dark);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+.recipe-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.recipe-slot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 2px solid var(--ui-border);
+  padding: 10px;
+  border-radius: 8px;
+}
+.slot-marker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ui-blue);
+  color: #fff;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slot-target-name {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+.craft-canvas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #efebe4;
+  border: 4px solid var(--ui-border);
+  border-radius: 12px;
+  padding: 2rem;
+  position: relative;
+}
+.craft-grid-3x3 {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  grid-template-rows: repeat(3, 80px);
+  gap: 8px;
+  background: var(--bg-dirt-dark);
+  padding: 8px;
+  border: 4px solid var(--ui-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+.craft-grid-cell {
+  background: #8f796a;
+  border: 3px solid var(--ui-border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.craft-grid-cell.filled {
+  background: #a98f7e;
+}
+.craft-grid-cell svg {
+  width: 60px;
+  height: 60px;
+}
+.source-palette {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.source-shape {
+  width: 64px;
+  height: 64px;
+  background: #fff;
+  border: 3px solid var(--ui-border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+}
+.source-shape svg {
+  width: 48px;
+  height: 48px;
+}
+.craft-status-bubble {
+  position: absolute;
+  top: 10px;
+  font-weight: 800;
+  color: var(--success);
+}
+
+@media(max-width: 750px) {
+  .craft-layout { grid-template-columns: 1fr; }
+}
+
+/* ZONE 3: SHAPE STORM */
+.storm-layout {
+  position: relative;
+  text-align: center;
+}
+.storm-hud {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  margin-bottom: 1.5rem;
+  background: var(--ui-light);
+  border: 3px solid var(--ui-border);
+  padding: 10px;
+  border-radius: 8px;
+}
+.storm-target {
+  font-weight: 900;
+  color: var(--ui-red);
+}
+.storm-playfield {
+  width: 100%;
+  height: 300px;
+  background: var(--ui-dark);
+  border: 4px solid var(--ui-border);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+}
+.storm-element {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  animation: floatDown 3s linear forwards;
+}
+@keyframes floatDown {
+  from { top: -70px; }
+  to { top: 310px; }
+}
+.storm-element svg {
+  width: 100%;
+  height: 100%;
+}
+.storm-btn {
+  margin-top: 1rem;
+}
+
+/* BUILD STAGE (SANDBOX) */
+.sandbox-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+}
+.sandbox-sidebar {
+  background: var(--ui-light);
+  border: 4px solid var(--ui-border);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sandbox-title {
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  text-align: center;
+}
+.sandbox-canvas {
+  height: 400px;
+  background: var(--bg-sky);
+  border: 4px solid var(--ui-border);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.sandbox-shape {
+  position: absolute;
+  cursor: move;
+  width: 80px;
+  height: 80px;
+}
+.sandbox-shape svg {
+  width: 100%;
+  height: 100%;
+}
+
+@media(max-width: 700px) {
+  .sandbox-layout { grid-template-columns: 1fr; }
+}
+
+/* GENERIC BUTTON STYLE */
+.btn-ui {
+  background: var(--ui-yellow);
+  border: 4px solid var(--ui-border);
+  box-shadow: var(--shadow-sm);
+  color: var(--ui-dark);
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+.btn-ui:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0 var(--ui-border);
+}
+.btn-ui:active {
+  transform: translateY(2px);
+  box-shadow: var(--shadow-active);
+}
+.btn-ui.danger { background: var(--ui-red); color: #fff; }
+.btn-ui.success { background: var(--bg-grass-light); color: #fff; }
+
+/* FEEDBACK OVERLAY */
+.feedback-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ui-dark);
+  border: 3px solid var(--ui-border);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  z-index: 200;
+  box-shadow: var(--shadow);
+  display: none;
+}
+</style>
+</head>
+<body>
+
+<div class="game-container">
+  
+  <!-- HELP TRIGGER -->
+  <button class="help-trigger" onclick="openCodex()" aria-label="Open Shape Codex">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.03-.42 1.98-1.07 2.75z"/></svg>
+  </button>
+
+  <!-- TOP CONSOLE -->
+  <div class="console-header">
+    <div class="logo-area">
+      <h1>VOXEL SHAPES</h1>
+      <p>Geometry quest</p>
+    </div>
+    <div class="stats-panel">
+      <div class="stat-indicator">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--ui-yellow)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div class="stat-val">XP: <span id="xpCount">0</span></div>
+      </div>
+      <div class="stat-indicator">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--ui-red)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <div class="stat-val">Level: <span id="levelNum">1</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEVEL CONTAINER CARD -->
+  <div class="stage-card">
+    <div class="stage-banner">
+      <div class="stage-title" id="stageBannerTitle">ZONE 1: SCAN THE OBJECTS</div>
+      <div class="stage-xp-reward">+100 XP</div>
+    </div>
+    <div class="stage-content">
+      
+      <!-- ZONE 1: SCAN THE BLOCKS -->
+      <div id="zone-1" class="screen active">
+        <div class="scan-layout">
+          <div class="scan-instruction">
+            Find the <span id="scanTargetWord" style="color: var(--ui-red); text-transform: uppercase;">Circle</span>
+            <button class="instruction-btn" onclick="speakTargetWord()" aria-label="Pronounce target word">
+              <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            </button>
+          </div>
+          <div class="scan-grid" id="scanGrid"></div>
+        </div>
+      </div>
+
+      <!-- ZONE 2: CRAFTING TABLE -->
+      <div id="zone-2" class="screen">
+        <div class="craft-layout">
+          <div class="craft-recipe-card">
+            <div class="recipe-title">Sword Recipe</div>
+            <div class="recipe-slots" id="recipeSlots"></div>
+          </div>
+          <div class="craft-canvas">
+            <div class="craft-status-bubble" id="craftStatus">Drag blocks to cells!</div>
+            <div class="craft-grid-3x3" id="craftGrid">
+              <!-- cells generated in JS -->
+            </div>
+            <div class="source-palette" id="craftPalette"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ZONE 3: SHAPE STORM -->
+      <div id="zone-3" class="screen">
+        <div class="storm-layout">
+          <div class="storm-hud">
+            <div>Target: <span class="storm-target" id="stormTarget">Circle</span></div>
+            <div>Score: <span id="stormScore">0/5</span></div>
+            <div>Time: <span id="stormTimer">20s</span></div>
+          </div>
+          <div class="storm-playfield" id="stormPlayfield">
+            <!-- elements float down here -->
+          </div>
+          <button class="btn-ui success storm-btn" id="stormStartBtn" onclick="startStorm()">START STORM GAME</button>
+        </div>
+      </div>
+
+      <!-- CREATIVE ARENA (SANDBOX) -->
+      <div id="zone-sandbox" class="screen">
+        <div class="sandbox-layout">
+          <div class="sandbox-sidebar">
+            <div class="sandbox-title">Add Elements</div>
+            <button class="btn-ui" onclick="addSandboxShape('circle')">Circle</button>
+            <button class="btn-ui" onclick="addSandboxShape('square')">Square</button>
+            <button class="btn-ui" onclick="addSandboxShape('triangle')">Triangle</button>
+            <button class="btn-ui" onclick="addSandboxShape('oval')">Oval</button>
+            <button class="btn-ui" onclick="addSandboxShape('rectangle')">Rectangle</button>
+            <button class="btn-ui" onclick="addSandboxShape('pentagon')">Pentagon</button>
+            <button class="btn-ui" onclick="addSandboxShape('hexagon')">Hexagon</button>
+          </div>
+          <div class="sandbox-canvas" id="sandboxCanvas">
+            <!-- dragged items will exist here -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LEVEL SELECTOR NAVIGATION -->
+  <div class="level-nav">
+    <button class="nav-node active" id="nav-z1" onclick="loadZone(1)">Quest 1</button>
+    <button class="nav-node disabled" id="nav-z2" onclick="loadZone(2)">Quest 2</button>
+    <button class="nav-node disabled" id="nav-z3" onclick="loadZone(3)">Quest 3</button>
+    <button class="nav-node disabled" id="nav-sandbox" onclick="loadZone(4)">Sandbox</button>
+  </div>
+
+</div>
+
+<!-- SHAPE CODEX MODAL -->
+<div class="codex-modal" id="codexModal">
+  <div class="codex-box">
+    <div class="codex-header">
+      <h2>Shape Codex</h2>
+      <button class="codex-close" onclick="closeCodex()">Close</button>
+    </div>
+    <div class="codex-grid" id="codexGrid"></div>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATIONS -->
+<div class="feedback-toast" id="feedbackToast">XP GAINED!</div>
+
+<script>
+/* ============================================================
+   SHAPE SHAPES VECTOR DESIGNS
+   ============================================================ */
+const SHAPES = {
+  circle: {
+    color: '#ff5757',
+    svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#ff5757" stroke="#000" stroke-width="5"/></svg>`
+  },
+  square: {
+    color: '#5cd03c',
+    svg: `<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" fill="#5cd03c" stroke="#000" stroke-width="5"/></svg>`
+  },
+  triangle: {
+    color: '#ffdd33',
+    svg: `<svg viewBox="0 0 100 100"><polygon points="50,15 15,80 85,80" fill="#ffdd33" stroke="#000" stroke-width="5"/></svg>`
+  },
+  oval: {
+    color: '#ac6cff',
+    svg: `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="42" ry="25" fill="#ac6cff" stroke="#000" stroke-width="5"/></svg>`
+  },
+  rectangle: {
+    color: '#ff7bce',
+    svg: `<svg viewBox="0 0 100 100"><rect x="10" y="25" width="80" height="50" fill="#ff7bce" stroke="#000" stroke-width="5"/></svg>`
+  },
+  pentagon: {
+    color: '#ff8a38',
+    svg: `<svg viewBox="0 0 100 100"><polygon points="50,15 85,42 72,82 28,82 15,42" fill="#ff8a38" stroke="#000" stroke-width="5"/></svg>`
+  },
+  hexagon: {
+    color: '#3ae2ff',
+    svg: `<svg viewBox="0 0 100 100"><polygon points="50,12 85,32 85,68 50,88 15,68 15,32" fill="#3ae2ff" stroke="#000" stroke-width="5"/></svg>`
+  }
+};
+
+/* ============================================================
+   SOUND EFFECTS SYNTHESIZER (Web Audio API)
+   ============================================================ */
+const SoundFX = {
+  ctx: null,
+  init() {
+    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  },
+  playLevelUp() {
+    this.init();
+    const now = this.ctx.currentTime;
+    const notes = [261.63, 329.63, 392.00, 523.25, 659.25];
+    notes.forEach((f, i) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.frequency.setValueAtTime(f, now + i * 0.1);
+      gain.gain.setValueAtTime(0.12, now + i * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.15);
+      osc.start(now + i * 0.1);
+      osc.stop(now + i * 0.1 + 0.2);
+    });
+  },
+  playSuccess() {
+    this.init();
+    const now = this.ctx.currentTime;
+    const playNote = (f, s) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.frequency.setValueAtTime(f, now + s);
+      gain.gain.setValueAtTime(0.1, now + s);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + s + 0.1);
+      osc.start(now + s);
+      osc.stop(now + s + 0.12);
+    };
+    playNote(392.00, 0);
+    playNote(523.25, 0.08);
+  },
+  playFail() {
+    this.init();
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(130, this.ctx.currentTime);
+    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.2);
+  }
+};
+
+/* ============================================================
+   SPEECH SYNTHESIS ENGINE
+   ============================================================ */
+function speak(word) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(word);
+    utter.lang = 'en-US';
+    utter.rate = 0.8; // perfect speed for A1 learning
+    window.speechSynthesis.speak(utter);
+  }
+}
+
+/* ============================================================
+   GAME LOGIC & DATA STATE
+   ============================================================ */
+let playerXP = 0;
+let playerLevel = 1;
+let currentZone = 1;
+let unlockedZones = [1];
+
+function addXP(amount) {
+  playerXP += amount;
+  document.getElementById("xpCount").textContent = playerXP;
+  showToast(`+${amount} XP!`);
+  
+  // Level threshold: Level 1 -> 2: 100XP, 2 -> 3: 200XP, 3 -> 4: 350XP
+  const thresholds = [0, 100, 200, 350];
+  let nextLvl = 1;
+  if (playerXP >= 350) nextLvl = 4;
+  else if (playerXP >= 200) nextLvl = 3;
+  else if (playerXP >= 100) nextLvl = 2;
+
+  if (nextLvl > playerLevel) {
+    playerLevel = nextLvl;
+    document.getElementById("levelNum").textContent = playerLevel;
+    SoundFX.playLevelUp();
+    showToast(`LEVEL UP! REACHED LEVEL ${playerLevel}`);
+    
+    // Unlock next zones
+    if (playerLevel >= 2 && !unlockedZones.includes(2)) {
+      unlockedZones.push(2);
+      document.getElementById("nav-z2").classList.remove("disabled");
+    }
+    if (playerLevel >= 3 && !unlockedZones.includes(3)) {
+      unlockedZones.push(3);
+      document.getElementById("nav-z3").classList.remove("disabled");
+    }
+    if (playerLevel >= 4 && !unlockedZones.includes(4)) {
+      unlockedZones.push(4);
+      document.getElementById("nav-sandbox").classList.remove("disabled");
+    }
+  } else {
+    SoundFX.playSuccess();
+  }
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("feedbackToast");
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 2000);
+}
+
+function loadZone(zId) {
+  if (!unlockedZones.includes(zId)) {
+    SoundFX.playFail();
+    showToast("Locked! Gain more XP to unlock.");
+    return;
+  }
+  
+  // hide all screens
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".nav-node").forEach(n => n.classList.remove("active"));
+
+  if (zId === 1) {
+    document.getElementById("zone-1").classList.add("active");
+    document.getElementById("nav-z1").classList.add("active");
+    document.getElementById("stageBannerTitle").textContent = "ZONE 1: SCAN THE OBJECTS";
+    initZone1();
+  } else if (zId === 2) {
+    document.getElementById("zone-2").classList.add("active");
+    document.getElementById("nav-z2").classList.add("active");
+    document.getElementById("stageBannerTitle").textContent = "ZONE 2: CRAFTING TABLE";
+    initZone2();
+  } else if (zId === 3) {
+    document.getElementById("zone-3").classList.add("active");
+    document.getElementById("nav-z3").classList.add("active");
+    document.getElementById("stageBannerTitle").textContent = "ZONE 3: SHAPE STORM";
+    initZone3();
+  } else if (zId === 4) {
+    document.getElementById("zone-sandbox").classList.add("active");
+    document.getElementById("nav-sandbox").classList.add("active");
+    document.getElementById("stageBannerTitle").textContent = "SANDBOX: BUILD MODE";
+    initSandbox();
+  }
+}
+
+/* ============================================================
+   ZONE 1: SCAN THE OBJECTS (Roblox & Minecraft Item Analogs)
+   ============================================================ */
+const SCAN_SCENARIOS = [
+  { target: "circle", items: ["circle", "square", "triangle", "oval"], labels: ["Shield", "Block", "Tent", "Mirror"] },
+  { target: "triangle", items: ["pentagon", "triangle", "hexagon", "rectangle"], labels: ["Gem", "Roof", "Honeycomb", "Brick"] },
+  { target: "square", items: ["oval", "circle", "square", "rectangle"], labels: ["Egg", "Coin", "Giftbox", "Tablet"] },
+  { target: "pentagon", items: ["hexagon", "pentagon", "triangle", "square"], labels: ["Nail", "Star Base", "Hat", "Tile"] },
+  { target: "hexagon", items: ["hexagon", "circle", "oval", "triangle"], labels: ["Nut", "Wheel", "Pill", "Sign"] },
+  { target: "oval", items: ["circle", "rectangle", "oval", "square"], labels: ["Pizza", "Chest", "Egg", "Crate"] },
+  { target: "rectangle", items: ["pentagon", "rectangle", "square", "circle"], labels: ["House", "Door", "Desk", "Button"] }
+];
+let currentScanIndex = 0;
+
+function initZone1() {
+  currentScanIndex = Math.floor(Math.random() * SCAN_SCENARIOS.length);
+  const scenario = SCAN_SCENARIOS[currentScanIndex];
+  
+  document.getElementById("scanTargetWord").textContent = scenario.target;
+  speak(scenario.target);
+
+  const grid = document.getElementById("scanGrid");
+  grid.innerHTML = "";
+
+  scenario.items.forEach((shapeKey, idx) => {
+    const card = document.createElement("div");
+    card.className = "scan-node";
+    card.innerHTML = `${SHAPES[shapeKey].svg}<div class="scan-label">${scenario.labels[idx]}</div>`;
+    card.onclick = () => checkScanAnswer(shapeKey, card);
+    grid.appendChild(card);
+  });
+}
+
+function checkScanAnswer(chosenShape, cardEl) {
+  const scenario = SCAN_SCENARIOS[currentScanIndex];
+  if (chosenShape === scenario.target) {
+    cardEl.classList.add("correct");
+    addXP(25);
+    setTimeout(() => {
+      initZone1();
+    }, 1000);
+  } else {
+    cardEl.classList.add("wrong");
+    SoundFX.playFail();
+    setTimeout(() => {
+      cardEl.classList.remove("wrong");
+    }, 600);
+  }
+}
+
+function speakTargetWord() {
+  const target = document.getElementById("scanTargetWord").textContent;
+  speak(target);
+}
+
+/* ============================================================
+   ZONE 2: CRAFTING TABLE (Drag & Drop Gameplay)
+   ============================================================ */
+const CRAFT_RECIPES = [
+  { item: "House", layout: ["triangle", "square"], recipeText: ["1. Triangle (Roof)", "2. Square (Walls)"] },
+  { item: "Sword", layout: ["triangle", "rectangle", "circle"], recipeText: ["1. Triangle (Blade)", "2. Rectangle (Hilt)", "3. Circle (Pommel)"] },
+  { item: "Wizard Hat", layout: ["triangle", "circle"], recipeText: ["1. Triangle (Cone)", "2. Circle (Brim)"] }
+];
+let activeRecipeIndex = 0;
+let userPlacedShapes = [];
+
+function initZone2() {
+  userPlacedShapes = [];
+  activeRecipeIndex = Math.floor(Math.random() * CRAFT_RECIPES.length);
+  const recipe = CRAFT_RECIPES[activeRecipeIndex];
+
+  document.querySelector(".recipe-title").textContent = `${recipe.item} Recipe`;
+  document.getElementById("craftStatus").textContent = "Drag blocks into slots below!";
+  
+  // Render Recipe Targets list
+  const slotsDiv = document.getElementById("recipeSlots");
+  slotsDiv.innerHTML = "";
+  recipe.recipeText.forEach(txt => {
+    const slot = document.createElement("div");
+    slot.className = "recipe-slot";
+    slot.innerHTML = `<span class="slot-marker">?</span><span class="slot-target-name">${txt}</span>`;
+    slotsDiv.innerHTML += slot.outerHTML;
+  });
+
+  // Render Grid Cells (3x3 grid, center column is slot targets)
+  const grid = document.getElementById("craftGrid");
+  grid.innerHTML = "";
+  
+  // Generate 9 cells. Only certain indices accept drops depending on recipe
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement("div");
+    cell.className = "craft-grid-cell";
+    cell.dataset.index = i;
+    
+    // Simple drag-over event listeners
+    cell.ondragover = e => e.preventDefault();
+    cell.ondrop = e => handleDrop(e, cell);
+    
+    grid.appendChild(cell);
+  }
+
+  // Render draggable source palette
+  const palette = document.getElementById("craftPalette");
+  palette.innerHTML = "";
+  Object.keys(SHAPES).forEach(shapeKey => {
+    const el = document.createElement("div");
+    el.className = "source-shape";
+    el.draggable = true;
+    el.innerHTML = SHAPES[shapeKey].svg;
+    el.ondragstart = e => {
+      e.dataTransfer.setData("text/plain", shapeKey);
+      speak(shapeKey);
+    };
+    palette.appendChild(el);
+  });
+}
+
+function handleDrop(e, cellEl) {
+  e.preventDefault();
+  const shapeKey = e.dataTransfer.getData("text/plain");
+  const recipe = CRAFT_RECIPES[activeRecipeIndex];
+
+  // Logic: check if this shape belongs to current recipe
+  if (recipe.layout.includes(shapeKey) && !userPlacedShapes.includes(shapeKey)) {
+    userPlacedShapes.push(shapeKey);
+    cellEl.innerHTML = SHAPES[shapeKey].svg;
+    cellEl.classList.add("filled");
+    speak(shapeKey);
+
+    // Update checklist icon
+    const slots = document.querySelectorAll(".recipe-slot");
+    recipe.layout.forEach((neededShape, idx) => {
+      if (neededShape === shapeKey) {
+        slots[idx].querySelector(".slot-marker").innerHTML = "✓";
+        slots[idx].querySelector(".slot-marker").style.background = "var(--bg-grass-light)";
+      }
+    });
+
+    if (userPlacedShapes.length === recipe.layout.length) {
+      document.getElementById("craftStatus").textContent = `SUCCESSFUL CRAFT: ${recipe.item}!`;
+      addXP(50);
+      setTimeout(() => {
+        initZone2();
+      }, 2000);
+    }
+  } else {
+    SoundFX.playFail();
+    showToast("Shape not required or already placed!");
+  }
+}
+
+/* ============================================================
+   ZONE 3: SHAPE STORM (Action/Clicker Mode)
+   ============================================================ */
+let stormInterval = null;
+let stormTimer = 20;
+let stormScore = 0;
+let targetStormShape = "";
+const targetPool = ["circle", "square", "triangle", "oval", "rectangle", "pentagon", "hexagon"];
+
+function initZone3() {
+  clearInterval(stormInterval);
+  document.getElementById("stormPlayfield").innerHTML = "";
+  document.getElementById("stormStartBtn").style.display = "inline-flex";
+  document.getElementById("stormTimer").textContent = "20s";
+  document.getElementById("stormScore").textContent = "0/5";
+}
+
+function startStorm() {
+  document.getElementById("stormStartBtn").style.display = "none";
+  stormScore = 0;
+  stormTimer = 20;
+  targetStormShape = targetPool[Math.floor(Math.random() * targetPool.length)];
+  document.getElementById("stormTarget").textContent = targetStormShape.toUpperCase();
+  document.getElementById("stormTarget").style.color = SHAPES[targetStormShape].color;
+  speak(targetStormShape);
+
+  stormInterval = setInterval(() => {
+    stormTimer--;
+    document.getElementById("stormTimer").textContent = stormTimer + "s";
+    
+    // Spawn shape object
+    if (Math.random() > 0.4) {
+      spawnStormShape();
+    }
+
+    if (stormTimer <= 0) {
+      endStorm();
+    }
+  }, 1000);
+}
+
+function spawnStormShape() {
+  const playfield = document.getElementById("stormPlayfield");
+  const keys = Object.keys(SHAPES);
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+
+  const element = document.createElement("div");
+  element.className = "storm-element";
+  element.innerHTML = SHAPES[randomKey].svg;
+  element.style.left = Math.floor(Math.random() * (playfield.clientWidth - 70)) + "px";
+
+  element.onclick = () => {
+    speak(randomKey);
+    if (randomKey === targetStormShape) {
+      stormScore++;
+      document.getElementById("stormScore").textContent = `${stormScore}/5`;
+      element.remove();
+      SoundFX.playSuccess();
+    } else {
+      SoundFX.playFail();
+      element.classList.add("wrong");
+    }
+  };
+
+  playfield.appendChild(element);
+
+  // Auto clean-up
+  setTimeout(() => {
+    if (element.parentNode) element.remove();
+  }, 3000);
+}
+
+function endStorm() {
+  clearInterval(stormInterval);
+  document.getElementById("stormPlayfield").innerHTML = "";
+  document.getElementById("stormStartBtn").style.display = "inline-flex";
+  
+  if (stormScore >= 5) {
+    addXP(100);
+    showToast("Quest Completed! Great focus!");
+  } else {
+    showToast("Time's up! Try again to score at least 5 points.");
+    SoundFX.playFail();
+  }
+}
+
+/* ============================================================
+   SANDBOX: BUILD CREATIVE ARENA
+   ============================================================ */
+function initSandbox() {
+  const canvas = document.getElementById("sandboxCanvas");
+  canvas.innerHTML = "<div style='position:absolute; top:10px; width:100%; text-align:center; font-family:var(--font-pixel); font-size:0.6rem; color:#fff;'>Drag & Drop items to move them around!</div>";
+}
+
+function addSandboxShape(shapeKey) {
+  const canvas = document.getElementById("sandboxCanvas");
+  const el = document.createElement("div");
+  el.className = "sandbox-shape";
+  el.innerHTML = SHAPES[shapeKey].svg;
+  el.style.left = "40%";
+  el.style.top = "40%";
+  
+  // Make element draggable inside sandbox limits
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  el.onmousedown = e => {
+    isDragging = true;
+    offsetX = e.clientX - el.offsetLeft;
+    offsetY = e.clientY - el.offsetTop;
+    el.style.cursor = 'grabbing';
+    speak(shapeKey);
+  };
+
+  document.onmousemove = e => {
+    if (!isDragging) return;
+    const canvasBounds = canvas.getBoundingClientRect();
+    let newX = e.clientX - offsetX;
+    let newY = e.clientY - offsetY;
+
+    // Bounds restriction
+    if (newX < 0) newX = 0;
+    if (newY < 0) newY = 0;
+    if (newX > canvasBounds.width - 80) newX = canvasBounds.width - 80;
+    if (newY > canvasBounds.height - 80) newY = canvasBounds.height - 80;
+
+    el.style.left = newX + "px";
+    el.style.top = newY + "px";
+  };
+
+  document.onmouseup = () => {
+    isDragging = false;
+    el.style.cursor = 'move';
+  };
+
+  canvas.appendChild(el);
+}
+
+/* ============================================================
+   CODEX (THEORY CARD INTERACTION)
+   ============================================================ */
+function openCodex() {
+  const modal = document.getElementById("codexModal");
+  modal.classList.add("active");
+
+  const grid = document.getElementById("codexGrid");
+  grid.innerHTML = "";
+
+  Object.keys(SHAPES).forEach(shapeKey => {
+    const card = document.createElement("div");
+    card.className = "codex-item";
+    card.innerHTML = `
+      ${SHAPES[shapeKey].svg}
+      <div class="codex-name">
+        ${shapeKey}
+        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+      </div>
+    `;
+    card.onclick = () => speak(shapeKey);
+    grid.appendChild(card);
+  });
+}
+
+function closeCodex() {
+  document.getElementById("codexModal").classList.remove("active");
+}
+
+/* ============================================================
+   INITIALIZATION BOOT
+   ============================================================ */
+function boot() {
+  initZone1();
+}
+
+boot();
+</script>
+</body>
+</html>
