@@ -1,1301 +1,1507 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Voxel Shape Crafting Quest</title>
+<title>Voxel Shape Quest — Домашка-игра</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Rubik:wght@400;500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 :root {
-  --font-pixel: 'Press Start 2P', monospace;
+  --font-title: 'Rubik Mono One', monospace; /* поддерживает кириллицу */
+  --font-pixel: 'Press Start 2P', monospace; /* только для цифр и англ. */
   --font-main: 'Rubik', sans-serif;
 
-  /* Minecraft / Roblox Earthy & Bold Theme */
-  --bg-sky: #75b4e3;
-  --bg-grass: #5b8731;
-  --bg-grass-light: #7ea955;
-  --bg-dirt: #866043;
-  --bg-dirt-dark: #573d2a;
-  
+  --bg-page: #2c1e12;
+  --panel-dirt: #866043;
+  --panel-dirt-dark: #573d2a;
+  --grass: #5b8731;
+  --grass-light: #7ea955;
+  --sky: #79b9e8;
   --ui-yellow: #f8c523;
-  --ui-blue: #00a2ff;
-  --ui-red: #e22226;
-  --ui-dark: #1e1e1e;
-  --ui-light: #f5f5f5;
-  --ui-border: #000000;
+  --ui-red: #e2413b;
+  --ui-blue: #2ea3f2;
+  --ui-dark: #17130f;
+  --paper: #fdf7ec;
 
-  --transition: all 0.2s steps(4); /* Retro step transitions */
-  --shadow: 6px 6px 0px var(--ui-border);
-  --shadow-sm: 4px 4px 0px var(--ui-border);
-  --shadow-active: 2px 2px 0px var(--ui-border);
+  --ok: #3e9e4f;
+  --bad: #d9433c;
+
+  --border: 4px solid #17130f;
+  --shadow: 6px 6px 0 rgba(0,0,0,0.55);
+  --shadow-sm: 4px 4px 0 rgba(0,0,0,0.55);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background-color: #312115;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.15) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.15) 2px, transparent 2px);
-  background-size: 32px 32px;
-  color: #ffffff;
+  background-color: var(--bg-page);
+  background-image:
+    linear-gradient(rgba(0,0,0,0.18) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(0,0,0,0.18) 2px, transparent 2px);
+  background-size: 34px 34px;
+  color: #fff;
   font-family: var(--font-main);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem 1rem 3rem;
-  overflow-x: hidden;
+  padding: 1.2rem 0.8rem 3rem;
 }
 
-.game-container {
-  max-width: 900px;
-  width: 100%;
+.wrap { max-width: 960px; width: 100%; }
+
+/* ================= HEADER ================= */
+.hud {
+  background: var(--panel-dirt);
+  border: var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.2rem;
   position: relative;
 }
-
-/* TOP STATUS CONSOLE */
-.console-header {
-  background: var(--bg-dirt);
-  border: 4px solid var(--ui-border);
-  box-shadow: var(--shadow);
-  border-radius: 12px;
-  padding: 1.2rem;
-  margin-bottom: 2rem;
+.hud-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
-  gap: 15px;
-  position: relative;
 }
-.console-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0; height: 6px;
-  background: var(--bg-dirt-dark);
-  border-radius: 0 0 8px 8px;
-}
-
-.logo-area h1 {
-  font-family: var(--font-pixel);
-  font-size: 1.1rem;
+.game-title {
+  font-family: var(--font-title);
+  font-size: clamp(0.95rem, 3vw, 1.35rem);
   color: var(--ui-yellow);
   text-shadow: 3px 3px 0 #000;
-  line-height: 1.4;
-  margin-bottom: 5px;
+  line-height: 1.3;
 }
-.logo-area p {
-  font-size: 0.9rem;
+.game-sub {
+  font-size: 0.85rem;
   font-weight: 700;
-  color: #f0e6df;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  color: #f3e9de;
+  opacity: 0.9;
+  margin-top: 2px;
 }
-
-.stats-panel {
-  display: flex;
-  gap: 20px;
-}
-.stat-indicator {
-  background: rgba(0, 0, 0, 0.4);
-  border: 3px solid var(--ui-border);
-  padding: 8px 16px;
+.hud-stats { display: flex; gap: 10px; flex-wrap: wrap; }
+.pill {
+  background: rgba(0,0,0,0.45);
+  border: 3px solid #17130f;
   border-radius: 8px;
+  padding: 7px 13px;
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-.stat-val {
+  gap: 8px;
   font-family: var(--font-pixel);
-  font-size: 0.9rem;
-  color: #fff;
+  font-size: 0.72rem;
 }
-.stat-val span {
-  color: var(--ui-yellow);
+.pill svg { width: 17px; height: 17px; }
+.pill b { color: var(--ui-yellow); font-weight: normal; }
+
+.xp-bar-outer {
+  margin-top: 12px;
+  background: rgba(0,0,0,0.5);
+  border: 3px solid #17130f;
+  border-radius: 8px;
+  height: 20px;
+  overflow: hidden;
+}
+.xp-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: repeating-linear-gradient(90deg, var(--grass-light) 0 12px, var(--grass) 12px 24px);
+  transition: width 0.5s ease;
+}
+.xp-bar-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f3e9de;
+  margin-top: 5px;
+  text-align: right;
 }
 
-/* HELP CODEX BUTTON */
-.help-trigger {
+.help-btn {
+  position: absolute;
+  top: -14px;
+  right: -10px;
+  width: 48px;
+  height: 48px;
   background: var(--ui-yellow);
-  border: 4px solid var(--ui-border);
+  border: var(--border);
+  border-radius: 10px;
   box-shadow: var(--shadow-sm);
-  border-radius: 8px;
-  width: 46px;
-  height: 46px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: var(--transition);
-  position: absolute;
-  top: -12px;
-  right: -12px;
-  z-index: 10;
+  transition: transform 0.1s;
+  z-index: 20;
 }
-.help-trigger:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--ui-border);
-}
-.help-trigger:active {
-  transform: translate(2px, 2px);
-  box-shadow: var(--shadow-active);
-}
-.help-trigger svg {
-  width: 24px;
-  height: 24px;
-  fill: var(--ui-dark);
-}
+.help-btn:hover { transform: translate(-2px,-2px); }
+.help-btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 rgba(0,0,0,0.55); }
+.help-btn svg { width: 26px; height: 26px; fill: var(--ui-dark); }
 
-/* MAIN LEVEL CARD */
-.stage-card {
-  background: #ffffff;
+/* ================= QUEST MAP ================= */
+.quest-map {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 1.4rem;
+  flex-wrap: wrap;
+}
+.map-node {
+  background: #4a3b32;
+  border: var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  padding: 10px 14px;
+  min-width: 118px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.12s;
+  position: relative;
+}
+.map-node:hover:not(.locked) { transform: translateY(-3px); }
+.map-node .num {
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  color: var(--ui-yellow);
+  display: block;
+  margin-bottom: 5px;
+}
+.map-node .name { font-size: 0.82rem; font-weight: 900; color: #fff; }
+.map-node.current { background: var(--grass); outline: 3px solid var(--ui-yellow); }
+.map-node.done { background: #3c5c33; }
+.map-node.done::after {
+  content: '';
+  position: absolute;
+  top: -12px; right: -10px;
+  width: 26px; height: 26px;
+  background: var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/16px no-repeat;
+  border: 3px solid #17130f;
+  border-radius: 7px;
+}
+.map-node.locked { opacity: 0.45; cursor: not-allowed; }
+.map-node.locked .num::before { content: '🔒 '; font-size: 0.6rem; }
+.map-arrow { color: var(--ui-yellow); font-weight: 900; font-size: 1.1rem; user-select: none; }
+
+/* ================= STAGE ================= */
+.stage {
+  background: var(--paper);
   color: var(--ui-dark);
-  border: 5px solid var(--ui-border);
+  border: 5px solid #17130f;
   border-radius: 16px;
   box-shadow: var(--shadow);
   overflow: hidden;
-  margin-bottom: 2rem;
 }
-.stage-banner {
-  background: var(--bg-grass);
-  border-bottom: 5px solid var(--ui-border);
-  padding: 1.2rem;
+.stage-head {
+  background: var(--grass);
+  border-bottom: 5px solid #17130f;
+  padding: 1rem 1.4rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #ffffff;
-}
-.stage-title {
-  font-family: var(--font-pixel);
-  font-size: 0.95rem;
-  text-shadow: 2px 2px 0px #000;
-}
-.stage-xp-reward {
-  background: var(--ui-dark);
-  color: var(--ui-yellow);
-  font-family: var(--font-pixel);
-  font-size: 0.75rem;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 2px solid #fff;
-}
-
-.stage-content {
-  padding: 2rem;
-  min-height: 380px;
-}
-
-/* LEVEL SELECTION FOOTER */
-.level-nav {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
+  gap: 10px;
   flex-wrap: wrap;
 }
-.nav-node {
-  background: #4a3b32;
-  border: 4px solid var(--ui-border);
-  border-radius: 8px;
+.stage-head h2 {
+  font-family: var(--font-title);
+  font-size: clamp(0.8rem, 2.6vw, 1.05rem);
   color: #fff;
-  padding: 12px 20px;
-  font-family: var(--font-pixel);
-  font-size: 0.75rem;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-}
-.nav-node:hover:not(.disabled) {
-  background: var(--bg-dirt);
-  transform: translateY(-2px);
-}
-.nav-node.active {
-  background: var(--bg-grass-light);
-  color: #fff;
-  transform: translateY(2px);
-  box-shadow: var(--shadow-active);
-}
-.nav-node.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* SCREEN MODAL: SHAPE CODEX */
-.codex-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-.codex-modal.active {
-  display: flex;
-}
-.codex-box {
-  background: #ffffff;
-  color: var(--ui-dark);
-  border: 5px solid var(--ui-border);
-  box-shadow: 8px 8px 0 #000;
-  border-radius: 16px;
-  max-width: 650px;
-  width: 100%;
-  overflow: hidden;
-  animation: popOpen 0.2s steps(3);
-}
-@keyframes popOpen {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-.codex-header {
-  background: var(--bg-dirt);
-  border-bottom: 5px solid var(--ui-border);
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #fff;
-}
-.codex-header h2 {
-  font-family: var(--font-pixel);
-  font-size: 0.9rem;
   text-shadow: 2px 2px 0 #000;
 }
-.codex-close {
-  background: var(--ui-red);
-  border: 3px solid var(--ui-border);
-  color: #fff;
+.stage-reward {
   font-family: var(--font-pixel);
-  font-size: 0.75rem;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
+  font-size: 0.65rem;
+  background: var(--ui-dark);
+  color: var(--ui-yellow);
+  border: 2px solid #fff;
+  border-radius: 7px;
+  padding: 6px 10px;
+  white-space: nowrap;
 }
+.stage-body { padding: clamp(1.2rem, 4vw, 2rem); }
+
+.task-strip {
+  background: #fff3d6;
+  border: 3px solid #17130f;
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 1.4rem;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.task-strip .ico {
+  flex-shrink: 0;
+  width: 34px; height: 34px;
+  background: var(--ui-yellow);
+  border: 3px solid #17130f;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+.task-strip p { font-size: 1.02rem; font-weight: 500; line-height: 1.5; }
+.task-strip b { font-weight: 900; }
+
+.screen { display: none; }
+.screen.active { display: block; animation: pop 0.25s ease; }
+@keyframes pop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ================= BUTTONS ================= */
+.btn {
+  font-family: var(--font-main);
+  font-weight: 900;
+  font-size: 1rem;
+  background: var(--ui-yellow);
+  color: var(--ui-dark);
+  border: var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  padding: 13px 26px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  transition: transform 0.1s;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(2px); box-shadow: 2px 2px 0 rgba(0,0,0,0.55); }
+.btn.green { background: var(--grass-light); color: #fff; }
+.btn.blue { background: var(--ui-blue); color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.btn svg { width: 18px; height: 18px; }
+
+.center { text-align: center; }
+.mt { margin-top: 1.4rem; }
+
+/* ================= BRIEFING ================= */
+.brief-art { text-align: center; margin-bottom: 1.2rem; }
+.brief-art svg { width: 120px; height: 120px; }
+.brief-text {
+  font-size: 1.08rem;
+  line-height: 1.65;
+  max-width: 620px;
+  margin: 0 auto 0.6rem;
+  text-align: center;
+}
+.brief-text b { color: var(--grass); }
+
+/* ================= STEP 1: CODEX-LEARN ================= */
 .codex-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 15px;
-  padding: 1.5rem;
-  max-height: 450px;
-  overflow-y: auto;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
 }
-.codex-item {
-  border: 3px solid var(--ui-border);
+.wcard {
+  background: #fff;
+  border: 3px solid #17130f;
   border-radius: 12px;
-  padding: 12px;
+  box-shadow: var(--shadow-sm);
+  padding: 14px 10px 12px;
   text-align: center;
   cursor: pointer;
-  background: var(--ui-light);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+  transition: transform 0.12s;
+  position: relative;
 }
-.codex-item:hover {
-  background: #fff;
-  transform: translateY(-2px);
-}
-.codex-item svg {
-  width: 70px;
-  height: 70px;
-  margin-bottom: 10px;
-}
-.codex-name {
-  font-weight: 900;
-  font-size: 1.05rem;
+.wcard:hover { transform: translateY(-3px); }
+.wcard svg.shape { width: 76px; height: 76px; }
+.wcard .word {
+  font-family: var(--font-pixel);
+  font-size: 0.72rem;
+  margin-top: 10px;
   text-transform: uppercase;
-  color: var(--primary);
+  color: var(--ui-dark);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
 }
-.codex-name svg {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  fill: var(--text-muted);
+.wcard .word svg { width: 15px; height: 15px; fill: #8a8177; flex-shrink: 0; }
+.wcard.listened { border-color: var(--ok); background: #edfbee; }
+.wcard.listened::after {
+  content: '';
+  position: absolute;
+  top: -11px; right: -9px;
+  width: 24px; height: 24px;
+  background: var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/14px no-repeat;
+  border: 3px solid #17130f;
+  border-radius: 6px;
 }
 
-/* ZONE 1: SCAN THE BLOCKS */
-.scan-layout {
-  text-align: center;
+/* ================= STEP 2: SCANNER ================= */
+.scan-stage { text-align: center; }
+.scan-progress {
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  color: #8a8177;
+  margin-bottom: 1rem;
 }
-.scan-instruction {
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-  color: var(--primary);
+.scan-item-frame {
+  width: min(260px, 70vw);
+  height: min(260px, 70vw);
+  margin: 0 auto 1.4rem;
+  background: #fff;
+  border: 4px solid #17130f;
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  padding: 14px;
 }
-.instruction-btn {
-  background: var(--ui-yellow);
-  border: 2px solid var(--ui-border);
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+.scan-item-frame img {
+  max-width: 100%;
+  max-height: 100%;
+  image-rendering: pixelated;
 }
-.instruction-btn svg { width: 16px; height: 16px; fill: var(--ui-dark); }
-.scan-grid {
+.scan-options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 15px;
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  max-width: 640px;
+  margin: 0 auto;
 }
-.scan-node {
-  background: var(--ui-light);
-  border: 3px solid var(--ui-border);
+.scan-opt {
+  font-family: var(--font-pixel);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  background: #fff;
+  border: 3px solid #17130f;
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  padding: 15px 8px;
+  cursor: pointer;
+  transition: transform 0.12s;
+  color: var(--ui-dark);
+}
+.scan-opt:hover { transform: translateY(-2px); background: #fffbe8; }
+.scan-opt.ok { background: #d9f5db; border-color: var(--ok); color: var(--ok); }
+.scan-opt.bad { background: #ffe1df; border-color: var(--bad); color: var(--bad); animation: shake 0.35s; }
+@keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+/* ================= STEP 3: CRAFT ================= */
+.craft-flex {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 20px;
+}
+@media (max-width: 720px) { .craft-flex { grid-template-columns: 1fr; } }
+.blueprint {
+  background: #eaf4ff;
+  border: 3px solid #17130f;
   border-radius: 12px;
   padding: 1rem;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.scan-node:hover {
-  background: #ffffff;
-  transform: translateY(-3px);
-  box-shadow: 6px 6px 0px var(--ui-border);
-}
-.scan-node.correct {
-  background: #e2fcdb;
-  border-color: var(--success);
-}
-.scan-node.wrong {
-  background: #ffe3e1;
-  border-color: var(--error);
-  animation: shake 0.3s steps(4);
-}
-.scan-node svg {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 10px;
-}
-.scan-label {
-  font-weight: 800;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
-
-/* ZONE 2: CRAFTING TABLE */
-.craft-layout {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 30px;
-}
-.craft-recipe-card {
-  background: var(--ui-light);
-  border: 4px solid var(--ui-border);
-  border-radius: 12px;
-  padding: 1.2rem;
   box-shadow: var(--shadow-sm);
 }
-.recipe-title {
+.blueprint h3 {
   font-family: var(--font-pixel);
-  font-size: 0.75rem;
-  color: var(--bg-dirt-dark);
-  margin-bottom: 1rem;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  color: var(--ui-blue);
+  margin-bottom: 0.8rem;
+}
+.blueprint img {
+  width: 100%;
+  max-width: 170px;
+  display: block;
+  margin: 0 auto 0.9rem;
+  image-rendering: pixelated;
+  border: 3px solid #17130f;
+  border-radius: 10px;
+  background: #fff;
+}
+.bp-slot {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #fff;
+  border: 2px solid #17130f;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+.bp-slot .mark {
+  width: 24px; height: 24px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  border: 2px solid #17130f;
+  background: #d9d2c7;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900;
+  color: #fff;
+  font-size: 0.85rem;
+}
+.bp-slot.got .mark { background: var(--ok); }
+.bp-slot .bp-word {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
   text-transform: uppercase;
 }
-.recipe-slots {
-  display: flex;
-  flex-direction: column;
+.bp-slot .bp-ru { font-size: 0.78rem; color: #8a8177; font-weight: 700; margin-left: auto; }
+
+.craft-right { text-align: center; }
+.craft-msg { font-weight: 900; font-size: 1.05rem; min-height: 28px; margin-bottom: 1rem; }
+.craft-msg.good { color: var(--ok); }
+.craft-msg.err { color: var(--bad); }
+.palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
   gap: 12px;
 }
-.recipe-slot {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.pal-shape {
   background: #fff;
-  border: 2px solid var(--ui-border);
-  padding: 10px;
-  border-radius: 8px;
-}
-.slot-marker {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--ui-blue);
-  color: #fff;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.slot-target-name {
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-}
-.craft-canvas {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #efebe4;
-  border: 4px solid var(--ui-border);
+  border: 3px solid #17130f;
   border-radius: 12px;
-  padding: 2rem;
-  position: relative;
-}
-.craft-grid-3x3 {
-  display: grid;
-  grid-template-columns: repeat(3, 80px);
-  grid-template-rows: repeat(3, 80px);
-  gap: 8px;
-  background: var(--bg-dirt-dark);
-  padding: 8px;
-  border: 4px solid var(--ui-border);
-  border-radius: 8px;
   box-shadow: var(--shadow-sm);
-  margin-bottom: 1.5rem;
-}
-.craft-grid-cell {
-  background: #8f796a;
-  border: 3px solid var(--ui-border);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-.craft-grid-cell.filled {
-  background: #a98f7e;
-}
-.craft-grid-cell svg {
-  width: 60px;
-  height: 60px;
-}
-.source-palette {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.source-shape {
-  width: 64px;
-  height: 64px;
-  background: #fff;
-  border: 3px solid var(--ui-border);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: grab;
-  box-shadow: var(--shadow-sm);
-  user-select: none;
-}
-.source-shape svg {
-  width: 48px;
-  height: 48px;
-}
-.craft-status-bubble {
-  position: absolute;
-  top: 10px;
-  font-weight: 800;
-  color: var(--success);
-}
-
-@media(max-width: 750px) {
-  .craft-layout { grid-template-columns: 1fr; }
-}
-
-/* ZONE 3: SHAPE STORM */
-.storm-layout {
-  position: relative;
+  padding: 10px 6px;
+  cursor: pointer;
+  transition: transform 0.12s;
   text-align: center;
 }
+.pal-shape:hover { transform: translateY(-3px); }
+.pal-shape svg { width: 56px; height: 56px; }
+.pal-shape .pname {
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #8a8177;
+  margin-top: 4px;
+}
+.pal-shape.used { opacity: 0.35; pointer-events: none; }
+.craft-counter {
+  font-family: var(--font-pixel);
+  font-size: 0.68rem;
+  color: #8a8177;
+  margin-bottom: 0.8rem;
+}
+
+/* ================= STEP 4: STORM ================= */
 .storm-hud {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 3px solid #17130f;
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  padding: 10px 14px;
+  margin-bottom: 1rem;
   font-family: var(--font-pixel);
-  font-size: 0.75rem;
-  margin-bottom: 1.5rem;
-  background: var(--ui-light);
-  border: 3px solid var(--ui-border);
-  padding: 10px;
-  border-radius: 8px;
+  font-size: 0.68rem;
 }
-.storm-target {
-  font-weight: 900;
-  color: var(--ui-red);
-}
-.storm-playfield {
-  width: 100%;
-  height: 300px;
-  background: var(--ui-dark);
-  border: 4px solid var(--ui-border);
+.storm-hud .tgt { color: var(--ui-red); text-transform: uppercase; }
+.storm-field {
+  height: 320px;
+  background: #1d1712;
+  border: 4px solid #17130f;
   border-radius: 12px;
   position: relative;
   overflow: hidden;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+  box-shadow: inset 0 0 24px rgba(0,0,0,0.8);
 }
-.storm-element {
+.storm-shape {
   position: absolute;
-  width: 60px;
-  height: 60px;
+  width: 62px;
+  height: 62px;
   cursor: pointer;
-  animation: floatDown 3s linear forwards;
+  animation: fall linear forwards;
 }
-@keyframes floatDown {
-  from { top: -70px; }
-  to { top: 310px; }
-}
-.storm-element svg {
-  width: 100%;
-  height: 100%;
-}
-.storm-btn {
-  margin-top: 1rem;
-}
+.storm-shape svg { width: 100%; height: 100%; }
+@keyframes fall { from { top: -70px; } to { top: 330px; } }
 
-/* BUILD STAGE (SANDBOX) */
-.sandbox-layout {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 20px;
+/* ================= FINAL ================= */
+.final-banner { text-align: center; padding: 0.5rem 0 1rem; }
+.final-banner .big {
+  font-family: var(--font-title);
+  font-size: clamp(1.1rem, 4vw, 1.7rem);
+  color: var(--grass);
+  margin-bottom: 0.7rem;
 }
-.sandbox-sidebar {
-  background: var(--ui-light);
-  border: 4px solid var(--ui-border);
-  border-radius: 12px;
-  padding: 1rem;
+.final-stats {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 1rem 0 1.2rem;
 }
-.sandbox-title {
-  font-family: var(--font-pixel);
-  font-size: 0.65rem;
+.final-stat {
+  background: #fff;
+  border: 3px solid #17130f;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  padding: 12px 22px;
   text-align: center;
 }
+.final-stat .v { font-family: var(--font-pixel); font-size: 1.05rem; color: var(--grass); }
+.final-stat .k { font-size: 0.78rem; font-weight: 700; color: #8a8177; margin-top: 5px; }
+.final-words {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-width: 560px;
+  margin: 0 auto 1.4rem;
+}
+.final-word-chip {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  background: #fff;
+  border: 2px solid #17130f;
+  border-radius: 7px;
+  padding: 7px 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.final-word-chip:hover { background: #fffbe8; }
+.screenshot-note {
+  background: #fff3d6;
+  border: 3px dashed var(--ui-red);
+  border-radius: 10px;
+  max-width: 540px;
+  margin: 0 auto 1.6rem;
+  padding: 0.9rem 1.1rem;
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+/* Sandbox */
+.sandbox-wrap { display: grid; grid-template-columns: 170px 1fr; gap: 16px; }
+@media (max-width: 700px) { .sandbox-wrap { grid-template-columns: 1fr; } }
+.sandbox-tools {
+  background: #fff;
+  border: 3px solid #17130f;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--paper);
+  border: 2px solid #17130f;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  transition: transform 0.1s;
+}
+.tool-btn:hover { transform: translateX(3px); }
+.tool-btn svg { width: 26px; height: 26px; flex-shrink: 0; }
 .sandbox-canvas {
-  height: 400px;
-  background: var(--bg-sky);
-  border: 4px solid var(--ui-border);
+  height: 380px;
+  background: linear-gradient(var(--sky) 0 75%, var(--grass) 75% 100%);
+  border: 4px solid #17130f;
   border-radius: 12px;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
+  touch-action: none;
 }
-.sandbox-shape {
+.sb-shape {
   position: absolute;
-  cursor: move;
-  width: 80px;
-  height: 80px;
+  width: 76px;
+  height: 76px;
+  cursor: grab;
+  touch-action: none;
 }
-.sandbox-shape svg {
-  width: 100%;
-  height: 100%;
-}
-
-@media(max-width: 700px) {
-  .sandbox-layout { grid-template-columns: 1fr; }
-}
-
-/* GENERIC BUTTON STYLE */
-.btn-ui {
-  background: var(--ui-yellow);
-  border: 4px solid var(--ui-border);
-  box-shadow: var(--shadow-sm);
-  color: var(--ui-dark);
-  font-family: var(--font-pixel);
+.sb-shape:active { cursor: grabbing; }
+.sb-shape svg { width: 100%; height: 100%; pointer-events: none; }
+.sandbox-hint {
+  position: absolute;
+  top: 8px; left: 0; right: 0;
+  text-align: center;
   font-size: 0.75rem;
-  padding: 12px 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: var(--transition);
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
+  pointer-events: none;
 }
-.btn-ui:hover {
-  transform: translateY(-2px);
-  box-shadow: 6px 6px 0 var(--ui-border);
-}
-.btn-ui:active {
-  transform: translateY(2px);
-  box-shadow: var(--shadow-active);
-}
-.btn-ui.danger { background: var(--ui-red); color: #fff; }
-.btn-ui.success { background: var(--bg-grass-light); color: #fff; }
 
-/* FEEDBACK OVERLAY */
-.feedback-toast {
+/* ================= MODAL ================= */
+.modal {
+  display: none;
   position: fixed;
-  bottom: 20px;
+  inset: 0;
+  background: rgba(0,0,0,0.86);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.modal.open { display: flex; }
+.modal-box {
+  background: var(--paper);
+  color: var(--ui-dark);
+  border: 5px solid #17130f;
+  border-radius: 16px;
+  box-shadow: 8px 8px 0 #000;
+  max-width: 680px;
+  width: 100%;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  animation: pop 0.2s ease;
+}
+.modal-head {
+  background: var(--panel-dirt);
+  border-bottom: 5px solid #17130f;
+  border-radius: 10px 10px 0 0;
+  padding: 0.9rem 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-head h3 {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  color: #fff;
+  text-shadow: 2px 2px 0 #000;
+}
+.modal-close {
+  background: var(--ui-red);
+  color: #fff;
+  border: 3px solid #17130f;
+  border-radius: 7px;
+  font-weight: 900;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+.modal-body { padding: 1.2rem; overflow-y: auto; }
+.modal-note { font-size: 0.9rem; font-weight: 500; color: #6d6459; margin-bottom: 1rem; text-align: center; }
+
+/* ================= TOAST ================= */
+.toast {
+  position: fixed;
+  bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--ui-dark);
-  border: 3px solid var(--ui-border);
+  border: 3px solid var(--ui-yellow);
   color: #fff;
-  padding: 10px 20px;
-  border-radius: 8px;
   font-family: var(--font-pixel);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
+  padding: 12px 20px;
+  border-radius: 10px;
   z-index: 200;
-  box-shadow: var(--shadow);
   display: none;
+  text-align: center;
+  line-height: 1.6;
 }
 </style>
 </head>
 <body>
 
-<div class="game-container">
-  
-  <!-- HELP TRIGGER -->
-  <button class="help-trigger" onclick="openCodex()" aria-label="Open Shape Codex">
-    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.03-.42 1.98-1.07 2.75z"/></svg>
-  </button>
+<!-- SVG DEFS: воксельные градиенты -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="g-red" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9d94"/><stop offset="0.55" stop-color="#e94d43"/><stop offset="1" stop-color="#ad2620"/></linearGradient>
+    <linearGradient id="g-green" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b8e086"/><stop offset="0.55" stop-color="#61b433"/><stop offset="1" stop-color="#3c7a1f"/></linearGradient>
+    <linearGradient id="g-yellow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe89b"/><stop offset="0.55" stop-color="#f7c31e"/><stop offset="1" stop-color="#bd9110"/></linearGradient>
+    <linearGradient id="g-purple" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d3aaff"/><stop offset="0.55" stop-color="#9a5cf0"/><stop offset="1" stop-color="#6a35b2"/></linearGradient>
+    <linearGradient id="g-pink" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb5e2"/><stop offset="0.55" stop-color="#f062b0"/><stop offset="1" stop-color="#b03579"/></linearGradient>
+    <linearGradient id="g-orange" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc98d"/><stop offset="0.55" stop-color="#f08326"/><stop offset="1" stop-color="#b25717"/></linearGradient>
+    <linearGradient id="g-cyan" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a5f0ff"/><stop offset="0.55" stop-color="#31c7e8"/><stop offset="1" stop-color="#1a86a3"/></linearGradient>
+  </defs>
+</svg>
 
-  <!-- TOP CONSOLE -->
-  <div class="console-header">
-    <div class="logo-area">
-      <h1>VOXEL SHAPES</h1>
-      <p>Geometry quest</p>
-    </div>
-    <div class="stats-panel">
-      <div class="stat-indicator">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--ui-yellow)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        <div class="stat-val">XP: <span id="xpCount">0</span></div>
+<div class="wrap">
+
+  <!-- ===== HUD ===== -->
+  <div class="hud">
+    <button class="help-btn" onclick="openCodexModal()" aria-label="Справочник форм">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.03-.42 1.98-1.07 2.75z"/></svg>
+    </button>
+    <div class="hud-top">
+      <div>
+        <div class="game-title">VOXEL SHAPE QUEST</div>
+        <div class="game-sub">Домашняя миссия: выучи 7 фигур на английском</div>
       </div>
-      <div class="stat-indicator">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--ui-red)"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        <div class="stat-val">Level: <span id="levelNum">1</span></div>
+      <div class="hud-stats">
+        <div class="pill">
+          <svg viewBox="0 0 24 24" fill="#f8c523"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          XP <b id="hudXP">0</b>
+        </div>
+        <div class="pill">
+          <svg viewBox="0 0 24 24" fill="#7ea955"><path d="M12 2 2 8v8l10 6 10-6V8L12 2z"/></svg>
+          LVL <b id="hudLVL">1</b>
+        </div>
       </div>
     </div>
+    <div class="xp-bar-outer"><div class="xp-bar-fill" id="xpFill"></div></div>
+    <div class="xp-bar-label" id="xpLabel">До следующего уровня: 100 XP</div>
   </div>
 
-  <!-- LEVEL CONTAINER CARD -->
-  <div class="stage-card">
-    <div class="stage-banner">
-      <div class="stage-title" id="stageBannerTitle">ZONE 1: SCAN THE OBJECTS</div>
-      <div class="stage-xp-reward">+100 XP</div>
+  <!-- ===== QUEST MAP ===== -->
+  <div class="quest-map" id="questMap"></div>
+
+  <!-- ===== STAGE ===== -->
+  <div class="stage">
+    <div class="stage-head">
+      <h2 id="stageTitle">БРИФИНГ</h2>
+      <div class="stage-reward" id="stageReward">MISSION START</div>
     </div>
-    <div class="stage-content">
-      
-      <!-- ZONE 1: SCAN THE BLOCKS -->
-      <div id="zone-1" class="screen active">
-        <div class="scan-layout">
-          <div class="scan-instruction">
-            Find the <span id="scanTargetWord" style="color: var(--ui-red); text-transform: uppercase;">Circle</span>
-            <button class="instruction-btn" onclick="speakTargetWord()" aria-label="Pronounce target word">
-              <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-            </button>
-          </div>
-          <div class="scan-grid" id="scanGrid"></div>
+    <div class="stage-body">
+
+      <!-- BRIEFING -->
+      <div class="screen active" id="scr-brief">
+        <div class="brief-art">
+          <svg viewBox="0 0 100 100"><polygon points="50,9 87,30 87,70 50,91 13,70 13,30" fill="url(#g-cyan)" stroke="#17130f" stroke-width="5" stroke-linejoin="round"/><ellipse cx="38" cy="32" rx="13" ry="7" fill="#fff" opacity="0.4"/></svg>
+        </div>
+        <p class="brief-text">
+          Привет, Строитель! Мир Вокселей повреждён: все чертежи блоков стёрты.
+          Чтобы восстановить мир, тебе нужно изучить <b>7 геометрических форм на английском языке</b>
+          и пройти 4 испытания. За каждое испытание ты получаешь <b>XP</b> и новый уровень.
+        </p>
+        <p class="brief-text" style="font-size:0.95rem; color:#8a8177;">
+          Подсказка: кнопка <b style="color:#c79a10;">?</b> в правом верхнем углу — твой справочник форм. Он доступен всегда!
+        </p>
+        <div class="center mt">
+          <button class="btn green" onclick="goToStep(1)">
+            Начать миссию
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
         </div>
       </div>
 
-      <!-- ZONE 2: CRAFTING TABLE -->
-      <div id="zone-2" class="screen">
-        <div class="craft-layout">
-          <div class="craft-recipe-card">
-            <div class="recipe-title">Sword Recipe</div>
-            <div class="recipe-slots" id="recipeSlots"></div>
+      <!-- STEP 1: CODEX LEARN -->
+      <div class="screen" id="scr-1">
+        <div class="task-strip">
+          <div class="ico">1</div>
+          <p><b>Задание:</b> нажми на каждую карточку и <b>послушай</b>, как произносится слово.
+          Повтори вслух за диктором! Чтобы пройти испытание, прослушай <b>все 7 слов</b>.</p>
+        </div>
+        <div class="codex-grid" id="learnGrid"></div>
+        <div class="center mt">
+          <button class="btn green" id="step1DoneBtn" disabled onclick="completeStep(1)">
+            Испытание пройдено — дальше!
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: SCANNER -->
+      <div class="screen" id="scr-2">
+        <div class="task-strip">
+          <div class="ico">2</div>
+          <p><b>Задание:</b> сканер нашёл предмет из игрового мира. Посмотри на его силуэт
+          и нажми на <b>английское слово</b> — какой он формы? Нажми на динамик у слова, чтобы услышать произношение.</p>
+        </div>
+        <div class="scan-stage">
+          <div class="scan-progress" id="scanProgress">ПРЕДМЕТ 1 / 7</div>
+          <div class="scan-item-frame"><img id="scanImg" src="" alt="Игровой предмет"></div>
+          <div class="scan-options" id="scanOptions"></div>
+        </div>
+      </div>
+
+      <!-- STEP 3: CRAFT -->
+      <div class="screen" id="scr-3">
+        <div class="task-strip">
+          <div class="ico">3</div>
+          <p><b>Задание:</b> перед тобой чертёж предмета. Собери его: нажимай в палитре на те фигуры,
+          которые указаны в чертеже (слова — на английском!). Клик по фигуре = озвучка слова.</p>
+        </div>
+        <div class="craft-counter" id="craftCounter">ЧЕРТЁЖ 1 / 3</div>
+        <div class="craft-flex">
+          <div class="blueprint">
+            <h3 id="bpName">HOUSE</h3>
+            <img id="bpImg" src="" alt="Предмет для крафта">
+            <div id="bpSlots"></div>
           </div>
-          <div class="craft-canvas">
-            <div class="craft-status-bubble" id="craftStatus">Drag blocks to cells!</div>
-            <div class="craft-grid-3x3" id="craftGrid">
-              <!-- cells generated in JS -->
-            </div>
-            <div class="source-palette" id="craftPalette"></div>
+          <div class="craft-right">
+            <div class="craft-msg" id="craftMsg">Выбери правильные фигуры!</div>
+            <div class="palette" id="craftPalette"></div>
           </div>
         </div>
       </div>
 
-      <!-- ZONE 3: SHAPE STORM -->
-      <div id="zone-3" class="screen">
-        <div class="storm-layout">
-          <div class="storm-hud">
-            <div>Target: <span class="storm-target" id="stormTarget">Circle</span></div>
-            <div>Score: <span id="stormScore">0/5</span></div>
-            <div>Time: <span id="stormTimer">20s</span></div>
-          </div>
-          <div class="storm-playfield" id="stormPlayfield">
-            <!-- elements float down here -->
-          </div>
-          <button class="btn-ui success storm-btn" id="stormStartBtn" onclick="startStorm()">START STORM GAME</button>
+      <!-- STEP 4: STORM -->
+      <div class="screen" id="scr-4">
+        <div class="task-strip">
+          <div class="ico">4</div>
+          <p><b>Задание:</b> начинается шторм фигур! Лови (кликай) <b>только ту фигуру</b>, которая указана
+          в задании. Поймай <b>5 штук за 30 секунд</b>. Слушай внимательно — цель озвучивается!</p>
+        </div>
+        <div class="storm-hud">
+          <div>ЦЕЛЬ: <span class="tgt" id="stormTarget">—</span></div>
+          <div>СЧЁТ: <span id="stormScore">0/5</span></div>
+          <div>ВРЕМЯ: <span id="stormTime">30</span> сек</div>
+        </div>
+        <div class="storm-field" id="stormField"></div>
+        <div class="center mt">
+          <button class="btn green" id="stormBtn" onclick="startStorm()">Запустить шторм</button>
         </div>
       </div>
 
-      <!-- CREATIVE ARENA (SANDBOX) -->
-      <div id="zone-sandbox" class="screen">
-        <div class="sandbox-layout">
-          <div class="sandbox-sidebar">
-            <div class="sandbox-title">Add Elements</div>
-            <button class="btn-ui" onclick="addSandboxShape('circle')">Circle</button>
-            <button class="btn-ui" onclick="addSandboxShape('square')">Square</button>
-            <button class="btn-ui" onclick="addSandboxShape('triangle')">Triangle</button>
-            <button class="btn-ui" onclick="addSandboxShape('oval')">Oval</button>
-            <button class="btn-ui" onclick="addSandboxShape('rectangle')">Rectangle</button>
-            <button class="btn-ui" onclick="addSandboxShape('pentagon')">Pentagon</button>
-            <button class="btn-ui" onclick="addSandboxShape('hexagon')">Hexagon</button>
-          </div>
+      <!-- FINAL -->
+      <div class="screen" id="scr-final">
+        <div class="final-banner">
+          <div class="big">МИССИЯ ВЫПОЛНЕНА!</div>
+          <p style="font-weight:700;">Мир Вокселей восстановлен. Ты — настоящий Мастер Форм!</p>
+        </div>
+        <div class="final-stats">
+          <div class="final-stat"><div class="v" id="finalXP">0 XP</div><div class="k">Опыт</div></div>
+          <div class="final-stat"><div class="v" id="finalLVL">1</div><div class="k">Уровень</div></div>
+          <div class="final-stat"><div class="v">7/7</div><div class="k">Слов изучено</div></div>
+        </div>
+        <div class="final-words" id="finalWords"></div>
+        <div class="screenshot-note center">
+          📸 Сделай <b>скриншот этого экрана</b> и отправь учителю — это твой отчёт о выполненной домашке!
+        </div>
+
+        <div class="task-strip">
+          <div class="ico">★</div>
+          <p><b>Бонус — творческий режим:</b> построй свой дом или персонажа из фигур!
+          Нажимай на фигуры слева, чтобы добавить их, и перетаскивай их по площадке.</p>
+        </div>
+        <div class="sandbox-wrap">
+          <div class="sandbox-tools" id="sandboxTools"></div>
           <div class="sandbox-canvas" id="sandboxCanvas">
-            <!-- dragged items will exist here -->
+            <div class="sandbox-hint">Перетаскивай фигуры пальцем или мышкой</div>
           </div>
         </div>
       </div>
 
     </div>
   </div>
-
-  <!-- LEVEL SELECTOR NAVIGATION -->
-  <div class="level-nav">
-    <button class="nav-node active" id="nav-z1" onclick="loadZone(1)">Quest 1</button>
-    <button class="nav-node disabled" id="nav-z2" onclick="loadZone(2)">Quest 2</button>
-    <button class="nav-node disabled" id="nav-z3" onclick="loadZone(3)">Quest 3</button>
-    <button class="nav-node disabled" id="nav-sandbox" onclick="loadZone(4)">Sandbox</button>
-  </div>
-
 </div>
 
-<!-- SHAPE CODEX MODAL -->
-<div class="codex-modal" id="codexModal">
-  <div class="codex-box">
-    <div class="codex-header">
-      <h2>Shape Codex</h2>
-      <button class="codex-close" onclick="closeCodex()">Close</button>
+<!-- CODEX MODAL -->
+<div class="modal" id="codexModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>СПРАВОЧНИК ФОРМ</h3>
+      <button class="modal-close" onclick="closeCodexModal()">Закрыть</button>
     </div>
-    <div class="codex-grid" id="codexGrid"></div>
+    <div class="modal-body">
+      <p class="modal-note">Нажми на карточку, чтобы услышать слово</p>
+      <div class="codex-grid" id="modalCodexGrid"></div>
+    </div>
   </div>
 </div>
 
-<!-- TOAST NOTIFICATIONS -->
-<div class="feedback-toast" id="feedbackToast">XP GAINED!</div>
+<div class="toast" id="toast"></div>
 
 <script>
 /* ============================================================
-   SHAPE SHAPES VECTOR DESIGNS
+   ДАННЫЕ: ФИГУРЫ (воксельные SVG с градиентами и бликами)
    ============================================================ */
 const SHAPES = {
   circle: {
-    color: '#ff5757',
-    svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#ff5757" stroke="#000" stroke-width="5"/></svg>`
+    ru: "круг",
+    svg: `<svg class="shape" viewBox="0 0 100 100"><circle cx="50" cy="50" r="39" fill="url(#g-red)" stroke="#17130f" stroke-width="5"/><ellipse cx="38" cy="35" rx="13" ry="8" fill="#fff" opacity="0.4" transform="rotate(-20 38 35)"/></svg>`
   },
   square: {
-    color: '#5cd03c',
-    svg: `<svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" fill="#5cd03c" stroke="#000" stroke-width="5"/></svg>`
+    ru: "квадрат",
+    svg: `<svg class="shape" viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="7" fill="url(#g-green)" stroke="#17130f" stroke-width="5"/><rect x="23" y="23" width="26" height="9" rx="4" fill="#fff" opacity="0.4"/></svg>`
   },
   triangle: {
-    color: '#ffdd33',
-    svg: `<svg viewBox="0 0 100 100"><polygon points="50,15 15,80 85,80" fill="#ffdd33" stroke="#000" stroke-width="5"/></svg>`
+    ru: "треугольник",
+    svg: `<svg class="shape" viewBox="0 0 100 100"><polygon points="50,11 89,85 11,85" fill="url(#g-yellow)" stroke="#17130f" stroke-width="5" stroke-linejoin="round"/><polygon points="48,26 55,39 41,39" fill="#fff" opacity="0.45"/></svg>`
   },
   oval: {
-    color: '#ac6cff',
-    svg: `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="42" ry="25" fill="#ac6cff" stroke="#000" stroke-width="5"/></svg>`
+    ru: "овал",
+    svg: `<svg class="shape" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="42" ry="27" fill="url(#g-purple)" stroke="#17130f" stroke-width="5"/><ellipse cx="35" cy="40" rx="13" ry="6" fill="#fff" opacity="0.4" transform="rotate(-15 35 40)"/></svg>`
   },
   rectangle: {
-    color: '#ff7bce',
-    svg: `<svg viewBox="0 0 100 100"><rect x="10" y="25" width="80" height="50" fill="#ff7bce" stroke="#000" stroke-width="5"/></svg>`
+    ru: "прямоугольник",
+    svg: `<svg class="shape" viewBox="0 0 100 100"><rect x="9" y="28" width="82" height="44" rx="7" fill="url(#g-pink)" stroke="#17130f" stroke-width="5"/><rect x="18" y="35" width="28" height="8" rx="4" fill="#fff" opacity="0.4"/></svg>`
   },
   pentagon: {
-    color: '#ff8a38',
-    svg: `<svg viewBox="0 0 100 100"><polygon points="50,15 85,42 72,82 28,82 15,42" fill="#ff8a38" stroke="#000" stroke-width="5"/></svg>`
+    ru: "пятиугольник",
+    svg: `<svg class="shape" viewBox="0 0 100 100"><polygon points="50,9 89,38 74,86 26,86 11,38" fill="url(#g-orange)" stroke="#17130f" stroke-width="5" stroke-linejoin="round"/><polygon points="44,22 58,26 47,36" fill="#fff" opacity="0.4"/></svg>`
   },
   hexagon: {
-    color: '#3ae2ff',
-    svg: `<svg viewBox="0 0 100 100"><polygon points="50,12 85,32 85,68 50,88 15,68 15,32" fill="#3ae2ff" stroke="#000" stroke-width="5"/></svg>`
+    ru: "шестиугольник",
+    svg: `<svg class="shape" viewBox="0 0 100 100"><polygon points="50,8 88,29 88,71 50,92 12,71 12,29" fill="url(#g-cyan)" stroke="#17130f" stroke-width="5" stroke-linejoin="round"/><polygon points="38,20 56,20 44,32" fill="#fff" opacity="0.4"/></svg>`
   }
 };
+const SHAPE_KEYS = Object.keys(SHAPES);
 
 /* ============================================================
-   SOUND EFFECTS SYNTHESIZER (Web Audio API)
+   КАРТИНКИ (GitHub raw + fallback на ветку patch-1)
    ============================================================ */
-const SoundFX = {
+const IMG_MAIN = "https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/";
+const IMG_FALLBACK = "https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/AlexandraGes-ESL-patch-1/";
+
+function setImg(imgEl, file) {
+  imgEl.onerror = () => { imgEl.onerror = null; imgEl.src = IMG_FALLBACK + file; };
+  imgEl.src = IMG_MAIN + file;
+}
+
+const SCAN_ITEMS = [
+  { file: "circle_shield.png",   shape: "circle" },
+  { file: "circle_clock.png",    shape: "circle" },
+  { file: "square_crate.png",    shape: "square" },
+  { file: "square_tnt.png",      shape: "square" },
+  { file: "triangle_roof.png",   shape: "triangle" },
+  { file: "triangle_cheese.png", shape: "triangle" },
+  { file: "oval_egg.png",        shape: "oval" },
+  { file: "oval_potion.png",     shape: "oval" },
+  { file: "rect_door.png",       shape: "rectangle" },
+  { file: "rect_chest.png",      shape: "rectangle" },
+  { file: "penta_gem.png",       shape: "pentagon" },
+  { file: "penta_badge.png",     shape: "pentagon" },
+  { file: "hexa_honey.png",      shape: "hexagon" },
+  { file: "hexa_nut.png",        shape: "hexagon" }
+];
+
+const RECIPES = [
+  { name: "HOUSE",      img: "craft_house.png", parts: [
+      { shape: "square",   ru: "стены" },
+      { shape: "triangle", ru: "крыша" } ] },
+  { name: "SWORD",      img: "craft_sword.png", parts: [
+      { shape: "triangle",  ru: "клинок" },
+      { shape: "rectangle", ru: "рукоять" },
+      { shape: "circle",    ru: "навершие" } ] },
+  { name: "WIZARD HAT", img: "craft_hat.png", parts: [
+      { shape: "triangle", ru: "конус" },
+      { shape: "oval",     ru: "поля шляпы" } ] }
+];
+
+/* ============================================================
+   ЗВУК: синтезатор эффектов + озвучка слов
+   ============================================================ */
+const FX = {
   ctx: null,
-  init() {
-    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+  note(freq, start, dur, type = "square", vol = 0.09) {
+    const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+    o.type = type; o.connect(g); g.connect(this.ctx.destination);
+    const t = this.ctx.currentTime + start;
+    o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.start(t); o.stop(t + dur + 0.05);
   },
-  playLevelUp() {
-    this.init();
-    const now = this.ctx.currentTime;
-    const notes = [261.63, 329.63, 392.00, 523.25, 659.25];
-    notes.forEach((f, i) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.frequency.setValueAtTime(f, now + i * 0.1);
-      gain.gain.setValueAtTime(0.12, now + i * 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.15);
-      osc.start(now + i * 0.1);
-      osc.stop(now + i * 0.1 + 0.2);
-    });
-  },
-  playSuccess() {
-    this.init();
-    const now = this.ctx.currentTime;
-    const playNote = (f, s) => {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.frequency.setValueAtTime(f, now + s);
-      gain.gain.setValueAtTime(0.1, now + s);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + s + 0.1);
-      osc.start(now + s);
-      osc.stop(now + s + 0.12);
-    };
-    playNote(392.00, 0);
-    playNote(523.25, 0.08);
-  },
-  playFail() {
-    this.init();
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(130, this.ctx.currentTime);
-    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
-    osc.start();
-    osc.stop(this.ctx.currentTime + 0.2);
-  }
+  good()  { this.init(); this.note(392, 0, 0.12); this.note(523, 0.09, 0.16); },
+  bad()   { this.init(); this.note(140, 0, 0.22, "sawtooth"); },
+  level() { this.init(); [262, 330, 392, 523, 659].forEach((f, i) => this.note(f, i * 0.09, 0.18)); }
 };
 
-/* ============================================================
-   SPEECH SYNTHESIS ENGINE
-   ============================================================ */
 function speak(word) {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(word);
-    utter.lang = 'en-US';
-    utter.rate = 0.8; // perfect speed for A1 learning
-    window.speechSynthesis.speak(utter);
-  }
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(word);
+  u.lang = "en-US";
+  u.rate = 0.75;
+  window.speechSynthesis.speak(u);
 }
 
 /* ============================================================
-   GAME LOGIC & DATA STATE
+   СОСТОЯНИЕ ИГРЫ + СОХРАНЕНИЕ
    ============================================================ */
-let playerXP = 0;
-let playerLevel = 1;
-let currentZone = 1;
-let unlockedZones = [1];
+const SAVE_KEY = "voxelShapeQuestV2";
+let state = {
+  xp: 0,
+  listened: [],          // слова, прослушанные в шаге 1
+  stepsDone: [],         // [1,2,3,4]
+  currentStep: 0         // 0 = брифинг
+};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) state = Object.assign(state, JSON.parse(raw));
+  } catch (e) { /* повреждённое сохранение — начинаем заново */ }
+}
+function saveState() { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }
+
+const LEVELS = [0, 100, 250, 400]; // пороги уровней
+function calcLevel() {
+  let lvl = 1;
+  LEVELS.forEach((t, i) => { if (state.xp >= t) lvl = i + 1; });
+  return lvl;
+}
 
 function addXP(amount) {
-  playerXP += amount;
-  document.getElementById("xpCount").textContent = playerXP;
-  showToast(`+${amount} XP!`);
-  
-  // Level threshold: Level 1 -> 2: 100XP, 2 -> 3: 200XP, 3 -> 4: 350XP
-  const thresholds = [0, 100, 200, 350];
-  let nextLvl = 1;
-  if (playerXP >= 350) nextLvl = 4;
-  else if (playerXP >= 200) nextLvl = 3;
-  else if (playerXP >= 100) nextLvl = 2;
-
-  if (nextLvl > playerLevel) {
-    playerLevel = nextLvl;
-    document.getElementById("levelNum").textContent = playerLevel;
-    SoundFX.playLevelUp();
-    showToast(`LEVEL UP! REACHED LEVEL ${playerLevel}`);
-    
-    // Unlock next zones
-    if (playerLevel >= 2 && !unlockedZones.includes(2)) {
-      unlockedZones.push(2);
-      document.getElementById("nav-z2").classList.remove("disabled");
-    }
-    if (playerLevel >= 3 && !unlockedZones.includes(3)) {
-      unlockedZones.push(3);
-      document.getElementById("nav-z3").classList.remove("disabled");
-    }
-    if (playerLevel >= 4 && !unlockedZones.includes(4)) {
-      unlockedZones.push(4);
-      document.getElementById("nav-sandbox").classList.remove("disabled");
-    }
+  const before = calcLevel();
+  state.xp += amount;
+  const after = calcLevel();
+  saveState();
+  renderHUD();
+  if (after > before) {
+    FX.level();
+    toast(`LEVEL UP!<br>Теперь у тебя уровень ${after}`);
   } else {
-    SoundFX.playSuccess();
+    toast(`+${amount} XP`);
   }
 }
 
-function showToast(msg) {
-  const toast = document.getElementById("feedbackToast");
-  toast.textContent = msg;
-  toast.style.display = 'block';
-  setTimeout(() => { toast.style.display = 'none'; }, 2000);
+function renderHUD() {
+  const lvl = calcLevel();
+  document.getElementById("hudXP").textContent = state.xp;
+  document.getElementById("hudLVL").textContent = lvl;
+
+  const next = LEVELS[lvl] !== undefined ? LEVELS[lvl] : null;
+  const fill = document.getElementById("xpFill");
+  const label = document.getElementById("xpLabel");
+  if (next === null) {
+    fill.style.width = "100%";
+    label.textContent = "Максимальный уровень!";
+  } else {
+    const prev = LEVELS[lvl - 1];
+    fill.style.width = ((state.xp - prev) / (next - prev) * 100) + "%";
+    label.textContent = `До следующего уровня: ${next - state.xp} XP`;
+  }
 }
 
-function loadZone(zId) {
-  if (!unlockedZones.includes(zId)) {
-    SoundFX.playFail();
-    showToast("Locked! Gain more XP to unlock.");
-    return;
-  }
-  
-  // hide all screens
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.querySelectorAll(".nav-node").forEach(n => n.classList.remove("active"));
-
-  if (zId === 1) {
-    document.getElementById("zone-1").classList.add("active");
-    document.getElementById("nav-z1").classList.add("active");
-    document.getElementById("stageBannerTitle").textContent = "ZONE 1: SCAN THE OBJECTS";
-    initZone1();
-  } else if (zId === 2) {
-    document.getElementById("zone-2").classList.add("active");
-    document.getElementById("nav-z2").classList.add("active");
-    document.getElementById("stageBannerTitle").textContent = "ZONE 2: CRAFTING TABLE";
-    initZone2();
-  } else if (zId === 3) {
-    document.getElementById("zone-3").classList.add("active");
-    document.getElementById("nav-z3").classList.add("active");
-    document.getElementById("stageBannerTitle").textContent = "ZONE 3: SHAPE STORM";
-    initZone3();
-  } else if (zId === 4) {
-    document.getElementById("zone-sandbox").classList.add("active");
-    document.getElementById("nav-sandbox").classList.add("active");
-    document.getElementById("stageBannerTitle").textContent = "SANDBOX: BUILD MODE";
-    initSandbox();
-  }
+function toast(html) {
+  const t = document.getElementById("toast");
+  t.innerHTML = html;
+  t.style.display = "block";
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = "none"; }, 2200);
 }
 
 /* ============================================================
-   ZONE 1: SCAN THE OBJECTS (Roblox & Minecraft Item Analogs)
+   КАРТА КВЕСТА И НАВИГАЦИЯ
    ============================================================ */
-const SCAN_SCENARIOS = [
-  { target: "circle", items: ["circle", "square", "triangle", "oval"], labels: ["Shield", "Block", "Tent", "Mirror"] },
-  { target: "triangle", items: ["pentagon", "triangle", "hexagon", "rectangle"], labels: ["Gem", "Roof", "Honeycomb", "Brick"] },
-  { target: "square", items: ["oval", "circle", "square", "rectangle"], labels: ["Egg", "Coin", "Giftbox", "Tablet"] },
-  { target: "pentagon", items: ["hexagon", "pentagon", "triangle", "square"], labels: ["Nail", "Star Base", "Hat", "Tile"] },
-  { target: "hexagon", items: ["hexagon", "circle", "oval", "triangle"], labels: ["Nut", "Wheel", "Pill", "Sign"] },
-  { target: "oval", items: ["circle", "rectangle", "oval", "square"], labels: ["Pizza", "Chest", "Egg", "Crate"] },
-  { target: "rectangle", items: ["pentagon", "rectangle", "square", "circle"], labels: ["House", "Door", "Desk", "Button"] }
+const STEP_META = [
+  { id: 1, name: "Кодекс",  title: "ШАГ 1: КОДЕКС ФОРМ",   reward: "+70 XP" },
+  { id: 2, name: "Сканер",  title: "ШАГ 2: СКАНЕР",        reward: "+105 XP" },
+  { id: 3, name: "Верстак", title: "ШАГ 3: ВЕРСТАК",       reward: "+150 XP" },
+  { id: 4, name: "Шторм",   title: "ШАГ 4: ШТОРМ ФОРМ",    reward: "+100 XP" },
+  { id: 5, name: "Финал",   title: "ФИНАЛ: МАСТЕР ФОРМ",   reward: "БОНУС" }
 ];
-let currentScanIndex = 0;
 
-function initZone1() {
-  currentScanIndex = Math.floor(Math.random() * SCAN_SCENARIOS.length);
-  const scenario = SCAN_SCENARIOS[currentScanIndex];
-  
-  document.getElementById("scanTargetWord").textContent = scenario.target;
-  speak(scenario.target);
+function isUnlocked(stepId) {
+  if (stepId === 1) return true;
+  return state.stepsDone.includes(stepId - 1);
+}
 
-  const grid = document.getElementById("scanGrid");
+function renderMap() {
+  const map = document.getElementById("questMap");
+  map.innerHTML = "";
+  STEP_META.forEach((s, i) => {
+    const node = document.createElement("div");
+    node.className = "map-node";
+    if (state.stepsDone.includes(s.id)) node.classList.add("done");
+    if (state.currentStep === s.id) node.classList.add("current");
+    if (!isUnlocked(s.id)) node.classList.add("locked");
+    node.innerHTML = `<span class="num">STEP ${s.id}</span><span class="name">${s.name}</span>`;
+    node.onclick = () => {
+      if (!isUnlocked(s.id)) { FX.bad(); toast("Сначала пройди предыдущий шаг!"); return; }
+      goToStep(s.id);
+    };
+    map.appendChild(node);
+    if (i < STEP_META.length - 1) {
+      const arrow = document.createElement("span");
+      arrow.className = "map-arrow";
+      arrow.textContent = "→";
+      map.appendChild(arrow);
+    }
+  });
+}
+
+function goToStep(stepId) {
+  if (!isUnlocked(stepId)) return;
+  state.currentStep = stepId;
+  saveState();
+
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  const meta = STEP_META.find(m => m.id === stepId);
+  document.getElementById("stageTitle").textContent = meta.title;
+  document.getElementById("stageReward").textContent = meta.reward;
+
+  if (stepId === 5) {
+    document.getElementById("scr-final").classList.add("active");
+    initFinal();
+  } else {
+    document.getElementById("scr-" + stepId).classList.add("active");
+    if (stepId === 1) initStep1();
+    if (stepId === 2) initStep2();
+    if (stepId === 3) initStep3();
+    if (stepId === 4) initStep4();
+  }
+  renderMap();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function completeStep(stepId) {
+  if (!state.stepsDone.includes(stepId)) {
+    state.stepsDone.push(stepId);
+    saveState();
+  }
+  goToStep(stepId + 1);
+}
+
+/* ============================================================
+   ШАГ 1: КОДЕКС (изучение + озвучка)
+   ============================================================ */
+function initStep1() {
+  const grid = document.getElementById("learnGrid");
   grid.innerHTML = "";
-
-  scenario.items.forEach((shapeKey, idx) => {
+  SHAPE_KEYS.forEach(key => {
     const card = document.createElement("div");
-    card.className = "scan-node";
-    card.innerHTML = `${SHAPES[shapeKey].svg}<div class="scan-label">${scenario.labels[idx]}</div>`;
-    card.onclick = () => checkScanAnswer(shapeKey, card);
+    card.className = "wcard" + (state.listened.includes(key) ? " listened" : "");
+    card.innerHTML = `${SHAPES[key].svg}
+      <div class="word">${key}
+        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+      </div>`;
+    card.onclick = () => {
+      speak(key);
+      if (!state.listened.includes(key)) {
+        state.listened.push(key);
+        card.classList.add("listened");
+        saveState();
+        checkStep1Done();
+      }
+    };
     grid.appendChild(card);
   });
+  checkStep1Done();
 }
 
-function checkScanAnswer(chosenShape, cardEl) {
-  const scenario = SCAN_SCENARIOS[currentScanIndex];
-  if (chosenShape === scenario.target) {
-    cardEl.classList.add("correct");
-    addXP(25);
-    setTimeout(() => {
-      initZone1();
-    }, 1000);
-  } else {
-    cardEl.classList.add("wrong");
-    SoundFX.playFail();
-    setTimeout(() => {
-      cardEl.classList.remove("wrong");
-    }, 600);
+function checkStep1Done() {
+  const btn = document.getElementById("step1DoneBtn");
+  const all = state.listened.length >= SHAPE_KEYS.length;
+  btn.disabled = !all;
+  if (all && !state.stepsDone.includes(1)) {
+    if (!btn._rewarded) { btn._rewarded = true; addXP(70); }
   }
-}
-
-function speakTargetWord() {
-  const target = document.getElementById("scanTargetWord").textContent;
-  speak(target);
 }
 
 /* ============================================================
-   ZONE 2: CRAFTING TABLE (Drag & Drop Gameplay)
+   ШАГ 2: СКАНЕР (картинки предметов)
    ============================================================ */
-const CRAFT_RECIPES = [
-  { item: "House", layout: ["triangle", "square"], recipeText: ["1. Triangle (Roof)", "2. Square (Walls)"] },
-  { item: "Sword", layout: ["triangle", "rectangle", "circle"], recipeText: ["1. Triangle (Blade)", "2. Rectangle (Hilt)", "3. Circle (Pommel)"] },
-  { item: "Wizard Hat", layout: ["triangle", "circle"], recipeText: ["1. Triangle (Cone)", "2. Circle (Brim)"] }
-];
-let activeRecipeIndex = 0;
-let userPlacedShapes = [];
+let scanQueue = [];
+let scanIndex = 0;
+let scanLocked = false;
 
-function initZone2() {
-  userPlacedShapes = [];
-  activeRecipeIndex = Math.floor(Math.random() * CRAFT_RECIPES.length);
-  const recipe = CRAFT_RECIPES[activeRecipeIndex];
-
-  document.querySelector(".recipe-title").textContent = `${recipe.item} Recipe`;
-  document.getElementById("craftStatus").textContent = "Drag blocks into slots below!";
-  
-  // Render Recipe Targets list
-  const slotsDiv = document.getElementById("recipeSlots");
-  slotsDiv.innerHTML = "";
-  recipe.recipeText.forEach(txt => {
-    const slot = document.createElement("div");
-    slot.className = "recipe-slot";
-    slot.innerHTML = `<span class="slot-marker">?</span><span class="slot-target-name">${txt}</span>`;
-    slotsDiv.innerHTML += slot.outerHTML;
-  });
-
-  // Render Grid Cells (3x3 grid, center column is slot targets)
-  const grid = document.getElementById("craftGrid");
-  grid.innerHTML = "";
-  
-  // Generate 9 cells. Only certain indices accept drops depending on recipe
-  for (let i = 0; i < 9; i++) {
-    const cell = document.createElement("div");
-    cell.className = "craft-grid-cell";
-    cell.dataset.index = i;
-    
-    // Simple drag-over event listeners
-    cell.ondragover = e => e.preventDefault();
-    cell.ondrop = e => handleDrop(e, cell);
-    
-    grid.appendChild(cell);
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
-
-  // Render draggable source palette
-  const palette = document.getElementById("craftPalette");
-  palette.innerHTML = "";
-  Object.keys(SHAPES).forEach(shapeKey => {
-    const el = document.createElement("div");
-    el.className = "source-shape";
-    el.draggable = true;
-    el.innerHTML = SHAPES[shapeKey].svg;
-    el.ondragstart = e => {
-      e.dataTransfer.setData("text/plain", shapeKey);
-      speak(shapeKey);
-    };
-    palette.appendChild(el);
-  });
+  return a;
 }
 
-function handleDrop(e, cellEl) {
-  e.preventDefault();
-  const shapeKey = e.dataTransfer.getData("text/plain");
-  const recipe = CRAFT_RECIPES[activeRecipeIndex];
+function initStep2() {
+  // по одному случайному предмету на каждую фигуру
+  scanQueue = shuffle(SHAPE_KEYS.map(shape => {
+    const items = SCAN_ITEMS.filter(it => it.shape === shape);
+    return items[Math.floor(Math.random() * items.length)];
+  }));
+  scanIndex = 0;
+  renderScanRound();
+}
 
-  // Logic: check if this shape belongs to current recipe
-  if (recipe.layout.includes(shapeKey) && !userPlacedShapes.includes(shapeKey)) {
-    userPlacedShapes.push(shapeKey);
-    cellEl.innerHTML = SHAPES[shapeKey].svg;
-    cellEl.classList.add("filled");
-    speak(shapeKey);
+function renderScanRound() {
+  scanLocked = false;
+  const item = scanQueue[scanIndex];
+  document.getElementById("scanProgress").textContent = `ПРЕДМЕТ ${scanIndex + 1} / ${scanQueue.length}`;
+  setImg(document.getElementById("scanImg"), item.file);
 
-    // Update checklist icon
-    const slots = document.querySelectorAll(".recipe-slot");
-    recipe.layout.forEach((neededShape, idx) => {
-      if (neededShape === shapeKey) {
-        slots[idx].querySelector(".slot-marker").innerHTML = "✓";
-        slots[idx].querySelector(".slot-marker").style.background = "var(--bg-grass-light)";
+  const wrong = shuffle(SHAPE_KEYS.filter(k => k !== item.shape)).slice(0, 3);
+  const options = shuffle([item.shape, ...wrong]);
+
+  const box = document.getElementById("scanOptions");
+  box.innerHTML = "";
+  options.forEach(key => {
+    const b = document.createElement("button");
+    b.className = "scan-opt";
+    b.textContent = key;
+    b.onclick = () => {
+      speak(key);
+      if (scanLocked) return;
+      if (key === item.shape) {
+        scanLocked = true;
+        b.classList.add("ok");
+        FX.good();
+        addXP(15);
+        setTimeout(() => {
+          scanIndex++;
+          if (scanIndex >= scanQueue.length) {
+            toast("Сканер откалиброван!<br>Шаг 2 пройден!");
+            completeStep(2);
+          } else {
+            renderScanRound();
+          }
+        }, 900);
+      } else {
+        b.classList.add("bad");
+        FX.bad();
+        setTimeout(() => b.classList.remove("bad"), 600);
       }
-    });
-
-    if (userPlacedShapes.length === recipe.layout.length) {
-      document.getElementById("craftStatus").textContent = `SUCCESSFUL CRAFT: ${recipe.item}!`;
-      addXP(50);
-      setTimeout(() => {
-        initZone2();
-      }, 2000);
-    }
-  } else {
-    SoundFX.playFail();
-    showToast("Shape not required or already placed!");
-  }
+    };
+    box.appendChild(b);
+  });
 }
 
 /* ============================================================
-   ZONE 3: SHAPE STORM (Action/Clicker Mode)
+   ШАГ 3: ВЕРСТАК (сборка по чертежу)
    ============================================================ */
-let stormInterval = null;
-let stormTimer = 20;
-let stormScore = 0;
-let targetStormShape = "";
-const targetPool = ["circle", "square", "triangle", "oval", "rectangle", "pentagon", "hexagon"];
+let recipeIndex = 0;
+let placedParts = [];
 
-function initZone3() {
-  clearInterval(stormInterval);
-  document.getElementById("stormPlayfield").innerHTML = "";
-  document.getElementById("stormStartBtn").style.display = "inline-flex";
-  document.getElementById("stormTimer").textContent = "20s";
+function initStep3() {
+  recipeIndex = 0;
+  renderRecipe();
+}
+
+function renderRecipe() {
+  placedParts = [];
+  const recipe = RECIPES[recipeIndex];
+  document.getElementById("craftCounter").textContent = `ЧЕРТЁЖ ${recipeIndex + 1} / ${RECIPES.length}`;
+  document.getElementById("bpName").textContent = recipe.name;
+  setImg(document.getElementById("bpImg"), recipe.img);
+
+  const msg = document.getElementById("craftMsg");
+  msg.textContent = "Выбери правильные фигуры!";
+  msg.className = "craft-msg";
+
+  const slots = document.getElementById("bpSlots");
+  slots.innerHTML = "";
+  recipe.parts.forEach(p => {
+    const s = document.createElement("div");
+    s.className = "bp-slot";
+    s.dataset.shape = p.shape;
+    s.innerHTML = `<span class="mark">?</span><span class="bp-word">${p.shape}</span><span class="bp-ru">${p.ru}</span>`;
+    slots.appendChild(s);
+  });
+
+  const pal = document.getElementById("craftPalette");
+  pal.innerHTML = "";
+  shuffle(SHAPE_KEYS).forEach(key => {
+    const el = document.createElement("div");
+    el.className = "pal-shape";
+    el.innerHTML = `${SHAPES[key].svg}<div class="pname">${key}</div>`;
+    el.onclick = () => {
+      speak(key);
+      const needed = recipe.parts.some(p => p.shape === key);
+      if (needed && !placedParts.includes(key)) {
+        placedParts.push(key);
+        el.classList.add("used");
+        FX.good();
+        const slot = document.querySelector(`.bp-slot[data-shape="${key}"]`);
+        slot.classList.add("got");
+        slot.querySelector(".mark").textContent = "✓";
+        if (placedParts.length === recipe.parts.length) {
+          msg.textContent = `Готово! Ты скрафтил: ${recipe.name}!`;
+          msg.className = "craft-msg good";
+          addXP(50);
+          setTimeout(() => {
+            recipeIndex++;
+            if (recipeIndex >= RECIPES.length) {
+              toast("Все чертежи собраны!<br>Шаг 3 пройден!");
+              completeStep(3);
+            } else {
+              renderRecipe();
+            }
+          }, 1400);
+        }
+      } else {
+        FX.bad();
+        msg.textContent = needed ? "Эта фигура уже на месте!" : "Этой фигуры нет в чертеже!";
+        msg.className = "craft-msg err";
+        setTimeout(() => {
+          if (msg.className.includes("err")) {
+            msg.textContent = "Выбери правильные фигуры!";
+            msg.className = "craft-msg";
+          }
+        }, 1200);
+      }
+    };
+    pal.appendChild(el);
+  });
+}
+
+/* ============================================================
+   ШАГ 4: ШТОРМ ФОРМ
+   ============================================================ */
+let stormTimer = null;
+let spawner = null;
+let stormSec = 30;
+let stormHits = 0;
+let stormTargetShape = "";
+
+function initStep4() {
+  stopStorm();
+  document.getElementById("stormField").innerHTML = "";
+  document.getElementById("stormTarget").textContent = "—";
   document.getElementById("stormScore").textContent = "0/5";
+  document.getElementById("stormTime").textContent = "30";
+  document.getElementById("stormBtn").style.display = "inline-flex";
 }
 
 function startStorm() {
-  document.getElementById("stormStartBtn").style.display = "none";
-  stormScore = 0;
-  stormTimer = 20;
-  targetStormShape = targetPool[Math.floor(Math.random() * targetPool.length)];
-  document.getElementById("stormTarget").textContent = targetStormShape.toUpperCase();
-  document.getElementById("stormTarget").style.color = SHAPES[targetStormShape].color;
-  speak(targetStormShape);
+  stormSec = 30;
+  stormHits = 0;
+  stormTargetShape = SHAPE_KEYS[Math.floor(Math.random() * SHAPE_KEYS.length)];
+  document.getElementById("stormTarget").textContent = stormTargetShape;
+  document.getElementById("stormScore").textContent = "0/5";
+  document.getElementById("stormTime").textContent = stormSec;
+  document.getElementById("stormBtn").style.display = "none";
+  speak(stormTargetShape);
 
-  stormInterval = setInterval(() => {
-    stormTimer--;
-    document.getElementById("stormTimer").textContent = stormTimer + "s";
-    
-    // Spawn shape object
-    if (Math.random() > 0.4) {
-      spawnStormShape();
-    }
-
-    if (stormTimer <= 0) {
-      endStorm();
-    }
+  stormTimer = setInterval(() => {
+    stormSec--;
+    document.getElementById("stormTime").textContent = stormSec;
+    if (stormSec <= 0) endStorm(false);
   }, 1000);
+
+  spawner = setInterval(spawnStormShape, 700);
 }
 
 function spawnStormShape() {
-  const playfield = document.getElementById("stormPlayfield");
-  const keys = Object.keys(SHAPES);
-  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+  const field = document.getElementById("stormField");
+  // цель падает чаще, чтобы игра была честной
+  const key = Math.random() < 0.38
+    ? stormTargetShape
+    : SHAPE_KEYS[Math.floor(Math.random() * SHAPE_KEYS.length)];
 
-  const element = document.createElement("div");
-  element.className = "storm-element";
-  element.innerHTML = SHAPES[randomKey].svg;
-  element.style.left = Math.floor(Math.random() * (playfield.clientWidth - 70)) + "px";
+  const el = document.createElement("div");
+  el.className = "storm-shape";
+  el.innerHTML = SHAPES[key].svg;
+  el.style.left = Math.floor(Math.random() * Math.max(10, field.clientWidth - 70)) + "px";
+  el.style.animationDuration = (2.6 + Math.random() * 1.6) + "s";
 
-  element.onclick = () => {
-    speak(randomKey);
-    if (randomKey === targetStormShape) {
-      stormScore++;
-      document.getElementById("stormScore").textContent = `${stormScore}/5`;
-      element.remove();
-      SoundFX.playSuccess();
+  el.onclick = () => {
+    if (key === stormTargetShape) {
+      stormHits++;
+      FX.good();
+      document.getElementById("stormScore").textContent = `${stormHits}/5`;
+      el.remove();
+      if (stormHits >= 5) endStorm(true);
     } else {
-      SoundFX.playFail();
-      element.classList.add("wrong");
+      FX.bad();
+      speak(key);
     }
   };
 
-  playfield.appendChild(element);
-
-  // Auto clean-up
-  setTimeout(() => {
-    if (element.parentNode) element.remove();
-  }, 3000);
+  field.appendChild(el);
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 4500);
 }
 
-function endStorm() {
-  clearInterval(stormInterval);
-  document.getElementById("stormPlayfield").innerHTML = "";
-  document.getElementById("stormStartBtn").style.display = "inline-flex";
-  
-  if (stormScore >= 5) {
+function stopStorm() {
+  clearInterval(stormTimer);
+  clearInterval(spawner);
+}
+
+function endStorm(won) {
+  stopStorm();
+  document.getElementById("stormField").innerHTML = "";
+  if (won) {
     addXP(100);
-    showToast("Quest Completed! Great focus!");
+    toast("Шторм остановлен!<br>Шаг 4 пройден!");
+    setTimeout(() => completeStep(4), 1000);
   } else {
-    showToast("Time's up! Try again to score at least 5 points.");
-    SoundFX.playFail();
+    FX.bad();
+    toast("Время вышло!<br>Попробуй ещё раз");
+    document.getElementById("stormBtn").style.display = "inline-flex";
   }
 }
 
 /* ============================================================
-   SANDBOX: BUILD CREATIVE ARENA
+   ФИНАЛ + ПЕСОЧНИЦА
    ============================================================ */
-function initSandbox() {
-  const canvas = document.getElementById("sandboxCanvas");
-  canvas.innerHTML = "<div style='position:absolute; top:10px; width:100%; text-align:center; font-family:var(--font-pixel); font-size:0.6rem; color:#fff;'>Drag & Drop items to move them around!</div>";
+function initFinal() {
+  document.getElementById("finalXP").textContent = state.xp + " XP";
+  document.getElementById("finalLVL").textContent = calcLevel();
+
+  const words = document.getElementById("finalWords");
+  words.innerHTML = "";
+  SHAPE_KEYS.forEach(key => {
+    const chip = document.createElement("div");
+    chip.className = "final-word-chip";
+    chip.textContent = key;
+    chip.onclick = () => speak(key);
+    words.appendChild(chip);
+  });
+
+  const tools = document.getElementById("sandboxTools");
+  if (!tools.hasChildNodes()) {
+    SHAPE_KEYS.forEach(key => {
+      const b = document.createElement("button");
+      b.className = "tool-btn";
+      b.innerHTML = `${SHAPES[key].svg} ${key}`;
+      b.onclick = () => { speak(key); addSandboxShape(key); };
+      tools.appendChild(b);
+    });
+  }
 }
 
-function addSandboxShape(shapeKey) {
+function addSandboxShape(key) {
   const canvas = document.getElementById("sandboxCanvas");
   const el = document.createElement("div");
-  el.className = "sandbox-shape";
-  el.innerHTML = SHAPES[shapeKey].svg;
-  el.style.left = "40%";
-  el.style.top = "40%";
-  
-  // Make element draggable inside sandbox limits
-  let isDragging = false;
-  let offsetX, offsetY;
+  el.className = "sb-shape";
+  el.innerHTML = SHAPES[key].svg;
+  el.style.left = Math.floor(Math.random() * Math.max(10, canvas.clientWidth - 90)) + "px";
+  el.style.top = Math.floor(Math.random() * Math.max(10, canvas.clientHeight - 90)) + "px";
 
-  el.onmousedown = e => {
-    isDragging = true;
-    offsetX = e.clientX - el.offsetLeft;
-    offsetY = e.clientY - el.offsetTop;
-    el.style.cursor = 'grabbing';
-    speak(shapeKey);
-  };
+  /* Pointer Events = мышь + палец единым кодом */
+  el.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    el.setPointerCapture(e.pointerId);
+    const startX = e.clientX - el.offsetLeft;
+    const startY = e.clientY - el.offsetTop;
 
-  document.onmousemove = e => {
-    if (!isDragging) return;
-    const canvasBounds = canvas.getBoundingClientRect();
-    let newX = e.clientX - offsetX;
-    let newY = e.clientY - offsetY;
-
-    // Bounds restriction
-    if (newX < 0) newX = 0;
-    if (newY < 0) newY = 0;
-    if (newX > canvasBounds.width - 80) newX = canvasBounds.width - 80;
-    if (newY > canvasBounds.height - 80) newY = canvasBounds.height - 80;
-
-    el.style.left = newX + "px";
-    el.style.top = newY + "px";
-  };
-
-  document.onmouseup = () => {
-    isDragging = false;
-    el.style.cursor = 'move';
-  };
+    const move = ev => {
+      let x = ev.clientX - startX;
+      let y = ev.clientY - startY;
+      x = Math.max(0, Math.min(x, canvas.clientWidth - el.clientWidth));
+      y = Math.max(0, Math.min(y, canvas.clientHeight - el.clientHeight));
+      el.style.left = x + "px";
+      el.style.top = y + "px";
+    };
+    const up = () => {
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerup", up);
+    };
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerup", up);
+  });
 
   canvas.appendChild(el);
 }
 
 /* ============================================================
-   CODEX (THEORY CARD INTERACTION)
+   МОДАЛКА-СПРАВОЧНИК
    ============================================================ */
-function openCodex() {
-  const modal = document.getElementById("codexModal");
-  modal.classList.add("active");
-
-  const grid = document.getElementById("codexGrid");
+function openCodexModal() {
+  const grid = document.getElementById("modalCodexGrid");
   grid.innerHTML = "";
-
-  Object.keys(SHAPES).forEach(shapeKey => {
+  SHAPE_KEYS.forEach(key => {
     const card = document.createElement("div");
-    card.className = "codex-item";
-    card.innerHTML = `
-      ${SHAPES[shapeKey].svg}
-      <div class="codex-name">
-        ${shapeKey}
+    card.className = "wcard";
+    card.innerHTML = `${SHAPES[key].svg}
+      <div class="word">${key}
         <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-      </div>
-    `;
-    card.onclick = () => speak(shapeKey);
+      </div>`;
+    card.onclick = () => speak(key);
     grid.appendChild(card);
   });
+  document.getElementById("codexModal").classList.add("open");
 }
-
-function closeCodex() {
-  document.getElementById("codexModal").classList.remove("active");
+function closeCodexModal() {
+  document.getElementById("codexModal").classList.remove("open");
 }
+document.getElementById("codexModal").addEventListener("click", e => {
+  if (e.target.id === "codexModal") closeCodexModal();
+});
 
 /* ============================================================
-   INITIALIZATION BOOT
+   СТАРТ
    ============================================================ */
-function boot() {
-  initZone1();
+loadState();
+renderHUD();
+renderMap();
+// восстанавливаем позицию игрока после перезагрузки страницы
+if (state.currentStep > 0 && isUnlocked(state.currentStep)) {
+  goToStep(state.currentStep);
 }
-
-boot();
 </script>
 </body>
 </html>
