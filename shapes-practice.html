@@ -1241,7 +1241,9 @@ function renderScanRound() {
 }
 
 /* ============================================================
-   ШАГ 3: ВЕРСТАК (сборка по чертежу)
+   ШАГ 3: ВЕРСТАК (НОВАЯ ЛОГИКА)
+   Ребёнок видит только картинку предмета и палитру.
+   Задача: угадать, какие 2-3 фигуры входят в состав.
    ============================================================ */
 let recipeIndex = 0;
 let placedParts = [];
@@ -1259,38 +1261,42 @@ function renderRecipe() {
   setImg(document.getElementById("bpImg"), recipe.img);
 
   const msg = document.getElementById("craftMsg");
-  msg.textContent = "Выбери правильные фигуры!";
+  msg.textContent = `Эта вещь состоит из ${recipe.parts.length} фигур. Собери её!`;
   msg.className = "craft-msg";
 
+  // СКРЫВАЕМ чек-лист слева — ребёнок должен сам угадать
   const slots = document.getElementById("bpSlots");
   slots.innerHTML = "";
-  recipe.parts.forEach(p => {
-    const s = document.createElement("div");
-    s.className = "bp-slot";
-    s.dataset.shape = p.shape;
-    s.innerHTML = `<span class="mark">?</span><span class="bp-word">${p.shape}</span><span class="bp-ru">${p.ru}</span>`;
-    slots.appendChild(s);
-  });
+  // Для отладки можно оставить скрытый список, но визуально его не показываем
 
   const pal = document.getElementById("craftPalette");
   pal.innerHTML = "";
-  shuffle(SHAPE_KEYS).forEach(key => {
+  
+  // Перемешиваем палитру, чтобы не было видно сразу ответ
+  const shuffledShapes = shuffle(SHAPE_KEYS);
+  
+  shuffledShapes.forEach(key => {
     const el = document.createElement("div");
     el.className = "pal-shape";
     el.innerHTML = `${SHAPES[key].svg}<div class="pname">${key}</div>`;
+    el.dataset.shape = key;
+    
     el.onclick = () => {
       speak(key);
-      const needed = recipe.parts.some(p => p.shape === key);
-      if (needed && !placedParts.includes(key)) {
+      const isNeeded = recipe.parts.some(p => p.shape === key);
+      const alreadyPlaced = placedParts.includes(key);
+
+      if (isNeeded && !alreadyPlaced) {
+        // ✅ ПРАВИЛЬНО
         placedParts.push(key);
         el.classList.add("used");
         FX.good();
-        const slot = document.querySelector(`.bp-slot[data-shape="${key}"]`);
-        slot.classList.add("got");
-        slot.querySelector(".mark").textContent = "✓";
+        msg.textContent = `Верно! Фигура "${key}" добавлена (${placedParts.length}/${recipe.parts.length})`;
+        msg.className = "craft-msg good";
+
+        // Проверяем, собраны ли все фигуры
         if (placedParts.length === recipe.parts.length) {
-          msg.textContent = `Готово! Ты скрафтил: ${recipe.name}!`;
-          msg.className = "craft-msg good";
+          msg.textContent = `Готово! Ты крафтил: ${recipe.name}!`;
           addXP(50);
           setTimeout(() => {
             recipeIndex++;
@@ -1301,106 +1307,189 @@ function renderRecipe() {
               renderRecipe();
             }
           }, 1400);
+        } else {
+          // Продолжаем, ждём следующую фигуру
+          setTimeout(() => {
+            msg.textContent = `Эта вещь состоит из ${recipe.parts.length} фигур. Собери её!`;
+            msg.className = "craft-msg";
+          }, 1800);
         }
       } else {
+        // ❌ НЕПРАВИЛЬНО
         FX.bad();
-        msg.textContent = needed ? "Эта фигура уже на месте!" : "Этой фигуры нет в чертеже!";
+        if (alreadyPlaced) {
+          msg.textContent = `Эту фигуру уже добавил!`;
+        } else {
+          msg.textContent = `Фигура "${key}" не подходит для этого предмета.`;
+        }
         msg.className = "craft-msg err";
         setTimeout(() => {
-          if (msg.className.includes("err")) {
-            msg.textContent = "Выбери правильные фигуры!";
-            msg.className = "craft-msg";
-          }
-        }, 1200);
+          msg.textContent = `Эта вещь состоит из ${recipe.parts.length} фигур. Собери её!`;
+          msg.className = "craft-msg";
+        }, 1600);
       }
     };
+    
     pal.appendChild(el);
   });
 }
 
 /* ============================================================
-   ШАГ 4: ШТОРМ ФОРМ
+   ШАГ 4: ШТОРМ ФОРМ (НОВАЯ ЛОГИКА)
+   Система озвучивает слово, показывает 4 фигуры.
+   Ребёнок кликает на правильную фигуру.
+   7 слов подряд = миссия выполнена.
    ============================================================ */
-let stormTimer = null;
-let spawner = null;
-let stormSec = 30;
-let stormHits = 0;
-let stormTargetShape = "";
+let stormWordQueue = [];
+let stormCurrentIdx = 0;
+let stormCurrentWord = "";
+let stormCurrentOptions = [];
+let stormLocked = false;
+let stormScore = 0;
 
 function initStep4() {
-  stopStorm();
+  // Генерируем 7 случайных слов в очередь
+  stormWordQueue = shuffle([...SHAPE_KEYS]).slice(0, 7);
+  stormCurrentIdx = 0;
+  stormScore = 0;
+  stormLocked = false;
+  
   document.getElementById("stormField").innerHTML = "";
-  document.getElementById("stormTarget").textContent = "—";
-  document.getElementById("stormScore").textContent = "0/5";
-  document.getElementById("stormTime").textContent = "30";
   document.getElementById("stormBtn").style.display = "inline-flex";
+  document.getElementById("stormScore").textContent = "0/7";
+  document.getElementById("stormTarget").textContent = "—";
+  
+  // Скрыта информация о таймере, т.к. его больше нет
+  document.querySelector(".storm-hud").style.display = "none";
 }
 
 function startStorm() {
-  stormSec = 30;
-  stormHits = 0;
-  stormTargetShape = SHAPE_KEYS[Math.floor(Math.random() * SHAPE_KEYS.length)];
-  document.getElementById("stormTarget").textContent = stormTargetShape;
-  document.getElementById("stormScore").textContent = "0/5";
-  document.getElementById("stormTime").textContent = stormSec;
   document.getElementById("stormBtn").style.display = "none";
-  speak(stormTargetShape);
-
-  stormTimer = setInterval(() => {
-    stormSec--;
-    document.getElementById("stormTime").textContent = stormSec;
-    if (stormSec <= 0) endStorm(false);
-  }, 1000);
-
-  spawner = setInterval(spawnStormShape, 700);
+  renderStormRound();
 }
 
-function spawnStormShape() {
+function renderStormRound() {
+  stormLocked = false;
+  stormCurrentWord = stormWordQueue[stormCurrentIdx];
+  const wrongWords = SHAPE_KEYS.filter(k => k !== stormCurrentWord);
+  stormCurrentOptions = shuffle([stormCurrentWord, ...shuffle(wrongWords).slice(0, 3)]);
+
+  // Озвучиваем слово
+  speak(stormCurrentWord);
+
+  // Заполняем поле с фигурами
   const field = document.getElementById("stormField");
-  // цель падает чаще, чтобы игра была честной
-  const key = Math.random() < 0.38
-    ? stormTargetShape
-    : SHAPE_KEYS[Math.floor(Math.random() * SHAPE_KEYS.length)];
+  field.innerHTML = "";
+  field.style.textAlign = "center";
+  field.style.paddingTop = "40px";
 
-  const el = document.createElement("div");
-  el.className = "storm-shape";
-  el.innerHTML = SHAPES[key].svg;
-  el.style.left = Math.floor(Math.random() * Math.max(10, field.clientWidth - 70)) + "px";
-  el.style.animationDuration = (2.6 + Math.random() * 1.6) + "s";
+  // Заголовок: "Найди:" + текст слова
+  const header = document.createElement("div");
+  header.style.marginBottom = "30px";
+  header.innerHTML = `
+    <div style="font-family: var(--font-main); font-size: 0.85rem; color: #aaa; margin-bottom: 8px;">СЛОВО:</div>
+    <div style="font-family: var(--font-pixel); font-size: 1.4rem; color: #fff; text-shadow: 2px 2px 4px #000;">
+      ${stormCurrentWord.toUpperCase()}
+    </div>
+  `;
+  field.appendChild(header);
 
-  el.onclick = () => {
-    if (key === stormTargetShape) {
-      stormHits++;
-      FX.good();
-      document.getElementById("stormScore").textContent = `${stormHits}/5`;
-      el.remove();
-      if (stormHits >= 5) endStorm(true);
-    } else {
-      FX.bad();
-      speak(key);
-    }
-  };
+  // Контейнер с фигурами (4 шт в ряд)
+  const shapesContainer = document.createElement("div");
+  shapesContainer.style.display = "flex";
+  shapesContainer.style.justifyContent = "center";
+  shapesContainer.style.gap = "16px";
+  shapesContainer.style.flexWrap = "wrap";
 
-  field.appendChild(el);
-  setTimeout(() => { if (el.parentNode) el.remove(); }, 4500);
+  stormCurrentOptions.forEach((key) => {
+    const shapeEl = document.createElement("div");
+    shapeEl.style.cursor = "pointer";
+    shapeEl.style.width = "80px";
+    shapeEl.style.height = "80px";
+    shapeEl.style.background = "#2a231f";
+    shapeEl.style.border = "3px solid #555";
+    shapeEl.style.borderRadius = "12px";
+    shapeEl.style.display = "flex";
+    shapeEl.style.alignItems = "center";
+    shapeEl.style.justifyContent = "center";
+    shapeEl.style.transition = "all 0.12s";
+    shapeEl.innerHTML = SHAPES[key].svg;
+    shapeEl.dataset.shape = key;
+
+    shapeEl.onmouseenter = () => {
+      if (!stormLocked) shapeEl.style.transform = "translateY(-4px)";
+    };
+    shapeEl.onmouseleave = () => {
+      shapeEl.style.transform = "translateY(0)";
+    };
+
+    shapeEl.onclick = () => checkStormAnswer(key, shapeEl);
+    shapesContainer.appendChild(shapeEl);
+  });
+
+  field.appendChild(shapesContainer);
+
+  // Индикатор прогресса внизу
+  const progress = document.createElement("div");
+  progress.style.marginTop = "40px";
+  progress.style.fontFamily = "var(--font-pixel)";
+  progress.style.fontSize = "0.75rem";
+  progress.style.color = "#aaa";
+  progress.textContent = `ВОПРОС ${stormCurrentIdx + 1} / ${stormWordQueue.length}`;
+  field.appendChild(progress);
 }
 
-function stopStorm() {
-  clearInterval(stormTimer);
-  clearInterval(spawner);
+function checkStormAnswer(chosenShape, element) {
+  if (stormLocked) return;
+  stormLocked = true;
+
+  const field = document.getElementById("stormField");
+
+  if (chosenShape === stormCurrentWord) {
+    // ✅ ПРАВИЛЬНО
+    FX.good();
+    element.style.borderColor = "#3e9e4f";
+    element.style.backgroundColor = "#2a4a2a";
+    element.style.boxShadow = "0 0 20px rgba(62, 158, 79, 0.6)";
+    stormScore++;
+    document.getElementById("stormScore").textContent = `${stormScore}/${stormWordQueue.length}`;
+
+    setTimeout(() => {
+      stormCurrentIdx++;
+      if (stormCurrentIdx >= stormWordQueue.length) {
+        // 🎉 ВСЕ СЛОВА ПРОЙДЕНЫ
+        endStorm(true);
+      } else {
+        renderStormRound();
+      }
+    }, 1000);
+  } else {
+    // ❌ НЕПРАВИЛЬНО
+    FX.bad();
+    element.style.borderColor = "#d9433c";
+    element.style.backgroundColor = "#4a2a2a";
+    element.style.boxShadow = "0 0 20px rgba(217, 67, 60, 0.6)";
+
+    // Повторяем слово после ошибки
+    setTimeout(() => {
+      speak(stormCurrentWord);
+      // Перемешиваем фигуры
+      setTimeout(() => {
+        stormLocked = false;
+        renderStormRound();
+      }, 500);
+    }, 800);
+  }
 }
 
 function endStorm(won) {
-  stopStorm();
-  document.getElementById("stormField").innerHTML = "";
   if (won) {
     addXP(100);
-    toast("Шторм остановлен!<br>Шаг 4 пройден!");
+    toast("Все слова распознаны!<br>Шаг 4 пройден!");
     setTimeout(() => completeStep(4), 1000);
   } else {
     FX.bad();
     toast("Время вышло!<br>Попробуй ещё раз");
-    document.getElementById("stormBtn").style.display = "inline-flex";
   }
 }
 
