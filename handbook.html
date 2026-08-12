@@ -14,12 +14,11 @@
         body {
             background: transparent;
             font-family: 'Georgia', serif;
-            overflow: hidden;
         }
 
         .handbook {
             width: 100%;
-            height: 100vh;
+            min-height: 100vh;
             background: transparent;
             display: flex;
             flex-direction: column;
@@ -118,18 +117,27 @@
 
         /* ===== ДНЕВНИК ===== */
         .book-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+            background: transparent;
         }
 
         .book-screen.active {
             opacity: 1;
             pointer-events: auto;
+            gap: 15px;
         }
 
         .book {
@@ -292,6 +300,11 @@
 
         /* ===== КВИЗ ===== */
         .quiz-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s;
@@ -299,6 +312,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+            background: transparent;
         }
 
         .quiz-screen.active {
