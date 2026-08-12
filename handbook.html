@@ -14,20 +14,24 @@
         body {
             background: transparent;
             font-family: 'Georgia', serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
 
         .handbook {
             width: 100%;
-            min-height: 100vh;
+            height: 100vh;
             background: transparent;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow: hidden;
         }
 
-        /* ===== ОБЛОЖКА (без рамки, крупнее, с подсветкой) ===== */
+        /* ===== ОБЛОЖКА (без рамки, с подсветкой) ===== */
         .cover-screen {
             display: flex;
             flex-direction: column;
@@ -236,26 +240,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 60px 100px;
+            padding: 30px 50px;
             background: #ebdcb9;
+            min-height: 610px;
+            flex-shrink: 0;
+            overflow-y: hidden;
         }
 
         .dedication-content {
-            max-width: 620px;
+            max-width: 600px;
             text-align: center;
         }
 
         .dedication-title {
-            font-size: 24px;
+            font-size: 18px;
             color: #8b6f47;
             font-style: italic;
-            margin-bottom: 25px;
-            letter-spacing: 1px;
+            margin-bottom: 15px;
+            letter-spacing: 0.8px;
         }
 
         .dedication-text {
-            font-size: 20px;
-            line-height: 1.9;
+            font-size: 16px;
+            line-height: 1.6;
             color: #2b221a;
             font-family: 'Georgia', serif;
             text-align: left;
@@ -263,12 +270,12 @@
         }
 
         .dedication-text p {
-            margin-bottom: 16px;
+            margin-bottom: 8px;
         }
 
         .dedication-signature {
-            margin-top: 25px;
-            font-size: 20px;
+            margin-top: 15px;
+            font-size: 16px;
             color: #3e2723;
             font-weight: bold;
             text-align: right;
@@ -350,7 +357,7 @@
             text-align: center;
         }
 
-        /* ===== ФИНАЛЬНОЕ ЗАДАНИЕ: FILL IN THE BLANKS ===== */
+        /* ===== ФИНАЛЬНОЕ ЗАДАНИЕ ===== */
         .quiz-screen {
             position: fixed;
             top: 0;
@@ -379,20 +386,21 @@
             background: #ebdcb9;
             border: 2px solid #c8a882;
             border-radius: 8px;
-            padding: 45px;
+            padding: 40px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.4);
             max-height: 85vh;
             overflow-y: auto;
         }
 
         .quiz-title {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: bold;
             color: #3e2723;
             text-align: center;
             margin-bottom: 10px;
             border-bottom: 3px solid #8b6f47;
             padding-bottom: 15px;
+            -webkit-font-smoothing: antialiased;
         }
 
         .quiz-subtitle {
@@ -412,34 +420,37 @@
         }
 
         .quiz-q-number {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
             color: #8b6f47;
             margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            -webkit-font-smoothing: antialiased;
         }
 
         .quiz-q-text {
-            font-size: 18px;
-            line-height: 1.6;
+            font-size: 17px;
+            line-height: 1.65;
             color: #2b221a;
             margin-bottom: 15px;
+            font-weight: 500;
         }
 
         .blank-select {
             display: inline-block;
             min-width: 200px;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border: none;
             border-bottom: 3px solid #d4a574;
             background: rgba(212,165,116,0.15);
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 700;
             font-family: 'Georgia', serif;
             color: #5d4037;
             border-radius: 4px 4px 0 0;
             cursor: pointer;
+            -webkit-font-smoothing: antialiased;
         }
 
         .blank-select:focus {
@@ -565,13 +576,12 @@ const PAGES = [
         html: `
             <div class="dedication-page">
                 <div class="dedication-content">
-                    <div class="dedication-title">— Fall River, three students missing: Thomas, Sara, Lucy —</div>
+                    <div class="dedication-title">— Fall River, three missing: Thomas, Sara, Lucy —</div>
                     <div class="dedication-text">
                         <p>Dean. Sam.</p>
-                        <p>If you're reading this, I'm not around to explain it myself. So listen close.</p>
-                        <p>Every case starts the same way — a name, a town, a list of things that don't add up. This one's Fall River. Three kids gone without a trace.</p>
-                        <p>I wrote this book so you'd never walk into the dark unprepared. Five creatures. Five ways to survive them. Learn every word. Some day the right word — <span class="vocab-word" data-tip="кремировать, сжечь">cremate</span>, <span class="vocab-word" data-tip="обезглавить">decapitate</span>, <span class="vocab-word" data-tip="изгнать (демона)">exorcise</span> — will be the only thing standing between you and something that shouldn't exist.</p>
-                        <p>Trust the research. Trust each other. And finish what I started.</p>
+                        <p>Three kids gone. No trace. I wrote this book so you'd never walk into darkness unprepared.</p>
+                        <p>Five creatures. Five ways to stop them. Learn every word. The right term — <span class="vocab-word" data-tip="кремировать, сжечь">cremate</span>, <span class="vocab-word" data-tip="обезглавить">decapitate</span>, <span class="vocab-word" data-tip="изгнать (демона)">exorcise</span> — might save your life.</p>
+                        <p>Trust the research. Finish what I started.</p>
                     </div>
                     <div class="dedication-signature">— Dad</div>
                 </div>
@@ -750,11 +760,8 @@ document.getElementById('btnOpen').addEventListener('click', () => {
     renderPage(0);
 });
 
-document.getElementById('btnPrev').addEventListener('click', () => {
-    if (currentPage > 0) renderPage(currentPage - 1);
-});
-
 document.getElementById('btnNext').addEventListener('click', () => {
+    playPageTurnSound();
     if (currentPage < totalPages - 1) {
         renderPage(currentPage + 1);
     } else {
@@ -762,11 +769,50 @@ document.getElementById('btnNext').addEventListener('click', () => {
     }
 });
 
-document.addEventListener('keydown', (e) => {
-    if (!document.getElementById('bookScreen').classList.contains('active')) return;
-    if (e.key === 'ArrowRight') document.getElementById('btnNext').click();
-    if (e.key === 'ArrowLeft') document.getElementById('btnPrev').click();
+document.getElementById('btnPrev').addEventListener('click', () => {
+    playPageTurnSound();
+    if (currentPage > 0) renderPage(currentPage - 1);
 });
+
+/* ===== PAGE TURN SOUND (Web Audio API) ===== */
+function playPageTurnSound() {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioContext.currentTime;
+        
+        // Создаём шелест (белый шум)
+        const bufferSize = audioContext.sampleRate * 0.15;
+        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        
+        const source = audioContext.createBufferSource();
+        source.buffer = buffer;
+        
+        // Фильтруем шум (фильтр для шелеста)
+        const filter = audioContext.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 4000;
+        
+        // Громкость
+        const gainNode = audioContext.createGain();
+        gainNode.gain.setValueAtTime(0.15, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        
+        // Подключаем
+        source.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        source.start(now);
+        source.stop(now + 0.15);
+    } catch (e) {
+        console.log('Audio not supported');
+    }
+}
 </script>
 
 </body>
