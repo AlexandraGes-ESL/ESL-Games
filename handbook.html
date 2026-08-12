@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hunter's Handbook - Entity Identification</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Courier+Prime:wght@400;700&family=Special+Elite&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: transparent !important;
+            color: #d1d1d6;
+            font-family: 'Courier Prime', monospace;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .journal-container {
+            width: 100%;
+            max-width: 1200px;
+            background: transparent;
+            padding: 0;
+            position: relative;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.95);
+        }
+
+        .journal-spread {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            background: #3e2723;
+            border: 4px solid #2d1a18;
+            padding: 40px;
+            border-radius: 12px;
+            min-height: 700px;
+            position: relative;
+            background-image: 
+                linear-gradient(90deg, rgba(0,0,0,0.4) 1px, transparent 1px),
+                linear-gradient(rgba(0,0,0,0.2) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Центральный разделитель */
+        .journal-spread::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 8px;
+            background: linear-gradient(90deg, rgba(0,0,0,0.4), rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.4));
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        .journal-page {
+            background-color: #ebdcb9;
+            color: #2b221a;
+            padding: 30px;
+            border-radius: 4px;
+            box-shadow: 3px 5px 15px rgba(0, 0, 0, 0.4);
+            border: 1px solid #c8b792;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background-image: linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px);
+            background-size: 100% 24px;
+            line-height: 24px;
+        }
+
+        .page-left { transform: rotate(-0.5deg); }
+        .page-right { transform: rotate(0.5deg); }
+
+        /* ЛЕВАЯ СТРАНИЦА - СУЩЕСТВО */
+        .entity-image {
+            width: 100%;
+            max-width: 180px;
+            height: auto;
+            margin: 0 auto 15px;
+            display: block;
+            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3));
+            clip-path: polygon(2% 0%, 98% 0.5%, 100% 3%, 99.5% 97%, 100% 99%, 3% 99.5%, 1% 97%, 0.5% 5%);
+        }
+
+        .entity-title {
+            font-family: 'Special Elite', cursive;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #5d4037;
+            padding-bottom: 8px;
+            color: #3e2723;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .entity-description {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            color: #2b221a;
+            line-height: 1.5;
+            text-align: justify;
+            border-left: 3px solid #5d4037;
+            padding-left: 12px;
+            flex-grow: 1;
+        }
+
+        .entity-description b {
+            color: #1e2530;
+            font-weight: bold;
+        }
+
+        /* ПРАВАЯ СТРАНИЦА - ЗАДАНИЕ */
+        .test-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .test-question {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            color: #1e2530;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .test-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-answer {
+            font-family: 'Special Elite', cursive;
+            font-size: 1.1rem;
+            padding: 12px 30px;
+            border: 2px solid #5d4037;
+            background: #ebdcb9;
+            color: #1e2530;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 100px;
+        }
+
+        .btn-answer:hover {
+            background: #5d4037;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .feedback {
+            font-family: 'Caveat', cursive;
+            font-size: 1rem;
+            color: #b71c1c;
+            margin-top: 20px;
+            min-height: 30px;
+            display: none;
+        }
+
+        .feedback.success {
+            color: #1b5e20;
+        }
+
+        /* ШТАМП */
+        .stamp-approved {
+            position: absolute;
+            bottom: 40px;
+            right: 50px;
+            border: 4px double #b71c1c;
+            color: #b71c1c;
+            font-family: 'Special Elite', cursive;
+            font-size: 1.6rem;
+            font-weight: bold;
+            padding: 8px 16px;
+            transform: rotate(-15deg);
+            opacity: 0.15;
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stamp-active {
+            opacity: 0.95;
+            transform: rotate(-15deg) scale(1.2);
+            animation: stampSlam 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        @keyframes stampSlam {
+            0% { transform: rotate(-45deg) scale(3); opacity: 0; }
+            100% { transform: rotate(-15deg) scale(1.2); opacity: 0.95; }
+        }
+
+        /* НАВИГАЦИЯ */
+        .slider-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            font-family: 'Special Elite', cursive;
+            font-size: 1rem;
+            padding: 10px 20px;
+            background: #5d4037;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.2s;
+            border-radius: 4px;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #4e342e;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-counter {
+            font-family: 'Courier Prime', monospace;
+            color: #d1d1d6;
+            font-size: 1rem;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .success-code {
+            display: none;
+            background: rgba(27, 94, 32, 0.2);
+            border: 2px solid #1b5e20;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            text-align: center;
+            color: #1b5e20;
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .success-code.show {
+            display: block;
+        }
+
+        @media (max-width: 900px) {
+            .journal-spread {
+                grid-template-columns: 1fr;
+                padding: 20px;
+                min-height: auto;
+                gap: 15px;
+            }
+            .journal-spread::after {
+                display: none;
+            }
+            .test-question {
+                font-size: 1.1rem;
+            }
+            .btn-answer {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="journal-container">
+        <div class="slider-wrapper">
+            <div class="journal-spread" id="journalSpread">
+                <!-- ЛЕВАЯ СТРАНИЦА -->
+                <div class="journal-page page-left">
+                    <img id="entityImage" src="" alt="Entity" class="entity-image">
+                    <div class="entity-title" id="entityTitle"></div>
+                    <div class="entity-description" id="entityDesc"></div>
+                </div>
+
+                <!-- ПРАВАЯ СТРАНИЦА -->
+                <div class="journal-page page-right">
+                    <div class="test-section">
+                        <div class="test-question" id="testQuestion">Is this entity a Tulpa?</div>
+                        
+                        <div class="test-buttons">
+                            <button class="btn-answer" onclick="answerNo()">NO</button>
+                            <button class="btn-answer" onclick="answerYes()">YES</button>
+                        </div>
+
+                        <div class="feedback" id="feedback"></div>
+
+                        <div class="success-code" id="successCode">
+                            <strong>✓ CORRECT!</strong><br>
+                            The entity is a Tulpa—sustained by collective belief.<br>
+                            <strong>CODE: JOURNAL1967</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ШТАМП -->
+                <div id="stamp" class="stamp-approved">APPROVED</div>
+            </div>
+        </div>
+
+        <!-- НАВИГАЦИЯ -->
+        <div class="slider-nav">
+            <button class="nav-btn" id="prevBtn" onclick="prevEntity()">← PREVIOUS</button>
+            <div class="page-counter"><span id="currentPage">1</span> / 5</div>
+            <button class="nav-btn" id="nextBtn" onclick="nextEntity()">NEXT →</button>
+        </div>
+    </div>
+
+    <script>
+        const entities = [
+            {
+                name: 'Ghost',
+                image: 'https://i.yapx.ru/eFuQv.png',
+                desc: 'Spectral entities are <b>anchored</b> to the earthly realm by physical remains. To neutralize a ghost permanently, one must locate the corporeal vessel and <b>cremate</b> it using salt and fuel. The spirit cannot <b>manifest</b> without its anchor.',
+                correct: false
+            },
+            {
+                name: 'Werewolf',
+                image: 'https://i.yapx.ru/eFuQw.png',
+                desc: 'Humans afflicted with a <b>curse</b> that forces transformation during lunar cycles. Unlike most <b>entities</b>, they retain some human consciousness. Silver-based ammunition can weaken them, but a <b>blessed</b> bullet to the heart is the most effective termination method.',
+                correct: false
+            },
+            {
+                name: 'Vampire',
+                image: 'https://i.yapx.ru/eFuQz.png',
+                desc: 'Vampires are one of the oldest <b>entities</b> in hunting records. They possess superhuman strength and <b>regenerate</b> rapidly. The only <b>definitive method</b> of execution is complete <b>decapitation</b>. Iron does not affect them; they are <b>immune</b> to most traditional weapons.',
+                correct: false
+            },
+            {
+                name: 'Demon',
+                image: 'https://i.yapx.ru/eFuQ0.png',
+                desc: 'Demonic possessions require <b>exorcism</b> through ritualistic binding. Demons are not <b>manifestations</b> of belief—they are <b>sentient entities</b> from another realm. They can <b>possess</b> multiple hosts and travel between bodies. Holy water and salt circles provide temporary containment.',
+                correct: false
+            },
+            {
+                name: 'Tulpa',
+                image: 'https://i.yapx.ru/eFuQy.png',
+                desc: 'Tulpas are unique <b>cognitive manifestations</b> brought to life by collective <b>belief</b> and internet rumors. Unlike traditional <b>entities</b>, they have no physical anchor but instead feed on the written lore about them. If the legend is altered, the creature\'s <b>physical properties and weaknesses</b> must adapt accordingly.',
+                correct: true
+            }
+        ];
+
+        let currentIndex = 0;
+        let correctAnswers = 0;
+
+        function loadEntity(index) {
+            const entity = entities[index];
+            document.getElementById('entityImage').src = entity.image;
+            document.getElementById('entityTitle').textContent = entity.name;
+            document.getElementById('entityDesc').innerHTML = entity.desc;
+            document.getElementById('currentPage').textContent = index + 1;
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === entities.length - 1;
+        }
+
+        function answerYes() {
+            const entity = entities[currentIndex];
+            const feedback = document.getElementById('feedback');
+            const stamp = document.getElementById('stamp');
+            const successCode = document.getElementById('successCode');
+
+            if (entity.correct) {
+                feedback.innerHTML = '✓ Correct!';
+                feedback.className = 'feedback success';
+                stamp.classList.add('stamp-active');
+                successCode.classList.add('show');
+                correctAnswers++;
+            } else {
+                feedback.innerHTML = '✗ Incorrect. This entity has a physical anchor or different origin.';
+                feedback.className = 'feedback';
+                stamp.classList.remove('stamp-active');
+                successCode.classList.remove('show');
+            }
+            feedback.style.display = 'block';
+        }
+
+        function answerNo() {
+            const entity = entities[currentIndex];
+            const feedback = document.getElementById('feedback');
+            const stamp = document.getElementById('stamp');
+            const successCode = document.getElementById('successCode');
+
+            if (!entity.correct) {
+                feedback.innerHTML = '✓ Correct! This is a traditional entity with physical manifestation.';
+                feedback.className = 'feedback success';
+                stamp.classList.remove('stamp-active');
+                successCode.classList.remove('show');
+            } else {
+                feedback.innerHTML = '✗ Incorrect. This entity is ONLY sustained by belief and written lore.';
+                feedback.className = 'feedback';
+                stamp.classList.remove('stamp-active');
+                successCode.classList.remove('show');
+            }
+            feedback.style.display = 'block';
+        }
+
+        function nextEntity() {
+            if (currentIndex < entities.length - 1) {
+                currentIndex++;
+                loadEntity(currentIndex);
+            }
+        }
+
+        function prevEntity() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                loadEntity(currentIndex);
+            }
+        }
+
+        // Инициализация
+        loadEntity(0);
+    </script>
+</body>
+</html>
