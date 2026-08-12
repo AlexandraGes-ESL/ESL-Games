@@ -3,766 +3,689 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hunter's Handbook - Entity Identification</title>
+    <title>Hunter's Handbook</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Courier+Prime:wght@400;700&family=Special+Elite&display=swap');
-
-        *{margin:0!important;padding:0!important;box-sizing:border-box!important}
-        
-        #handbook,#handbook *{margin:0!important;padding:0!important;box-sizing:border-box!important}
-        
-        #handbook{
-            position:relative!important;
-            width:100%!important;
-            height:100%!important;
-            min-height:600px!important;
-            overflow:hidden!important;
-            background:transparent!important;
-            font-family:'Courier Prime',Georgia,serif!important;
-            --hb-cover:#5d4037;
-            --hb-paper:#ebdcb9;
-            --hb-text:#2b221a;
-            --hb-text-dim:rgba(45,34,26,0.6);
-            --hb-gold:#d4a574;
-            --hb-gold-dim:rgba(212,165,116,0.3);
-            --hb-shadow:rgba(45,34,26,0.3);
-            --hb-accent:#8b6f47;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        #handbook .hb-screen{
-            position:absolute!important;
-            inset:0!important;
-            display:flex!important;
-            justify-content:center!important;
-            align-items:center!important;
-            opacity:0!important;
-            visibility:hidden!important;
-            pointer-events:none!important;
-            transition:opacity .6s,visibility .6s!important;
+        body {
+            background: transparent;
+            font-family: 'Georgia', serif;
+            overflow: hidden;
         }
 
-        #handbook .hb-screen.hb-active{
-            opacity:1!important;
-            visibility:visible!important;
-            pointer-events:auto!important;
+        .handbook {
+            width: 100%;
+            height: 100vh;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        /* ОБЛОЖКА */
-        #handbook .hb-cover-book{
-            position:relative!important;
-            width:340px!important;
-            display:flex!important;
-            flex-direction:column!important;
-            align-items:center!important;
+        /* ===== ОБЛОЖКА ===== */
+        .cover-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            opacity: 1;
+            transition: opacity 0.5s;
         }
 
-        #handbook .hb-cover-spine-3d{
-            position:absolute!important;
-            left:0!important;
-            top:0!important;
-            width:24px!important;
-            height:440px!important;
-            background:linear-gradient(90deg,#3a2a22,#5d4037 40%,#7d5d52 60%,#5d4037)!important;
-            border-radius:4px 0 0 4px!important;
-            box-shadow:inset -2px 0 6px rgba(0,0,0,.5),2px 0 8px rgba(0,0,0,.3)!important;
-            z-index:2!important;
+        .cover-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
-        #handbook .hb-cover-front-3d{
-            position:relative!important;
-            width:340px!important;
-            height:440px!important;
-            border-radius:4px 12px 12px 4px!important;
-            overflow:hidden!important;
-            box-shadow:6px 6px 20px rgba(93,64,55,.5),2px 2px 6px rgba(0,0,0,.3),inset 0 0 0 1px rgba(212,165,116,.3)!important;
-            border:2px solid rgba(212,165,116,.35)!important;
-            margin-left:12px!important;
+        .cover-book {
+            width: 300px;
+            height: 400px;
+            background: linear-gradient(135deg, #8B6F47 0%, #6B5D45 50%, #4A3D2C 100%);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.3);
+            position: relative;
+            border: 2px solid #3a2a18;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        #handbook .hb-cover-full{
-            width:100%!important;
-            height:100%!important;
-            background-size:cover!important;
-            background-position:center!important;
-            background-repeat:no-repeat!important;
+        .cover-book::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,.02) 2px, rgba(255,255,255,.02) 4px),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.02) 2px, rgba(255,255,255,.02) 4px);
+            border-radius: 8px;
+            pointer-events: none;
         }
 
-        #handbook .hb-cover-open-full{
-            margin-top:18px!important;
-            background:rgba(93,64,55,0.92)!important;
-            border:1px solid var(--hb-gold-dim)!important;
-            color:#fff8e7!important;
-            font-family:'Special Elite',serif!important;
-            font-size:15px!important;
-            font-weight:600!important;
-            padding:11px 32px!important;
-            border-radius:24px!important;
-            cursor:pointer!important;
-            transition:all .3s!important;
-            letter-spacing:1px!important;
+        .cover-clasp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 60px;
+            background: linear-gradient(90deg, #a89968, #c4a962, #a89968);
+            border: 2px solid #7a6a4a;
+            border-radius: 4px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.3);
         }
 
-        #handbook .hb-cover-open-full:hover{
-            background:var(--hb-gold)!important;
-            color:var(--hb-cover)!important;
-            transform:scale(1.05)!important;
+        .cover-clasp::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 40px;
+            background: #555;
+            border-radius: 2px;
         }
 
-        /* КНИГА */
-        #handbook .hb-book-wrapper{
-            display:flex!important;
-            flex-direction:column!important;
-            align-items:center!important;
-            gap:12px!important;
+        .btn-open {
+            padding: 12px 32px;
+            background: #5d4037;
+            color: #f5deb3;
+            border: 2px solid #8b6f47;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
+            letter-spacing: 1px;
         }
 
-        #handbook .hb-book{
-            position:relative!important;
-            width:780px!important;
-            height:520px!important;
-            display:grid!important;
-            grid-template-columns:1fr 1fr!important;
-            gap:0!important;
-            background:var(--hb-paper)!important;
-            border-radius:6px 16px 16px 6px!important;
-            box-shadow:0 4px 20px var(--hb-shadow),0 0 0 1px rgba(93,64,55,.1),inset 0 0 30px rgba(93,64,55,.03)!important;
-            overflow:hidden!important;
+        .btn-open:hover {
+            background: #8b6f47;
+            color: #2b2b2b;
+            transform: scale(1.05);
         }
 
-        #handbook .hb-spine{
-            position:absolute!important;
-            left:50%!important;
-            top:0!important;
-            transform:translateX(-50%)!important;
-            width:16px!important;
-            height:100%!important;
-            background:linear-gradient(90deg,rgba(45,34,26,.08),rgba(45,34,26,.15) 40%,rgba(45,34,26,.2) 50%,rgba(45,34,26,.15) 60%,rgba(45,34,26,.08))!important;
-            z-index:10!important;
-            pointer-events:none!important;
+        /* ===== ДНЕВНИК ===== */
+        .book-screen {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
 
-        #handbook .hb-page{
-            position:relative!important;
-            overflow:hidden!important;
+        .book-screen.active {
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        #handbook .hb-page-inner{
-            position:absolute!important;
-            inset:0!important;
-            padding:24px!important;
-            display:flex!important;
-            flex-direction:column!important;
-            overflow:hidden!important;
+        .book {
+            width: 900px;
+            height: 550px;
+            background: #ebdcb9;
+            border-radius: 8px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            border: 2px solid #c8a882;
+            overflow: hidden;
         }
 
-        #handbook .hb-page-left{
-            background:linear-gradient(135deg,#d9cdbf,var(--hb-paper))!important;
-            border-right:1px solid rgba(93,64,55,.08)!important;
+        .page {
+            position: relative;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            background: #ebdcb9;
         }
 
-        #handbook .hb-page-right{
-            background:linear-gradient(225deg,#d9cdbf,var(--hb-paper))!important;
-            border-left:1px solid rgba(93,64,55,.08)!important;
+        .page-left {
+            border-right: 2px solid #c8a882;
         }
 
-        /* ЛЕВАЯ СТРАНИЦА - КАРТИНКА И ОПИСАНИЕ */
-        #handbook .hb-page-img{
-            flex:0 0 45%;
-            border-radius:10px!important;
-            background-size:contain!important;
-            background-position:center!important;
-            background-color:var(--hb-paper)!important;
-            background-repeat:no-repeat!important;
-            border:1px solid rgba(93,64,55,.1)!important;
-            cursor:pointer!important;
-            box-shadow:0 2px 8px rgba(93,64,55,.15)!important;
-            margin-bottom:10px!important;
+        /* ЛЕВАЯ СТРАНИЦА - КАРТИНКА */
+        .page-image {
+            width: 100%;
+            height: 100%;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 3px;
+            clip-path: polygon(0 0, 98% 1%, 99% 3%, 100% 98%, 99% 99%, 2% 100%, 1% 97%, 0 2%);
+            box-shadow: 2px 3px 8px rgba(0,0,0,0.2);
         }
 
-        #handbook .hb-page-title{
-            font-family:'Special Elite',cursive;
-            font-size:1.4rem!important;
-            text-align:center!important;
-            margin-bottom:10px!important;
-            border-bottom:2px solid #5d4037!important;
-            padding-bottom:8px!important;
-            color:#3e2723!important;
-            text-transform:uppercase!important;
-            letter-spacing:1px!important;
+        /* ПРАВАЯ СТРАНИЦА - ТЕКСТ */
+        .page-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 12px;
+            overflow-y: auto;
+            padding-right: 12px;
         }
 
-        #handbook .hb-page-text{
-            font-size:0.85rem!important;
-            line-height:1.55!important;
-            color:var(--hb-text)!important;
-            overflow-y:auto!important;
-            padding-right:8px!important;
-            flex:1!important;
-            text-align:justify!important;
+        .page-content::-webkit-scrollbar {
+            width: 6px;
         }
 
-        #handbook .hb-page-text::-webkit-scrollbar{width:4px!important}
-        #handbook .hb-page-text::-webkit-scrollbar-thumb{background:rgba(93,64,55,.2)!important;border-radius:2px!important}
-
-        #handbook .hb-page-text p{margin-bottom:8px!important}
-
-        /* TOOLTIPS */
-        #handbook .hb-tip{
-            position:relative!important;
-            border-bottom:1px dotted rgba(212,165,116,.8)!important;
-            cursor:help!important;
-            color:var(--hb-text)!important;
-            display:inline-block!important;
+        .page-content::-webkit-scrollbar-thumb {
+            background: rgba(93, 64, 55, 0.3);
+            border-radius: 3px;
         }
 
-        #handbook .hb-tip:hover::after{
-            content:attr(data-tip)!important;
-            position:absolute!important;
-            bottom:calc(100% + 6px)!important;
-            left:50%!important;
-            transform:translateX(-50%)!important;
-            background:rgba(45,34,26,0.95)!important;
-            color:#ffd9b3!important;
-            font-size:10px!important;
-            font-weight:600!important;
-            padding:5px 10px!important;
-            border-radius:6px!important;
-            white-space:nowrap!important;
-            z-index:200!important;
-            pointer-events:none!important;
-            box-shadow:0 2px 10px rgba(45,34,26,.5)!important;
-            font-family:'Courier Prime',monospace!important;
+        .entity-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3e2723;
+            border-bottom: 2px solid #8b6f47;
+            padding-bottom: 8px;
+            font-family: 'Georgia', serif;
         }
 
-        /* ПРАВАЯ СТРАНИЦА - КВИЗ */
-        #handbook .hb-test-section{
-            display:flex!important;
-            flex-direction:column!important;
-            justify-content:center!important;
-            gap:12px!important;
-            height:100%!important;
-            padding:20px!important;
+        .entity-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #2b221a;
+            text-align: justify;
+            font-family: 'Georgia', serif;
         }
 
-        #handbook .hb-test-question{
-            font-family:'Special Elite',cursive;
-            font-size:1.2rem!important;
-            color:#3e2723!important;
-            text-align:center!important;
-            margin-bottom:15px!important;
-            line-height:1.5!important;
+        .entity-text p {
+            margin-bottom: 10px;
         }
 
-        #handbook .hb-test-desc{
-            font-size:0.8rem!important;
-            color:var(--hb-text-dim)!important;
-            text-align:center!important;
-            margin-bottom:15px!important;
-            line-height:1.4!important;
-            font-style:italic!important;
+        /* ВЫДЕЛЕННЫЕ СЛОВА И TOOLTIPS */
+        .vocab-word {
+            position: relative;
+            border-bottom: 2px dotted #d4a574;
+            cursor: help;
+            font-weight: 500;
+            color: #2b221a;
         }
 
-        #handbook .hb-quiz-options{
-            display:flex!important;
-            flex-direction:column!important;
-            gap:6px!important;
-            margin-bottom:12px!important;
+        .tooltip {
+            position: fixed;
+            background: rgba(45, 34, 26, 0.95);
+            color: #ffd9b3;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            z-index: 99999;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            font-family: 'Courier New', monospace;
+            border: 1px solid #8b6f47;
         }
 
-        #handbook .hb-quiz-opt{
-            padding:8px 12px!important;
-            border-radius:8px!important;
-            border:1px solid rgba(93,64,55,.2)!important;
-            background:rgba(255,255,255,.7)!important;
-            cursor:pointer!important;
-            font-size:0.95rem!important;
-            font-family:'Caveat',cursive!important;
-            font-weight:600!important;
-            color:var(--hb-text)!important;
-            transition:all .2s!important;
-            text-align:left!important;
+        /* НОМЕРА СТРАНИЦ */
+        .page-number {
+            position: absolute;
+            bottom: 10px;
+            font-size: 12px;
+            color: rgba(45, 34, 26, 0.5);
+            font-family: 'Courier New', monospace;
         }
 
-        #handbook .hb-quiz-opt:hover:not(:disabled){
-            background:rgba(212,165,116,.2)!important;
-            border-color:rgba(212,165,116,.6)!important;
+        .page-number-left {
+            left: 20px;
         }
 
-        #handbook .hb-quiz-opt:disabled{
-            cursor:default!important;
-        }
-
-        #handbook .hb-quiz-opt.hb-correct{
-            background:rgba(120,200,140,.25)!important;
-            border-color:rgba(80,170,100,.6)!important;
-            color:#1b5e20!important;
-        }
-
-        #handbook .hb-quiz-opt.hb-wrong{
-            background:rgba(239,108,108,.18)!important;
-            border-color:rgba(239,108,108,.5)!important;
-            color:#b71c1c!important;
-        }
-
-        #handbook .hb-quiz-feedback{
-            margin-top:10px!important;
-            padding:8px 10px!important;
-            border-radius:8px!important;
-            font-size:0.85rem!important;
-            font-weight:600!important;
-            background:rgba(120,200,140,.15)!important;
-            color:#1b5e20!important;
-            border:1px solid rgba(80,170,100,.3)!important;
-            display:none!important;
-            text-align:center!important;
-        }
-
-        #handbook .hb-quiz-feedback.hb-show{display:block!important}
-
-        /* ШТАМП */
-        #handbook .hb-stamp{
-            position:absolute!important;
-            bottom:40px!important;
-            right:50px!important;
-            border:4px double #b71c1c!important;
-            color:#b71c1c!important;
-            font-family:'Special Elite',cursive!important;
-            font-size:1.5rem!important;
-            font-weight:bold!important;
-            padding:8px 16px!important;
-            transform:rotate(-15deg)!important;
-            opacity:0.15!important;
-            pointer-events:none!important;
-            text-transform:uppercase!important;
-            letter-spacing:2px!important;
-        }
-
-        #handbook .hb-stamp.hb-active{
-            opacity:0.95!important;
-            transform:rotate(-15deg) scale(1.2)!important;
-            animation:hbStamp .4s cubic-bezier(0.18, 0.89, 0.32, 1.28)!important;
-        }
-
-        @keyframes hbStamp{
-            0%{transform:rotate(-45deg) scale(3);opacity:0}
-            100%{transform:rotate(-15deg) scale(1.2);opacity:0.95}
+        .page-number-right {
+            right: 20px;
         }
 
         /* НАВИГАЦИЯ */
-        #handbook .hb-controls{
-            display:flex!important;
-            align-items:center!important;
-            gap:12px!important;
-            margin-top:16px!important;
+        .controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
         }
 
-        #handbook .hb-nav-btn{
-            font-family:'Special Elite',cursive!important;
-            font-size:0.95rem!important;
-            padding:10px 20px!important;
-            background:#5d4037!important;
-            color:#fff!important;
-            border:none!important;
-            cursor:pointer!important;
-            text-transform:uppercase!important;
-            letter-spacing:1px!important;
-            transition:background .2s!important;
-            border-radius:4px!important;
+        .btn-nav {
+            padding: 10px 20px;
+            background: #5d4037;
+            color: #f5deb3;
+            border: 2px solid #8b6f47;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
         }
 
-        #handbook .hb-nav-btn:hover:not(:disabled){
-            background:#4e342e!important;
+        .btn-nav:hover:not(:disabled) {
+            background: #8b6f47;
+            color: #2b2b2b;
         }
 
-        #handbook .hb-nav-btn:disabled{
-            opacity:0.5!important;
-            cursor:not-allowed!important;
+        .btn-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        #handbook .hb-page-counter{
-            font-family:'Courier Prime',monospace!important;
-            color:#7d5d52!important;
-            font-size:0.9rem!important;
-            text-align:center!important;
-            flex-grow:1!important;
+        .page-counter {
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            color: #5d4037;
+            min-width: 40px;
+            text-align: center;
         }
 
-        #handbook .hb-progress{
-            width:780px!important;
-            height:4px!important;
-            background:rgba(93,64,55,.12)!important;
-            border-radius:3px!important;
-            overflow:hidden!important;
-            margin-top:8px!important;
+        /* ===== КВИЗ ===== */
+        .quiz-screen {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        #handbook .hb-progress-fill{
-            height:100%!important;
-            width:0%!important;
-            background:linear-gradient(90deg,var(--hb-gold),var(--hb-accent))!important;
-            transition:width .5s!important;
-            border-radius:3px!important;
+        .quiz-screen.active {
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        /* ПРАКТИКА */
-        #handbook .hb-tf-item{
-            margin-bottom:10px!important;
-            padding:8px 10px!important;
-            background:rgba(255,255,255,.6)!important;
-            border-radius:8px!important;
-            border:1px solid rgba(93,64,55,.1)!important;
+        .quiz-container {
+            width: 700px;
+            background: #ebdcb9;
+            border: 2px solid #c8a882;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
-        #handbook .hb-tf-stmt{
-            font-size:0.85rem!important;
-            font-weight:600!important;
-            color:var(--hb-text)!important;
-            margin-bottom:6px!important;
+        .quiz-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #3e2723;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #8b6f47;
+            padding-bottom: 15px;
         }
 
-        #handbook .hb-tf-btns{
-            display:flex!important;
-            gap:6px!important;
+        .quiz-question {
+            margin-bottom: 25px;
         }
 
-        #handbook .hb-tf-btn{
-            flex:1!important;
-            padding:5px 10px!important;
-            border-radius:6px!important;
-            border:1px solid rgba(93,64,55,.2)!important;
-            background:#fff!important;
-            cursor:pointer!important;
-            font-size:0.8rem!important;
-            font-weight:700!important;
-            color:var(--hb-cover)!important;
-            font-family:'Courier Prime',monospace!important;
-            transition:all .2s!important;
+        .quiz-q-number {
+            font-size: 16px;
+            font-weight: bold;
+            color: #5d4037;
+            margin-bottom: 8px;
         }
 
-        #handbook .hb-tf-btn:hover:not(:disabled){
-            background:rgba(212,165,116,.15)!important;
+        .quiz-q-text {
+            font-size: 15px;
+            color: #2b221a;
+            margin-bottom: 10px;
+            font-style: italic;
         }
 
-        #handbook .hb-tf-btn:disabled{
-            cursor:default!important;
+        .quiz-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        #handbook .hb-tf-btn.hb-correct{
-            background:rgba(120,200,140,.25)!important;
-            border-color:rgba(80,170,100,.6)!important;
-            color:#1b5e20!important;
+        .quiz-opt {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #8b6f47;
+            background: white;
+            color: #2b221a;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
         }
 
-        #handbook .hb-tf-btn.hb-wrong{
-            background:rgba(239,108,108,.18)!important;
-            border-color:rgba(239,108,108,.5)!important;
-            color:#b71c1c!important;
+        .quiz-opt:hover:not(:disabled) {
+            background: #d4a574;
+            color: white;
         }
 
-        #handbook .hb-page-num{
-            position:absolute!important;
-            bottom:8px!important;
-            font-size:10px!important;
-            color:var(--hb-text-dim)!important;
-            font-family:'Courier Prime',monospace!important;
+        .quiz-opt:disabled {
+            cursor: default;
         }
 
-        #handbook .hb-page-num-left{left:24px!important}
-        #handbook .hb-page-num-right{right:24px!important}
+        .quiz-opt.correct {
+            background: #4caf50;
+            color: white;
+            border-color: #2e7d32;
+        }
 
-        /* FADE ANIMATIONS */
-        #handbook .hb-fade-out{animation:hbFdO .3s ease forwards!important}
-        #handbook .hb-fade-in{animation:hbFdI .4s ease forwards!important}
+        .quiz-opt.wrong {
+            background: #f44336;
+            color: white;
+            border-color: #c62828;
+        }
 
-        @keyframes hbFdO{0%{opacity:1}100%{opacity:0}}
-        @keyframes hbFdI{0%{opacity:0}100%{opacity:1}}
+        .quiz-feedback {
+            font-size: 13px;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            display: none;
+            text-align: center;
+        }
 
-        /* RESPONSIVE */
-        @media(max-width:820px){
-            #handbook .hb-book{
-                width:95vw!important;
-                height:auto!important;
-                min-height:500px!important;
-                grid-template-columns:1fr!important;
-                border-radius:14px!important;
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .btn-finish {
+            width: 100%;
+            padding: 15px;
+            background: #5d4037;
+            color: #f5deb3;
+            border: 2px solid #8b6f47;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
+            margin-top: 30px;
+        }
+
+        .btn-finish:hover {
+            background: #8b6f47;
+            color: #2b2b2b;
+        }
+
+        .btn-finish:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 1000px) {
+            .book {
+                width: 95vw;
+                height: auto;
+                min-height: 400px;
+                grid-template-columns: 1fr;
             }
-            #handbook .hb-page-left{
-                border-right:none!important;
-                border-bottom:1px solid rgba(93,64,55,.08)!important;
-                min-height:240px!important;
+            .page-left {
+                border-right: none;
+                border-bottom: 2px solid #c8a882;
+                min-height: 200px;
             }
-            #handbook .hb-page-right{
-                border-left:none!important;
-                min-height:260px!important;
+            .quiz-container {
+                width: 95vw;
             }
-            #handbook .hb-spine{
-                left:0!important;
-                top:50%!important;
-                transform:translateY(-50%)!important;
-                width:100%!important;
-                height:8px!important;
-            }
-            #handbook .hb-progress{width:95vw!important}
-            #handbook .hb-cover-book{width:280px!important}
-            #handbook .hb-cover-spine-3d{height:380px!important}
-            #handbook .hb-cover-front-3d{width:280px!important;height:380px!important}
         }
     </style>
 </head>
 <body>
 
-<div id="handbook">
+<div class="handbook">
     <!-- ОБЛОЖКА -->
-    <div class="hb-screen hb-active" id="hbCover">
-        <div class="hb-cover-book">
-            <div class="hb-cover-spine-3d"></div>
-            <div class="hb-cover-front-3d">
-                <div class="hb-cover-full" id="hbCoverImg" style="background-image: url('https://i.yapx.ru/eFuQv.png'); filter: brightness(0.6);"></div>
+    <div class="cover-screen" id="coverScreen">
+        <div class="cover-book">
+            <div class="cover-clasp"></div>
+        </div>
+        <button class="btn-open" id="btnOpen">Open Handbook ✦</button>
+    </div>
+
+    <!-- ДНЕВНИК -->
+    <div class="book-screen" id="bookScreen">
+        <div class="book">
+            <!-- ЛЕВАЯ СТРАНИЦА - КАРТИНКА -->
+            <div class="page page-left">
+                <div class="page-image" id="pageImage"></div>
+                <div class="page-number page-number-left" id="pageNumLeft">1</div>
             </div>
-            <button class="hb-cover-open-full" id="hbBtnOpen">Open Handbook ✦</button>
+
+            <!-- ПРАВАЯ СТРАНИЦА - ТЕКСТ -->
+            <div class="page page-right">
+                <div class="page-content" id="pageContent">
+                    <div class="entity-name" id="entityName"></div>
+                    <div class="entity-text" id="entityDesc"></div>
+                </div>
+                <div class="page-number page-number-right" id="pageNumRight">2</div>
+            </div>
+        </div>
+
+        <!-- НАВИГАЦИЯ -->
+        <div class="controls">
+            <button class="btn-nav" id="btnPrev" disabled>← PREVIOUS</button>
+            <div class="page-counter"><span id="currentPage">1</span> / 5</div>
+            <button class="btn-nav" id="btnNext">NEXT →</button>
         </div>
     </div>
 
-    <!-- КНИГА -->
-    <div class="hb-screen" id="hbReader">
-        <div class="hb-book-wrapper">
-            <div class="hb-book" id="hbBook">
-                <!-- ЛЕВАЯ СТРАНИЦА -->
-                <div class="hb-page hb-page-left">
-                    <div class="hb-page-inner">
-                        <div class="hb-page-img" id="hbEntityImg"></div>
-                        <div class="hb-page-title" id="hbEntityTitle"></div>
-                        <div class="hb-page-text" id="hbEntityDesc"></div>
-                        <div class="hb-page-num hb-page-num-left" id="hbPageNumL">1</div>
-                    </div>
-                </div>
-
-                <!-- ПРАВАЯ СТРАНИЦА -->
-                <div class="hb-page hb-page-right">
-                    <div class="hb-page-inner">
-                        <div class="hb-test-section" id="hbTestSection"></div>
-                        <div class="hb-page-num hb-page-num-right" id="hbPageNumR">2</div>
-                    </div>
-                </div>
-
-                <div class="hb-spine"></div>
-                <!-- ШТАМП -->
-                <div class="hb-stamp" id="hbStamp">APPROVED</div>
-            </div>
-
-            <!-- ПРОГРЕСС БАР -->
-            <div class="hb-progress"><div class="hb-progress-fill" id="hbProgressFill"></div></div>
-
-            <!-- НАВИГАЦИЯ -->
-            <div class="hb-controls">
-                <button class="hb-nav-btn" id="hbBtnPrev" disabled>← PREVIOUS</button>
-                <div class="hb-page-counter"><span id="hbCurrentPage">1</span> / 5</div>
-                <button class="hb-nav-btn" id="hbBtnNext">NEXT →</button>
-            </div>
+    <!-- КВИЗ -->
+    <div class="quiz-screen" id="quizScreen">
+        <div class="quiz-container" id="quizContainer">
+            <div class="quiz-title">VOCABULARY CHECK</div>
+            <div id="quizContent"></div>
+            <button class="btn-finish" id="btnFinish" disabled>Finish</button>
         </div>
     </div>
 </div>
 
-<script>
-(function(){'use strict';
+<div id="tooltip" class="tooltip" style="display: none;"></div>
 
+<script>
 const ENTITIES = [
     {
         name: 'Ghost',
         image: 'https://i.yapx.ru/eFuQv.png',
-        desc: 'Spectral entities are <span class="hb-tip" data-tip="закреплён, привязан">anchored</span> to the earthly realm by physical remains. To neutralize a ghost permanently, one must locate the corporeal vessel and <span class="hb-tip" data-tip="кремировать">cremate</span> it using salt and fuel. The spirit cannot <span class="hb-tip" data-tip="проявляться">manifest</span> without its anchor.',
-        question: 'Is this entity anchored to physical remains?',
-        correct: true
+        desc: 'Spectral entities are <span class="vocab-word" data-tip="закреплён, привязан">anchored</span> to the earthly realm by physical remains. To neutralize a ghost permanently, one must locate the corporeal vessel and <span class="vocab-word" data-tip="кремировать">cremate</span> it using salt and fuel. The spirit cannot <span class="vocab-word" data-tip="проявляться">manifest</span> without its anchor.'
     },
     {
         name: 'Werewolf',
         image: 'https://i.yapx.ru/eFuQw.png',
-        desc: 'Humans afflicted with a <span class="hb-tip" data-tip="проклятие">curse</span> that forces transformation during lunar cycles. Unlike most <span class="hb-tip" data-tip="существа, сущности">entities</span>, they retain some human consciousness. Silver-based ammunition can weaken them, but a <span class="hb-tip" data-tip="освященный">blessed</span> bullet to the heart is the most effective termination method.',
-        question: 'Does this entity respond to silver bullets?',
-        correct: true
+        desc: 'Humans afflicted with a <span class="vocab-word" data-tip="проклятие">curse</span> that forces transformation during lunar cycles. Unlike most <span class="vocab-word" data-tip="существа, сущности">entities</span>, they retain some human consciousness. Silver-based ammunition can weaken them, but a <span class="vocab-word" data-tip="освященный">blessed</span> bullet to the heart is the most effective termination method.'
     },
     {
         name: 'Vampire',
         image: 'https://i.yapx.ru/eFuQz.png',
-        desc: 'Vampires are one of the oldest <span class="hb-tip" data-tip="существа, сущности">entities</span> in hunting records. They possess superhuman strength and <span class="hb-tip" data-tip="восстанавливаться">regenerate</span> rapidly. The only <span class="hb-tip" data-tip="окончательный, решительный">definitive method</span> of execution is complete <span class="hb-tip" data-tip="обезглавливание">decapitation</span>. Iron does not affect them; they are <span class="hb-tip" data-tip="неуязвим">immune</span> to most traditional weapons.',
-        question: 'Is decapitation the only effective method?',
-        correct: true
+        desc: 'Vampires are one of the oldest <span class="vocab-word" data-tip="существа, сущности">entities</span> in hunting records. They possess superhuman strength and <span class="vocab-word" data-tip="восстанавливаться">regenerate</span> rapidly. The only <span class="vocab-word" data-tip="окончательный, решительный">definitive method</span> of execution is complete <span class="vocab-word" data-tip="обезглавливание">decapitation</span>. Iron does not affect them; they are <span class="vocab-word" data-tip="неуязвим">immune</span> to most traditional weapons.'
     },
     {
         name: 'Demon',
         image: 'https://i.yapx.ru/eFuQ0.png',
-        desc: 'Demonic possessions require <span class="hb-tip" data-tip="экзорцизм, изгнание">exorcism</span> through ritualistic binding. Demons are not <span class="hb-tip" data-tip="проявления">manifestations</span> of belief—they are <span class="hb-tip" data-tip="разумный, сознательный">sentient entities</span> from another realm. They can <span class="hb-tip" data-tip="завладевать">possess</span> multiple hosts and travel between bodies. Holy water and salt circles provide temporary containment.',
-        question: 'Can demons be permanently bound to one host?',
-        correct: false
+        desc: 'Demonic possessions require <span class="vocab-word" data-tip="экзорцизм, изгнание">exorcism</span> through ritualistic binding. Demons are not <span class="vocab-word" data-tip="проявления">manifestations</span> of belief—they are <span class="vocab-word" data-tip="разумный, сознательный">sentient entities</span> from another realm. They can <span class="vocab-word" data-tip="завладевать">possess</span> multiple hosts and travel between bodies. Holy water and salt circles provide temporary containment.'
     },
     {
         name: 'Tulpa',
         image: 'https://i.yapx.ru/eFuQy.png',
-        desc: 'Tulpas are unique <span class="hb-tip" data-tip="умственный, мыслительный">cognitive</span> <span class="hb-tip" data-tip="проявления">manifestations</span> brought to life by collective <span class="hb-tip" data-tip="вера, убеждение">belief</span> and internet rumors. Unlike traditional <span class="hb-tip" data-tip="существа, сущности">entities</span>, they have no physical <span class="hb-tip" data-tip="якорь, опора">anchor</span> but instead feed on the written lore about them. If the legend is altered, the creature\'s physical properties and weaknesses must adapt accordingly.',
-        question: 'Is this entity sustained entirely by written belief?',
-        correct: true
+        desc: 'Tulpas are unique <span class="vocab-word" data-tip="умственный, мыслительный">cognitive</span> <span class="vocab-word" data-tip="проявления">manifestations</span> brought to life by collective <span class="vocab-word" data-tip="вера, убеждение">belief</span> and internet rumors. Unlike traditional <span class="vocab-word" data-tip="существа, сущности">entities</span>, they have no physical <span class="vocab-word" data-tip="якорь, опора">anchor</span> but instead feed on the written lore about them. If the legend is altered, the creature\'s physical properties and weaknesses must adapt accordingly.'
     }
 ];
 
-const PRACTICE = {
-    type: 'practice',
-    caption: 'Story Detective',
-    questions: [
-        {stmt: 'Ghosts can manifest without a physical anchor.', answer: 'false'},
-        {stmt: 'Werewolves transform only during full moon.', answer: 'true'},
-        {stmt: 'Vampires regenerate from all wounds.', answer: 'false'},
-        {stmt: 'Demons can possess multiple hosts.', answer: 'true'},
-        {stmt: 'Tulpas exist independently of human belief.', answer: 'false'}
-    ]
-};
+const QUIZ_QUESTIONS = [
+    {
+        q: 'What does "anchor" mean?',
+        options: ['A weapon', 'A connection or support point', 'A type of curse', 'A spell'],
+        correct: 1
+    },
+    {
+        q: 'How do you neutralize a Ghost permanently?',
+        options: ['With holy water', 'By finding and cremating its physical remains', 'With silver bullets', 'By reading an exorcism ritual'],
+        correct: 1
+    },
+    {
+        q: 'What does "blessed" mean in the context of hunting?',
+        options: ['Happy', 'Sanctified or made holy', 'Expensive', 'Sharp'],
+        correct: 1
+    },
+    {
+        q: 'What is the main difference between a Tulpa and other entities?',
+        options: ['It has superhuman strength', 'It exists only through collective belief', 'It can regenerate', 'It requires holy water to defeat'],
+        correct: 1
+    },
+    {
+        q: 'How can Demons be temporarily stopped?',
+        options: ['With silver bullets', 'With blessed weapons', 'With holy water and salt circles', 'With exorcism alone'],
+        correct: 2
+    }
+];
 
 let currentPage = 0;
-let totalPages = ENTITIES.length;
+const tooltip = document.getElementById('tooltip');
 
-function $(id) { return document.getElementById(id); }
-
-function show(id) { 
-    let e = $(id);
-    if(e) {
-        e.classList.remove('hb-hidden');
-        e.classList.add('hb-active');
-    }
-}
-
-function hide(id) { 
-    let e = $(id);
-    if(e) {
-        e.classList.add('hb-hidden');
-        e.classList.remove('hb-active');
-    }
-}
-
-function renderPage(idx) {
-    if(idx < 0 || idx >= totalPages) return;
+function showPage(idx) {
+    if (idx < 0 || idx >= ENTITIES.length) return;
     
-    let entity = ENTITIES[idx];
-    let leftInner = $('hbBook').querySelector('.hb-page-left .hb-page-inner');
-    let rightInner = $('hbBook').querySelector('.hb-page-right .hb-page-inner');
+    const entity = ENTITIES[idx];
+    document.getElementById('pageImage').style.backgroundImage = `url('${entity.image}')`;
+    document.getElementById('entityName').textContent = entity.name;
+    document.getElementById('entityDesc').innerHTML = entity.desc;
+    document.getElementById('pageNumLeft').textContent = idx * 2 + 1;
+    document.getElementById('pageNumRight').textContent = idx * 2 + 2;
+    document.getElementById('currentPage').textContent = idx + 1;
     
-    // Левая страница
-    leftInner.innerHTML = `
-        <div class="hb-page-img" id="hbEntityImg" style="background-image: url('${entity.image}');"></div>
-        <div class="hb-page-title">${entity.name}</div>
-        <div class="hb-page-text">${entity.desc}</div>
-        <div class="hb-page-num hb-page-num-left">${idx*2+1}</div>
-    `;
-    
-    // Правая страница
-    rightInner.innerHTML = `
-        <div class="hb-test-section">
-            <div class="hb-test-question">${entity.question}</div>
-            <div class="hb-quiz-options">
-                <button class="hb-quiz-opt" data-answer="true">YES</button>
-                <button class="hb-quiz-opt" data-answer="false">NO</button>
-            </div>
-            <div class="hb-quiz-feedback" id="hbFeedback"></div>
-        </div>
-        <div class="hb-page-num hb-page-num-right">${idx*2+2}</div>
-    `;
-    
-    // Обработчики ответов
-    let opts = rightInner.querySelectorAll('.hb-quiz-opt');
-    opts.forEach(btn => {
-        btn.addEventListener('click', function() {
-            let answer = this.getAttribute('data-answer');
-            let correct = entity.correct;
-            let feedback = $('hbFeedback');
-            let stamp = $('hbStamp');
-            
-            // Блокируем кнопки
-            opts.forEach(b => b.disabled = true);
-            
-            if(answer === 'true' && correct || answer === 'false' && !correct) {
-                this.classList.add('hb-correct');
-                stamp.classList.add('hb-active');
-                feedback.textContent = '✓ CORRECT! Code: JOURNAL1967';
-                feedback.classList.add('hb-show');
-            } else {
-                this.classList.add('hb-wrong');
-                stamp.classList.remove('hb-active');
-                feedback.textContent = '✗ Incorrect. Re-read the description.';
-                feedback.classList.add('hb-show');
-            }
-        });
-    });
-    
-    // Обновляем навигацию
-    $('hbCurrentPage').textContent = idx + 1;
-    $('hbBtnPrev').disabled = (idx === 0);
-    $('hbBtnNext').disabled = (idx === totalPages - 1);
-    $('hbProgressFill').style.width = ((idx+1)/totalPages*100) + '%';
+    document.getElementById('btnPrev').disabled = (idx === 0);
+    document.getElementById('btnNext').disabled = (idx === ENTITIES.length - 1);
     
     currentPage = idx;
+    
+    // Добавляем слушатели для tooltips
+    setupTooltips();
 }
 
-function fadeTransition(idx) {
-    let leftInner = $('hbBook').querySelector('.hb-page-left .hb-page-inner');
-    let rightInner = $('hbBook').querySelector('.hb-page-right .hb-page-inner');
-    
-    leftInner.classList.add('hb-fade-out');
-    rightInner.classList.add('hb-fade-out');
-    
-    setTimeout(() => {
-        renderPage(idx);
-        leftInner = $('hbBook').querySelector('.hb-page-left .hb-page-inner');
-        rightInner = $('hbBook').querySelector('.hb-page-right .hb-page-inner');
-        leftInner.classList.remove('hb-fade-out');
-        rightInner.classList.remove('hb-fade-out');
-        leftInner.classList.add('hb-fade-in');
-        rightInner.classList.add('hb-fade-in');
+function setupTooltips() {
+    const words = document.querySelectorAll('.vocab-word');
+    words.forEach(word => {
+        word.addEventListener('mouseenter', (e) => {
+            const tip = word.getAttribute('data-tip');
+            tooltip.textContent = tip;
+            tooltip.style.display = 'block';
+            
+            const rect = word.getBoundingClientRect();
+            tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+            tooltip.style.top = (rect.top - 35) + 'px';
+        });
         
-        setTimeout(() => {
-            leftInner.classList.remove('hb-fade-in');
-            rightInner.classList.remove('hb-fade-in');
-        }, 400);
-    }, 300);
+        word.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+        });
+    });
 }
 
-function next() { if(currentPage < totalPages - 1) fadeTransition(currentPage + 1); }
-function prev() { if(currentPage > 0) fadeTransition(currentPage - 1); }
+function showQuiz() {
+    document.getElementById('bookScreen').classList.remove('active');
+    document.getElementById('quizScreen').classList.add('active');
+    
+    let html = '';
+    QUIZ_QUESTIONS.forEach((q, i) => {
+        html += `
+            <div class="quiz-question">
+                <div class="quiz-q-number">Question ${i + 1} / ${QUIZ_QUESTIONS.length}</div>
+                <div class="quiz-q-text">${q.q}</div>
+                <div class="quiz-options">
+        `;
+        q.options.forEach((opt, j) => {
+            html += `<button class="quiz-opt" onclick="answerQuiz(${i}, ${j})">${opt}</button>`;
+        });
+        html += `
+                </div>
+                <div class="quiz-feedback" id="feedback-${i}"></div>
+            </div>
+        `;
+    });
+    
+    document.getElementById('quizContent').innerHTML = html;
+}
 
-function init() {
-    $('hbBtnOpen').addEventListener('click', () => {
-        hide('hbCover');
-        show('hbReader');
-    });
+let answersCorrect = 0;
+
+function answerQuiz(qIdx, optIdx) {
+    const q = QUIZ_QUESTIONS[qIdx];
+    const buttons = document.querySelectorAll(`.quiz-question:nth-child(${qIdx + 2}) .quiz-opt`);
+    const feedback = document.getElementById(`feedback-${qIdx}`);
     
-    $('hbBtnNext').addEventListener('click', next);
-    $('hbBtnPrev').addEventListener('click', prev);
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if(e.key === 'ArrowRight') next();
-        if(e.key === 'ArrowLeft') prev();
-    });
-    
-    // Touch navigation
-    let touchStartX = 0;
-    $('hbBook').addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, {passive: true});
-    
-    $('hbBook').addEventListener('touchend', (e) => {
-        if(!touchStartX) return;
-        let dx = touchStartX - e.changedTouches[0].screenX;
-        if(Math.abs(dx) > 50) {
-            if(dx > 0) next(); else prev();
+    buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === q.correct) {
+            btn.classList.add('correct');
+        } else if (i === optIdx && optIdx !== q.correct) {
+            btn.classList.add('wrong');
         }
-        touchStartX = 0;
-    }, {passive: true});
+    });
     
-    renderPage(0);
+    if (optIdx === q.correct) {
+        feedback.innerHTML = '✓ Correct!';
+        feedback.style.background = 'rgba(76, 175, 80, 0.2)';
+        feedback.style.color = '#1b5e20';
+        answersCorrect++;
+    } else {
+        feedback.innerHTML = '✗ Incorrect';
+        feedback.style.background = 'rgba(244, 67, 54, 0.2)';
+        feedback.style.color = '#b71c1c';
+    }
+    feedback.classList.add('show');
+    
+    // Активируем финальную кнопку если все ответил
+    if (answersCorrect === QUIZ_QUESTIONS.length) {
+        document.getElementById('btnFinish').disabled = false;
+    }
 }
 
-if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-else init();
+document.getElementById('btnOpen').addEventListener('click', () => {
+    document.getElementById('coverScreen').classList.add('hidden');
+    document.getElementById('bookScreen').classList.add('active');
+    showPage(0);
+});
 
-})();
+document.getElementById('btnPrev').addEventListener('click', () => {
+    if (currentPage > 0) showPage(currentPage - 1);
+});
+
+document.getElementById('btnNext').addEventListener('click', () => {
+    if (currentPage < ENTITIES.length - 1) {
+        showPage(currentPage + 1);
+    } else {
+        showQuiz();
+    }
+});
+
+document.getElementById('btnFinish').addEventListener('click', () => {
+    alert(`Great! You scored ${answersCorrect}/${QUIZ_QUESTIONS.length}. The Handbook is complete!`);
+    document.getElementById('quizScreen').classList.remove('active');
+    document.getElementById('coverScreen').classList.remove('hidden');
+    answersCorrect = 0;
+    currentPage = 0;
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' && !document.getElementById('bookScreen').classList.contains('active') === false) {
+        document.getElementById('btnNext').click();
+    }
+    if (e.key === 'ArrowLeft' && !document.getElementById('bookScreen').classList.contains('active') === false) {
+        document.getElementById('btnPrev').click();
+    }
+});
+
+showPage(0);
 </script>
 
 </body>
