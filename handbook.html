@@ -7,435 +7,763 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Courier+Prime:wght@400;700&family=Special+Elite&display=swap');
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background: transparent !important;
-            color: #d1d1d6;
-            font-family: 'Courier Prime', monospace;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        *{margin:0!important;padding:0!important;box-sizing:border-box!important}
+        
+        #handbook,#handbook *{margin:0!important;padding:0!important;box-sizing:border-box!important}
+        
+        #handbook{
+            position:relative!important;
+            width:100%!important;
+            height:100%!important;
+            min-height:600px!important;
+            overflow:hidden!important;
+            background:transparent!important;
+            font-family:'Courier Prime',Georgia,serif!important;
+            --hb-cover:#5d4037;
+            --hb-paper:#ebdcb9;
+            --hb-text:#2b221a;
+            --hb-text-dim:rgba(45,34,26,0.6);
+            --hb-gold:#d4a574;
+            --hb-gold-dim:rgba(212,165,116,0.3);
+            --hb-shadow:rgba(45,34,26,0.3);
+            --hb-accent:#8b6f47;
         }
 
-        .journal-container {
-            width: 100%;
-            max-width: 1200px;
-            background: transparent;
-            padding: 0;
-            position: relative;
+        #handbook .hb-screen{
+            position:absolute!important;
+            inset:0!important;
+            display:flex!important;
+            justify-content:center!important;
+            align-items:center!important;
+            opacity:0!important;
+            visibility:hidden!important;
+            pointer-events:none!important;
+            transition:opacity .6s,visibility .6s!important;
         }
 
-        .slider-wrapper {
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.95);
+        #handbook .hb-screen.hb-active{
+            opacity:1!important;
+            visibility:visible!important;
+            pointer-events:auto!important;
         }
 
-        .journal-spread {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            background: #3e2723;
-            border: 4px solid #2d1a18;
-            padding: 40px;
-            border-radius: 12px;
-            min-height: 700px;
-            position: relative;
-            background-image: 
-                linear-gradient(90deg, rgba(0,0,0,0.4) 1px, transparent 1px),
-                linear-gradient(rgba(0,0,0,0.2) 1px, transparent 1px);
-            background-size: 40px 40px;
+        /* ОБЛОЖКА */
+        #handbook .hb-cover-book{
+            position:relative!important;
+            width:340px!important;
+            display:flex!important;
+            flex-direction:column!important;
+            align-items:center!important;
         }
 
-        /* Центральный разделитель */
-        .journal-spread::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            width: 8px;
-            background: linear-gradient(90deg, rgba(0,0,0,0.4), rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.4));
-            transform: translateX(-50%);
-            pointer-events: none;
+        #handbook .hb-cover-spine-3d{
+            position:absolute!important;
+            left:0!important;
+            top:0!important;
+            width:24px!important;
+            height:440px!important;
+            background:linear-gradient(90deg,#3a2a22,#5d4037 40%,#7d5d52 60%,#5d4037)!important;
+            border-radius:4px 0 0 4px!important;
+            box-shadow:inset -2px 0 6px rgba(0,0,0,.5),2px 0 8px rgba(0,0,0,.3)!important;
+            z-index:2!important;
         }
 
-        .journal-page {
-            background-color: #ebdcb9;
-            color: #2b221a;
-            padding: 30px;
-            border-radius: 4px;
-            box-shadow: 3px 5px 15px rgba(0, 0, 0, 0.4);
-            border: 1px solid #c8b792;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            background-image: linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px);
-            background-size: 100% 24px;
-            line-height: 24px;
+        #handbook .hb-cover-front-3d{
+            position:relative!important;
+            width:340px!important;
+            height:440px!important;
+            border-radius:4px 12px 12px 4px!important;
+            overflow:hidden!important;
+            box-shadow:6px 6px 20px rgba(93,64,55,.5),2px 2px 6px rgba(0,0,0,.3),inset 0 0 0 1px rgba(212,165,116,.3)!important;
+            border:2px solid rgba(212,165,116,.35)!important;
+            margin-left:12px!important;
         }
 
-        .page-left { transform: rotate(-0.5deg); }
-        .page-right { transform: rotate(0.5deg); }
-
-        /* ЛЕВАЯ СТРАНИЦА - СУЩЕСТВО */
-        .entity-image {
-            width: 100%;
-            max-width: 180px;
-            height: auto;
-            margin: 0 auto 15px;
-            display: block;
-            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3));
-            clip-path: polygon(2% 0%, 98% 0.5%, 100% 3%, 99.5% 97%, 100% 99%, 3% 99.5%, 1% 97%, 0.5% 5%);
+        #handbook .hb-cover-full{
+            width:100%!important;
+            height:100%!important;
+            background-size:cover!important;
+            background-position:center!important;
+            background-repeat:no-repeat!important;
         }
 
-        .entity-title {
-            font-family: 'Special Elite', cursive;
-            font-size: 1.5rem;
-            text-align: center;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #5d4037;
-            padding-bottom: 8px;
-            color: #3e2723;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        #handbook .hb-cover-open-full{
+            margin-top:18px!important;
+            background:rgba(93,64,55,0.92)!important;
+            border:1px solid var(--hb-gold-dim)!important;
+            color:#fff8e7!important;
+            font-family:'Special Elite',serif!important;
+            font-size:15px!important;
+            font-weight:600!important;
+            padding:11px 32px!important;
+            border-radius:24px!important;
+            cursor:pointer!important;
+            transition:all .3s!important;
+            letter-spacing:1px!important;
         }
 
-        .entity-description {
-            font-family: 'Courier Prime', monospace;
-            font-size: 0.9rem;
-            color: #2b221a;
-            line-height: 1.5;
-            text-align: justify;
-            border-left: 3px solid #5d4037;
-            padding-left: 12px;
-            flex-grow: 1;
+        #handbook .hb-cover-open-full:hover{
+            background:var(--hb-gold)!important;
+            color:var(--hb-cover)!important;
+            transform:scale(1.05)!important;
         }
 
-        .entity-description b {
-            color: #1e2530;
-            font-weight: bold;
+        /* КНИГА */
+        #handbook .hb-book-wrapper{
+            display:flex!important;
+            flex-direction:column!important;
+            align-items:center!important;
+            gap:12px!important;
         }
 
-        /* ПРАВАЯ СТРАНИЦА - ЗАДАНИЕ */
-        .test-section {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            flex-grow: 1;
+        #handbook .hb-book{
+            position:relative!important;
+            width:780px!important;
+            height:520px!important;
+            display:grid!important;
+            grid-template-columns:1fr 1fr!important;
+            gap:0!important;
+            background:var(--hb-paper)!important;
+            border-radius:6px 16px 16px 6px!important;
+            box-shadow:0 4px 20px var(--hb-shadow),0 0 0 1px rgba(93,64,55,.1),inset 0 0 30px rgba(93,64,55,.03)!important;
+            overflow:hidden!important;
         }
 
-        .test-question {
-            font-family: 'Caveat', cursive;
-            font-size: 1.4rem;
-            color: #1e2530;
-            margin-bottom: 30px;
-            line-height: 1.6;
+        #handbook .hb-spine{
+            position:absolute!important;
+            left:50%!important;
+            top:0!important;
+            transform:translateX(-50%)!important;
+            width:16px!important;
+            height:100%!important;
+            background:linear-gradient(90deg,rgba(45,34,26,.08),rgba(45,34,26,.15) 40%,rgba(45,34,26,.2) 50%,rgba(45,34,26,.15) 60%,rgba(45,34,26,.08))!important;
+            z-index:10!important;
+            pointer-events:none!important;
         }
 
-        .test-buttons {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
+        #handbook .hb-page{
+            position:relative!important;
+            overflow:hidden!important;
         }
 
-        .btn-answer {
-            font-family: 'Special Elite', cursive;
-            font-size: 1.1rem;
-            padding: 12px 30px;
-            border: 2px solid #5d4037;
-            background: #ebdcb9;
-            color: #1e2530;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            min-width: 100px;
+        #handbook .hb-page-inner{
+            position:absolute!important;
+            inset:0!important;
+            padding:24px!important;
+            display:flex!important;
+            flex-direction:column!important;
+            overflow:hidden!important;
         }
 
-        .btn-answer:hover {
-            background: #5d4037;
-            color: #fff;
-            transform: scale(1.05);
+        #handbook .hb-page-left{
+            background:linear-gradient(135deg,#d9cdbf,var(--hb-paper))!important;
+            border-right:1px solid rgba(93,64,55,.08)!important;
         }
 
-        .feedback {
-            font-family: 'Caveat', cursive;
-            font-size: 1rem;
-            color: #b71c1c;
-            margin-top: 20px;
-            min-height: 30px;
-            display: none;
+        #handbook .hb-page-right{
+            background:linear-gradient(225deg,#d9cdbf,var(--hb-paper))!important;
+            border-left:1px solid rgba(93,64,55,.08)!important;
         }
 
-        .feedback.success {
-            color: #1b5e20;
+        /* ЛЕВАЯ СТРАНИЦА - КАРТИНКА И ОПИСАНИЕ */
+        #handbook .hb-page-img{
+            flex:0 0 45%;
+            border-radius:10px!important;
+            background-size:contain!important;
+            background-position:center!important;
+            background-color:var(--hb-paper)!important;
+            background-repeat:no-repeat!important;
+            border:1px solid rgba(93,64,55,.1)!important;
+            cursor:pointer!important;
+            box-shadow:0 2px 8px rgba(93,64,55,.15)!important;
+            margin-bottom:10px!important;
         }
+
+        #handbook .hb-page-title{
+            font-family:'Special Elite',cursive;
+            font-size:1.4rem!important;
+            text-align:center!important;
+            margin-bottom:10px!important;
+            border-bottom:2px solid #5d4037!important;
+            padding-bottom:8px!important;
+            color:#3e2723!important;
+            text-transform:uppercase!important;
+            letter-spacing:1px!important;
+        }
+
+        #handbook .hb-page-text{
+            font-size:0.85rem!important;
+            line-height:1.55!important;
+            color:var(--hb-text)!important;
+            overflow-y:auto!important;
+            padding-right:8px!important;
+            flex:1!important;
+            text-align:justify!important;
+        }
+
+        #handbook .hb-page-text::-webkit-scrollbar{width:4px!important}
+        #handbook .hb-page-text::-webkit-scrollbar-thumb{background:rgba(93,64,55,.2)!important;border-radius:2px!important}
+
+        #handbook .hb-page-text p{margin-bottom:8px!important}
+
+        /* TOOLTIPS */
+        #handbook .hb-tip{
+            position:relative!important;
+            border-bottom:1px dotted rgba(212,165,116,.8)!important;
+            cursor:help!important;
+            color:var(--hb-text)!important;
+            display:inline-block!important;
+        }
+
+        #handbook .hb-tip:hover::after{
+            content:attr(data-tip)!important;
+            position:absolute!important;
+            bottom:calc(100% + 6px)!important;
+            left:50%!important;
+            transform:translateX(-50%)!important;
+            background:rgba(45,34,26,0.95)!important;
+            color:#ffd9b3!important;
+            font-size:10px!important;
+            font-weight:600!important;
+            padding:5px 10px!important;
+            border-radius:6px!important;
+            white-space:nowrap!important;
+            z-index:200!important;
+            pointer-events:none!important;
+            box-shadow:0 2px 10px rgba(45,34,26,.5)!important;
+            font-family:'Courier Prime',monospace!important;
+        }
+
+        /* ПРАВАЯ СТРАНИЦА - КВИЗ */
+        #handbook .hb-test-section{
+            display:flex!important;
+            flex-direction:column!important;
+            justify-content:center!important;
+            gap:12px!important;
+            height:100%!important;
+            padding:20px!important;
+        }
+
+        #handbook .hb-test-question{
+            font-family:'Special Elite',cursive;
+            font-size:1.2rem!important;
+            color:#3e2723!important;
+            text-align:center!important;
+            margin-bottom:15px!important;
+            line-height:1.5!important;
+        }
+
+        #handbook .hb-test-desc{
+            font-size:0.8rem!important;
+            color:var(--hb-text-dim)!important;
+            text-align:center!important;
+            margin-bottom:15px!important;
+            line-height:1.4!important;
+            font-style:italic!important;
+        }
+
+        #handbook .hb-quiz-options{
+            display:flex!important;
+            flex-direction:column!important;
+            gap:6px!important;
+            margin-bottom:12px!important;
+        }
+
+        #handbook .hb-quiz-opt{
+            padding:8px 12px!important;
+            border-radius:8px!important;
+            border:1px solid rgba(93,64,55,.2)!important;
+            background:rgba(255,255,255,.7)!important;
+            cursor:pointer!important;
+            font-size:0.95rem!important;
+            font-family:'Caveat',cursive!important;
+            font-weight:600!important;
+            color:var(--hb-text)!important;
+            transition:all .2s!important;
+            text-align:left!important;
+        }
+
+        #handbook .hb-quiz-opt:hover:not(:disabled){
+            background:rgba(212,165,116,.2)!important;
+            border-color:rgba(212,165,116,.6)!important;
+        }
+
+        #handbook .hb-quiz-opt:disabled{
+            cursor:default!important;
+        }
+
+        #handbook .hb-quiz-opt.hb-correct{
+            background:rgba(120,200,140,.25)!important;
+            border-color:rgba(80,170,100,.6)!important;
+            color:#1b5e20!important;
+        }
+
+        #handbook .hb-quiz-opt.hb-wrong{
+            background:rgba(239,108,108,.18)!important;
+            border-color:rgba(239,108,108,.5)!important;
+            color:#b71c1c!important;
+        }
+
+        #handbook .hb-quiz-feedback{
+            margin-top:10px!important;
+            padding:8px 10px!important;
+            border-radius:8px!important;
+            font-size:0.85rem!important;
+            font-weight:600!important;
+            background:rgba(120,200,140,.15)!important;
+            color:#1b5e20!important;
+            border:1px solid rgba(80,170,100,.3)!important;
+            display:none!important;
+            text-align:center!important;
+        }
+
+        #handbook .hb-quiz-feedback.hb-show{display:block!important}
 
         /* ШТАМП */
-        .stamp-approved {
-            position: absolute;
-            bottom: 40px;
-            right: 50px;
-            border: 4px double #b71c1c;
-            color: #b71c1c;
-            font-family: 'Special Elite', cursive;
-            font-size: 1.6rem;
-            font-weight: bold;
-            padding: 8px 16px;
-            transform: rotate(-15deg);
-            opacity: 0.15;
-            pointer-events: none;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        #handbook .hb-stamp{
+            position:absolute!important;
+            bottom:40px!important;
+            right:50px!important;
+            border:4px double #b71c1c!important;
+            color:#b71c1c!important;
+            font-family:'Special Elite',cursive!important;
+            font-size:1.5rem!important;
+            font-weight:bold!important;
+            padding:8px 16px!important;
+            transform:rotate(-15deg)!important;
+            opacity:0.15!important;
+            pointer-events:none!important;
+            text-transform:uppercase!important;
+            letter-spacing:2px!important;
         }
 
-        .stamp-active {
-            opacity: 0.95;
-            transform: rotate(-15deg) scale(1.2);
-            animation: stampSlam 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        #handbook .hb-stamp.hb-active{
+            opacity:0.95!important;
+            transform:rotate(-15deg) scale(1.2)!important;
+            animation:hbStamp .4s cubic-bezier(0.18, 0.89, 0.32, 1.28)!important;
         }
 
-        @keyframes stampSlam {
-            0% { transform: rotate(-45deg) scale(3); opacity: 0; }
-            100% { transform: rotate(-15deg) scale(1.2); opacity: 0.95; }
+        @keyframes hbStamp{
+            0%{transform:rotate(-45deg) scale(3);opacity:0}
+            100%{transform:rotate(-15deg) scale(1.2);opacity:0.95}
         }
 
         /* НАВИГАЦИЯ */
-        .slider-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            gap: 15px;
+        #handbook .hb-controls{
+            display:flex!important;
+            align-items:center!important;
+            gap:12px!important;
+            margin-top:16px!important;
         }
 
-        .nav-btn {
-            font-family: 'Special Elite', cursive;
-            font-size: 1rem;
-            padding: 10px 20px;
-            background: #5d4037;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: background 0.2s;
-            border-radius: 4px;
+        #handbook .hb-nav-btn{
+            font-family:'Special Elite',cursive!important;
+            font-size:0.95rem!important;
+            padding:10px 20px!important;
+            background:#5d4037!important;
+            color:#fff!important;
+            border:none!important;
+            cursor:pointer!important;
+            text-transform:uppercase!important;
+            letter-spacing:1px!important;
+            transition:background .2s!important;
+            border-radius:4px!important;
         }
 
-        .nav-btn:hover:not(:disabled) {
-            background: #4e342e;
+        #handbook .hb-nav-btn:hover:not(:disabled){
+            background:#4e342e!important;
         }
 
-        .nav-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        #handbook .hb-nav-btn:disabled{
+            opacity:0.5!important;
+            cursor:not-allowed!important;
         }
 
-        .page-counter {
-            font-family: 'Courier Prime', monospace;
-            color: #d1d1d6;
-            font-size: 1rem;
-            text-align: center;
-            flex-grow: 1;
+        #handbook .hb-page-counter{
+            font-family:'Courier Prime',monospace!important;
+            color:#7d5d52!important;
+            font-size:0.9rem!important;
+            text-align:center!important;
+            flex-grow:1!important;
         }
 
-        .success-code {
-            display: none;
-            background: rgba(27, 94, 32, 0.2);
-            border: 2px solid #1b5e20;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 4px;
-            text-align: center;
-            color: #1b5e20;
-            font-family: 'Courier Prime', monospace;
+        #handbook .hb-progress{
+            width:780px!important;
+            height:4px!important;
+            background:rgba(93,64,55,.12)!important;
+            border-radius:3px!important;
+            overflow:hidden!important;
+            margin-top:8px!important;
         }
 
-        .success-code.show {
-            display: block;
+        #handbook .hb-progress-fill{
+            height:100%!important;
+            width:0%!important;
+            background:linear-gradient(90deg,var(--hb-gold),var(--hb-accent))!important;
+            transition:width .5s!important;
+            border-radius:3px!important;
         }
 
-        @media (max-width: 900px) {
-            .journal-spread {
-                grid-template-columns: 1fr;
-                padding: 20px;
-                min-height: auto;
-                gap: 15px;
+        /* ПРАКТИКА */
+        #handbook .hb-tf-item{
+            margin-bottom:10px!important;
+            padding:8px 10px!important;
+            background:rgba(255,255,255,.6)!important;
+            border-radius:8px!important;
+            border:1px solid rgba(93,64,55,.1)!important;
+        }
+
+        #handbook .hb-tf-stmt{
+            font-size:0.85rem!important;
+            font-weight:600!important;
+            color:var(--hb-text)!important;
+            margin-bottom:6px!important;
+        }
+
+        #handbook .hb-tf-btns{
+            display:flex!important;
+            gap:6px!important;
+        }
+
+        #handbook .hb-tf-btn{
+            flex:1!important;
+            padding:5px 10px!important;
+            border-radius:6px!important;
+            border:1px solid rgba(93,64,55,.2)!important;
+            background:#fff!important;
+            cursor:pointer!important;
+            font-size:0.8rem!important;
+            font-weight:700!important;
+            color:var(--hb-cover)!important;
+            font-family:'Courier Prime',monospace!important;
+            transition:all .2s!important;
+        }
+
+        #handbook .hb-tf-btn:hover:not(:disabled){
+            background:rgba(212,165,116,.15)!important;
+        }
+
+        #handbook .hb-tf-btn:disabled{
+            cursor:default!important;
+        }
+
+        #handbook .hb-tf-btn.hb-correct{
+            background:rgba(120,200,140,.25)!important;
+            border-color:rgba(80,170,100,.6)!important;
+            color:#1b5e20!important;
+        }
+
+        #handbook .hb-tf-btn.hb-wrong{
+            background:rgba(239,108,108,.18)!important;
+            border-color:rgba(239,108,108,.5)!important;
+            color:#b71c1c!important;
+        }
+
+        #handbook .hb-page-num{
+            position:absolute!important;
+            bottom:8px!important;
+            font-size:10px!important;
+            color:var(--hb-text-dim)!important;
+            font-family:'Courier Prime',monospace!important;
+        }
+
+        #handbook .hb-page-num-left{left:24px!important}
+        #handbook .hb-page-num-right{right:24px!important}
+
+        /* FADE ANIMATIONS */
+        #handbook .hb-fade-out{animation:hbFdO .3s ease forwards!important}
+        #handbook .hb-fade-in{animation:hbFdI .4s ease forwards!important}
+
+        @keyframes hbFdO{0%{opacity:1}100%{opacity:0}}
+        @keyframes hbFdI{0%{opacity:0}100%{opacity:1}}
+
+        /* RESPONSIVE */
+        @media(max-width:820px){
+            #handbook .hb-book{
+                width:95vw!important;
+                height:auto!important;
+                min-height:500px!important;
+                grid-template-columns:1fr!important;
+                border-radius:14px!important;
             }
-            .journal-spread::after {
-                display: none;
+            #handbook .hb-page-left{
+                border-right:none!important;
+                border-bottom:1px solid rgba(93,64,55,.08)!important;
+                min-height:240px!important;
             }
-            .test-question {
-                font-size: 1.1rem;
+            #handbook .hb-page-right{
+                border-left:none!important;
+                min-height:260px!important;
             }
-            .btn-answer {
-                padding: 10px 20px;
-                font-size: 0.9rem;
+            #handbook .hb-spine{
+                left:0!important;
+                top:50%!important;
+                transform:translateY(-50%)!important;
+                width:100%!important;
+                height:8px!important;
             }
+            #handbook .hb-progress{width:95vw!important}
+            #handbook .hb-cover-book{width:280px!important}
+            #handbook .hb-cover-spine-3d{height:380px!important}
+            #handbook .hb-cover-front-3d{width:280px!important;height:380px!important}
         }
     </style>
 </head>
 <body>
 
-    <div class="journal-container">
-        <div class="slider-wrapper">
-            <div class="journal-spread" id="journalSpread">
-                <!-- ЛЕВАЯ СТРАНИЦА -->
-                <div class="journal-page page-left">
-                    <img id="entityImage" src="" alt="Entity" class="entity-image">
-                    <div class="entity-title" id="entityTitle"></div>
-                    <div class="entity-description" id="entityDesc"></div>
-                </div>
-
-                <!-- ПРАВАЯ СТРАНИЦА -->
-                <div class="journal-page page-right">
-                    <div class="test-section">
-                        <div class="test-question" id="testQuestion">Is this entity a Tulpa?</div>
-                        
-                        <div class="test-buttons">
-                            <button class="btn-answer" onclick="answerNo()">NO</button>
-                            <button class="btn-answer" onclick="answerYes()">YES</button>
-                        </div>
-
-                        <div class="feedback" id="feedback"></div>
-
-                        <div class="success-code" id="successCode">
-                            <strong>✓ CORRECT!</strong><br>
-                            The entity is a Tulpa—sustained by collective belief.<br>
-                            <strong>CODE: JOURNAL1967</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ШТАМП -->
-                <div id="stamp" class="stamp-approved">APPROVED</div>
+<div id="handbook">
+    <!-- ОБЛОЖКА -->
+    <div class="hb-screen hb-active" id="hbCover">
+        <div class="hb-cover-book">
+            <div class="hb-cover-spine-3d"></div>
+            <div class="hb-cover-front-3d">
+                <div class="hb-cover-full" id="hbCoverImg" style="background-image: url('https://i.yapx.ru/eFuQv.png'); filter: brightness(0.6);"></div>
             </div>
-        </div>
-
-        <!-- НАВИГАЦИЯ -->
-        <div class="slider-nav">
-            <button class="nav-btn" id="prevBtn" onclick="prevEntity()">← PREVIOUS</button>
-            <div class="page-counter"><span id="currentPage">1</span> / 5</div>
-            <button class="nav-btn" id="nextBtn" onclick="nextEntity()">NEXT →</button>
+            <button class="hb-cover-open-full" id="hbBtnOpen">Open Handbook ✦</button>
         </div>
     </div>
 
-    <script>
-        const entities = [
-            {
-                name: 'Ghost',
-                image: 'https://i.yapx.ru/eFuQv.png',
-                desc: 'Spectral entities are <b>anchored</b> to the earthly realm by physical remains. To neutralize a ghost permanently, one must locate the corporeal vessel and <b>cremate</b> it using salt and fuel. The spirit cannot <b>manifest</b> without its anchor.',
-                correct: false
-            },
-            {
-                name: 'Werewolf',
-                image: 'https://i.yapx.ru/eFuQw.png',
-                desc: 'Humans afflicted with a <b>curse</b> that forces transformation during lunar cycles. Unlike most <b>entities</b>, they retain some human consciousness. Silver-based ammunition can weaken them, but a <b>blessed</b> bullet to the heart is the most effective termination method.',
-                correct: false
-            },
-            {
-                name: 'Vampire',
-                image: 'https://i.yapx.ru/eFuQz.png',
-                desc: 'Vampires are one of the oldest <b>entities</b> in hunting records. They possess superhuman strength and <b>regenerate</b> rapidly. The only <b>definitive method</b> of execution is complete <b>decapitation</b>. Iron does not affect them; they are <b>immune</b> to most traditional weapons.',
-                correct: false
-            },
-            {
-                name: 'Demon',
-                image: 'https://i.yapx.ru/eFuQ0.png',
-                desc: 'Demonic possessions require <b>exorcism</b> through ritualistic binding. Demons are not <b>manifestations</b> of belief—they are <b>sentient entities</b> from another realm. They can <b>possess</b> multiple hosts and travel between bodies. Holy water and salt circles provide temporary containment.',
-                correct: false
-            },
-            {
-                name: 'Tulpa',
-                image: 'https://i.yapx.ru/eFuQy.png',
-                desc: 'Tulpas are unique <b>cognitive manifestations</b> brought to life by collective <b>belief</b> and internet rumors. Unlike traditional <b>entities</b>, they have no physical anchor but instead feed on the written lore about them. If the legend is altered, the creature\'s <b>physical properties and weaknesses</b> must adapt accordingly.',
-                correct: true
-            }
-        ];
+    <!-- КНИГА -->
+    <div class="hb-screen" id="hbReader">
+        <div class="hb-book-wrapper">
+            <div class="hb-book" id="hbBook">
+                <!-- ЛЕВАЯ СТРАНИЦА -->
+                <div class="hb-page hb-page-left">
+                    <div class="hb-page-inner">
+                        <div class="hb-page-img" id="hbEntityImg"></div>
+                        <div class="hb-page-title" id="hbEntityTitle"></div>
+                        <div class="hb-page-text" id="hbEntityDesc"></div>
+                        <div class="hb-page-num hb-page-num-left" id="hbPageNumL">1</div>
+                    </div>
+                </div>
 
-        let currentIndex = 0;
-        let correctAnswers = 0;
+                <!-- ПРАВАЯ СТРАНИЦА -->
+                <div class="hb-page hb-page-right">
+                    <div class="hb-page-inner">
+                        <div class="hb-test-section" id="hbTestSection"></div>
+                        <div class="hb-page-num hb-page-num-right" id="hbPageNumR">2</div>
+                    </div>
+                </div>
 
-        function loadEntity(index) {
-            const entity = entities[index];
-            document.getElementById('entityImage').src = entity.image;
-            document.getElementById('entityTitle').textContent = entity.name;
-            document.getElementById('entityDesc').innerHTML = entity.desc;
-            document.getElementById('currentPage').textContent = index + 1;
-            document.getElementById('feedback').style.display = 'none';
-            document.getElementById('prevBtn').disabled = index === 0;
-            document.getElementById('nextBtn').disabled = index === entities.length - 1;
-        }
+                <div class="hb-spine"></div>
+                <!-- ШТАМП -->
+                <div class="hb-stamp" id="hbStamp">APPROVED</div>
+            </div>
 
-        function answerYes() {
-            const entity = entities[currentIndex];
-            const feedback = document.getElementById('feedback');
-            const stamp = document.getElementById('stamp');
-            const successCode = document.getElementById('successCode');
+            <!-- ПРОГРЕСС БАР -->
+            <div class="hb-progress"><div class="hb-progress-fill" id="hbProgressFill"></div></div>
 
-            if (entity.correct) {
-                feedback.innerHTML = '✓ Correct!';
-                feedback.className = 'feedback success';
-                stamp.classList.add('stamp-active');
-                successCode.classList.add('show');
-                correctAnswers++;
+            <!-- НАВИГАЦИЯ -->
+            <div class="hb-controls">
+                <button class="hb-nav-btn" id="hbBtnPrev" disabled>← PREVIOUS</button>
+                <div class="hb-page-counter"><span id="hbCurrentPage">1</span> / 5</div>
+                <button class="hb-nav-btn" id="hbBtnNext">NEXT →</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function(){'use strict';
+
+const ENTITIES = [
+    {
+        name: 'Ghost',
+        image: 'https://i.yapx.ru/eFuQv.png',
+        desc: 'Spectral entities are <span class="hb-tip" data-tip="закреплён, привязан">anchored</span> to the earthly realm by physical remains. To neutralize a ghost permanently, one must locate the corporeal vessel and <span class="hb-tip" data-tip="кремировать">cremate</span> it using salt and fuel. The spirit cannot <span class="hb-tip" data-tip="проявляться">manifest</span> without its anchor.',
+        question: 'Is this entity anchored to physical remains?',
+        correct: true
+    },
+    {
+        name: 'Werewolf',
+        image: 'https://i.yapx.ru/eFuQw.png',
+        desc: 'Humans afflicted with a <span class="hb-tip" data-tip="проклятие">curse</span> that forces transformation during lunar cycles. Unlike most <span class="hb-tip" data-tip="существа, сущности">entities</span>, they retain some human consciousness. Silver-based ammunition can weaken them, but a <span class="hb-tip" data-tip="освященный">blessed</span> bullet to the heart is the most effective termination method.',
+        question: 'Does this entity respond to silver bullets?',
+        correct: true
+    },
+    {
+        name: 'Vampire',
+        image: 'https://i.yapx.ru/eFuQz.png',
+        desc: 'Vampires are one of the oldest <span class="hb-tip" data-tip="существа, сущности">entities</span> in hunting records. They possess superhuman strength and <span class="hb-tip" data-tip="восстанавливаться">regenerate</span> rapidly. The only <span class="hb-tip" data-tip="окончательный, решительный">definitive method</span> of execution is complete <span class="hb-tip" data-tip="обезглавливание">decapitation</span>. Iron does not affect them; they are <span class="hb-tip" data-tip="неуязвим">immune</span> to most traditional weapons.',
+        question: 'Is decapitation the only effective method?',
+        correct: true
+    },
+    {
+        name: 'Demon',
+        image: 'https://i.yapx.ru/eFuQ0.png',
+        desc: 'Demonic possessions require <span class="hb-tip" data-tip="экзорцизм, изгнание">exorcism</span> through ritualistic binding. Demons are not <span class="hb-tip" data-tip="проявления">manifestations</span> of belief—they are <span class="hb-tip" data-tip="разумный, сознательный">sentient entities</span> from another realm. They can <span class="hb-tip" data-tip="завладевать">possess</span> multiple hosts and travel between bodies. Holy water and salt circles provide temporary containment.',
+        question: 'Can demons be permanently bound to one host?',
+        correct: false
+    },
+    {
+        name: 'Tulpa',
+        image: 'https://i.yapx.ru/eFuQy.png',
+        desc: 'Tulpas are unique <span class="hb-tip" data-tip="умственный, мыслительный">cognitive</span> <span class="hb-tip" data-tip="проявления">manifestations</span> brought to life by collective <span class="hb-tip" data-tip="вера, убеждение">belief</span> and internet rumors. Unlike traditional <span class="hb-tip" data-tip="существа, сущности">entities</span>, they have no physical <span class="hb-tip" data-tip="якорь, опора">anchor</span> but instead feed on the written lore about them. If the legend is altered, the creature\'s physical properties and weaknesses must adapt accordingly.',
+        question: 'Is this entity sustained entirely by written belief?',
+        correct: true
+    }
+];
+
+const PRACTICE = {
+    type: 'practice',
+    caption: 'Story Detective',
+    questions: [
+        {stmt: 'Ghosts can manifest without a physical anchor.', answer: 'false'},
+        {stmt: 'Werewolves transform only during full moon.', answer: 'true'},
+        {stmt: 'Vampires regenerate from all wounds.', answer: 'false'},
+        {stmt: 'Demons can possess multiple hosts.', answer: 'true'},
+        {stmt: 'Tulpas exist independently of human belief.', answer: 'false'}
+    ]
+};
+
+let currentPage = 0;
+let totalPages = ENTITIES.length;
+
+function $(id) { return document.getElementById(id); }
+
+function show(id) { 
+    let e = $(id);
+    if(e) {
+        e.classList.remove('hb-hidden');
+        e.classList.add('hb-active');
+    }
+}
+
+function hide(id) { 
+    let e = $(id);
+    if(e) {
+        e.classList.add('hb-hidden');
+        e.classList.remove('hb-active');
+    }
+}
+
+function renderPage(idx) {
+    if(idx < 0 || idx >= totalPages) return;
+    
+    let entity = ENTITIES[idx];
+    let leftInner = $('hbBook').querySelector('.hb-page-left .hb-page-inner');
+    let rightInner = $('hbBook').querySelector('.hb-page-right .hb-page-inner');
+    
+    // Левая страница
+    leftInner.innerHTML = `
+        <div class="hb-page-img" id="hbEntityImg" style="background-image: url('${entity.image}');"></div>
+        <div class="hb-page-title">${entity.name}</div>
+        <div class="hb-page-text">${entity.desc}</div>
+        <div class="hb-page-num hb-page-num-left">${idx*2+1}</div>
+    `;
+    
+    // Правая страница
+    rightInner.innerHTML = `
+        <div class="hb-test-section">
+            <div class="hb-test-question">${entity.question}</div>
+            <div class="hb-quiz-options">
+                <button class="hb-quiz-opt" data-answer="true">YES</button>
+                <button class="hb-quiz-opt" data-answer="false">NO</button>
+            </div>
+            <div class="hb-quiz-feedback" id="hbFeedback"></div>
+        </div>
+        <div class="hb-page-num hb-page-num-right">${idx*2+2}</div>
+    `;
+    
+    // Обработчики ответов
+    let opts = rightInner.querySelectorAll('.hb-quiz-opt');
+    opts.forEach(btn => {
+        btn.addEventListener('click', function() {
+            let answer = this.getAttribute('data-answer');
+            let correct = entity.correct;
+            let feedback = $('hbFeedback');
+            let stamp = $('hbStamp');
+            
+            // Блокируем кнопки
+            opts.forEach(b => b.disabled = true);
+            
+            if(answer === 'true' && correct || answer === 'false' && !correct) {
+                this.classList.add('hb-correct');
+                stamp.classList.add('hb-active');
+                feedback.textContent = '✓ CORRECT! Code: JOURNAL1967';
+                feedback.classList.add('hb-show');
             } else {
-                feedback.innerHTML = '✗ Incorrect. This entity has a physical anchor or different origin.';
-                feedback.className = 'feedback';
-                stamp.classList.remove('stamp-active');
-                successCode.classList.remove('show');
+                this.classList.add('hb-wrong');
+                stamp.classList.remove('hb-active');
+                feedback.textContent = '✗ Incorrect. Re-read the description.';
+                feedback.classList.add('hb-show');
             }
-            feedback.style.display = 'block';
+        });
+    });
+    
+    // Обновляем навигацию
+    $('hbCurrentPage').textContent = idx + 1;
+    $('hbBtnPrev').disabled = (idx === 0);
+    $('hbBtnNext').disabled = (idx === totalPages - 1);
+    $('hbProgressFill').style.width = ((idx+1)/totalPages*100) + '%';
+    
+    currentPage = idx;
+}
+
+function fadeTransition(idx) {
+    let leftInner = $('hbBook').querySelector('.hb-page-left .hb-page-inner');
+    let rightInner = $('hbBook').querySelector('.hb-page-right .hb-page-inner');
+    
+    leftInner.classList.add('hb-fade-out');
+    rightInner.classList.add('hb-fade-out');
+    
+    setTimeout(() => {
+        renderPage(idx);
+        leftInner = $('hbBook').querySelector('.hb-page-left .hb-page-inner');
+        rightInner = $('hbBook').querySelector('.hb-page-right .hb-page-inner');
+        leftInner.classList.remove('hb-fade-out');
+        rightInner.classList.remove('hb-fade-out');
+        leftInner.classList.add('hb-fade-in');
+        rightInner.classList.add('hb-fade-in');
+        
+        setTimeout(() => {
+            leftInner.classList.remove('hb-fade-in');
+            rightInner.classList.remove('hb-fade-in');
+        }, 400);
+    }, 300);
+}
+
+function next() { if(currentPage < totalPages - 1) fadeTransition(currentPage + 1); }
+function prev() { if(currentPage > 0) fadeTransition(currentPage - 1); }
+
+function init() {
+    $('hbBtnOpen').addEventListener('click', () => {
+        hide('hbCover');
+        show('hbReader');
+    });
+    
+    $('hbBtnNext').addEventListener('click', next);
+    $('hbBtnPrev').addEventListener('click', prev);
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') next();
+        if(e.key === 'ArrowLeft') prev();
+    });
+    
+    // Touch navigation
+    let touchStartX = 0;
+    $('hbBook').addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+    
+    $('hbBook').addEventListener('touchend', (e) => {
+        if(!touchStartX) return;
+        let dx = touchStartX - e.changedTouches[0].screenX;
+        if(Math.abs(dx) > 50) {
+            if(dx > 0) next(); else prev();
         }
+        touchStartX = 0;
+    }, {passive: true});
+    
+    renderPage(0);
+}
 
-        function answerNo() {
-            const entity = entities[currentIndex];
-            const feedback = document.getElementById('feedback');
-            const stamp = document.getElementById('stamp');
-            const successCode = document.getElementById('successCode');
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
 
-            if (!entity.correct) {
-                feedback.innerHTML = '✓ Correct! This is a traditional entity with physical manifestation.';
-                feedback.className = 'feedback success';
-                stamp.classList.remove('stamp-active');
-                successCode.classList.remove('show');
-            } else {
-                feedback.innerHTML = '✗ Incorrect. This entity is ONLY sustained by belief and written lore.';
-                feedback.className = 'feedback';
-                stamp.classList.remove('stamp-active');
-                successCode.classList.remove('show');
-            }
-            feedback.style.display = 'block';
-        }
+})();
+</script>
 
-        function nextEntity() {
-            if (currentIndex < entities.length - 1) {
-                currentIndex++;
-                loadEntity(currentIndex);
-            }
-        }
-
-        function prevEntity() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                loadEntity(currentIndex);
-            }
-        }
-
-        // Инициализация
-        loadEntity(0);
-    </script>
 </body>
 </html>
