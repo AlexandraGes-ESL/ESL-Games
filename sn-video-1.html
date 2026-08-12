@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Backseat - Supernatural Investigation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Courier+Prime:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="video-container" style="all:initial!important;display:block!important;width:100%!important;height:100vh!important;position:relative!important;overflow:hidden!important;box-sizing:border-box!important;font-family:'Courier Prime',monospace!important;background:#0a0605!important;">
+<div id="main-container" style="all:initial!important;display:block!important;width:100%!important;height:100vh!important;position:relative!important;overflow:hidden!important;box-sizing:border-box!important;font-family:'Courier Prime',monospace!important;background:#0a0605!important;">
 
 <style>
-  #video-container *{box-sizing:border-box!important;margin:0!important;padding:0!important;}
-  #video-container{
+  #main-container *{box-sizing:border-box!important;margin:0!important;padding:0!important;}
+  #main-container{
     --paper: #ebdcb9;
     --brown-dark: #2b1810;
     --brown-light: #5d4037;
@@ -20,17 +20,23 @@
     --shadow: rgba(0,0,0,0.8);
   }
 
-  /* ===== PRELOADER SCREEN ===== */
-  #video-container .loader-screen{
+  /* ===== VIDEO SECTION ===== */
+  #main-container .video-section{
+    position:absolute!important;inset:0!important;z-index:100!important;
+    background:#000!important;transition:opacity 0.5s, visibility 0.5s!important;
+  }
+  #main-container .video-section.hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
+
+  /* PRELOADER SCREEN */
+  #main-container .loader-screen{
     position:absolute!important;inset:0!important;z-index:50!important;
     background:linear-gradient(135deg, #1a0f07 0%, #0a0605 100%)!important;
     display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
     gap:30px!important;transition:opacity 0.6s ease, visibility 0.6s ease!important;
   }
-  #video-container .loader-screen.hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
+  #main-container .loader-screen.hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
 
-  /* Animated Case File Icon */
-  #video-container .loader-icon{
+  #main-container .loader-icon{
     width:80px!important;height:100px!important;
     border:3px solid var(--gold)!important;border-radius:6px!important;
     background:linear-gradient(135deg, rgba(212,165,116,0.15) 0%, rgba(212,165,116,0.05) 100%)!important;
@@ -38,11 +44,11 @@
     animation:caseFloat 2.2s ease-in-out infinite!important;
   }
   
-  #video-container .loader-icon::before{
+  #main-container .loader-icon::before{
     content:''!important;position:absolute!important;top:12px!important;left:8px!important;
     width:64px!important;height:3px!important;background:var(--gold)!important;border-radius:2px!important;
   }
-  #video-container .loader-icon::after{
+  #main-container .loader-icon::after{
     content:''!important;position:absolute!important;top:24px!important;left:8px!important;
     width:60px!important;height:2px!important;background:rgba(212,165,116,0.6)!important;border-radius:1px!important;
     box-shadow:0 8px 0 rgba(212,165,116,0.6), 0 16px 0 rgba(212,165,116,0.4)!important;
@@ -53,43 +59,35 @@
     50%{transform:translateY(-20px) rotateZ(2deg);box-shadow:0 8px 35px var(--shadow), inset 0 0 30px rgba(212,165,116,0.35);}
   }
 
-  #video-container .loader-title{
+  #main-container .loader-title{
     font-family:'Cinzel Decorative',serif!important;font-size:20px!important;
     color:var(--gold)!important;font-weight:700!important;text-shadow:0 3px 12px rgba(0,0,0,0.9)!important;
     letter-spacing:2px!important;text-align:center!important;
   }
 
-  #video-container .loader-bar-bg{
+  #main-container .loader-bar-bg{
     width:360px!important;height:10px!important;background:rgba(255,255,255,0.08)!important;
     border:2px solid var(--gold)!important;border-radius:8px!important;overflow:hidden!important;
     box-shadow:inset 0 0 10px rgba(0,0,0,0.6)!important;
   }
-  #video-container .loader-bar-fill{
+  #main-container .loader-bar-fill{
     width:0%!important;height:100%!important;background:linear-gradient(90deg, var(--gold), #f5deb3)!important;
     box-shadow:0 0 15px var(--gold)!important;transition:width 0.3s ease!important;
   }
 
-  /* ===== VIDEO CONTAINER & FRAME ===== */
-  #video-container .video-wrap{
+  /* VIDEO CONTAINER */
+  #main-container .video-wrap{
     position:absolute!important;inset:0!important;z-index:10!important;
     display:flex!important;align-items:center!important;justify-content:center!important;
     background:#000!important;
   }
-  #video-container video{
+  #main-container video{
     width:100%!important;height:100%!important;object-fit:cover!important;
     display:block!important;
   }
 
-  /* Decorative Frame Overlay */
-  #video-container .frame-overlay{
-    content:''!important;position:absolute!important;inset:0!important;
-    border:5px solid var(--gold)!important;
-    box-shadow:inset 0 0 40px rgba(0,0,0,0.9), 0 0 50px rgba(212,165,116,0.3)!important;
-    pointer-events:none!important;z-index:25!important;
-  }
-
   /* SOUND TOGGLE BUTTON */
-  #video-container .sound-btn{
+  #main-container .sound-btn{
     position:absolute!important;top:24px!important;right:24px!important;z-index:30!important;
     background:rgba(43, 24, 16, 0.9)!important;border:2px solid var(--gold)!important;
     color:#f5deb3!important;font-weight:700!important;font-size:13px!important;
@@ -98,93 +96,255 @@
     transition:0.2s!important;display:flex!important;align-items:center!important;gap:7px!important;
     font-family:'Courier Prime',monospace!important;letter-spacing:0.5px!important;
   }
-  #video-container .sound-btn:hover{transform:scale(1.06)!important;background:var(--gold)!important;color:var(--brown-dark)!important;}
+  #main-container .sound-btn:hover{transform:scale(1.06)!important;background:var(--gold)!important;color:var(--brown-dark)!important;}
 
-  /* ===== END SCREEN OVERLAY ===== */
-  #video-container .end-overlay{
+  /* END SCREEN OVERLAY */
+  #main-container .end-overlay{
     position:absolute!important;inset:0!important;z-index:40!important;
     background:rgba(10, 6, 5, 0.92)!important;backdrop-filter:blur(8px)!important;
     display:none!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
-    gap:24px!important;text-align:center!important;padding:40px!important;
+    gap:20px!important;text-align:center!important;padding:40px!important;
   }
-  #video-container .end-overlay.show{display:flex!important;animation:fadeIn 0.7s ease forwards!important;}
+  #main-container .end-overlay.show{display:flex!important;animation:fadeIn 0.7s ease forwards!important;}
   @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 
-  #video-container .end-card{
-    background:var(--paper)!important;border:4px solid var(--gold)!important;
-    border-radius:16px!important;padding:32px 48px!important;
-    box-shadow:0 0 60px rgba(0,0,0,0.9), inset 0 0 20px rgba(212,165,116,0.1)!important;
-    display:flex!important;flex-direction:column!important;align-items:center!important;gap:14px!important;
-    max-width:620px!important;
+  #main-container .end-card{
+    background:var(--paper)!important;border:3px solid var(--gold)!important;
+    border-radius:14px!important;padding:28px 40px!important;
+    box-shadow:0 0 60px rgba(0,0,0,0.9)!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;gap:20px!important;
+    max-width:500px!important;
   }
 
-  #video-container .end-icon{
-    font-size:48px!important;text-shadow:0 2px 8px rgba(0,0,0,0.4)!important;
+  #main-container .end-text{
+    font-size:16px!important;color:var(--text-dark)!important;font-weight:600!important;
+    line-height:1.7!important;font-family:'Courier Prime',monospace!important;
   }
 
-  #video-container .end-title{
-    font-family:'Cinzel Decorative',serif!important;font-size:24px!important;
-    color:var(--brown-dark)!important;font-weight:700!important;letter-spacing:1px!important;
-  }
-  
-  #video-container .end-subtitle{
-    font-size:15px!important;color:var(--text-dark)!important;font-weight:600!important;
-    line-height:1.6!important;font-family:'Courier Prime',monospace!important;
-  }
-
-  #video-container .end-btn-group{display:flex!important;gap:14px!important;margin-top:8px!important;}
-  #video-container .btn-continue{
-    padding:12px 32px!important;background:var(--brown-dark)!important;border:2px solid var(--gold)!important;
-    border-radius:12px!important;font-weight:700!important;color:var(--gold)!important;
-    font-size:14px!important;cursor:pointer!important;transition:0.2s!important;
+  #main-container .end-btn-group{display:flex!important;gap:12px!important;}
+  #main-container .btn-action{
+    padding:11px 28px!important;background:var(--brown-dark)!important;border:2px solid var(--gold)!important;
+    border-radius:10px!important;font-weight:700!important;color:var(--gold)!important;
+    font-size:13px!important;cursor:pointer!important;transition:0.2s!important;
     box-shadow:0 4px 12px rgba(0,0,0,0.5)!important;font-family:'Courier Prime',monospace!important;
-    letter-spacing:1px!important;text-transform:uppercase!important;
+    letter-spacing:0.8px!important;text-transform:uppercase!important;
   }
-  #video-container .btn-continue:hover{background:var(--gold)!important;color:var(--brown-dark)!important;transform:translateY(-2px)!important;}
+  #main-container .btn-action:hover{background:var(--gold)!important;color:var(--brown-dark)!important;transform:translateY(-2px)!important;}
 
-  /* Case File Stamp */
-  #video-container .case-stamp{
-    display:inline-block!important;border:2px double var(--gold)!important;
-    color:var(--gold)!important;font-family:'Courier Prime',monospace!important;
-    font-weight:bold!important;font-size:11px!important;padding:5px 12px!important;
-    transform:rotate(-8deg)!important;opacity:0.85!important;letter-spacing:1px!important;
-    margin-top:8px!important;
+  /* ===== CASE FILE SECTION ===== */
+  #main-container .case-section{
+    position:absolute!important;inset:0!important;z-index:100!important;
+    background:linear-gradient(135deg, #121212 0%, #0a0a0a 100%)!important;
+    display:none!important;flex-direction:column!important;align-items:center!important;padding:20px!important;
+    overflow-y:auto!important;
+  }
+  #main-container .case-section.active{display:flex!important;}
+
+  #main-container .case-title{
+    font-family:'Special Elite',cursive!important;
+    color:#ffb000!important;letter-spacing:2px!important;margin-bottom:25px!important;
+    margin-top:15px!important;text-shadow:0 0 8px rgba(255, 176, 0, 0.4)!important;
+    font-size:18px!important;
+  }
+
+  #main-container .folder-container{
+    width:100%!important;max-width:950px!important;
+    background:#c39b62!important;border-radius:6px!important;
+    box-shadow:0 15px 35px rgba(0,0,0,0.8), inset 0 0 25px rgba(0,0,0,0.3)!important;
+    padding:30px!important;border:2px solid #a47c45!important;
+  }
+
+  #main-container .documents-grid{
+    display:grid!important;grid-template-columns:1fr 1fr!important;gap:25px!important;margin-bottom:30px!important;
+  }
+
+  #main-container .document{
+    background:#f4ebd0!important;color:#1a1a1a!important;padding:20px!important;
+    border-radius:2px!important;box-shadow:0 5px 15px rgba(0,0,0,0.4)!important;
+    border:1px solid #dcd1b4!important;font-size:0.9rem!important;line-height:1.5!important;
+    position:relative!important;
+  }
+
+  #main-container .doc-left{transform:rotate(-0.5deg)!important;}
+  #main-container .doc-right{transform:rotate(0.5deg)!important;}
+
+  #main-container .document-title{
+    font-family:'Special Elite',cursive!important;font-weight:bold!important;
+    text-align:center!important;border-bottom:2px solid #333!important;padding-bottom:10px!important;
+    margin-bottom:15px!important;text-transform:uppercase!important;font-size:1.1rem!important;
+  }
+
+  #main-container .highlight{
+    background-color:rgba(212, 143, 56, 0.25)!important;
+    padding:2px 4px!important;border-bottom:1px dashed #d48f38!important;
+  }
+
+  #main-container .incident-table{
+    width:100%!important;border-collapse:collapse!important;margin-top:15px!important;font-size:0.8rem!important;
+  }
+
+  #main-container .incident-table th, #main-container .incident-table td{
+    border:1px solid #888!important;padding:8px!important;text-align:left!important;
+  }
+
+  #main-container .incident-table th{
+    background-color:rgba(0,0,0,0.05)!important;font-family:'Special Elite',cursive!important;
+  }
+
+  #main-container .analysis-box{
+    margin-top:25px!important;background:rgba(0,0,0,0.6)!important;border:1px solid #333!important;
+    padding:20px!important;border-radius:4px!important;text-align:center!important;
+  }
+
+  #main-container .analysis-box label{
+    font-family:'Special Elite',cursive!important;color:#ffb000!important;
+    font-size:1.1rem!important;display:block!important;margin-bottom:15px!important;
+  }
+
+  #main-container select{
+    font-family:'Courier Prime',monospace!important;font-weight:bold!important;
+    background:#222!important;color:#fff!important;border:1px solid #555!important;padding:10px!important;
+    width:90%!important;max-width:700px!important;margin-bottom:15px!important;
+    font-size:0.9rem!important;border-radius:4px!important;
+  }
+
+  #main-container select:focus{border-color:#ffb000!important;outline:none!important;}
+
+  #main-container .case-btn{
+    font-family:'Special Elite',cursive!important;background:#8b0000!important;color:#fff!important;
+    border:none!important;padding:12px 30px!important;font-size:1rem!important;
+    text-transform:uppercase!important;cursor:pointer!important;border-radius:4px!important;
+    letter-spacing:1px!important;transition:background 0.2s!important;
+  }
+
+  #main-container .case-btn:hover{background:#a30000!important;}
+
+  #main-container .result-message{
+    margin-top:20px!important;font-size:1rem!important;line-height:1.6!important;
+  }
+
+  #main-container .success-code-box{
+    background:rgba(76, 175, 80, 0.15)!important;border:1px solid #4caf50!important;
+    color:#4caf50!important;padding:15px!important;display:inline-block!important;
+    border-radius:4px!important;margin-top:15px!important;font-family:'Special Elite',cursive!important;
+    font-size:1.2rem!important;letter-spacing:2px!important;
+  }
+
+  @media (max-width: 768px) {
+    #main-container .documents-grid{grid-template-columns:1fr!important;}
   }
 </style>
 
-<!-- PRELOADER -->
-<div class="loader-screen" id="loader">
-  <div class="loader-icon"></div>
-  <div class="loader-title">ANALYZING CASE FILE...</div>
-  <div class="loader-bar-bg">
-    <div class="loader-bar-fill" id="loader-fill" style="width: 0%;"></div>
-  </div>
-</div>
+<!-- ===== VIDEO SECTION ===== -->
+<div class="video-section" id="video-section">
 
-<!-- SOUND CONTROL -->
-<button class="sound-btn" id="sound-btn">🔇 MUTED</button>
-
-<!-- VIDEO PLAYER -->
-<div class="video-wrap">
-  <video id="case-video" playsinline="" preload="auto" muted="" style="width: 100%; height: 100%; max-width: inherit !important; max-height: inherit !important;">
-    <source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/video_2026-08-12_19-12-06.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-  <div class="frame-overlay"></div>
-</div>
-
-<!-- END SCREEN OVERLAY -->
-<div class="end-overlay" id="end-overlay">
-  <div class="end-card">
-    <div class="end-icon">📂</div>
-    <div class="end-title">Case Files Retrieved</div>
-    <div class="end-subtitle">
-      The evidence is yours to examine.<br>
-      <b>Proceed to the dorm. Time is running out.</b>
-      <div class="case-stamp">CLASSIFIED</div>
+  <!-- PRELOADER -->
+  <div class="loader-screen" id="loader">
+    <div class="loader-icon"></div>
+    <div class="loader-title">ANALYZING CASE FILE...</div>
+    <div class="loader-bar-bg">
+      <div class="loader-bar-fill" id="loader-fill" style="width: 0%;"></div>
     </div>
-    <div class="end-btn-group">
-      <button class="btn-continue" id="btn-continue">CONTINUE INVESTIGATION →</button>
+  </div>
+
+  <!-- SOUND CONTROL -->
+  <button class="sound-btn" id="sound-btn">🔇 MUTED</button>
+
+  <!-- VIDEO PLAYER -->
+  <div class="video-wrap">
+    <video id="case-video" playsinline="" preload="auto" muted="" style="width: 100%; height: 100%; max-width: inherit !important; max-height: inherit !important;">
+      <source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/video_2026-08-12_19-12-06.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <!-- END SCREEN OVERLAY -->
+  <div class="end-overlay" id="end-overlay">
+    <div class="end-card">
+      <div class="end-text">The evidence is yours to examine.</div>
+      <div class="end-btn-group">
+        <button class="btn-action" id="btn-rewatch">🔁 REWATCH</button>
+        <button class="btn-action" id="btn-examine">EXAMINE →</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== CASE FILE SECTION ===== -->
+<div class="case-section" id="case-section">
+  <h2 class="case-title">📂 FEDERAL BUREAU OF INVESTIGATION - ACTIVE CASE</h2>
+
+  <div class="folder-container">
+    <div class="documents-grid">
+
+      <!-- Document 1: FBI Pattern Report -->
+      <div class="document doc-left">
+        <div class="document-title">INCIDENT PATTERN SUMMARY</div>
+        <p><strong>Lead Agent:</strong> Collins, FBI</p>
+        <p><strong>Local Authority:</strong> Fall River PD</p>
+        <p><strong>Summary:</strong> Over the past 30 days, three sophomore students vanished from the campus under identical weather conditions (dense fog, heavy rainfall).</p>
+        
+        <table class="incident-table">
+          <thead>
+            <tr>
+              <th>Victim</th>
+              <th>Date</th>
+              <th>Reported Attire (Departure)</th>
+              <th>Attire by Witness</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Thomas Wright</td>
+              <td>Aug 20</td>
+              <td><span class="highlight">Green cotton hoodie</span>, jeans</td>
+              <td>Bright yellow raincoat</td>
+            </tr>
+            <tr>
+              <td>Sarah Connor</td>
+              <td>Sept 2</td>
+              <td><span class="highlight">Black leather jacket</span>, boots</td>
+              <td>White evening dress</td>
+            </tr>
+            <tr>
+              <td>Lucy Miller</td>
+              <td>Sept 9</td>
+              <td><span class="highlight">Blue denim jacket</span>, backpack</td>
+              <td>Bright red varsity jacket</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size: 0.8rem; margin-top: 10px; font-style: italic;">
+          *Roommates confirmed victims did not own the clothes described by forest-edge witnesses.
+        </p>
+      </div>
+
+      <!-- Document 2: Witness Audits -->
+      <div class="document doc-right">
+        <div class="document-title">WITNESS TESTIMONY AUDIT</div>
+        <p><strong>Witness:</strong> Mrs. Gable (Blackwood Forest border resident)</p>
+        <p><strong>Statement:</strong> "At approximately 8:45 PM, I observed a young woman fitting Lucy's description walking into the treeline. What struck me was her <span class="highlight">bright red varsity jacket</span>. In dense fog, it was very visible. She was carrying <span class="highlight">no bags</span> and walked as if in a trance."</p>
+        
+        <p><strong>Roommate Statement (Jane Doe):</strong> "Lucy left Room 213 at 8:30 PM heading to the library. She wore her <span class="highlight">blue denim jacket</span> and carried her <span class="highlight">heavy black backpack</span> with her laptop. She definitely did not own a red varsity jacket."</p>
+      </div>
+
+    </div>
+
+    <!-- Quiz Section -->
+    <div class="analysis-box">
+      <label for="deduction-select">🔎 SUBMIT YOUR DEDUCTIVE ANALYSIS</label>
+      <select id="deduction-select">
+        <option value="">-- Select the logical deduction based on the evidence --</option>
+        <option value="wrong_1">The victims purchased new clothing immediately before disappearing.</option>
+        <option value="correct">The witnesses could not have seen the real students. The clothing discrepancies indicate a different entity assumed their forms.</option>
+        <option value="wrong_2">The roommates are withholding information and lying about the victims' wardrobes.</option>
+        <option value="wrong_3">Local police altered reports to cover up a campus security failure.</option>
+      </select>
+      <br>
+      <button class="case-btn" onclick="evaluateDeduction()">Verify Evidence</button>
+
+      <div id="result-display" class="result-message"></div>
     </div>
   </div>
 </div>
@@ -196,7 +356,10 @@
   var loaderFill = document.getElementById('loader-fill');
   var soundBtn = document.getElementById('sound-btn');
   var endOverlay = document.getElementById('end-overlay');
-  var continueBtn = document.getElementById('btn-continue');
+  var rewatchBtn = document.getElementById('btn-rewatch');
+  var examineBtn = document.getElementById('btn-examine');
+  var videoSection = document.getElementById('video-section');
+  var caseSection = document.getElementById('case-section');
 
   if(!video) return;
 
@@ -219,7 +382,6 @@
       var playPromise = video.play();
       if(playPromise !== undefined){
         playPromise.catch(function(){
-          /* Autoplay blocked fallback */
           soundBtn.textContent = '▶ PLAY VIDEO';
         });
       }
@@ -228,7 +390,6 @@
 
   video.addEventListener('canplaythrough', startVideo, { once: true });
 
-  /* Fallback timeout */
   setTimeout(function(){
     if(loader && !loader.classList.contains('hidden')) {
       startVideo();
@@ -253,16 +414,47 @@
     if(endOverlay) endOverlay.classList.add('show');
   });
 
-  /* Continue Button Handler */
-  continueBtn.addEventListener('click', function(){
-    /* Отправляем сигнал родительскому фрейму в Genially */
-    if(window.parent !== window){
-      window.parent.postMessage({type: 'scene-complete', scene: 'backseat-video'}, '*');
-    }
-    console.log('Proceeding to next scene...');
+  /* Rewatch Button */
+  rewatchBtn.addEventListener('click', function(){
+    if(endOverlay) endOverlay.classList.remove('show');
+    video.currentTime = 0;
+    video.play();
+  });
+
+  /* Examine Button */
+  examineBtn.addEventListener('click', function(){
+    videoSection.classList.add('hidden');
+    caseSection.classList.add('active');
   });
 
 })();
+
+/* Case File Deduction */
+function evaluateDeduction() {
+  var select = document.getElementById('deduction-select');
+  var resultDiv = document.getElementById('result-display');
+  
+  if (select.value === 'correct') {
+    resultDiv.innerHTML = `
+      <span style="color: #4caf50; font-weight: bold;">✓ ANALYSIS VERIFIED.</span><br>
+      <span style="color: #e0e0e0; font-size: 0.95rem; margin-top: 10px; display: block;">
+        The clothing differences are important. An entity is copying the students' bodies. However, the clothes are wrong. This suggests the entity knows about the victims only from descriptions and stories—not from seeing them directly.
+      </span><br>
+      <div class="success-code-box">
+        UNLOCK CODE: TULPA1967
+      </div>
+    `;
+  } else if (select.value === '') {
+    resultDiv.innerHTML = '<span style="color: #ffb000;">System: Select a deductive option before verifying.</span>';
+  } else {
+    resultDiv.innerHTML = `
+      <span style="color: #d32f2f; font-weight: bold;">✗ ANALYSIS REJECTED.</span><br>
+      <span style="color: #bbb; font-size: 0.95rem; margin-top: 10px; display: block;">
+        Review the evidence. The pattern is consistent across all three cases. Focus on what changed between the moment of departure and the moment of sighting.
+      </span>
+    `;
+  }
+}
 </script>
 </div>
 </body>
