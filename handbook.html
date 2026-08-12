@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hunter's Handbook</title>
+    <title>John Winchester's Handbook</title>
     <style>
         * {
             margin: 0;
@@ -27,13 +27,13 @@
             padding: 20px;
         }
 
-        /* ===== ОБЛОЖКА ===== */
+        /* ===== ОБЛОЖКА (без рамки, крупнее, с подсветкой) ===== */
         .cover-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 30px;
+            gap: 34px;
             opacity: 1;
             transition: opacity 0.5s;
         }
@@ -44,64 +44,34 @@
         }
 
         .cover-book {
-            width: 300px;
-            height: 400px;
-            background: linear-gradient(135deg, #8B6F47 0%, #6B5D45 50%, #4A3D2C 100%);
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.3);
-            position: relative;
-            border: 2px solid #3a2a18;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 380px;
+            height: 500px;
+            background-image: url('https://i.yapx.ru/eFvKn.png');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: transparent;
+            border: none;
+            filter: drop-shadow(0 0 18px rgba(212, 165, 116, 0.55)) drop-shadow(0 10px 25px rgba(0,0,0,0.6));
+            animation: glowPulse 3s ease-in-out infinite;
         }
 
-        .cover-book::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,.02) 2px, rgba(255,255,255,.02) 4px),
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.02) 2px, rgba(255,255,255,.02) 4px);
-            border-radius: 8px;
-            pointer-events: none;
-        }
-
-        .cover-clasp {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 60px;
-            background: linear-gradient(90deg, #a89968, #c4a962, #a89968);
-            border: 2px solid #7a6a4a;
-            border-radius: 4px;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.3);
-        }
-
-        .cover-clasp::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px;
-            height: 40px;
-            background: #555;
-            border-radius: 2px;
+        @keyframes glowPulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 14px rgba(212, 165, 116, 0.4)) drop-shadow(0 10px 25px rgba(0,0,0,0.6));
+            }
+            50% {
+                filter: drop-shadow(0 0 30px rgba(212, 165, 116, 0.8)) drop-shadow(0 10px 25px rgba(0,0,0,0.6));
+            }
         }
 
         .btn-open {
-            padding: 12px 32px;
+            padding: 14px 38px;
             background: #5d4037;
             color: #f5deb3;
             border: 2px solid #8b6f47;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
@@ -137,12 +107,12 @@
         .book-screen.active {
             opacity: 1;
             pointer-events: auto;
-            gap: 15px;
+            gap: 18px;
         }
 
         .book {
-            width: 900px;
-            height: 550px;
+            width: 1000px;
+            height: 610px;
             background: #ebdcb9;
             border-radius: 8px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.4);
@@ -155,7 +125,7 @@
 
         .page {
             position: relative;
-            padding: 30px;
+            padding: 38px;
             display: flex;
             flex-direction: column;
             background: #ebdcb9;
@@ -163,18 +133,61 @@
 
         .page-left {
             border-right: 2px solid #c8a882;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* ЛЕВАЯ СТРАНИЦА - КАРТИНКА */
-        .page-image {
+        /* ЛЕВАЯ СТРАНИЦА - КАРТИНКА С ЭФФЕКТОМ ФОТО */
+        .photo-wrapper {
+            position: relative;
             width: 100%;
             height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-image {
+            width: 92%;
+            height: 92%;
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
-            border-radius: 3px;
-            clip-path: polygon(0 0, 98% 1%, 99% 3%, 100% 98%, 99% 99%, 2% 100%, 1% 97%, 0 2%);
-            box-shadow: 2px 3px 8px rgba(0,0,0,0.2);
+            background-color: #f5f0e5;
+            clip-path: polygon(
+                1% 3%, 8% 0%, 22% 1.5%, 35% 0.3%, 51% 1.8%, 67% 0%, 81% 1.2%, 94% 0.5%, 99% 2.5%,
+                100% 12%, 98.5% 25%, 100% 38%, 99% 52%, 100% 66%, 98.7% 80%, 100% 93%, 97% 99%,
+                85% 100%, 71% 98.5%, 58% 100%, 44% 98.8%, 30% 100%, 16% 98.5%, 4% 100%, 0% 90%,
+                1.5% 76%, 0% 62%, 1.2% 48%, 0% 34%, 1.5% 20%, 0% 8%
+            );
+            box-shadow: 3px 5px 15px rgba(0,0,0,0.35);
+            position: relative;
+            transform: rotate(-1.5deg);
+        }
+
+        /* КУСОЧКИ СКОТЧА */
+        .tape {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(255,250,235,0.75), rgba(240,230,205,0.55));
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15), inset 0 0 8px rgba(255,255,255,0.3);
+            border: 1px solid rgba(200,180,140,0.3);
+            z-index: 5;
+        }
+
+        .tape-tl {
+            width: 70px;
+            height: 26px;
+            top: -8px;
+            left: 8%;
+            transform: rotate(-35deg);
+        }
+
+        .tape-tr {
+            width: 70px;
+            height: 26px;
+            top: -6px;
+            right: 10%;
+            transform: rotate(28deg);
         }
 
         /* ПРАВАЯ СТРАНИЦА - ТЕКСТ */
@@ -182,7 +195,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            gap: 12px;
+            gap: 14px;
             overflow-y: auto;
             padding-right: 12px;
         }
@@ -197,24 +210,68 @@
         }
 
         .entity-name {
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
             color: #3e2723;
             border-bottom: 2px solid #8b6f47;
-            padding-bottom: 8px;
+            padding-bottom: 10px;
             font-family: 'Georgia', serif;
         }
 
         .entity-text {
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 19px;
+            line-height: 1.7;
             color: #2b221a;
             text-align: justify;
             font-family: 'Georgia', serif;
         }
 
         .entity-text p {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        /* СТРАНИЦА ПОСВЯЩЕНИЯ */
+        .dedication-page {
+            grid-column: 1 / 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 100px;
+            background: #ebdcb9;
+        }
+
+        .dedication-content {
+            max-width: 620px;
+            text-align: center;
+        }
+
+        .dedication-title {
+            font-size: 24px;
+            color: #8b6f47;
+            font-style: italic;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .dedication-text {
+            font-size: 20px;
+            line-height: 1.9;
+            color: #2b221a;
+            font-family: 'Georgia', serif;
+            text-align: left;
+            font-style: italic;
+        }
+
+        .dedication-text p {
+            margin-bottom: 16px;
+        }
+
+        .dedication-signature {
+            margin-top: 25px;
+            font-size: 20px;
+            color: #3e2723;
+            font-weight: bold;
+            text-align: right;
         }
 
         /* ВЫДЕЛЕННЫЕ СЛОВА И TOOLTIPS */
@@ -222,8 +279,8 @@
             position: relative;
             border-bottom: 2px dotted #d4a574;
             cursor: help;
-            font-weight: 500;
-            color: #2b221a;
+            font-weight: 600;
+            color: #5d4037;
         }
 
         .tooltip {
@@ -232,7 +289,7 @@
             color: #ffd9b3;
             padding: 8px 12px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             white-space: nowrap;
             z-index: 99999;
@@ -251,13 +308,8 @@
             font-family: 'Courier New', monospace;
         }
 
-        .page-number-left {
-            left: 20px;
-        }
-
-        .page-number-right {
-            right: 20px;
-        }
+        .page-number-left { left: 20px; }
+        .page-number-right { right: 20px; }
 
         /* НАВИГАЦИЯ */
         .controls {
@@ -294,11 +346,11 @@
             font-size: 14px;
             font-family: 'Courier New', monospace;
             color: #5d4037;
-            min-width: 40px;
+            min-width: 60px;
             text-align: center;
         }
 
-        /* ===== КВИЗ ===== */
+        /* ===== ФИНАЛЬНОЕ ЗАДАНИЕ: FILL IN THE BLANKS ===== */
         .quiz-screen {
             position: fixed;
             top: 0;
@@ -323,100 +375,102 @@
         }
 
         .quiz-container {
-            width: 700px;
+            width: 780px;
             background: #ebdcb9;
             border: 2px solid #c8a882;
             border-radius: 8px;
-            padding: 40px;
+            padding: 45px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
         }
 
         .quiz-title {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: bold;
             color: #3e2723;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             border-bottom: 3px solid #8b6f47;
             padding-bottom: 15px;
         }
 
+        .quiz-subtitle {
+            font-size: 15px;
+            color: #8b6f47;
+            font-style: italic;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
         .quiz-question {
-            margin-bottom: 25px;
+            margin-bottom: 28px;
+            padding: 18px 20px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 8px;
+            border-left: 4px solid #8b6f47;
         }
 
         .quiz-q-number {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            color: #5d4037;
-            margin-bottom: 8px;
+            color: #8b6f47;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .quiz-q-text {
-            font-size: 15px;
+            font-size: 18px;
+            line-height: 1.6;
             color: #2b221a;
-            margin-bottom: 10px;
-            font-style: italic;
+            margin-bottom: 15px;
         }
 
-        .quiz-options {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .quiz-opt {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #8b6f47;
-            background: white;
-            color: #2b221a;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+        .blank-select {
+            display: inline-block;
+            min-width: 200px;
+            padding: 6px 10px;
+            border: none;
+            border-bottom: 3px solid #d4a574;
+            background: rgba(212,165,116,0.15);
+            font-size: 17px;
+            font-weight: 700;
             font-family: 'Georgia', serif;
+            color: #5d4037;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
         }
 
-        .quiz-opt:hover:not(:disabled) {
-            background: #d4a574;
-            color: white;
+        .blank-select:focus {
+            outline: none;
+            background: rgba(212,165,116,0.3);
         }
 
-        .quiz-opt:disabled {
-            cursor: default;
+        .blank-select.correct {
+            background: rgba(76, 175, 80, 0.25);
+            border-bottom-color: #2e7d32;
+            color: #1b5e20;
         }
 
-        .quiz-opt.correct {
-            background: #4caf50;
-            color: white;
-            border-color: #2e7d32;
+        .blank-select.wrong {
+            background: rgba(244, 67, 54, 0.2);
+            border-bottom-color: #c62828;
+            color: #b71c1c;
         }
 
-        .quiz-opt.wrong {
-            background: #f44336;
-            color: white;
-            border-color: #c62828;
-        }
-
-        .quiz-feedback {
-            font-size: 13px;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 4px;
+        .quiz-feedback-line {
+            font-size: 14px;
+            margin-top: 8px;
             display: none;
-            text-align: center;
+            font-weight: 600;
         }
 
-        .quiz-feedback.show {
-            display: block;
-        }
+        .quiz-feedback-line.show { display: block; }
 
-        .btn-finish {
+        .btn-check {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             background: #5d4037;
             color: #f5deb3;
             border: 2px solid #8b6f47;
@@ -426,20 +480,30 @@
             font-weight: bold;
             transition: all 0.3s;
             font-family: 'Georgia', serif;
-            margin-top: 30px;
+            margin-top: 15px;
         }
 
-        .btn-finish:hover {
+        .btn-check:hover {
             background: #8b6f47;
             color: #2b2b2b;
         }
 
-        .btn-finish:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .final-message {
+            display: none;
+            margin-top: 20px;
+            padding: 18px;
+            background: rgba(76, 175, 80, 0.15);
+            border: 2px solid #2e7d32;
+            border-radius: 6px;
+            text-align: center;
+            color: #1b5e20;
+            font-size: 16px;
+            font-weight: 600;
         }
 
-        @media (max-width: 1000px) {
+        .final-message.show { display: block; }
+
+        @media (max-width: 1050px) {
             .book {
                 width: 95vw;
                 height: auto;
@@ -449,11 +513,13 @@
             .page-left {
                 border-right: none;
                 border-bottom: 2px solid #c8a882;
-                min-height: 200px;
+                min-height: 250px;
             }
-            .quiz-container {
-                width: 95vw;
+            .dedication-page {
+                grid-column: 1;
+                padding: 30px;
             }
+            .quiz-container { width: 95vw; }
         }
     </style>
 </head>
@@ -462,45 +528,29 @@
 <div class="handbook">
     <!-- ОБЛОЖКА -->
     <div class="cover-screen" id="coverScreen">
-        <div class="cover-book">
-            <div class="cover-clasp"></div>
-        </div>
+        <div class="cover-book"></div>
         <button class="btn-open" id="btnOpen">Open Handbook ✦</button>
     </div>
 
     <!-- ДНЕВНИК -->
     <div class="book-screen" id="bookScreen">
-        <div class="book">
-            <!-- ЛЕВАЯ СТРАНИЦА - КАРТИНКА -->
-            <div class="page page-left">
-                <div class="page-image" id="pageImage"></div>
-                <div class="page-number page-number-left" id="pageNumLeft">1</div>
-            </div>
-
-            <!-- ПРАВАЯ СТРАНИЦА - ТЕКСТ -->
-            <div class="page page-right">
-                <div class="page-content" id="pageContent">
-                    <div class="entity-name" id="entityName"></div>
-                    <div class="entity-text" id="entityDesc"></div>
-                </div>
-                <div class="page-number page-number-right" id="pageNumRight">2</div>
-            </div>
-        </div>
-
-        <!-- НАВИГАЦИЯ -->
+        <div class="book" id="bookEl"></div>
         <div class="controls">
             <button class="btn-nav" id="btnPrev" disabled>← PREVIOUS</button>
-            <div class="page-counter"><span id="currentPage">1</span> / 5</div>
+            <div class="page-counter"><span id="currentPage">1</span> / 6</div>
             <button class="btn-nav" id="btnNext">NEXT →</button>
         </div>
     </div>
 
-    <!-- КВИЗ -->
+    <!-- ФИНАЛЬНОЕ ЗАДАНИЕ -->
     <div class="quiz-screen" id="quizScreen">
-        <div class="quiz-container" id="quizContainer">
-            <div class="quiz-title">VOCABULARY CHECK</div>
+        <div class="quiz-container">
+            <div class="quiz-title">Complete John's Notes</div>
+            <div class="quiz-subtitle">Fill in the blanks using the correct hunter's terminology</div>
             <div id="quizContent"></div>
-            <button class="btn-finish" id="btnFinish" disabled>Finish</button>
+            <div class="final-message" id="finalMessage">
+                ✓ Well done, agent. You now know John Winchester's field notes by heart. Time to move out.
+            </div>
         </div>
     </div>
 </div>
@@ -508,98 +558,130 @@
 <div id="tooltip" class="tooltip" style="display: none;"></div>
 
 <script>
-const ENTITIES = [
+// ===== СТРАНИЦЫ: ПОСВЯЩЕНИЕ + 5 СУЩЕСТВ =====
+const PAGES = [
     {
+        type: 'dedication',
+        html: `
+            <div class="dedication-page">
+                <div class="dedication-content">
+                    <div class="dedication-title">— Fall River, three students missing: Thomas, Sara, Lucy —</div>
+                    <div class="dedication-text">
+                        <p>Dean. Sam.</p>
+                        <p>If you're reading this, I'm not around to explain it myself. So listen close.</p>
+                        <p>Every case starts the same way — a name, a town, a list of things that don't add up. This one's Fall River. Three kids gone without a trace.</p>
+                        <p>I wrote this book so you'd never walk into the dark unprepared. Five creatures. Five ways to survive them. Learn every word. Some day the right word — <span class="vocab-word" data-tip="кремировать, сжечь">cremate</span>, <span class="vocab-word" data-tip="обезглавить">decapitate</span>, <span class="vocab-word" data-tip="изгнать (демона)">exorcise</span> — will be the only thing standing between you and something that shouldn't exist.</p>
+                        <p>Trust the research. Trust each other. And finish what I started.</p>
+                    </div>
+                    <div class="dedication-signature">— Dad</div>
+                </div>
+            </div>
+        `
+    },
+    {
+        type: 'entity',
         name: 'Ghost',
         image: 'https://i.yapx.ru/eFuQv.png',
-        desc: 'Spectral entities are <span class="vocab-word" data-tip="закреплён, привязан">anchored</span> to the earthly realm by physical remains. To neutralize a ghost permanently, one must locate the corporeal vessel and <span class="vocab-word" data-tip="кремировать">cremate</span> it using salt and fuel. The spirit cannot <span class="vocab-word" data-tip="проявляться">manifest</span> without its anchor.'
+        desc: 'A ghost is the spirit of a dead person. It cannot leave our world because it is <span class="vocab-word" data-tip="закреплён, привязан">anchored</span> to something — usually its own bones or a personal object.<br><br>Locate the remains and <span class="vocab-word" data-tip="кремировать, сжечь">cremate</span> them with salt and fire. After that, the spirit cannot <span class="vocab-word" data-tip="появляться, проявляться">manifest</span> anymore. It\'s gone for good.'
     },
     {
+        type: 'entity',
         name: 'Werewolf',
         image: 'https://i.yapx.ru/eFuQw.png',
-        desc: 'Humans afflicted with a <span class="vocab-word" data-tip="проклятие">curse</span> that forces transformation during lunar cycles. Unlike most <span class="vocab-word" data-tip="существа, сущности">entities</span>, they retain some human consciousness. Silver-based ammunition can weaken them, but a <span class="vocab-word" data-tip="освященный">blessed</span> bullet to the heart is the most effective termination method.'
+        desc: 'A werewolf is a person carrying a dangerous <span class="vocab-word" data-tip="проклятие">curse</span>. On full-moon nights, this person changes into a wolf-like monster and loses all control.<br><br>Silver can hurt a werewolf, but only a <span class="vocab-word" data-tip="освящённый">blessed</span> silver bullet through the heart will stop it for good.'
     },
     {
+        type: 'entity',
         name: 'Vampire',
         image: 'https://i.yapx.ru/eFuQz.png',
-        desc: 'Vampires are one of the oldest <span class="vocab-word" data-tip="существа, сущности">entities</span> in hunting records. They possess superhuman strength and <span class="vocab-word" data-tip="восстанавливаться">regenerate</span> rapidly. The only <span class="vocab-word" data-tip="окончательный, решительный">definitive method</span> of execution is complete <span class="vocab-word" data-tip="обезглавливание">decapitation</span>. Iron does not affect them; they are <span class="vocab-word" data-tip="неуязвим">immune</span> to most traditional weapons.'
+        desc: 'Vampires are some of the oldest <span class="vocab-word" data-tip="существа, сущности">entities</span> a hunter will face. They\'re extremely strong, and wounds <span class="vocab-word" data-tip="восстанавливаться">regenerate</span> almost instantly.<br><br>Guns and knives won\'t help — they\'re <span class="vocab-word" data-tip="неуязвимый">immune</span> to normal weapons. To neutralize a vampire, one must <span class="vocab-word" data-tip="обезглавить">decapitate</span> the subject using a blade. There is no other way.'
     },
     {
+        type: 'entity',
         name: 'Demon',
         image: 'https://i.yapx.ru/eFuQ0.png',
-        desc: 'Demonic possessions require <span class="vocab-word" data-tip="экзорцизм, изгнание">exorcism</span> through ritualistic binding. Demons are not <span class="vocab-word" data-tip="проявления">manifestations</span> of belief—they are <span class="vocab-word" data-tip="разумный, сознательный">sentient entities</span> from another realm. They can <span class="vocab-word" data-tip="завладевать">possess</span> multiple hosts and travel between bodies. Holy water and salt circles provide temporary containment.'
+        desc: 'A demon is a <span class="vocab-word" data-tip="разумный, сознательный">sentient</span> <span class="vocab-word" data-tip="существо, сущность">entity</span> from another world. It needs a human body to stay here, so it must <span class="vocab-word" data-tip="овладевать, вселяться">possess</span> a person.<br><br>To remove it, hunters <span class="vocab-word" data-tip="изгонять демона">exorcise</span> the host with a special ritual. Holy water and a salt circle can hold it back for a while.'
     },
     {
+        type: 'entity',
         name: 'Tulpa',
         image: 'https://i.yapx.ru/eFuQy.png',
-        desc: 'Tulpas are unique <span class="vocab-word" data-tip="умственный, мыслительный">cognitive</span> <span class="vocab-word" data-tip="проявления">manifestations</span> brought to life by collective <span class="vocab-word" data-tip="вера, убеждение">belief</span> and internet rumors. Unlike traditional <span class="vocab-word" data-tip="существа, сущности">entities</span>, they have no physical <span class="vocab-word" data-tip="якорь, опора">anchor</span> but instead feed on the written lore about them. If the legend is altered, the creature\'s physical properties and weaknesses must adapt accordingly.'
+        desc: 'A tulpa is different from every other <span class="vocab-word" data-tip="существо, сущность">entity</span> in this book. It has no real body — people create it with their own <span class="vocab-word" data-tip="вера, убеждение">belief</span>.<br><br>Tulpas are unique: they are <span class="vocab-word" data-tip="умственные проявления, порождённые верой">cognitive manifestations</span> brought to life by collective belief. Change the story people believe, and the tulpa itself will change too.'
     }
 ];
 
-const QUIZ_QUESTIONS = [
+// ===== ФИНАЛЬНОЕ ЗАДАНИЕ (точно по сценарию) =====
+const BLANKS = [
     {
-        q: 'What does "anchor" mean?',
-        options: ['A weapon', 'A connection or support point', 'A type of curse', 'A spell'],
-        correct: 1
+        before: 'To neutralize a vampire, one must',
+        after: 'the subject using a blade.',
+        options: ['exorcise', 'dissect', 'decapitate'],
+        correct: 'decapitate'
     },
     {
-        q: 'How do you neutralize a Ghost permanently?',
-        options: ['With holy water', 'By finding and cremating its physical remains', 'With silver bullets', 'By reading an exorcism ritual'],
-        correct: 1
+        before: 'Spectral entities are often anchored to the earthly realm by physical remains; locate and',
+        after: 'them with salt.',
+        options: ['bury', 'submerge', 'cremate'],
+        correct: 'cremate'
     },
     {
-        q: 'What does "blessed" mean in the context of hunting?',
-        options: ['Happy', 'Sanctified or made holy', 'Expensive', 'Sharp'],
-        correct: 1
-    },
-    {
-        q: 'What is the main difference between a Tulpa and other entities?',
-        options: ['It has superhuman strength', 'It exists only through collective belief', 'It can regenerate', 'It requires holy water to defeat'],
-        correct: 1
-    },
-    {
-        q: 'How can Demons be temporarily stopped?',
-        options: ['With silver bullets', 'With blessed weapons', 'With holy water and salt circles', 'With exorcism alone'],
-        correct: 2
+        before: 'Tulpas are unique: they are',
+        after: 'brought to life by collective belief.',
+        options: ['demonic curses', 'cognitive manifestations', 'radioactive anomalies'],
+        correct: 'cognitive manifestations'
     }
 ];
 
 let currentPage = 0;
+const totalPages = PAGES.length;
 const tooltip = document.getElementById('tooltip');
 
-function showPage(idx) {
-    if (idx < 0 || idx >= ENTITIES.length) return;
-    
-    const entity = ENTITIES[idx];
-    document.getElementById('pageImage').style.backgroundImage = `url('${entity.image}')`;
-    document.getElementById('entityName').textContent = entity.name;
-    document.getElementById('entityDesc').innerHTML = entity.desc;
-    document.getElementById('pageNumLeft').textContent = idx * 2 + 1;
-    document.getElementById('pageNumRight').textContent = idx * 2 + 2;
+function renderPage(idx) {
+    if (idx < 0 || idx >= totalPages) return;
+    const page = PAGES[idx];
+    const bookEl = document.getElementById('bookEl');
+
+    if (page.type === 'dedication') {
+        bookEl.innerHTML = page.html;
+    } else {
+        bookEl.innerHTML = `
+            <div class="page page-left">
+                <div class="photo-wrapper">
+                    <div class="page-image" style="background-image:url('${page.image}');">
+                        <div class="tape tape-tl"></div>
+                        <div class="tape tape-tr"></div>
+                    </div>
+                </div>
+                <div class="page-number page-number-left">${idx * 2 + 1}</div>
+            </div>
+            <div class="page page-right">
+                <div class="page-content">
+                    <div class="entity-name">${page.name}</div>
+                    <div class="entity-text">${page.desc}</div>
+                </div>
+                <div class="page-number page-number-right">${idx * 2 + 2}</div>
+            </div>
+        `;
+    }
+
     document.getElementById('currentPage').textContent = idx + 1;
-    
     document.getElementById('btnPrev').disabled = (idx === 0);
-    document.getElementById('btnNext').disabled = (idx === ENTITIES.length - 1);
-    
+
     currentPage = idx;
-    
-    // Добавляем слушатели для tooltips
     setupTooltips();
 }
 
 function setupTooltips() {
     const words = document.querySelectorAll('.vocab-word');
     words.forEach(word => {
-        word.addEventListener('mouseenter', (e) => {
+        word.addEventListener('mouseenter', () => {
             const tip = word.getAttribute('data-tip');
             tooltip.textContent = tip;
             tooltip.style.display = 'block';
-            
             const rect = word.getBoundingClientRect();
             tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
-            tooltip.style.top = (rect.top - 35) + 'px';
+            tooltip.style.top = (rect.top - 38) + 'px';
         });
-        
         word.addEventListener('mouseleave', () => {
             tooltip.style.display = 'none';
         });
@@ -609,99 +691,82 @@ function setupTooltips() {
 function showQuiz() {
     document.getElementById('bookScreen').classList.remove('active');
     document.getElementById('quizScreen').classList.add('active');
-    
+
     let html = '';
-    QUIZ_QUESTIONS.forEach((q, i) => {
+    BLANKS.forEach((b, i) => {
+        const shuffled = [...b.options];
         html += `
             <div class="quiz-question">
-                <div class="quiz-q-number">Question ${i + 1} / ${QUIZ_QUESTIONS.length}</div>
-                <div class="quiz-q-text">${q.q}</div>
-                <div class="quiz-options">
-        `;
-        q.options.forEach((opt, j) => {
-            html += `<button class="quiz-opt" onclick="answerQuiz(${i}, ${j})">${opt}</button>`;
-        });
-        html += `
+                <div class="quiz-q-number">Sentence ${i + 1} / ${BLANKS.length}</div>
+                <div class="quiz-q-text">
+                    ${b.before}
+                    <select class="blank-select" id="blank-${i}">
+                        <option value="">— choose —</option>
+                        ${shuffled.map(o => `<option value="${o}">${o}</option>`).join('')}
+                    </select>
+                    ${b.after}
                 </div>
-                <div class="quiz-feedback" id="feedback-${i}"></div>
+                <div class="quiz-feedback-line" id="feedback-${i}"></div>
             </div>
         `;
     });
-    
+    html += `<button class="btn-check" id="btnCheck">Check My Answers</button>`;
+
     document.getElementById('quizContent').innerHTML = html;
+    document.getElementById('btnCheck').addEventListener('click', checkAnswers);
 }
 
-let answersCorrect = 0;
+function checkAnswers() {
+    let allCorrect = true;
 
-function answerQuiz(qIdx, optIdx) {
-    const q = QUIZ_QUESTIONS[qIdx];
-    const buttons = document.querySelectorAll(`.quiz-question:nth-child(${qIdx + 2}) .quiz-opt`);
-    const feedback = document.getElementById(`feedback-${qIdx}`);
-    
-    buttons.forEach((btn, i) => {
-        btn.disabled = true;
-        if (i === q.correct) {
-            btn.classList.add('correct');
-        } else if (i === optIdx && optIdx !== q.correct) {
-            btn.classList.add('wrong');
+    BLANKS.forEach((b, i) => {
+        const select = document.getElementById(`blank-${i}`);
+        const feedback = document.getElementById(`feedback-${i}`);
+        const value = select.value;
+
+        select.classList.remove('correct', 'wrong');
+
+        if (value === b.correct) {
+            select.classList.add('correct');
+            feedback.textContent = '✓ Correct!';
+            feedback.style.color = '#1b5e20';
+        } else {
+            select.classList.add('wrong');
+            feedback.textContent = value ? '✗ Not quite. Try again.' : '✗ Please choose an answer.';
+            feedback.style.color = '#b71c1c';
+            allCorrect = false;
         }
+        feedback.classList.add('show');
     });
-    
-    if (optIdx === q.correct) {
-        feedback.innerHTML = '✓ Correct!';
-        feedback.style.background = 'rgba(76, 175, 80, 0.2)';
-        feedback.style.color = '#1b5e20';
-        answersCorrect++;
-    } else {
-        feedback.innerHTML = '✗ Incorrect';
-        feedback.style.background = 'rgba(244, 67, 54, 0.2)';
-        feedback.style.color = '#b71c1c';
-    }
-    feedback.classList.add('show');
-    
-    // Активируем финальную кнопку если все ответил
-    if (answersCorrect === QUIZ_QUESTIONS.length) {
-        document.getElementById('btnFinish').disabled = false;
+
+    if (allCorrect) {
+        document.getElementById('finalMessage').classList.add('show');
     }
 }
 
 document.getElementById('btnOpen').addEventListener('click', () => {
     document.getElementById('coverScreen').classList.add('hidden');
     document.getElementById('bookScreen').classList.add('active');
-    showPage(0);
+    renderPage(0);
 });
 
 document.getElementById('btnPrev').addEventListener('click', () => {
-    if (currentPage > 0) showPage(currentPage - 1);
+    if (currentPage > 0) renderPage(currentPage - 1);
 });
 
 document.getElementById('btnNext').addEventListener('click', () => {
-    if (currentPage < ENTITIES.length - 1) {
-        showPage(currentPage + 1);
+    if (currentPage < totalPages - 1) {
+        renderPage(currentPage + 1);
     } else {
         showQuiz();
     }
 });
 
-document.getElementById('btnFinish').addEventListener('click', () => {
-    alert(`Great! You scored ${answersCorrect}/${QUIZ_QUESTIONS.length}. The Handbook is complete!`);
-    document.getElementById('quizScreen').classList.remove('active');
-    document.getElementById('coverScreen').classList.remove('hidden');
-    answersCorrect = 0;
-    currentPage = 0;
-});
-
-// Keyboard navigation
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' && !document.getElementById('bookScreen').classList.contains('active') === false) {
-        document.getElementById('btnNext').click();
-    }
-    if (e.key === 'ArrowLeft' && !document.getElementById('bookScreen').classList.contains('active') === false) {
-        document.getElementById('btnPrev').click();
-    }
+    if (!document.getElementById('bookScreen').classList.contains('active')) return;
+    if (e.key === 'ArrowRight') document.getElementById('btnNext').click();
+    if (e.key === 'ArrowLeft') document.getElementById('btnPrev').click();
 });
-
-showPage(0);
 </script>
 
 </body>
