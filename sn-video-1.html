@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Backseat - Supernatural Investigation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="video-container" style="all:initial!important;display:block!important;width:100%!important;height:100vh!important;position:relative!important;overflow:hidden!important;box-sizing:border-box!important;font-family:'Courier Prime',monospace!important;background:#0a0605!important;">
+
+<style>
+  #video-container *{box-sizing:border-box!important;margin:0!important;padding:0!important;}
+  #video-container{
+    --paper: #ebdcb9;
+    --brown-dark: #2b1810;
+    --brown-light: #5d4037;
+    --gold: #d4a574;
+    --text-dark: #2b221a;
+    --shadow: rgba(0,0,0,0.8);
+  }
+
+  /* ===== PRELOADER SCREEN ===== */
+  #video-container .loader-screen{
+    position:absolute!important;inset:0!important;z-index:50!important;
+    background:linear-gradient(135deg, #1a0f07 0%, #0a0605 100%)!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    gap:30px!important;transition:opacity 0.6s ease, visibility 0.6s ease!important;
+  }
+  #video-container .loader-screen.hidden{opacity:0!important;visibility:hidden!important;pointer-events:none!important;}
+
+  /* Animated Case File Icon */
+  #video-container .loader-icon{
+    width:80px!important;height:100px!important;
+    border:3px solid var(--gold)!important;border-radius:6px!important;
+    background:linear-gradient(135deg, rgba(212,165,116,0.15) 0%, rgba(212,165,116,0.05) 100%)!important;
+    position:relative!important;box-shadow:0 0 30px var(--shadow), inset 0 0 20px rgba(212,165,116,0.2)!important;
+    animation:caseFloat 2.2s ease-in-out infinite!important;
+  }
+  
+  #video-container .loader-icon::before{
+    content:''!important;position:absolute!important;top:12px!important;left:8px!important;
+    width:64px!important;height:3px!important;background:var(--gold)!important;border-radius:2px!important;
+  }
+  #video-container .loader-icon::after{
+    content:''!important;position:absolute!important;top:24px!important;left:8px!important;
+    width:60px!important;height:2px!important;background:rgba(212,165,116,0.6)!important;border-radius:1px!important;
+    box-shadow:0 8px 0 rgba(212,165,116,0.6), 0 16px 0 rgba(212,165,116,0.4)!important;
+  }
+
+  @keyframes caseFloat{
+    0%, 100%{transform:translateY(0) rotateZ(-2deg);box-shadow:0 0 30px var(--shadow), inset 0 0 20px rgba(212,165,116,0.2);}
+    50%{transform:translateY(-20px) rotateZ(2deg);box-shadow:0 8px 35px var(--shadow), inset 0 0 30px rgba(212,165,116,0.35);}
+  }
+
+  #video-container .loader-title{
+    font-family:'Cinzel Decorative',serif!important;font-size:20px!important;
+    color:var(--gold)!important;font-weight:700!important;text-shadow:0 3px 12px rgba(0,0,0,0.9)!important;
+    letter-spacing:2px!important;text-align:center!important;
+  }
+
+  #video-container .loader-bar-bg{
+    width:360px!important;height:10px!important;background:rgba(255,255,255,0.08)!important;
+    border:2px solid var(--gold)!important;border-radius:8px!important;overflow:hidden!important;
+    box-shadow:inset 0 0 10px rgba(0,0,0,0.6)!important;
+  }
+  #video-container .loader-bar-fill{
+    width:0%!important;height:100%!important;background:linear-gradient(90deg, var(--gold), #f5deb3)!important;
+    box-shadow:0 0 15px var(--gold)!important;transition:width 0.3s ease!important;
+  }
+
+  /* ===== VIDEO CONTAINER & FRAME ===== */
+  #video-container .video-wrap{
+    position:absolute!important;inset:0!important;z-index:10!important;
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    background:#000!important;
+  }
+  #video-container video{
+    width:100%!important;height:100%!important;object-fit:cover!important;
+    display:block!important;
+  }
+
+  /* Decorative Frame Overlay */
+  #video-container .frame-overlay{
+    content:''!important;position:absolute!important;inset:0!important;
+    border:5px solid var(--gold)!important;
+    box-shadow:inset 0 0 40px rgba(0,0,0,0.9), 0 0 50px rgba(212,165,116,0.3)!important;
+    pointer-events:none!important;z-index:25!important;
+  }
+
+  /* SOUND TOGGLE BUTTON */
+  #video-container .sound-btn{
+    position:absolute!important;top:24px!important;right:24px!important;z-index:30!important;
+    background:rgba(43, 24, 16, 0.9)!important;border:2px solid var(--gold)!important;
+    color:#f5deb3!important;font-weight:700!important;font-size:13px!important;
+    padding:9px 16px!important;border-radius:24px!important;cursor:pointer!important;
+    box-shadow:0 4px 16px rgba(0,0,0,0.7)!important;backdrop-filter:blur(4px)!important;
+    transition:0.2s!important;display:flex!important;align-items:center!important;gap:7px!important;
+    font-family:'Courier Prime',monospace!important;letter-spacing:0.5px!important;
+  }
+  #video-container .sound-btn:hover{transform:scale(1.06)!important;background:var(--gold)!important;color:var(--brown-dark)!important;}
+
+  /* ===== END SCREEN OVERLAY ===== */
+  #video-container .end-overlay{
+    position:absolute!important;inset:0!important;z-index:40!important;
+    background:rgba(10, 6, 5, 0.92)!important;backdrop-filter:blur(8px)!important;
+    display:none!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+    gap:24px!important;text-align:center!important;padding:40px!important;
+  }
+  #video-container .end-overlay.show{display:flex!important;animation:fadeIn 0.7s ease forwards!important;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+  #video-container .end-card{
+    background:var(--paper)!important;border:4px solid var(--gold)!important;
+    border-radius:16px!important;padding:32px 48px!important;
+    box-shadow:0 0 60px rgba(0,0,0,0.9), inset 0 0 20px rgba(212,165,116,0.1)!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;gap:14px!important;
+    max-width:620px!important;
+  }
+
+  #video-container .end-icon{
+    font-size:48px!important;text-shadow:0 2px 8px rgba(0,0,0,0.4)!important;
+  }
+
+  #video-container .end-title{
+    font-family:'Cinzel Decorative',serif!important;font-size:24px!important;
+    color:var(--brown-dark)!important;font-weight:700!important;letter-spacing:1px!important;
+  }
+  
+  #video-container .end-subtitle{
+    font-size:15px!important;color:var(--text-dark)!important;font-weight:600!important;
+    line-height:1.6!important;font-family:'Courier Prime',monospace!important;
+  }
+
+  #video-container .end-btn-group{display:flex!important;gap:14px!important;margin-top:8px!important;}
+  #video-container .btn-continue{
+    padding:12px 32px!important;background:var(--brown-dark)!important;border:2px solid var(--gold)!important;
+    border-radius:12px!important;font-weight:700!important;color:var(--gold)!important;
+    font-size:14px!important;cursor:pointer!important;transition:0.2s!important;
+    box-shadow:0 4px 12px rgba(0,0,0,0.5)!important;font-family:'Courier Prime',monospace!important;
+    letter-spacing:1px!important;text-transform:uppercase!important;
+  }
+  #video-container .btn-continue:hover{background:var(--gold)!important;color:var(--brown-dark)!important;transform:translateY(-2px)!important;}
+
+  /* Case File Stamp */
+  #video-container .case-stamp{
+    display:inline-block!important;border:2px double var(--gold)!important;
+    color:var(--gold)!important;font-family:'Courier Prime',monospace!important;
+    font-weight:bold!important;font-size:11px!important;padding:5px 12px!important;
+    transform:rotate(-8deg)!important;opacity:0.85!important;letter-spacing:1px!important;
+    margin-top:8px!important;
+  }
+</style>
+
+<!-- PRELOADER -->
+<div class="loader-screen" id="loader">
+  <div class="loader-icon"></div>
+  <div class="loader-title">ANALYZING CASE FILE...</div>
+  <div class="loader-bar-bg">
+    <div class="loader-bar-fill" id="loader-fill" style="width: 0%;"></div>
+  </div>
+</div>
+
+<!-- SOUND CONTROL -->
+<button class="sound-btn" id="sound-btn">🔇 MUTED</button>
+
+<!-- VIDEO PLAYER -->
+<div class="video-wrap">
+  <video id="case-video" playsinline="" preload="auto" muted="" style="width: 100%; height: 100%; max-width: inherit !important; max-height: inherit !important;">
+    <source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/video_2026-08-12_19-12-06.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <div class="frame-overlay"></div>
+</div>
+
+<!-- END SCREEN OVERLAY -->
+<div class="end-overlay" id="end-overlay">
+  <div class="end-card">
+    <div class="end-icon">📂</div>
+    <div class="end-title">Case Files Retrieved</div>
+    <div class="end-subtitle">
+      The evidence is yours to examine.<br>
+      <b>Proceed to the dorm. Time is running out.</b>
+      <div class="case-stamp">CLASSIFIED</div>
+    </div>
+    <div class="end-btn-group">
+      <button class="btn-continue" id="btn-continue">CONTINUE INVESTIGATION →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var video = document.getElementById('case-video');
+  var loader = document.getElementById('loader');
+  var loaderFill = document.getElementById('loader-fill');
+  var soundBtn = document.getElementById('sound-btn');
+  var endOverlay = document.getElementById('end-overlay');
+  var continueBtn = document.getElementById('btn-continue');
+
+  if(!video) return;
+
+  /* Simulated Progress Bar */
+  var prog = 0;
+  var timer = setInterval(function(){
+    prog += Math.floor(Math.random() * 25) + 8;
+    if(prog > 95) prog = 95;
+    if(loaderFill) loaderFill.style.width = prog + '%';
+  }, 250);
+
+  /* Video Ready Event */
+  function startVideo(){
+    clearInterval(timer);
+    if(loaderFill) loaderFill.style.width = '100%';
+    
+    setTimeout(function(){
+      if(loader) loader.classList.add('hidden');
+      video.currentTime = 0;
+      var playPromise = video.play();
+      if(playPromise !== undefined){
+        playPromise.catch(function(){
+          /* Autoplay blocked fallback */
+          soundBtn.textContent = '▶ PLAY VIDEO';
+        });
+      }
+    }, 500);
+  }
+
+  video.addEventListener('canplaythrough', startVideo, { once: true });
+
+  /* Fallback timeout */
+  setTimeout(function(){
+    if(loader && !loader.classList.contains('hidden')) {
+      startVideo();
+    }
+  }, 3000);
+
+  /* Sound Toggle Handler */
+  soundBtn.addEventListener('click', function(){
+    if(video.muted){
+      video.muted = false;
+      video.volume = 1.0;
+      soundBtn.textContent = '🔊 SOUND ON';
+      video.play();
+    } else {
+      video.muted = true;
+      soundBtn.textContent = '🔇 MUTED';
+    }
+  });
+
+  /* Video Ended Handler */
+  video.addEventListener('ended', function(){
+    if(endOverlay) endOverlay.classList.add('show');
+  });
+
+  /* Continue Button Handler */
+  continueBtn.addEventListener('click', function(){
+    /* Отправляем сигнал родительскому фрейму в Genially */
+    if(window.parent !== window){
+      window.parent.postMessage({type: 'scene-complete', scene: 'backseat-video'}, '*');
+    }
+    console.log('Proceeding to next scene...');
+  });
+
+})();
+</script>
+</div>
+</body>
+</html>
