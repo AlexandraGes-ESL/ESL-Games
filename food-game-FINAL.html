@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yummy Path: Feed the Cat!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Quicksand', 'Nunito', sans-serif;
+            background-color: #b6ef9f;
+            background-image: url('https://i.yapx.ru/eGV8A.png');
+            background-repeat: repeat;
+            background-size: 260px 260px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 15px 30px 15px;
+            color: #1b3d2b;
+            user-select: none;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            background: #ffffff;
+            padding: 14px 28px;
+            border-radius: 26px;
+            box-shadow: 0 6px 0 #8ec876, 0 12px 20px rgba(0,0,0,0.08);
+            border: 4px solid #ffffff;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header-cat-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        h1 {
+            color: #173826;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        p.subtitle {
+            color: #2b573d;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .menu-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 650px;
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 30px;
+            box-shadow: 0 12px 0 #8ec876, 0 20px 30px rgba(0,0,0,0.1);
+            border: 4px solid #fff;
+            margin-top: 10px;
+        }
+
+        .menu-header-decor {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .menu-cat-icon {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+        }
+
+        .menu-title {
+            font-size: 2rem;
+            color: #173826;
+            font-weight: 800;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .category-btn {
+            padding: 16px;
+            border: 3px solid #b6ef9f;
+            background: #f7fff4;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #173826;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 0 #9ed487;
+        }
+
+        .category-btn img, .category-btn svg {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #8ec876;
+            background: #ffffff;
+        }
+
+        .category-btn.selected {
+            border-color: #173826;
+            background: #e4f9da;
+            box-shadow: 0 5px 0 #173826;
+        }
+
+        .category-btn.full-width {
+            grid-column: 1 / -1;
+            padding: 18px;
+            font-size: 1.2rem;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            background: #e67e22;
+            color: white;
+            font-family: inherit;
+            font-size: 1.5rem;
+            font-weight: 800;
+            border-radius: 22px;
+            cursor: pointer;
+            box-shadow: 0 7px 0 #d35400;
+            transition: all 0.2s;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 0 #d35400;
+            background: #f39c12;
+        }
+
+        .start-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 #d35400;
+        }
+
+        .game-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1000px;
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 20px;
+            box-shadow: 0 12px 0 #8ec876, 0 20px 30px rgba(0,0,0,0.1);
+            border: 4px solid #fff;
+        }
+
+        .game-container.active {
+            display: flex;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 15px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .audio-box {
+            background: #f7fff4;
+            border: 3px solid #b6ef9f;
+            border-radius: 20px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 5px 0 #9ed487;
+            flex: 1;
+            min-width: 240px;
+            justify-content: center;
+        }
+
+        .btn-audio {
+            background: #173826;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 #0d2116;
+            flex-shrink: 0;
+        }
+
+        .btn-audio svg {
+            width: 26px;
+            height: 26px;
+            fill: currentColor;
+        }
+
+        .btn-audio:hover {
+            transform: scale(1.06);
+            background: #235238;
+        }
+
+        .word-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #173826;
+            letter-spacing: 0.5px;
+            word-break: break-all;
+        }
+
+        .hearts-container {
+            display: flex;
+            gap: 8px;
+            background: #f7fff4;
+            padding: 10px 18px;
+            border-radius: 20px;
+            border: 3px solid #b6ef9f;
+            box-shadow: 0 5px 0 #9ed487;
+            align-items: center;
+        }
+
+        .heart-img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .heart-img.lost {
+            opacity: 0.2;
+            filter: grayscale(1);
+            transform: scale(0.85);
+        }
+
+        .btn-nav {
+            background: #ffffff;
+            border: 3px solid #b6ef9f;
+            color: #173826;
+            font-family: inherit;
+            padding: 10px 18px;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #9ed487;
+            transition: all 0.2s;
+        }
+
+        .btn-nav:hover {
+            transform: translateY(-2px);
+            background: #f7fff4;
+            box-shadow: 0 7px 0 #8ec876;
+        }
+
+        .board-wrapper {
+            position: relative;
+            width: 100%;
+            background-color: #b6ef9f;
+            border-radius: 24px;
+            padding: 25px 15px;
+            margin-bottom: 15px;
+            box-shadow: inset 0 6px 12px rgba(0,0,0,0.08);
+            overflow: auto;
+            border: 4px solid #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .honeycomb-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 5px 10px 10px 10px;
+        }
+
+        .hex-row {
+            display: flex;
+            gap: 2px;
+        }
+
+        .hex-row + .hex-row {
+            margin-top: -26px;
+        }
+
+        .hex-row-odd {
+            margin-left: 48px;
+        }
+
+        .hex {
+            width: 94px;
+            height: 108px;
+            background: #ffffff;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            position: relative;
+            transform: none !important;
+            filter: drop-shadow(0px 0px 1.5px #8ec876);
+            flex-shrink: 0;
+        }
+
+        .hex.start {
+            background: #fff4e6;
+            cursor: default;
+        }
+
+        .hex.finish {
+            background: #f3e8ff;
+            cursor: default;
+        }
+
+        .hex.item:hover {
+            background: #eefbee;
+        }
+
+        .hex.selected {
+            background: #d4f4e6 !important;
+        }
+
+        .hex.incorrect {
+            background: #ffdede !important;
+            animation: shake 0.35s ease-in-out;
+        }
+
+        .hex-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hex-food-img {
+            width: 62px;
+            height: 62px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .hex-cat-overlay {
+            position: absolute;
+            width: 72px;
+            height: 72px;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25));
+            z-index: 10;
+            animation: catPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes catPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #173826;
+            background: #ffffff;
+            padding: 14px 20px;
+            border-radius: 20px;
+            border: 3px solid #b6ef9f;
+            box-shadow: 0 5px 0 #9ed487;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-icon-img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        .status-value {
+            color: #e67e22;
+            font-weight: 800;
+            font-size: 1.3rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(23, 56, 38, 0.75);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(6px);
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            padding: 35px 25px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 14px 0 #10271b;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 4px solid #fff;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-cat-final {
+            width: 140px;
+            height: 140px;
+            object-fit: contain;
+            margin: 0 auto 12px auto;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+        }
+
+        .modal-content h2 {
+            color: #173826;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .modal-content p {
+            color: #2b573d;
+            margin-bottom: 22px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            background: #e67e22;
+            color: white;
+            font-family: inherit;
+            font-size: 1.3rem;
+            font-weight: 800;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #d35400;
+            transition: all 0.2s;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #d35400;
+            background: #f39c12;
+        }
+
+        .app-footer {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            background: #ffffff;
+            border-radius: 22px;
+            border: 3px solid #fff;
+            box-shadow: 0 5px 0 #8ec876;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .footer-by {
+            color: #173826;
+            font-size: 0.95rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .footer-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 800;
+            transition: all 0.2s;
+        }
+
+        .footer-link.boosty {
+            background: #fff4e6;
+            color: #d35400;
+            border: 2px solid #f39c12;
+        }
+
+        .footer-link.tg {
+            background: #eef8ff;
+            color: #0088cc;
+            border: 2px solid #0088cc;
+        }
+
+        .footer-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .footer-link .ico {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* ═══════════════════════════════════════════
+           ROTATE OVERLAY — приглашение повернуть телефон
+           Показывается ТОЛЬКО на мобильных в портретной
+           ориентации, когда открыт игровой экран
+           ═══════════════════════════════════════════ */
+        .rotate-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: #b6ef9f;
+            background-image: url('https://i.yapx.ru/eGV8A.png');
+            background-repeat: repeat;
+            background-size: 260px 260px;
+            z-index: 2000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .rotate-overlay.visible {
+            display: flex;
+        }
+
+        .rotate-card {
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 40px 30px;
+            box-shadow: 0 12px 0 #8ec876, 0 20px 30px rgba(0,0,0,0.12);
+            border: 4px solid #fff;
+            max-width: 400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .rotate-cat-img {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15));
+        }
+
+        .rotate-phone-icon {
+            font-size: 3.5rem;
+            animation: rotatePhone 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes rotatePhone {
+            0%, 20% { transform: rotate(0deg); }
+            50%, 70% { transform: rotate(90deg); }
+            100% { transform: rotate(90deg); }
+        }
+
+        .rotate-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #173826;
+            line-height: 1.3;
+        }
+
+        .rotate-subtitle {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #2b573d;
+            line-height: 1.5;
+        }
+
+        .fullscreen-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            background: #e67e22;
+            color: white;
+            font-family: inherit;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #d35400;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .fullscreen-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #d35400;
+        }
+
+        /* ═══ MOBILE ADAPTATION ═══ */
+        @media (max-width: 850px) {
+            body { padding: 10px; }
+            h1 { font-size: 1.8rem; }
+            header { padding: 12px 20px; }
+            .menu-screen { padding: 20px 15px; border-radius: 24px; }
+            .category-grid { grid-template-columns: 1fr; gap: 10px; }
+            .category-btn.full-width { grid-column: auto; }
+            .game-container { padding: 15px 10px; border-radius: 24px; }
+            .controls { gap: 8px; }
+            .audio-box { min-width: 160px; padding: 6px 12px; }
+            .word-text { font-size: 1.2rem; }
+            .btn-audio { width: 42px; height: 42px; }
+            .hearts-container { padding: 8px 12px; }
+            .heart-img { width: 24px; height: 24px; }
+            .btn-nav { padding: 8px 14px; font-size: 0.95rem; }
+        }
+
+        /* ═══ MOBILE LANDSCAPE: компактный игровой режим ═══ */
+        @media (max-width: 1000px) and (orientation: landscape) {
+            body { padding: 8px; }
+            header { display: none; }
+            .app-footer { display: none; }
+            .game-container { padding: 10px; }
+            .controls { margin-bottom: 8px; }
+            .status-bar { padding: 8px 14px; font-size: 0.95rem; }
+            .status-icon-img { width: 24px; height: 24px; }
+            .status-value { font-size: 1.1rem; }
+            .board-wrapper { padding: 12px 8px; margin-bottom: 8px; }
+
+            .hex {
+                width: 62px;
+                height: 71px;
+            }
+            .hex-row + .hex-row { margin-top: -17px; }
+            .hex-row-odd { margin-left: 32px; }
+            .hex-food-img { width: 40px; height: 40px; }
+            .hex-cat-overlay { width: 48px; height: 48px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <img src="https://i.yapx.ru/eGVqn.png" alt="Cat" class="header-cat-img">
+            <h1>Yummy Path!</h1>
+        </div>
+        <p class="subtitle">Feed the cat on its way to the cozy bed!</p>
+    </header>
+
+    <div class="menu-screen" id="menu-screen">
+        <div class="menu-header-decor">
+            <img src="https://i.yapx.ru/eGVqq.png" alt="Happy Cat" class="menu-cat-icon">
+            <h2 class="menu-title">Select Food Category</h2>
+        </div>
+
+        <div class="category-grid">
+            <button class="category-btn selected" data-category="fast-food">
+                <img src="https://i.yapx.ru/eGVqw.png" alt="Burger">
+                <span>Fast Food</span>
+            </button>
+            <button class="category-btn" data-category="drinks">
+                <img src="https://i.yapx.ru/eGVqg.png" alt="Juice">
+                <span>Drinks</span>
+            </button>
+            <button class="category-btn" data-category="fruit">
+                <img src="https://i.yapx.ru/eGVqa.png" alt="Apple">
+                <span>Fruit</span>
+            </button>
+            <button class="category-btn" data-category="everyday">
+                <img src="https://i.yapx.ru/eGg00.png" alt="Soup">
+                <span>Everyday Food</span>
+            </button>
+            <button class="category-btn full-width" data-category="mix">
+                <img src="https://i.yapx.ru/eGVqy.png" alt="Mix">
+                <span>Mix All Categories</span>
+            </button>
+        </div>
+
+        <button class="start-btn" id="btn-start-game">
+            <span>START GAME</span> 🐾
+        </button>
+    </div>
+
+    <div class="game-container" id="game-container">
+        <div class="controls">
+            <div class="audio-box">
+                <button class="btn-audio" id="btn-play-audio" title="Listen to word" aria-label="Listen">
+                    <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                </button>
+                <span class="word-text" id="target-word-text">???</span>
+            </div>
+
+            <div class="hearts-container" id="hearts-container">
+                <img src="https://i.yapx.ru/eGV6S.png" alt="Life" class="heart-img">
+                <img src="https://i.yapx.ru/eGV6S.png" alt="Life" class="heart-img">
+                <img src="https://i.yapx.ru/eGV6S.png" alt="Life" class="heart-img">
+            </div>
+
+            <button class="btn-nav" id="btn-back-menu">📋 Menu</button>
+        </div>
+
+        <div class="board-wrapper">
+            <div class="honeycomb-container" id="board"></div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <img src="https://i.yapx.ru/eGVqu.png" alt="Cat" class="status-icon-img">
+                <span>Steps Left:</span>
+                <span class="status-value" id="steps-left-count">7</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="win-modal">
+        <div class="modal-content">
+            <img src="https://i.yapx.ru/eGVqu.png" alt="Sleeping Cat" class="modal-cat-final">
+            <h2>Yummy! Cat is Full & Happy!</h2>
+            <p>You guided the cat safely to its cozy bed! Great job listening!</p>
+            <button class="modal-btn" id="btn-win-restart">Play Again 🐾</button>
+        </div>
+    </div>
+
+    <div class="modal" id="lose-modal">
+        <div class="modal-content">
+            <img src="https://i.yapx.ru/eGV7O.png" alt="Sad Cat" class="modal-cat-final">
+            <h2>Oh no! Out of Lives!</h2>
+            <p>The kitty got confused along the way. Let's try again!</p>
+            <button class="modal-btn" id="btn-lose-restart">Try Again 🔄</button>
+        </div>
+    </div>
+
+    <!-- ═══ ROTATE OVERLAY (mobile portrait only) ═══ -->
+    <div class="rotate-overlay" id="rotate-overlay">
+        <div class="rotate-card">
+            <img src="https://i.yapx.ru/eGVqq.png" alt="Cat" class="rotate-cat-img">
+            <span class="rotate-phone-icon">📱</span>
+            <div class="rotate-title">Rotate your phone!</div>
+            <div class="rotate-subtitle">This game works best in landscape mode. Turn your device sideways for the full honeycomb board! 🐝</div>
+            <button class="fullscreen-btn" id="btn-fullscreen">
+                <span>⛶</span> Go Fullscreen
+            </button>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <span class="footer-by">Made with ❤️ by Alexandra Ges · ESL</span>
+        <div class="footer-links">
+            <a class="footer-link boosty" href="https://boosty.to/alexandrages_esl" target="_blank" rel="noopener" aria-label="Boosty">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7l-9-5zm0 2.2 6.5 3.6-6.5 3.6-6.5-3.6L12 4.2z"/></svg>
+                Boosty
+            </a>
+            <a class="footer-link tg" href="https://t.me/alexandragesESL" target="_blank" rel="noopener" aria-label="Telegram">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M9.8 15.6 9.6 19c.4 0 .6-.2.8-.4l1.9-1.8 4 2.9c.7.4 1.3.2 1.5-.7l2.7-12.6c.3-1.1-.4-1.6-1.1-1.3L2.3 9.3c-1.1.4-1.1 1-.2 1.3l4.4 1.4L17 5.5c.5-.3.9-.1.6.2z"/></svg>
+                Telegram
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        const foodDict = {
+            "burger": { url: "https://i.yapx.ru/eGVqw.png", category: "fast-food" },
+            "ice cream": { url: "https://i.yapx.ru/eGVqy.png", category: "fast-food" },
+            "fries": { url: "https://i.yapx.ru/eGVqz.png", category: "fast-food" },
+            "pizza": { url: "https://i.yapx.ru/eGVq0.png", category: "fast-food" },
+            "cola": { url: "https://i.yapx.ru/eGVq1.png", category: "fast-food" },
+            "hot dog": { url: "https://i.yapx.ru/eGVq2.png", category: "fast-food" },
+            "popcorn": { url: "https://i.yapx.ru/eGg1u.png", category: "fast-food" },
+            "cookie": { url: "https://i.yapx.ru/eGg1k.png", category: "fast-food" },
+            "tea": { url: "https://i.yapx.ru/eGVqd.png", category: "drinks" },
+            "coffee": { url: "https://i.yapx.ru/eGVqe.png", category: "drinks" },
+            "lemonade": { url: "https://i.yapx.ru/eGVqg.png", category: "drinks" },
+            "orange juice": { url: "https://i.yapx.ru/eGVqf.png", category: "drinks" },
+            "water": { url: "https://i.yapx.ru/eGVqj.png", category: "drinks" },
+            "milk": { url: "https://i.yapx.ru/eGVqk.png", category: "drinks" },
+            "hot chocolate": { url: "https://i.yapx.ru/eGg07.png", category: "drinks" },
+            "tomato juice": { url: "https://i.yapx.ru/eGg02.png", category: "drinks" },
+            "mango": { url: "https://i.yapx.ru/eGVqZ.png", category: "fruit" },
+            "apple": { url: "https://i.yapx.ru/eGVqa.png", category: "fruit" },
+            "banana": { url: "https://i.yapx.ru/eGVqc.png", category: "fruit" },
+            "strawberry": { url: "https://i.yapx.ru/eGVrC.png", category: "fruit" },
+            "pomegranate": { url: "https://i.yapx.ru/eGVrD.png", category: "fruit" },
+            "pear": { url: "https://i.yapx.ru/eGg2E.png", category: "fruit" },
+            "watermelon": { url: "https://i.yapx.ru/eGg18.png", category: "fruit" },
+            "lemon": { url: "https://i.yapx.ru/eGg2j.png", category: "fruit" },
+            "sandwich": { url: "https://i.yapx.ru/eGy55.png", category: "everyday" },
+            "bread": { url: "https://i.yapx.ru/eGVq3.png", category: "everyday" },
+            "egg": { url: "https://i.yapx.ru/eGVq4.png", category: "everyday" },
+            "pasta": { url: "https://i.yapx.ru/eGVq5.png", category: "everyday" },
+            "rice": { url: "https://i.yapx.ru/eGVq6.png", category: "everyday" },
+            "cereal": { url: "https://i.yapx.ru/eGVq8.png", category: "everyday" },
+            "fish": { url: "https://i.yapx.ru/eGVq9.png", category: "everyday" },
+            "tomato": { url: "https://i.yapx.ru/eGVrA.png", category: "everyday" },
+            "cheese": { url: "https://i.yapx.ru/eGy53.png", category: "everyday" },
+            "soup": { url: "https://i.yapx.ru/eGg00.png", category: "everyday" },
+            "salad": { url: "https://i.yapx.ru/eGg01.png", category: "everyday" }
+        };
+
+        const catPoses = ["https://i.yapx.ru/eGVqn.png", "https://i.yapx.ru/eGVqq.png", "https://i.yapx.ru/eGVqr.png", "https://i.yapx.ru/eGVqu.png"];
+        const bedPng = "https://i.yapx.ru/eGVqv.png";
+
+        const categories = {
+            "fast-food": ["burger", "ice cream", "fries", "pizza", "cola", "hot dog", "popcorn", "cookie"],
+            "drinks": ["tea", "coffee", "lemonade", "orange juice", "water", "milk", "hot chocolate", "tomato juice"],
+            "fruit": ["mango", "apple", "banana", "strawberry", "pomegranate", "pear", "watermelon", "lemon"],
+            "everyday": ["sandwich", "bread", "egg", "pasta", "rice", "cereal", "fish", "tomato", "cheese", "soup", "salad"],
+            "mix": Object.keys(foodDict)
+        };
+
+        const ROWS = 5, COLS = 7;
+
+        const verifiedPaths = [
+            [{r:0,c:0}, {r:0,c:1}, {r:0,c:2}, {r:0,c:3}, {r:0,c:4}, {r:1,c:4}, {r:2,c:5}, {r:3,c:5}, {r:4,c:6}],
+            [{r:0,c:0}, {r:0,c:1}, {r:0,c:2}, {r:1,c:2}, {r:1,c:3}, {r:2,c:4}, {r:3,c:4}, {r:3,c:5}, {r:4,c:6}],
+            [{r:0,c:0}, {r:0,c:1}, {r:0,c:2}, {r:1,c:2}, {r:2,c:3}, {r:3,c:3}, {r:4,c:4}, {r:4,c:5}, {r:4,c:6}],
+            [{r:0,c:0}, {r:0,c:1}, {r:1,c:1}, {r:1,c:2}, {r:2,c:3}, {r:2,c:4}, {r:3,c:4}, {r:4,c:5}, {r:4,c:6}],
+            [{r:0,c:0}, {r:0,c:1}, {r:1,c:1}, {r:2,c:2}, {r:2,c:3}, {r:3,c:3}, {r:3,c:4}, {r:3,c:5}, {r:4,c:6}],
+            [{r:0,c:0}, {r:1,c:0}, {r:1,c:1}, {r:1,c:2}, {r:1,c:3}, {r:1,c:4}, {r:2,c:5}, {r:3,c:5}, {r:4,c:6}],
+            [{r:0,c:0}, {r:1,c:0}, {r:1,c:1}, {r:1,c:2}, {r:2,c:3}, {r:3,c:3}, {r:3,c:4}, {r:3,c:5}, {r:4,c:6}],
+            [{r:0,c:0}, {r:1,c:0}, {r:1,c:1}, {r:2,c:2}, {r:2,c:3}, {r:3,c:3}, {r:3,c:4}, {r:4,c:5}, {r:4,c:6}],
+            [{r:0,c:0}, {r:1,c:0}, {r:2,c:1}, {r:2,c:2}, {r:2,c:3}, {r:2,c:4}, {r:3,c:4}, {r:3,c:5}, {r:4,c:6}],
+            [{r:0,c:0}, {r:1,c:0}, {r:2,c:1}, {r:2,c:2}, {r:3,c:2}, {r:3,c:3}, {r:4,c:4}, {r:4,c:5}, {r:4,c:6}]
+        ];
+
+        let selectedCategory = "fast-food";
+        let gameState = {
+            board: [],
+            catPath: [],
+            currentPathIndex: 0,
+            currentTargetWord: "",
+            lives: 3,
+            wordsList: [],
+            isPlaying: false
+        };
+
+        /* ═══ ROTATE OVERLAY LOGIC ═══ */
+        const rotateOverlay = document.getElementById('rotate-overlay');
+
+        function isMobile() {
+            return window.matchMedia("(max-width: 850px)").matches || 
+                   ('ontouchstart' in window && Math.min(screen.width, screen.height) < 850);
+        }
+
+        function isPortrait() {
+            return window.matchMedia("(orientation: portrait)").matches;
+        }
+
+        function updateRotateOverlay() {
+            // Показываем оверлей только: мобильное устройство + портрет + открыт игровой экран
+            const gameActive = document.getElementById('game-container').classList.contains('active');
+            if (isMobile() && isPortrait() && gameActive) {
+                rotateOverlay.classList.add('visible');
+            } else {
+                rotateOverlay.classList.remove('visible');
+            }
+        }
+
+        window.addEventListener('resize', updateRotateOverlay);
+        window.addEventListener('orientationchange', updateRotateOverlay);
+
+        document.getElementById('btn-fullscreen').addEventListener('click', async () => {
+            try {
+                // 1. Запрашиваем полный экран
+                const docEl = document.documentElement;
+                if (docEl.requestFullscreen) {
+                    await docEl.requestFullscreen();
+                } else if (docEl.webkitRequestFullscreen) {
+                    await docEl.webkitRequestFullscreen();
+                }
+                // 2. Пытаемся заблокировать ландшафтную ориентацию
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock('landscape');
+                }
+            } catch (err) {
+                // Если блокировка не поддерживается — просто просим повернуть вручную
+                console.log('Orientation lock not supported:', err);
+            }
+            updateRotateOverlay();
+        });
+
+        function playSound(type) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (type === "munch") {
+                for (let i = 0; i < 3; i++) {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(450 + i * 120, ctx.currentTime + i * 0.08);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.07);
+                    osc.start(ctx.currentTime + i * 0.08);
+                    osc.stop(ctx.currentTime + i * 0.08 + 0.07);
+                }
+            } else if (type === "phew") {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = "triangle";
+                osc.frequency.setValueAtTime(350, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.35);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.35);
+            }
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.85;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function preloadImages() {
+            Object.values(foodDict).forEach(item => {
+                if (item.url.startsWith("http")) {
+                    const img = new Image();
+                    img.src = item.url;
+                }
+            });
+            catPoses.forEach(url => {
+                const img = new Image();
+                img.src = url;
+            });
+            const bedImg = new Image();
+            bedImg.src = bedPng;
+        }
+
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedCategory = btn.dataset.category;
+            });
+        });
+
+        document.getElementById('btn-start-game').addEventListener('click', () => startGame(selectedCategory));
+
+        function startGame(category) {
+            gameState.wordsList = categories[category];
+            gameState.lives = 3;
+            gameState.currentPathIndex = 0;
+            gameState.isPlaying = true;
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('game-container').classList.add('active');
+            updateHearts();
+            setupBoard();
+            nextTurn();
+            updateRotateOverlay();
+        }
+
+        function getNeighbors(r, c) {
+            let candidates = [];
+            if (r % 2 === 0) {
+                candidates = [{r: r, c: c-1}, {r: r, c: c+1}, {r: r-1, c: c-1}, {r: r-1, c: c}, {r: r+1, c: c-1}, {r: r+1, c: c}];
+            } else {
+                candidates = [{r: r, c: c-1}, {r: r, c: c+1}, {r: r-1, c: c}, {r: r-1, c: c+1}, {r: r+1, c: c}, {r: r+1, c: c+1}];
+            }
+            return candidates.filter(p => p.r >= 0 && p.r < ROWS && p.c >= 0 && p.c < COLS);
+        }
+
+        function setupBoard() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+            gameState.board = [];
+
+            gameState.catPath = verifiedPaths[Math.floor(Math.random() * verifiedPaths.length)];
+            const catPath = gameState.catPath;
+            const pathLen = catPath.length - 2;
+
+            const words = gameState.wordsList;
+            let pathFoodWords = [];
+            for (let i = 0; i < pathLen; i++) {
+                const prev = pathFoodWords[i - 1] || null;
+                const valid = words.filter(w => w !== prev);
+                pathFoodWords.push(valid[Math.floor(Math.random() * valid.length)]);
+            }
+
+            const boardObj = {};
+            for (let idx = 0; idx < pathLen; idx++) {
+                const pos = catPath[idx + 1];
+                boardObj[`${pos.r},${pos.c}`] = pathFoodWords[idx];
+            }
+            boardObj['0,0'] = "start";
+            boardObj['4,6'] = "bed";
+
+            for (let r = 0; r < ROWS; r++) {
+                gameState.board[r] = [];
+                for (let c = 0; c < COLS; c++) {
+                    const key = `${r},${c}`;
+                    let word = "";
+                    let type = "item";
+
+                    if (key === '0,0') {
+                        type = "start";
+                        word = "start";
+                    } else if (key === '4,6') {
+                        type = "finish";
+                        word = "bed";
+                    } else if (boardObj[key]) {
+                        word = boardObj[key];
+                    } else {
+                        const forbidden = new Set();
+                        for (let step_idx = 0; step_idx < pathLen; step_idx++) {
+                            const cat_pos = catPath[step_idx];
+                            const target_word = pathFoodWords[step_idx];
+                            const nbrs = getNeighbors(cat_pos.r, cat_pos.c);
+                            if (nbrs.some(n => n.r === r && n.c === c)) {
+                                forbidden.add(target_word);
+                            }
+                        }
+
+                        let available = words.filter(w => !forbidden.has(w));
+                        if (available.length === 0) available = words;
+                        word = available[Math.floor(Math.random() * available.length)];
+                        boardObj[key] = word;
+                    }
+
+                    const foodUrl = (type === 'start') ? "" : (type === 'finish' ? bedPng : foodDict[word].url);
+                    gameState.board[r][c] = { r, c, type, word, foodUrl };
+                }
+            }
+
+            for (let r = 0; r < ROWS; r++) {
+                const rowEl = document.createElement('div');
+                rowEl.className = 'hex-row' + (r % 2 === 1 ? ' hex-row-odd' : '');
+
+                for (let c = 0; c < COLS; c++) {
+                    const cell = gameState.board[r][c];
+                    const hexEl = document.createElement('div');
+                    hexEl.className = 'hex ' + cell.type;
+                    hexEl.id = `hex-${r}-${c}`;
+
+                    let innerHtml = '<div class="hex-content">';
+                    if (cell.type === 'start') {
+                        innerHtml += `<img src="${catPoses[0]}" class="hex-cat-overlay" id="cat-overlay" alt="Cat" />`;
+                    } else {
+                        innerHtml += `<img src="${cell.foodUrl}" class="hex-food-img" alt="${cell.word}" />`;
+                    }
+                    innerHtml += '</div>';
+
+                    hexEl.innerHTML = innerHtml;
+
+                    if (cell.type === 'item') {
+                        hexEl.addEventListener('click', () => handleCellClick(r, c));
+                    }
+
+                    rowEl.appendChild(hexEl);
+                }
+
+                boardEl.appendChild(rowEl);
+            }
+        }
+
+        function nextTurn() {
+            if (!gameState.isPlaying) return;
+
+            const pathLen = gameState.catPath.length - 2;
+            const nextStepIndex = gameState.currentPathIndex + 1;
+
+            if (nextStepIndex > pathLen) {
+                moveCatOverlay(4, 6);
+                setTimeout(() => showVictory(), 600);
+                return;
+            }
+
+            const nextCellPos = gameState.catPath[nextStepIndex];
+            const nextCell = gameState.board[nextCellPos.r][nextCellPos.c];
+            gameState.currentTargetWord = nextCell.word;
+
+            document.getElementById('target-word-text').textContent = gameState.currentTargetWord.toUpperCase();
+            document.getElementById('steps-left-count').textContent = (pathLen + 1) - nextStepIndex;
+
+            setTimeout(() => speak(gameState.currentTargetWord), 300);
+        }
+
+        function handleCellClick(r, c) {
+            if (!gameState.isPlaying || gameState.currentTargetWord === "") return;
+
+            const cell = gameState.board[r][c];
+            const hexEl = document.getElementById(`hex-${r}-${c}`);
+            const currentPos = gameState.catPath[gameState.currentPathIndex];
+            const prevPos = gameState.currentPathIndex > 0 ? gameState.catPath[gameState.currentPathIndex - 1] : null;
+
+            const neighbors = getNeighbors(currentPos.r, currentPos.c);
+            const isNeighbor = neighbors.some(n => n.r === r && n.c === c);
+
+            if (!isNeighbor || (prevPos && prevPos.r === r && prevPos.c === c)) return;
+
+            if (cell.word === gameState.currentTargetWord) {
+                hexEl.classList.add('selected');
+                gameState.currentPathIndex++;
+                playSound("munch");
+                moveCatOverlay(r, c);
+                setTimeout(() => nextTurn(), 600);
+            } else {
+                gameState.lives--;
+                updateHearts();
+                hexEl.classList.add('incorrect');
+                playSound("phew");
+
+                setTimeout(() => hexEl.classList.remove('incorrect'), 400);
+
+                if (gameState.lives <= 0) {
+                    gameState.isPlaying = false;
+                    setTimeout(() => showGameOver(), 500);
+                }
+            }
+        }
+
+        function moveCatOverlay(targetR, targetC) {
+            const oldCat = document.getElementById('cat-overlay');
+            if (oldCat) oldCat.remove();
+
+            const newHex = document.getElementById(`hex-${targetR}-${targetC}`);
+            const contentDiv = newHex.querySelector('.hex-content');
+
+            const newCat = document.createElement('img');
+            newCat.src = catPoses[gameState.currentPathIndex % catPoses.length];
+            newCat.className = 'hex-cat-overlay';
+            newCat.id = 'cat-overlay';
+            newCat.alt = 'Cat';
+            contentDiv.appendChild(newCat);
+        }
+
+        function updateHearts() {
+            const hearts = document.querySelectorAll('.heart-img');
+            hearts.forEach((h, idx) => {
+                if (idx < gameState.lives) {
+                    h.classList.remove('lost');
+                } else {
+                    h.classList.add('lost');
+                }
+            });
+        }
+
+        function showVictory() {
+            gameState.isPlaying = false;
+            document.getElementById('win-modal').classList.add('show');
+        }
+
+        function showGameOver() {
+            gameState.isPlaying = false;
+            document.getElementById('lose-modal').classList.add('show');
+        }
+
+        document.getElementById('btn-play-audio').addEventListener('click', () => {
+            if (gameState.currentTargetWord) speak(gameState.currentTargetWord);
+        });
+
+        document.getElementById('btn-back-menu').addEventListener('click', () => {
+            document.getElementById('game-container').classList.remove('active');
+            document.getElementById('menu-screen').style.display = 'flex';
+            updateRotateOverlay();
+        });
+
+        document.getElementById('btn-win-restart').addEventListener('click', () => {
+            document.getElementById('win-modal').classList.remove('show');
+            startGame(selectedCategory);
+        });
+
+        document.getElementById('btn-lose-restart').addEventListener('click', () => {
+            document.getElementById('lose-modal').classList.remove('show');
+            startGame(selectedCategory);
+        });
+
+        preloadImages();
+    </script>
+</body>
+</html>
