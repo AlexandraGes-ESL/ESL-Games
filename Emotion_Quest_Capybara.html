@@ -183,6 +183,157 @@
             box-shadow: 0 3px 0 #d35400;
         }
 
+        .wordlist-btn {
+            width: 100%;
+            padding: 14px;
+            border: 3px solid #ffc9e3;
+            background: #fff6fb;
+            color: #b83280;
+            font-family: inherit;
+            font-size: 1.15rem;
+            font-weight: 800;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #f5a8ce;
+            transition: all 0.2s;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .wordlist-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #e88bbd;
+            background: #ffffff;
+        }
+
+        /* ═══ WORD LIST SCREEN ═══ */
+        .wordlist-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 26px;
+            box-shadow: 0 12px 0 #f5a8ce, 0 20px 30px rgba(0,0,0,0.1);
+            border: 4px solid #fff;
+            margin-top: 10px;
+        }
+
+        .wordlist-screen.active {
+            display: flex;
+        }
+
+        .wordlist-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 8px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .wordlist-title {
+            font-size: 1.7rem;
+            color: #b83280;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .wordlist-hint {
+            width: 100%;
+            text-align: center;
+            color: #9b5c7f;
+            font-weight: 700;
+            font-size: 0.98rem;
+            margin-bottom: 18px;
+        }
+
+        .wordlist-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            width: 100%;
+            margin-bottom: 22px;
+        }
+
+        .word-card {
+            background: #fff6fb;
+            border: 3px solid #ffc9e3;
+            border-radius: 20px;
+            padding: 14px 10px 12px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 0 #f5a8ce;
+            position: relative;
+        }
+
+        .word-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #e88bbd;
+            background: #ffffff;
+        }
+
+        .word-card:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 0 #f5a8ce;
+        }
+
+        .word-card img {
+            width: 74px;
+            height: 74px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            pointer-events: none;
+        }
+
+        .word-card .word-label {
+            font-weight: 800;
+            font-size: 1.02rem;
+            color: #b83280;
+            text-align: center;
+        }
+
+        .word-card .word-speaker {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 0.95rem;
+            opacity: 0.55;
+        }
+
+        .word-card.speaking {
+            border-color: #b83280;
+            background: #ffe4f2;
+            animation: cardPulse 0.6s ease-in-out;
+        }
+
+        @keyframes cardPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        @media (max-width: 850px) {
+            .wordlist-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .word-card img { width: 60px; height: 60px; }
+            .wordlist-screen { padding: 18px 14px; border-radius: 24px; }
+        }
+
+        @media (min-width: 851px) and (max-width: 1000px) {
+            .wordlist-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
         .game-container {
             display: none;
             flex-direction: column;
@@ -737,8 +888,25 @@
             </button>
         </div>
 
+        <button class="wordlist-btn" id="btn-open-wordlist">
+            <span>📚</span> Learn the Words First
+        </button>
+
         <button class="start-btn" id="btn-start-game">
-            <span>START GAME</span> 🐹
+            <span>START GAME</span>
+        </button>
+    </div>
+
+    <!-- ═══ WORD LIST SCREEN ═══ -->
+    <div class="wordlist-screen" id="wordlist-screen">
+        <div class="wordlist-header">
+            <h2 class="wordlist-title">📚 Word List</h2>
+            <button class="btn-nav" id="btn-wordlist-back">⬅ Back to Menu</button>
+        </div>
+        <p class="wordlist-hint">Tap a card to hear the word! 🔊</p>
+        <div class="wordlist-grid" id="wordlist-grid"></div>
+        <button class="start-btn" id="btn-wordlist-start">
+            <span>I'M READY — PLAY!</span>
         </button>
     </div>
 
@@ -988,6 +1156,43 @@
         });
 
         document.getElementById('btn-start-game').addEventListener('click', () => startGame());
+
+        /* ═══ WORD LIST LOGIC ═══ */
+        function buildWordList() {
+            const grid = document.getElementById('wordlist-grid');
+            grid.innerHTML = '';
+            Object.keys(emotionDict).forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML =
+                    '<span class="word-speaker">🔊</span>' +
+                    '<img src="' + emotionDict[word].url + '" alt="' + word + '">' +
+                    '<span class="word-label">' + word + '</span>';
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.word-card.speaking').forEach(c => c.classList.remove('speaking'));
+                    card.classList.add('speaking');
+                    speak(word);
+                    setTimeout(() => card.classList.remove('speaking'), 700);
+                });
+                grid.appendChild(card);
+            });
+        }
+
+        document.getElementById('btn-open-wordlist').addEventListener('click', () => {
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('wordlist-screen').classList.add('active');
+            buildWordList();
+        });
+
+        document.getElementById('btn-wordlist-back').addEventListener('click', () => {
+            document.getElementById('wordlist-screen').classList.remove('active');
+            document.getElementById('menu-screen').style.display = 'flex';
+        });
+
+        document.getElementById('btn-wordlist-start').addEventListener('click', () => {
+            document.getElementById('wordlist-screen').classList.remove('active');
+            startGame();
+        });
 
         function startGame() {
             gameState.lives = 3;
