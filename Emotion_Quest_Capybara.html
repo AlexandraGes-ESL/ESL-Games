@@ -595,46 +595,46 @@
         <p class="subtitle">Explore emotions with our cute capybara friend!</p>
     </header>
 
-    <div class="menu-screen" id="menu-screen">
+    <div class="menu-screen" id="menuScreen">
         <div class="menu-header-decor">
             <img src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/character-start.png" alt="Capybara" class="menu-capybara-icon">
             <h2 class="menu-title">Choose Your Mode</h2>
         </div>
 
         <div class="mode-grid">
-            <button class="mode-btn selected" data-mode="word" onclick="selectMode('word')">
+            <button class="mode-btn selected" data-mode="word" onclick="window.selectMode('word')">
                 <span class="mode-btn-emoji">📝</span>
                 <span>Word Mode</span>
                 <small style="font-size: 0.8rem; opacity: 0.8;">Tap the emotion!</small>
             </button>
-            <button class="mode-btn" data-mode="story" onclick="selectMode('story')">
+            <button class="mode-btn" data-mode="story" onclick="window.selectMode('story')">
                 <span class="mode-btn-emoji">📖</span>
                 <span>Story Mode</span>
                 <small style="font-size: 0.8rem; opacity: 0.8;">Live the day!</small>
             </button>
         </div>
 
-        <button class="start-btn" id="btn-start-game" onclick="startGame()">
+        <button class="start-btn" onclick="window.startGame()">
             <span>START GAME</span> 🐹
         </button>
     </div>
 
-    <div class="game-container" id="game-container">
+    <div class="game-container" id="gameContainer">
         <div class="controls">
             <div class="audio-box">
-                <button class="btn-audio" id="btn-play-audio" title="Listen" aria-label="Listen">
+                <button class="btn-audio" id="btnPlayAudio" title="Listen" aria-label="Listen">
                     <svg viewBox="0 0 24 24" style="width:26px; height:26px; fill:currentColor;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                 </button>
-                <span class="word-text" id="target-word-text">???</span>
+                <span class="word-text" id="targetWordText">???</span>
             </div>
 
-            <div class="hearts-container" id="hearts-container">
+            <div class="hearts-container" id="heartsContainer">
                 <img src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/character-start.png" alt="Life" class="heart-img" style="width:30px; height:30px;">
                 <img src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/character-start.png" alt="Life" class="heart-img" style="width:30px; height:30px;">
                 <img src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/character-start.png" alt="Life" class="heart-img" style="width:30px; height:30px;">
             </div>
 
-            <button class="btn-nav" id="btn-back-menu">📋 Menu</button>
+            <button class="btn-nav" onclick="window.backToMenu()">📋 Menu</button>
         </div>
 
         <div class="board-wrapper">
@@ -644,26 +644,26 @@
         <div class="status-bar">
             <div class="status-item">
                 <span>Steps Left:</span>
-                <span class="status-value" id="steps-left-count">7</span>
+                <span class="status-value" id="stepsLeftCount">7</span>
             </div>
         </div>
     </div>
 
-    <div class="modal" id="win-modal">
+    <div class="modal" id="winModal">
         <div class="modal-content">
             <img src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/happy.png" alt="Happy Capybara" class="modal-capybara-final">
             <h2>Awesome! 🎉</h2>
             <p>You helped our capybara friend understand all the emotions!</p>
-            <button class="modal-btn" id="btn-win-restart" onclick="restartGame()">Play Again 🐹</button>
+            <button class="modal-btn" onclick="window.restartGame()">Play Again 🐹</button>
         </div>
     </div>
 
-    <div class="modal" id="lose-modal">
+    <div class="modal" id="loseModal">
         <div class="modal-content">
             <img src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/sad.png" alt="Sad Capybara" class="modal-capybara-final">
             <h2>Oops! 😢</h2>
             <p>The capybara got confused. Let's try again!</p>
-            <button class="modal-btn" id="btn-lose-restart" onclick="restartGame()">Try Again 🔄</button>
+            <button class="modal-btn" onclick="window.restartGame()">Try Again 🔄</button>
         </div>
     </div>
 
@@ -698,19 +698,15 @@
         const CAPYBARA_START = 'https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/character-start.png';
         const CAPYBARA_HAPPY = 'https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/final-positive-result_ult.png';
 
-        const WORD_MODE = {
-            words: ['happy', 'sad', 'angry', 'confused', 'cool', 'surprised', 'shy', 'tired', 'hungry', 'thirsty']
-        };
-
         const STORY_MODE = [
             { prompt: 'I wake up and see the sun! ☀️', correct: 'happy' },
             { prompt: 'I eat lots of grass for breakfast! 🌾', correct: 'happy' },
             { prompt: 'Uh oh... I lost my favorite toy 😞', correct: 'sad' },
             { prompt: 'Someone took my snacks! 😤', correct: 'angry' },
-            { prompt: 'I don't understand the puzzle 🤔', correct: 'confused' },
+            { prompt: 'I don\'t understand the puzzle 🤔', correct: 'confused' },
             { prompt: 'Cool! My friend looks so cool! 😎', correct: 'cool' },
             { prompt: 'Wow! What a big surprise! 🎉', correct: 'surprised' },
-            { prompt: 'It's night time... I'm very tired 😴', correct: 'tired' }
+            { prompt: 'It\'s night time... I\'m very tired 😴', correct: 'tired' }
         ];
 
         let currentMode = 'word';
@@ -733,19 +729,19 @@
             [{r:0,c:0}, {r:0,c:1}, {r:1,c:1}, {r:1,c:2}, {r:2,c:3}, {r:2,c:4}, {r:3,c:4}, {r:4,c:5}, {r:4,c:6}]
         ];
 
-        function selectMode(mode) {
+        window.selectMode = function(mode) {
             currentMode = mode;
             document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('selected'));
             document.querySelector(`[data-mode="${mode}"]`).classList.add('selected');
         }
 
-        function startGame() {
+        window.startGame = function() {
             gameState.lives = 3;
             gameState.currentPathIndex = 0;
             gameState.isPlaying = true;
             gameState.storyIndex = 0;
-            document.getElementById('menu-screen').style.display = 'none';
-            document.getElementById('game-container').classList.add('active');
+            document.getElementById('menuScreen').style.display = 'none';
+            document.getElementById('gameContainer').classList.add('active');
             updateHearts();
             setupBoard();
             nextTurn();
@@ -781,7 +777,7 @@
             const boardObj = {};
             for(let idx = 0; idx < pathLen; idx++) {
                 const pos = path[idx + 1];
-                boardObj[`${pos.r},${pos.c}`] = pathEmotions[idx];
+                boardObj[pos.r + ',' + pos.c] = pathEmotions[idx];
             }
             boardObj['0,0'] = 'start';
             boardObj['4,6'] = 'finish';
@@ -789,7 +785,7 @@
             for(let r = 0; r < ROWS; r++) {
                 gameState.board[r] = [];
                 for(let c = 0; c < COLS; c++) {
-                    const key = `${r},${c}`;
+                    const key = r + ',' + c;
                     let emotion = '';
                     let type = 'item';
 
@@ -830,20 +826,18 @@
                     const cell = gameState.board[r][c];
                     const hexEl = document.createElement('div');
                     hexEl.className = 'hex ' + cell.type;
-                    hexEl.id = `hex-${r}-${c}`;
+                    hexEl.id = 'hex-' + r + '-' + c;
 
                     let innerHtml = '<div class="hex-content">';
-                    if(cell.type === 'start') {
-                        innerHtml += `<img src="${CAPYBARA_START}" class="hex-emotion-img" alt="Capybara" />`;
-                    } else {
-                        innerHtml += `<img src="${cell.emotionUrl}" class="hex-emotion-img" alt="${cell.emotion}" />`;
-                    }
+                    innerHtml += '<img src="' + cell.emotionUrl + '" class="hex-emotion-img" alt="' + cell.emotion + '" />';
                     innerHtml += '</div>';
 
                     hexEl.innerHTML = innerHtml;
 
                     if(cell.type === 'item') {
-                        hexEl.addEventListener('click', () => handleCellClick(r, c));
+                        hexEl.addEventListener('click', (function(r, c) {
+                            return function() { handleCellClick(r, c); }
+                        })(r, c));
                     }
 
                     rowEl.appendChild(hexEl);
@@ -870,22 +864,22 @@
             gameState.currentTargetEmotion = nextCell.emotion;
 
             if(currentMode === 'word') {
-                document.getElementById('target-word-text').textContent = gameState.currentTargetEmotion.toUpperCase();
+                document.getElementById('targetWordText').textContent = gameState.currentTargetEmotion.toUpperCase();
             } else {
                 const story = STORY_MODE[gameState.storyIndex % STORY_MODE.length];
-                document.getElementById('target-word-text').textContent = story.prompt;
+                document.getElementById('targetWordText').textContent = story.prompt;
                 gameState.currentTargetEmotion = story.correct;
                 gameState.storyIndex++;
             }
 
-            document.getElementById('steps-left-count').textContent = (pathLen + 1) - nextStepIndex;
+            document.getElementById('stepsLeftCount').textContent = (pathLen + 1) - nextStepIndex;
         }
 
         function handleCellClick(r, c) {
             if(!gameState.isPlaying || gameState.currentTargetEmotion === '') return;
 
             const cell = gameState.board[r][c];
-            const hexEl = document.getElementById(`hex-${r}-${c}`);
+            const hexEl = document.getElementById('hex-' + r + '-' + c);
             const currentPos = gameState.capybaraPath[gameState.currentPathIndex];
             const prevPos = gameState.currentPathIndex > 0 ? gameState.capybaraPath[gameState.currentPathIndex - 1] : null;
 
@@ -919,7 +913,7 @@
             const oldCapy = document.getElementById('capy-overlay');
             if(oldCapy) oldCapy.remove();
 
-            const newHex = document.getElementById(`hex-${targetR}-${targetC}`);
+            const newHex = document.getElementById('hex-' + targetR + '-' + targetC);
             const contentDiv = newHex.querySelector('.hex-content');
 
             const newCapy = document.createElement('img');
@@ -942,55 +936,60 @@
         }
 
         function playSound(type) {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            if(type === 'munch') {
-                for(let i = 0; i < 3; i++) {
-                    const osc = ctx.createOscillator(); const gain = ctx.createGain();
-                    osc.connect(gain); gain.connect(ctx.destination);
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(450 + i * 120, ctx.currentTime + i * 0.08);
-                    gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.08);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.07);
-                    osc.start(ctx.currentTime + i * 0.08);
-                    osc.stop(ctx.currentTime + i * 0.08 + 0.07);
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if(type === 'munch') {
+                    for(let i = 0; i < 3; i++) {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(450 + i * 120, ctx.currentTime + i * 0.08);
+                        gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.08);
+                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.07);
+                        osc.start(ctx.currentTime + i * 0.08);
+                        osc.stop(ctx.currentTime + i * 0.08 + 0.07);
+                    }
+                } else if(type === 'phew') {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(350, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.35);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.35);
                 }
-            } else if(type === 'phew') {
-                const osc = ctx.createOscillator(); const gain = ctx.createGain();
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(350, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.35);
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtValue(0.01, ctx.currentTime + 0.35);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.35);
+            } catch(e) {
+                console.log('Audio not available');
             }
         }
 
         function showVictory() {
             gameState.isPlaying = false;
-            document.getElementById('win-modal').classList.add('show');
+            document.getElementById('winModal').classList.add('show');
         }
 
         function showGameOver() {
             gameState.isPlaying = false;
-            document.getElementById('lose-modal').classList.add('show');
+            document.getElementById('loseModal').classList.add('show');
         }
 
-        function restartGame() {
-            document.getElementById('win-modal').classList.remove('show');
-            document.getElementById('lose-modal').classList.remove('show');
+        window.restartGame = function() {
+            document.getElementById('winModal').classList.remove('show');
+            document.getElementById('loseModal').classList.remove('show');
             startGame();
         }
 
-        document.getElementById('btn-play-audio').addEventListener('click', () => {
-            // Placeholder for audio
-        });
-
-        document.getElementById('btn-back-menu').addEventListener('click', () => {
-            document.getElementById('game-container').classList.remove('active');
-            document.getElementById('menu-screen').style.display = 'flex';
-        });
+        window.backToMenu = function() {
+            gameState.isPlaying = false;
+            document.getElementById('gameContainer').classList.remove('active');
+            document.getElementById('menuScreen').style.display = 'flex';
+        }
 
         // Preload images
         Object.values(EMOTIONS).forEach(url => {
