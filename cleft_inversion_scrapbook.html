@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cleft Sentences & Inversion — Master Emphasis (B2+)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Lora:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* VINTAGE SCRAPBOOK STYLESHEET */
+    /* ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --cream: #f4edd9;          /* Warm desk background */
+      --paper: #faf6eb;          /* Open book paper color */
+      --ink: #2b1f15;            /* Dark ink color */
+      --lavender: #76638f;       /* Primary highlight (Reference color) */
+      --lavender-light: #f0ecf5; /* Light tint for formulas */
+      --moss: #6b8265;           /* Success / Botanical green */
+      --terracotta: #b86259;     /* Error / Accent red */
+      --gold: #bda272;           /* Sub-headings / Badges decoration */
+      
+      --shadow-sm: 0 2px 4px rgba(43,31,21,0.08);
+      --shadow-md: 0 8px 24px rgba(43,31,21,0.12);
+      --shadow-lg: 0 16px 36px rgba(43,31,21,0.18);
+      
+      --r-card: 6px;
+      --font-body: 'Roboto', sans-serif;
+      --font-serif: 'Lora', serif;
+      --font-display: 'Playfair Display', serif;
+      --font-hand: 'Architects Daughter', cursive;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--cream);
+      background-image: radial-gradient(rgba(43,31,21,0.05) 1px, transparent 0);
+      background-size: 24px 24px;
+      color: var(--ink);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* TOPBAR LOGO & AUDIO CONTROLS */
+    /* ═══════════════════════════════════════════════════════════════ */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .logo-pill {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 99px;
+      padding: 8px 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo-pill span {
+      color: var(--lavender);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .level-tag {
+      background: var(--lavender);
+      color: var(--paper);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .audio-btn {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 0 var(--ink);
+      transition: all 0.1s ease;
+    }
+
+    .audio-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 var(--ink);
+    }
+
+    .audio-btn.muted {
+      opacity: 0.6;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* HERO: OPEN BOOK STYLE */
+    /* ═══════════════════════════════════════════════════════════════ */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 32px;
+      align-items: center;
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: var(--r-card);
+      padding: 44px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    /* Decorative Tape (Washi Tape) Effect */
+    .washi-tape-top {
+      position: absolute;
+      top: -12px;
+      left: 10%;
+      width: 120px;
+      height: 28px;
+      background: rgba(189,162,114,0.45);
+      transform: rotate(-3deg);
+      border-left: 3px dashed rgba(43,31,21,0.2);
+      border-right: 3px dashed rgba(43,31,21,0.2);
+    }
+
+    .hero-tag {
+      display: inline-block;
+      border: 1px solid var(--lavender);
+      background: var(--lavender-light);
+      color: var(--lavender);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: 2.6rem;
+      line-height: 1.15;
+      color: var(--lavender);
+      margin-bottom: 16px;
+      font-weight: 900;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--ink);
+      margin-bottom: 28px;
+      font-family: var(--font-serif);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-scrap {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--ink);
+      transition: all 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-scrap:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--ink);
+    }
+
+    .btn-scrap:active {
+      transform: translate(4px, 4px);
+      box-shadow: 0px 0px 0 var(--ink);
+    }
+
+    .btn-scrap-primary {
+      background: var(--lavender);
+      color: var(--paper);
+    }
+
+    .btn-scrap-primary:hover {
+      background: #64517d;
+      color: var(--paper);
+    }
+
+    .hero-img-box {
+      border: 6px solid #fff;
+      box-shadow: var(--shadow-sm);
+      border-radius: 4px;
+      transform: rotate(2deg);
+      overflow: hidden;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    .hero-img-box img {
+      width: 100%;
+      display: block;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* THEORY COMPARTMENTS */
+    /* ═══════════════════════════════════════════════════════════════ */
+    .theory-section {
+      margin-bottom: 48px;
+    }
+
+    .theory-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 12px;
+    }
+
+    .theory-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--lavender);
+    }
+
+    .badges-strip {
+      height: 48px;
+      object-fit: contain;
+    }
+
+    /* Scrapbook Collapsible Pages */
+    .page-details {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: var(--r-card);
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .page-summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 20px 24px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      background: var(--lavender-light);
+      border-bottom: 2px solid var(--ink);
+      font-family: var(--font-serif);
+      user-select: none;
+    }
+
+    .page-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .page-summary::after {
+      content: '＋';
+      margin-left: auto;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .page-details[open] .page-summary::after {
+      content: '－';
+    }
+
+    .page-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .page-content {
+      padding: 28px;
+    }
+
+    /* Two column grid layout for book spread look */
+    .page-spread {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 36px;
+      align-items: start;
+    }
+
+    .page-left {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .page-right {
+      position: sticky;
+      top: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .scrapbook-photo {
+      border: 8px solid #fff;
+      background: #fff;
+      box-shadow: var(--shadow-md);
+      transform: rotate(-1.5deg);
+      border-radius: 4px;
+      max-width: 100%;
+    }
+
+    .scrapbook-photo img {
+      width: 100%;
+      display: block;
+    }
+
+    .scrapbook-photo-caption {
+      font-family: var(--font-hand);
+      font-size: 0.85rem;
+      text-align: center;
+      color: var(--lavender);
+      margin-top: 8px;
+    }
+
+    .handwritten-note {
+      font-family: var(--font-hand);
+      color: var(--terracotta);
+      font-size: 1.05rem;
+      line-height: 1.4;
+      padding: 12px 16px;
+      position: relative;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* PEDAGOGICAL TOOLING LAYOUTS */
+    /* ═══════════════════════════════════════════════════════════════ */
+    .instruction-lead {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      color: var(--ink);
+      border-left: 4px solid var(--lavender);
+      padding-left: 14px;
+      margin-bottom: 8px;
+    }
+
+    /* Formula Strip */
+    .formula-strip {
+      background: var(--lavender-light);
+      border: 1px dashed var(--lavender);
+      border-radius: var(--r-card);
+      padding: 14px;
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .formula-pill {
+      background: #fff;
+      border: 1.5px solid var(--ink);
+      border-radius: 4px;
+      padding: 4px 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .formula-join {
+      font-weight: 900;
+      color: var(--lavender);
+    }
+
+    /* Contrast Box */
+    .contrast-box {
+      border: 2px solid var(--ink);
+      border-radius: var(--r-card);
+      background: var(--cream);
+      overflow: hidden;
+      margin: 16px 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .contrast-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 18px;
+      gap: 16px;
+      border-bottom: 1.5px dashed rgba(43,31,21,0.15);
+    }
+
+    .contrast-row:last-child {
+      border-bottom: none;
+    }
+
+    .contrast-label {
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      padding: 4px 8px;
+      text-align: center;
+      width: 80px;
+    }
+
+    .contrast-label.neutral {
+      background: #fff;
+      border: 1.5px solid var(--ink);
+      color: var(--ink);
+    }
+
+    .contrast-label.highlighted {
+      background: var(--lavender-light);
+      border: 1.5px solid var(--lavender);
+      color: var(--lavender);
+    }
+
+    .contrast-label.error-label {
+      background: #fdf2f2;
+      border: 1.5px solid var(--terracotta);
+      color: var(--terracotta);
+    }
+
+    .emphasis-text {
+      background: rgba(189,162,114,0.25);
+      border-bottom: 2px solid var(--gold);
+      padding: 0 4px;
+      font-weight: 700;
+    }
+
+    /* Comparative Cards Layout */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 18px 0;
+    }
+
+    .theory-card {
+      background: #fff;
+      border: 2px solid var(--ink);
+      border-radius: var(--r-card);
+      padding: 20px;
+      box-shadow: 4px 4px 0 var(--ink);
+      position: relative;
+    }
+
+    .theory-card-header {
+      font-weight: 700;
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--lavender);
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid rgba(43,31,21,0.1);
+      padding-bottom: 6px;
+    }
+
+    .theory-card-body {
+      font-size: 0.9rem;
+    }
+
+    .theory-card-body b {
+      color: var(--moss);
+    }
+
+    /* Trigger Words Clouds */
+    .chip-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .trigger-chip {
+      background: #fff;
+      border: 1.5px solid var(--ink);
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .trigger-chip.primary-trigger {
+      border-color: var(--lavender);
+      background: var(--lavender-light);
+      color: var(--lavender);
+      font-weight: 700;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* INTERACTIVE TRAINER HUD */
+    /* ═══════════════════════════════════════════════════════════════ */
+    .trainer-section {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-md);
+      padding: 36px;
+      margin-bottom: 40px;
+    }
+
+    .hud-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      border-bottom: 2px dashed rgba(43,31,21,0.15);
+      padding-bottom: 16px;
+    }
+
+    .bookmark-progress-box {
+      flex: 1;
+      min-width: 250px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    /* Visually unique ribbon bookmark progress bar */
+    .ribbon-track {
+      flex: 1;
+      height: 16px;
+      background: rgba(43,31,21,0.08);
+      border-radius: 99px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--ink);
+    }
+
+    .ribbon-fill {
+      height: 100%;
+      background: repeating-linear-gradient(
+        -45deg,
+        var(--lavender),
+        var(--lavender) 10px,
+        #87749f 10px,
+        #87749f 20px
+      );
+      width: 0%;
+      border-radius: 99px 0 0 99px;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hud-lbl {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .hud-chips-box {
+      display: flex;
+      gap: 10px;
+    }
+
+    .hud-chip {
+      background: #fff;
+      border: 2px solid var(--ink);
+      border-radius: 99px;
+      padding: 6px 14px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .hud-chip.combo-active {
+      background: var(--lavender-light);
+      border-color: var(--lavender);
+      color: var(--lavender);
+      animation: bounce 0.4s ease;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* Question Cards */
+    .card-space {
+      position: relative;
+      min-height: 250px;
+    }
+
+    .question-card {
+      animation: cardSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes cardSlideIn {
+      from { opacity: 0; transform: translateY(24px) rotate(1deg); }
+      to { opacity: 1; transform: translateY(0) rotate(0); }
+    }
+
+    .q-meta {
+      display: inline-block;
+      background: var(--lavender-light);
+      color: var(--lavender);
+      border: 1px solid var(--lavender);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      margin-bottom: 18px;
+    }
+
+    .q-text {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      line-height: 1.5;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .gap-placeholder {
+      display: inline-block;
+      min-width: 90px;
+      border-bottom: 3px dashed var(--lavender);
+      text-align: center;
+      color: var(--lavender);
+      font-weight: 900;
+      padding: 0 4px;
+    }
+
+    /* Options UI */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-row {
+      background: #fff;
+      border: 2px solid var(--ink);
+      border-radius: var(--r-card);
+      padding: 18px 22px;
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--ink);
+      transition: all 0.15s ease;
+      color: var(--ink);
+      width: 100%;
+    }
+
+    .option-row:hover:not(:disabled) {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 var(--ink);
+      border-color: var(--lavender);
+    }
+
+    .option-row:disabled {
+      cursor: default;
+    }
+
+    .option-row.correct-ans {
+      background: #f0f7f1;
+      border-color: var(--moss);
+      color: var(--moss);
+      box-shadow: 3px 3px 0 var(--moss);
+    }
+
+    .option-row.wrong-ans {
+      background: #fdf2f2;
+      border-color: var(--terracotta);
+      color: var(--terracotta);
+      box-shadow: 3px 3px 0 var(--terracotta);
+    }
+
+    /* Input Field UI */
+    .input-box-area {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .input-field-custom {
+      flex: 1;
+      min-width: 250px;
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      border: 2px solid var(--ink);
+      border-radius: var(--r-card);
+      padding: 16px;
+      background: #fff;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .input-field-custom:focus {
+      outline: none;
+      border-color: var(--lavender);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 3px rgba(118,99,143,0.15);
+    }
+
+    .input-field-custom.correct-field {
+      border-color: var(--moss);
+      background: #f0f7f1;
+    }
+
+    .input-field-custom.wrong-field {
+      border-color: var(--terracotta);
+      background: #fdf2f2;
+    }
+
+    /* Feedback Banner */
+    .fb-banner {
+      border-radius: var(--r-card);
+      padding: 24px;
+      margin-top: 24px;
+      border: 2px solid var(--ink);
+      box-shadow: var(--shadow-sm);
+      animation: cardSlideIn 0.3s ease;
+    }
+
+    .fb-banner.fb-correct {
+      background: #f0f7f1;
+      border-color: var(--moss);
+    }
+
+    .fb-banner.fb-wrong {
+      background: #fdf2f2;
+      border-color: var(--terracotta);
+    }
+
+    .fb-title-txt {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .fb-correct .fb-title-txt { color: var(--moss); }
+    .fb-wrong .fb-title-txt { color: var(--terracotta); }
+
+    .fb-rationale {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      margin-bottom: 18px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* PERSONAL SCRAPBOOK WRITING PRACTICE */
+    /* ═══════════════════════════════════════════════════════════════ */
+    .journal-spread {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-top: 30px;
+    }
+
+    .journal-header {
+      background: var(--lavender-light);
+      border-bottom: 2px solid var(--ink);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .journal-header h3 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      color: var(--lavender);
+    }
+
+    .prompt-picker {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .prompt-tab {
+      background: #fff;
+      border: 2px solid var(--ink);
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .prompt-tab.active-tab {
+      background: var(--lavender);
+      color: var(--paper);
+    }
+
+    .journal-body {
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 32px;
+    }
+
+    .paper-lines-container {
+      position: relative;
+    }
+
+    .journal-ruled-textarea {
+      width: 100%;
+      min-height: 220px;
+      border: 2px solid var(--ink);
+      border-radius: 4px;
+      padding: 16px 20px;
+      font-family: var(--font-hand);
+      font-size: 1.25rem;
+      line-height: 1.8;
+      background: #fff;
+      background-image: linear-gradient(rgba(43,31,21,0.08) 1px, transparent 1px);
+      background-size: 100% 1.8em;
+      color: var(--ink);
+      resize: vertical;
+    }
+
+    .journal-ruled-textarea:focus {
+      outline: none;
+      border-color: var(--lavender);
+    }
+
+    .journal-checker-panel {
+      background: var(--cream);
+      border: 2px solid var(--ink);
+      border-radius: var(--r-card);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .checker-header {
+      font-weight: 700;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      border-bottom: 1.5px solid rgba(43,31,21,0.1);
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .checker-rule {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .checker-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: #fff;
+    }
+
+    .checker-rule.satisfied {
+      color: var(--moss);
+      font-weight: 700;
+    }
+
+    .checker-rule.satisfied .checker-icon {
+      background: var(--moss);
+      border-color: var(--moss);
+      color: #fff;
+    }
+
+    .journal-footer {
+      padding: 0 28px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .model-box {
+      border: 2px dashed var(--gold);
+      background: #fbfbf6;
+      border-radius: var(--r-card);
+      padding: 16px;
+      margin-top: 18px;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      animation: cardSlideIn 0.3s ease;
+    }
+
+    .model-header {
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* FINAL COMPLETED CARD */
+    /* ═══════════════════════════════════════════════════════════════ */
+    .final-section {
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-lg);
+      padding: 44px;
+      text-align: center;
+      position: relative;
+    }
+
+    .final-badge-box {
+      max-width: 280px;
+      margin: 0 auto 24px;
+      border: 6px solid #fff;
+      box-shadow: var(--shadow-md);
+      border-radius: 4px;
+      transform: rotate(-1deg);
+    }
+
+    .final-badge-box img {
+      width: 100%;
+      display: block;
+    }
+
+    .final-section h2 {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      color: var(--lavender);
+      margin-bottom: 12px;
+    }
+
+    .final-score-strip {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: var(--font-serif);
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+
+    .final-msg-txt {
+      font-size: 1.05rem;
+      max-width: 500px;
+      margin: 0 auto 28px;
+      color: var(--ink);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* RESPONSIVE LAYOUT */
+    /* ═══════════════════════════════════════════════════════════════ */
+    @media (max-width: 820px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 28px;
+        text-align: center;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .hero-img-box {
+        order: -1;
+        max-width: 250px;
+      }
+      .hero-actions {
+        justify-content: center;
+      }
+      .page-spread {
+        grid-template-columns: 1fr;
+      }
+      .page-right {
+        position: static;
+        max-width: 300px;
+        margin: 20px auto 0;
+      }
+      .journal-body {
+        grid-template-columns: 1fr;
+      }
+      .hud-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .hud-right {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="logo-pill">
+      UNIT 4 <span>·</span> EMPHASIS
+    </div>
+    <div class="topbar-right">
+      <span class="level-tag">Level B2+</span>
+      <button class="audio-btn" id="audioToggleBtn" title="Toggle audio" aria-label="Toggle audio">🔊</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO COMPARTMENT -->
+    <section class="hero" id="heroSection">
+      <div class="washi-tape-top"></div>
+      <div class="hero-left">
+        <span class="hero-tag">Active Grammatical Spotlight</span>
+        <h1>Cleft Sentences &<br>Inversion</h1>
+        <p>Master the exact techniques native speakers use to emphasize specific parts of a message. Study the structured scrapbook, challenge yourself through a 31-task adaptive trainer, and craft your own personal journal stories.</p>
+        <div class="hero-actions">
+          <button class="btn-scrap btn-scrap-primary" id="btnHeroStart">Go to Practice ✦</button>
+          <a class="btn-scrap" href="#theorySection">Read Theory ↓</a>
+        </div>
+      </div>
+      <div class="hero-img-box">
+        <img src="https://i.yapx.ru/eHZHC.jpg" alt="Vintage open workbook">
+      </div>
+    </section>
+
+    <!-- THEORY SECTION -->
+    <section class="theory-section" id="theorySection">
+      <div class="theory-section-header">
+        <h2 class="theory-title">Grammar Study Pages</h2>
+        <img src="https://i.yapx.ru/eHZHF.jpg" alt="Vintage badges" class="badges-strip">
+      </div>
+
+      <!-- Page 1: What are Cleft Sentences -->
+      <details class="page-details" open>
+        <summary class="page-summary">
+          <span class="page-num">01</span>
+          What are Cleft Sentences?
+        </summary>
+        <div class="page-content">
+          <div class="page-spread">
+            <div class="page-left">
+              <p class="instruction-lead">A cleft sentence (from the word "cleft" meaning split) splits a standard statement into two clauses, placing a spotlight on the most crucial piece of information.</p>
+              
+              <div class="formula-strip">
+                <span class="formula-pill">What</span>
+                <span class="formula-join">+</span>
+                <span class="formula-pill">Subject + Verb</span>
+                <span class="formula-join">+</span>
+                <span class="formula-pill">is / was</span>
+                <span class="formula-join">+</span>
+                <span class="formula-pill">★ Focused Info</span>
+              </div>
+
+              <div class="contrast-box">
+                <div class="contrast-row">
+                  <span class="contrast-label neutral">Natural</span>
+                  <span>I love <span class="emphasis-text">my job</span>.</span>
+                </div>
+                <div class="contrast-row">
+                  <span class="contrast-label highlighted">Cleft</span>
+                  <span>What I love is <span class="emphasis-text">my job</span>.</span>
+                </div>
+              </div>
+
+              <p>By moving the core info to the end of the sentence, you draw the listener’s absolute attention to it. This technique is highly valued in essays, formal presentations, and storytelling.</p>
+            </div>
+            <div class="page-right">
+              <div class="scrapbook-photo">
+                <img src="https://i.yapx.ru/eHZHD.jpg" alt="Pressed poppy flowers">
+                <div class="scrapbook-photo-caption">Spotlight focus: like a single poppy flower ✿</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Page 2: Cleft Sentence Patterns -->
+      <details class="page-details">
+        <summary class="page-summary">
+          <span class="page-num">02</span>
+          Cleft Sentence Patterns
+        </summary>
+        <div class="page-content">
+          <div class="page-spread">
+            <div class="page-left">
+              <p class="instruction-lead">Depending on the tone and focus, choose one of these three standard structural frames:</p>
+              
+              <div class="card-grid">
+                <div class="theory-card">
+                  <div class="theory-card-header">1. What-clause (Most common)</div>
+                  <div class="theory-card-body">
+                    Emphasis placed after the verb BE.
+                    <div style="background:var(--cream); padding:8px; border-radius:4px; margin-top:8px;">
+                      What I appreciate most is <b>your honesty</b>.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="theory-card">
+                  <div class="theory-card-header">2. The thing (that)</div>
+                  <div class="theory-card-body">
+                    A slightly more formal version.
+                    <div style="background:var(--cream); padding:8px; border-radius:4px; margin-top:8px;">
+                      The thing that impressed me was <b>his dedication</b>.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="theory-card">
+                  <div class="theory-card-header">3. What... about... is...</div>
+                  <div class="theory-card-body">
+                    Perfect to show specific context.
+                    <div style="background:var(--cream); padding:8px; border-radius:4px; margin-top:8px;">
+                      What I love about that website is <b>the photos</b>.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="handwritten-note">
+                ✏️ Remember: The information coming at the very end of a cleft pattern receives 100% of the conversational spotlight!
+              </div>
+            </div>
+            <div class="page-right">
+              <div class="scrapbook-photo">
+                <img src="https://i.yapx.ru/eHZHC.jpg" alt="Vintage open workbook" style="max-width:200px;">
+                <div class="scrapbook-photo-caption">Write it down to remember! 📖</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Page 3: Inversion for Emphasis -->
+      <details class="page-details">
+        <summary class="page-summary">
+          <span class="page-num">03</span>
+          Inversion for Emphasis
+        </summary>
+        <div class="page-content">
+          <div class="page-spread">
+            <div class="page-left">
+              <p class="instruction-lead">Inversion changes the standard order of words. Placing a negative or restrictive adverbial first forces the auxiliary verb to jump in front of the subject.</p>
+              
+              <div class="formula-strip">
+                <span class="formula-pill">Negative Word</span>
+                <span class="formula-join">+</span>
+                <span class="formula-pill">Auxiliary (did/have/do)</span>
+                <span class="formula-join">+</span>
+                <span class="formula-pill">Subject</span>
+                <span class="formula-join">+</span>
+                <span class="formula-pill">Verb...</span>
+              </div>
+
+              <div class="contrast-box">
+                <div class="contrast-row">
+                  <span class="contrast-label neutral">Natural</span>
+                  <span>He had never seen such beauty.</span>
+                </div>
+                <div class="contrast-row">
+                  <span class="contrast-label highlighted">Inverted</span>
+                  <span><span class="emphasis-text">Never had he seen</span> such beauty.</span>
+                </div>
+              </div>
+
+              <p style="font-weight:700; margin-top:10px;">Primary Restrictive Triggers:</p>
+              <div class="chip-cloud">
+                <span class="trigger-chip primary-trigger">Never</span>
+                <span class="trigger-chip primary-trigger">Rarely</span>
+                <span class="trigger-chip primary-trigger">Only then</span>
+                <span class="trigger-chip primary-trigger">Hardly</span>
+                <span class="trigger-chip">At no time</span>
+                <span class="trigger-chip">Not once</span>
+                <span class="trigger-chip">No sooner</span>
+                <span class="trigger-chip">In no way</span>
+              </div>
+            </div>
+            <div class="page-right">
+              <div class="scrapbook-photo">
+                <img src="https://i.yapx.ru/eHZHE.jpg" alt="Falling leaves">
+                <div class="scrapbook-photo-caption">Flipped order: like leaves in the wind 🍂</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Page 4: Common Traps -->
+      <details class="page-details">
+        <summary class="page-summary">
+          <span class="page-num">04</span>
+          Mistakes & Traps
+        </summary>
+        <div class="page-content">
+          <div class="page-spread">
+            <div class="page-left">
+              <p class="instruction-lead">Avoid these common mistakes to keep your sentences grammatically sound:</p>
+
+              <div class="contrast-box">
+                <div class="contrast-row">
+                  <span class="contrast-label error-label">Trap 1</span>
+                  <span><b>Forgetting the subject-auxiliary flip after "Only".</b><br>
+                    ✗ Only then I understood the rule.<br>
+                    ✔ Only then <span class="emphasis-text">did I understand</span> the rule.
+                  </span>
+                </div>
+                <div class="contrast-row">
+                  <span class="contrast-label error-label">Trap 2</span>
+                  <span><b>Forgetting the auxiliary verb entirely.</b><br>
+                    ✗ Never he has seen anything like it.<br>
+                    ✔ Never <span class="emphasis-text">has he seen</span> anything like it.
+                  </span>
+                </div>
+                <div class="contrast-row">
+                  <span class="contrast-label error-label">Trap 3</span>
+                  <span><b>Adding prepositional noise into clean Cleft frames.</b><br>
+                    ✗ What I love about is the photos.<br>
+                    ✔ What I love about that website <span class="emphasis-text">is the photos</span>.
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="page-right">
+              <div class="handwritten-note" style="border: 2px dashed var(--gold); border-radius: var(--r-card); background: #fdfdfa;">
+                💡 <b>Mnemonic checklist:</b><br>
+                1. Look at the trigger.<br>
+                2. Put the auxiliary.<br>
+                3. Put the subject.<br>
+                4. Put the verb.<br>
+                <b>(Neg + Aux + Subj + Verb)</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <button class="btn-scrap btn-scrap-primary btn-big" id="btnTheoryStart">Unlock Practice Section ✦</button>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE TRAINER -->
+    <section class="trainer-section hidden" id="trainerSection">
+      <div class="hud-header">
+        <div class="bookmark-progress-box">
+          <span class="hud-lbl">Ribbon progress:</span>
+          <div class="ribbon-track">
+            <div class="ribbon-fill" id="progressRibbon"></div>
+          </div>
+          <span class="hud-lbl" id="progressCountLabel">1 / 31</span>
+        </div>
+        <div class="hud-right">
+          <div class="hud-chips-box">
+            <div class="hud-chip" id="hudScoreDisplay">Score: 0</div>
+            <div class="hud-chip" id="hudStreakDisplay">✦ Streak: 0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-space">
+        <!-- JS Renders active question card here -->
+        <div class="question-card" id="activeQuestionCard">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- WRITING PRACTICE SECTION -->
+    <section class="journal-spread hidden" id="writingSection">
+      <div class="journal-header">
+        <h3>My Journal: Personal Spotlight</h3>
+        <div class="prompt-picker">
+          <button class="prompt-tab active-tab" onclick="switchPrompt(0)">01: My Passion</button>
+          <button class="prompt-tab" onclick="switchPrompt(1)">02: Rare Event</button>
+          <button class="prompt-tab" onclick="switchPrompt(2)">03: My Pet Peeve</button>
+        </div>
+      </div>
+
+      <div class="journal-body">
+        <div class="paper-lines-container">
+          <div style="margin-bottom:12px; font-weight:500;" id="activePromptGuide">
+            Write 2-3 sentences. Tell us about your main job, study, or passion. Highlight what you love.
+          </div>
+          <textarea 
+            class="journal-ruled-textarea" 
+            id="journalInput" 
+            placeholder="Type your response here..." 
+            spellcheck="false"
+            oninput="evaluateJournalText()"></textarea>
+          
+          <div class="model-box hidden" id="modelAnswerBox">
+            <div class="model-header">💡 Model Specimen:</div>
+            <div id="modelTextContainer">Model answer text.</div>
+          </div>
+        </div>
+
+        <div class="journal-checker-panel">
+          <div class="checker-header">Active Checklist</div>
+          <div class="checker-rule" id="ruleMinWords">
+            <span class="checker-icon">1</span> At least 15 words
+          </div>
+          <div class="checker-rule" id="ruleGrammarPattern">
+            <span class="checker-icon">2</span> Target structure pattern found
+          </div>
+          
+          <div style="margin-top:20px; border-top: 1.5px solid rgba(43,31,21,0.1); padding-top:16px; display:flex; flex-direction:column; gap:12px;">
+            <button class="btn-scrap" style="width:100%;" id="btnShowModel" onclick="toggleModelAnswer()">Compare with Model</button>
+            <button class="btn-scrap btn-scrap-primary" style="width:100%;" id="btnSaveJournal" onclick="saveJournalEntry()" disabled>Save Entry & Finish ✓</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL SECTION -->
+    <section class="final-section hidden" id="finalSection">
+      <div class="final-badge-box">
+        <img src="https://i.yapx.ru/eHZHD.jpg" alt="Pressed poppy flowers final">
+      </div>
+      <h2 id="finalHeader">Unit Completed!</h2>
+      <p class="final-score-strip" id="finalScoreStrip">Your score: 31 / 31</p>
+      <p class="final-msg-txt" id="finalMsgTxt">Congratulations! You've mastered Cleft Sentences & Inversion. The structures are now firmly integrated into your English toolkit.</p>
+      <div class="final-btns">
+        <button class="btn-scrap btn-scrap-primary" id="btnReviewMistakes" style="display:none;">Practise Mistakes (0)</button>
+        <button class="btn-scrap" id="btnRestartApp">Start Over</button>
+      </div>
+    </section>
+  </main>
+
+  <footer style="text-align: center; padding: 40px 20px; font-weight: 500; font-size: 0.85rem; opacity: 0.75;">
+    Unit 4 · Cleft Sentences & Inversion Scrapbook · Level B2+
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <!-- ═══════════════════════════════════════════════════════════════ */ -->
+  <script>
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* AUDIO SYNTHESIS SYSTEM */
+    /* ═══════════════════════════════════════════════════════════════ */
+    const SoundEngine = (() => {
+      let audioCtx = null;
+      let soundEnabled = true;
+
+      function initCtx() {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) audioCtx = new AudioContextClass();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      function playTone(frequency, duration, type = 'sine', volume = 0.15, delay = 0) {
+        if (!soundEnabled) return;
+        const ctx = initCtx();
+        if (!ctx) return;
+
+        const scheduledTime = ctx.currentTime + delay;
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.type = type;
+        oscillator.frequency.setValueAtTime(frequency, scheduledTime);
+
+        gainNode.gain.setValueAtTime(0.0001, scheduledTime);
+        gainNode.gain.exponentialRampToValueAtTime(volume, scheduledTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, scheduledTime + duration);
+
+        oscillator.connect(gainNode).connect(ctx.destination);
+        oscillator.start(scheduledTime);
+        oscillator.stop(scheduledTime + duration + 0.02);
+      }
+
+      return {
+        toggleMute: () => {
+          soundEnabled = !soundEnabled;
+          if (soundEnabled) playTone(500, 0.08, 'triangle', 0.1);
+          return soundEnabled;
+        },
+        playClick: () => playTone(350, 0.06, 'triangle', 0.1),
+        playCorrect: () => {
+          playTone(523.25, 0.10, 'sine', 0.15, 0);       // C5
+          playTone(659.25, 0.10, 'sine', 0.15, 0.08);    // E5
+          playTone(783.99, 0.18, 'sine', 0.15, 0.16);    // G5
+        },
+        playWrong: () => {
+          playTone(293.66, 0.15, 'sawtooth', 0.08, 0);    // D4
+          playTone(220.00, 0.22, 'sawtooth', 0.08, 0.1);   // A3
+        },
+        playStreak: () => {
+          [659.25, 783.99, 987.77, 1318.51].forEach((f, idx) => {
+            playTone(f, 0.1, 'triangle', 0.12, idx * 0.07);
+          });
+        },
+        playSuccess: () => {
+          [523.25, 659.25, 783.99, 1046.50].forEach((f, idx) => {
+            playTone(f, 0.2, 'triangle', 0.15, idx * 0.12);
+          });
+        }
+      };
+    })();
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* QUESTION DATABASE (30 Mixed + 1 Warm-up) */
+    /* ═══════════════════════════════════════════════════════════════ */
+    const QUESTION_BANK = [
+      {
+        id: 0,
+        part: 'Warm-up · Easy Beginning',
+        type: 'mc',
+        sentence: 'I like coffee. What I {GAP} is coffee.',
+        options: ['like', 'want', 'drink'],
+        correct: 'like',
+        why: '<b>What I like is coffee.</b> Keep the exact verb from the original sentence.'
+      },
+      {
+        id: 1,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'He doesn\'t appreciate how hard new concepts can be. What he {GAP} is how hard new concepts can be.',
+        options: ['doesn\'t appreciate', 'appreciates', 'doesn\'t like'],
+        correct: 'doesn\'t appreciate',
+        why: 'Keep the original verb phrase intact. <b>What he doesn\'t appreciate is...</b>'
+      },
+      {
+        id: 2,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'I love the photos on that website. What I love {GAP} that website is the photos.',
+        options: ['about', 'on', 'with'],
+        correct: 'about',
+        why: 'To highlight a feature, use: <b>What I love about [subject] is [feature]</b>.'
+      },
+      {
+        id: 3,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'He wants a new motorbike. What he {GAP} is a new motorbike.',
+        options: ['wants', 'needs', 'is wanting'],
+        correct: 'wants',
+        why: 'Simple cleft conversion. The verb stays the same: <b>What he wants is...</b>'
+      },
+      {
+        id: 4,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'I hate the traffic in this city. What I hate {GAP} this city is the traffic.',
+        options: ['about', 'in', 'of'],
+        correct: 'about',
+        why: 'Use the "What I hate about... is" pattern to express particular annoyances.'
+      },
+      {
+        id: 5,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'At no time {GAP} he mention that anything was wrong.',
+        answers: ['did'],
+        correct: 'did',
+        why: 'The sentence refers to past actions ("didn\'t mention"), so the auxiliary <b>did</b> is correct.'
+      },
+      {
+        id: 6,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'Not once {GAP} he apologise for his behavior.',
+        answers: ['did'],
+        correct: 'did',
+        why: 'For a past action, use <b>did</b> + subject + bare infinitive. <b>Not once did he apologise...</b>'
+      },
+      {
+        id: 7,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'In no way {GAP} he right about this situation.',
+        answers: ['is', 'was'],
+        correct: 'is',
+        why: 'The verb <i>be</i> acts as its own auxiliary. <b>In no way is he right / was he right</b>.'
+      },
+      {
+        id: 8,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'Never {GAP} I seen him so angry before.',
+        answers: ['have', 'had'],
+        correct: 'have',
+        why: 'The past participle <i>seen</i> indicates we need a form of <i>have</i>. <b>Never have I seen...</b>'
+      },
+      {
+        id: 9,
+        part: 'Part C · Meaning & Emphasis Focus',
+        type: 'mc',
+        sentence: 'A: "Hardly had we left when it rained." | B: "We had left before the rain." | Which sentence sounds more dramatic?',
+        options: ['Sentence A', 'Sentence B'],
+        correct: 'Sentence A',
+        why: 'Inversion using <i>Hardly had we...</i> emphasizes the immediate and dramatic sequence of events.'
+      },
+      {
+        id: 10,
+        part: 'Part C · Meaning & Emphasis Focus',
+        type: 'mc',
+        sentence: 'A: "What I need is a vacation." | B: "I really need a vacation." | Which emphasises the word "vacation" more?',
+        options: ['Sentence A', 'Sentence B'],
+        correct: 'Sentence A',
+        why: 'The cleft structure <i>What I need is...</i> places maximum spotlight on <i>vacation</i>.'
+      },
+      {
+        id: 11,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'The location was the problem. What was the problem was {GAP}.',
+        options: ['the location', 'location', 'where we were'],
+        correct: 'the location',
+        why: '<b>What was the problem was the location.</b> Emphasises the specific subject.'
+      },
+      {
+        id: 12,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'I really value your honesty. What I really {GAP} is your honesty.',
+        options: ['value', 'appreciate', 'respect'],
+        correct: 'value',
+        why: 'Keep the verb: <b>What I really value is your honesty.</b>'
+      },
+      {
+        id: 13,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'Setting goals helps you succeed. What {GAP} you succeed is setting goals.',
+        options: ['helps', 'makes', 'enables'],
+        correct: 'helps',
+        why: 'The verb remains unchanged: <b>What helps you succeed is setting goals.</b>'
+      },
+      {
+        id: 14,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'Her determination impressed me. What {GAP} me was her determination.',
+        options: ['impressed', 'struck', 'moved'],
+        correct: 'impressed',
+        why: '<b>What impressed me was her determination.</b>'
+      },
+      {
+        id: 15,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'The feedback you gave me changed everything. What {GAP} everything was the feedback.',
+        options: ['changed', 'transformed', 'saved'],
+        correct: 'changed',
+        why: '<b>What changed everything was the feedback.</b>'
+      },
+      {
+        id: 16,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'Rarely {GAP} people appreciate hard work nowadays.',
+        answers: ['do'],
+        correct: 'do',
+        why: 'Present tense inversion requires <b>do/does</b>. <b>Rarely do people appreciate...</b>'
+      },
+      {
+        id: 17,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'Only then {GAP} I understand the gravity of my mistake.',
+        answers: ['did'],
+        correct: 'did',
+        why: 'Only then + past auxiliary: <b>Only then did I understand...</b>'
+      },
+      {
+        id: 18,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'Scarcely {GAP} we arrived when the show started.',
+        answers: ['had'],
+        correct: 'had',
+        why: 'Scarcely + past perfect: <b>Scarcely had we arrived...</b>'
+      },
+      {
+        id: 19,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'No sooner {GAP} he walked in than she called.',
+        answers: ['had'],
+        correct: 'had',
+        why: 'No sooner + had + subject + past participle. <b>No sooner had he walked in...</b>'
+      },
+      {
+        id: 20,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'In {GAP} the children, laughing and playing.',
+        answers: ['rushed', 'came', 'ran'],
+        correct: 'rushed',
+        why: 'Directional adverbial inversion: adverbial + verb + subject. <b>In rushed the children.</b>'
+      },
+      {
+        id: 21,
+        part: 'Part C · Meaning & Emphasis Focus',
+        type: 'mc',
+        sentence: 'A: "Never have I heard such nonsense." | B: "I have never heard such nonsense." | Which is more emphatic?',
+        options: ['Sentence A', 'Sentence B'],
+        correct: 'Sentence A',
+        why: 'Inversion (A) is dramatically charged compared to the standard sentence (B).'
+      },
+      {
+        id: 22,
+        part: 'Part C · Meaning & Emphasis Focus',
+        type: 'mc',
+        sentence: 'A: "The thing that surprised me was his honesty." | B: "His honesty surprised me." | Which highlights "honesty"?',
+        options: ['Sentence A', 'Sentence B'],
+        correct: 'Sentence A',
+        why: 'Cleft (A) places the surprise target at the final position for maximum focus.'
+      },
+      {
+        id: 23,
+        part: 'Part C · Meaning & Emphasis Focus',
+        type: 'mc',
+        sentence: 'A: "Rarely do people appreciate hard work." | B: "People rarely appreciate hard work." | Which is more formal?',
+        options: ['Sentence A', 'Sentence B'],
+        correct: 'Sentence A',
+        why: 'Inversion using <i>Rarely do...</i> is a common device in formal, literary English.'
+      },
+      {
+        id: 24,
+        part: 'Part C · Meaning & Emphasis Focus',
+        type: 'mc',
+        sentence: 'A: "Only then did I realise the truth." | B: "I realised the truth only then." | Which highlights timing?',
+        options: ['Sentence A', 'Sentence B'],
+        correct: 'Sentence A',
+        why: 'Fronting <i>Only then</i> stresses the exact moment of realization.'
+      },
+      {
+        id: 25,
+        part: 'Part C · Meaning & Emphasis Focus',
+        type: 'mc',
+        sentence: 'A: "What makes her special is her kindness." | B: "She is special because of her kindness." | Which is a cleft sentence?',
+        options: ['Sentence A', 'Sentence B'],
+        correct: 'Sentence A',
+        why: 'Sentence A is a Wh-cleft emphasizing "her kindness".'
+      },
+      {
+        id: 26,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'I value creativity and integrity equally. What I {GAP} equally is creativity and integrity.',
+        options: ['value', 'appreciate', 'like'],
+        correct: 'value',
+        why: 'Keep the original verb: <b>What I value equally is...</b>'
+      },
+      {
+        id: 27,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'Down {GAP} the snow from the dark clouds.',
+        answers: ['came', 'poured', 'fell'],
+        correct: 'came',
+        why: 'Directional inversion: Down + verb + subject. <b>Down came the snow...</b>'
+      },
+      {
+        id: 28,
+        part: 'Part C · Meaning & Emphasis Focus',
+        type: 'mc',
+        sentence: 'A: "Not only did he pass, but he excelled." | B: "He not only passed but excelled." | Which is more dramatic?',
+        options: ['Sentence A', 'Sentence B'],
+        correct: 'Sentence A',
+        why: 'Inversion (A) sounds much more dramatic and emphatic.'
+      },
+      {
+        id: 29,
+        part: 'Part A · Cleft Sentence Transform',
+        type: 'mc',
+        sentence: 'The way she handled the crisis was remarkable. What was remarkable was {GAP}.',
+        options: ['the way she handled the crisis', 'how she handled it', 'her handling'],
+        correct: 'the way she handled the crisis',
+        why: 'Cleft frames highlight the exact noun phrase: <b>...was the way she handled the crisis.</b>'
+      },
+      {
+        id: 30,
+        part: 'Part B · Inversion In-depth',
+        type: 'fill',
+        sentence: 'Scarcely {GAP} I understood before everything changed.',
+        answers: ['had'],
+        correct: 'had',
+        why: 'Past perfect inversion trigger: <b>Scarcely had I understood...</b>'
+      }
+    ];
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* STATE ENGINE */
+    /* ═══════════════════════════════════════════════════════════════ */
+    let currentQuestions = [];
+    let currentPos = 0;
+    let score = 0;
+    let streak = 0;
+    let answered = false;
+    let mistakesBasket = [];
+    let isReviewMode = false;
+
+    // DOM Elements
+    const elements = {
+      hero: document.getElementById('heroSection'),
+      theory: document.getElementById('theorySection'),
+      trainer: document.getElementById('trainerSection'),
+      writing: document.getElementById('writingSection'),
+      final: document.getElementById('finalSection'),
+      audioBtn: document.getElementById('audioToggleBtn'),
+      progressRibbon: document.getElementById('progressRibbon'),
+      progressCountLabel: document.getElementById('progressCountLabel'),
+      scoreDisplay: document.getElementById('hudScoreDisplay'),
+      streakDisplay: document.getElementById('hudStreakDisplay'),
+      questionCard: document.getElementById('activeQuestionCard'),
+      finalScoreStrip: document.getElementById('finalScoreStrip'),
+      finalMsgTxt: document.getElementById('finalMsgTxt'),
+      btnReviewMistakes: document.getElementById('btnReviewMistakes'),
+      journalInput: document.getElementById('journalInput'),
+      activePromptGuide: document.getElementById('activePromptGuide'),
+      modelAnswerBox: document.getElementById('modelAnswerBox'),
+      modelTextContainer: document.getElementById('modelTextContainer'),
+      btnShowModel: document.getElementById('btnShowModel'),
+      btnSaveJournal: document.getElementById('btnSaveJournal'),
+      btnRestartApp: document.getElementById('btnRestartApp')
+    };
+
+    // Initialize Event Listeners
+    document.getElementById('btnHeroStart').onclick = () => initTrainer(QUESTION_BANK);
+    document.getElementById('btnTheoryStart').onclick = () => initTrainer(QUESTION_BANK);
+    elements.btnRestartApp.onclick = resetApplication;
+    elements.btnReviewMistakes.onclick = startMistakesReview;
+
+    elements.audioBtn.onclick = () => {
+      const active = SoundEngine.toggleMute();
+      elements.audioBtn.textContent = active ? '🔊' : '🔇';
+      elements.audioBtn.classList.toggle('muted', !active);
+    };
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* TRAINER INITIALIZATION & RENDERING */
+    /* ═══════════════════════════════════════════════════════════════ */
+    function initTrainer(set, review = false) {
+      SoundEngine.playClick();
+      elements.hero.classList.add('hidden');
+      elements.theory.classList.add('hidden');
+      elements.final.classList.add('hidden');
+      elements.writing.classList.add('hidden');
+      elements.trainer.classList.remove('hidden');
+
+      isReviewMode = review;
+      currentPos = 0;
+      answered = false;
+
+      if (!review) {
+        score = 0;
+        mistakesBasket = [];
+        // Keep question 0 first (warm-up), then shuffle the rest
+        const warmUp = set[0];
+        const rest = set.slice(1);
+        shuffleArray(rest);
+        currentQuestions = [warmUp, ...rest];
+      } else {
+        currentQuestions = [...set];
+      }
+
+      renderActiveQuestion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderActiveQuestion() {
+      answered = false;
+      const q = currentQuestions[currentPos];
+      const total = currentQuestions.length;
+
+      // Update HUD
+      elements.progressCountLabel.textContent = `${currentPos + 1} / ${total}`;
+      elements.progressRibbon.style.width = `${(currentPos / total) * 100}%`;
+      elements.scoreDisplay.textContent = isReviewMode ? 'Review Mode' : `Score: ${score}`;
+      elements.streakDisplay.textContent = `✦ Streak: ${streak}`;
+
+      // Create card structure
+      let cardHTML = `
+        <div class="q-meta">${q.part}</div>
+        <div class="q-text">${q.sentence.replace('{GAP}', '<span class="gap-placeholder" id="gapLabel">?</span>').replace('{{GAP}}', '<span class="gap-placeholder" id="gapLabel">?</span>')}</div>
+      `;
+
+      if (q.type === 'mc') {
+        cardHTML += `<div class="options-grid" id="optionsContainer"></div>`;
+      } else {
+        cardHTML += `
+          <div class="input-box-area">
+            <input type="text" class="input-field-custom" id="trainerInputField" placeholder="Type the missing word..." autocomplete="off" spellcheck="false">
+            <button class="btn-scrap btn-scrap-primary" id="trainerSubmitBtn">Check Answer</button>
+          </div>
+        `;
+      }
+
+      cardHTML += `<div class="fb-banner hidden" id="feedbackBanner"></div>`;
+      elements.questionCard.innerHTML = cardHTML;
+
+      // Populate interactive choices
+      if (q.type === 'mc') {
+        const container = document.getElementById('optionsContainer');
+        const shuffledOptions = [...q.options];
+        if (q.options.length > 2) shuffleArray(shuffledOptions);
+
+        shuffledOptions.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'option-row';
+          btn.textContent = opt;
+          btn.onclick = () => evaluateChoice(btn, opt, q);
+          container.appendChild(btn);
+        });
+      } else {
+        const inputField = document.getElementById('trainerInputField');
+        const submitBtn = document.getElementById('trainerSubmitBtn');
+
+        inputField.focus();
+        inputField.onkeydown = (e) => {
+          if (e.key === 'Enter') evaluateInput(q);
+        };
+        submitBtn.onclick = () => evaluateInput(q);
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* ANSWER EVALUATION LOGIC */
+    /* ═══════════════════════════════════════════════════════════════ */
+    function evaluateChoice(selectedBtn, chosenVal, q) {
+      if (answered) return;
+      answered = true;
+      SoundEngine.playClick();
+
+      const isCorrect = chosenVal === q.correct;
+      const options = document.getElementById('optionsContainer').children;
+
+      Array.from(options).forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === q.correct) {
+          btn.classList.add('correct-ans');
+        } else if (btn === selectedBtn) {
+          btn.classList.add('wrong-ans');
+        }
+      });
+
+      triggerFeedback(isCorrect, q);
+    }
+
+    function evaluateInput(q) {
+      if (answered) return;
+      const inputField = document.getElementById('trainerInputField');
+      const inputVal = inputField.value.trim().toLowerCase();
+
+      if (!inputVal) {
+        inputField.focus();
+        return;
+      }
+
+      answered = true;
+      SoundEngine.playClick();
+      inputField.disabled = true;
+
+      const isCorrect = q.answers.map(a => a.toLowerCase()).includes(inputVal);
+      if (isCorrect) {
+        inputField.classList.add('correct-field');
+      } else {
+        inputField.classList.add('wrong-field');
+      }
+
+      triggerFeedback(isCorrect, q);
+    }
+
+    function triggerFeedback(isCorrect, q) {
+      const banner = document.getElementById('feedbackBanner');
+      const gapLabel = document.getElementById('gapLabel');
+
+      if (gapLabel) gapLabel.textContent = q.correct;
+
+      if (isCorrect) {
+        SoundEngine.playCorrect();
+        streak++;
+        if (!isReviewMode) score++;
+
+        if (streak >= 3) {
+          SoundEngine.playStreak();
+          elements.streakDisplay.classList.add('combo-active');
+        }
+
+        banner.className = 'fb-banner fb-correct';
+        banner.innerHTML = `
+          <div class="fb-title-txt">✓ Correct!</div>
+          <div class="fb-rationale">${q.why}</div>
+          <button class="btn-scrap btn-scrap-primary" id="btnNextQuestion">Next Task →</button>
+        `;
+      } else {
+        SoundEngine.playWrong();
+        streak = 0;
+        elements.streakDisplay.classList.remove('combo-active');
+        if (!isReviewMode && !mistakesBasket.includes(q)) {
+          mistakesBasket.push(q);
+        }
+
+        banner.className = 'fb-banner fb-wrong';
+        banner.innerHTML = `
+          <div class="fb-title-txt">Not quite —</div>
+          <div class="fb-rationale">${q.why}</div>
+          <button class="btn-scrap btn-scrap-primary" id="btnNextQuestion">Next Task →</button>
+        `;
+      }
+
+      document.getElementById('btnNextQuestion').onclick = advanceNext;
+      document.getElementById('btnNextQuestion').focus();
+    }
+
+    function advanceNext() {
+      SoundEngine.playClick();
+      currentPos++;
+      if (currentPos >= currentQuestions.length) {
+        if (isReviewMode) {
+          finishWritingBlock();
+        } else {
+          // Proceed to personal scrapbook active production
+          initWritingSection();
+        }
+      } else {
+        renderActiveQuestion();
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* PERSONAL SCRAPBOOK WRITING LOGIC */
+    /* ═══════════════════════════════════════════════════════════════ */
+    const JOURNAL_PROMPTS = [
+      {
+        guide: "Write 2-3 sentences about your current job, study, or passion. You must use <b>What I [verb]... is...</b> to spotlight the core part.",
+        model: "What I value most about my current project is the creative freedom. The thing that drives me is solving complex problems.",
+        regex: /what\s+[a-z']+\s+([a-z']+\s+){0,3}(is|was)/i
+      },
+      {
+        guide: "Describe a dramatic or rare travel experience you have had. Use an inverted negative helper (e.g. <b>Never had I...</b> or <b>Rarely do I...</b>).",
+        model: "Never had I seen such a breathtaking view as the Icelandic sunrise. Hardly had we landed when the Northern Lights appeared.",
+        regex: /(never|rarely|hardly|scarcely|seldom|not once|at no time)\s+(have|had|did|do|is|was|were|has)\s+[a-z']+/i
+      },
+      {
+        guide: "State your biggest daily annoyance. Use <b>What annoys/irritates me is...</b> or <b>The thing that bugs me is...</b>",
+        model: "What irritates me most in the morning is when the coffee machine breaks down. The thing that bugs me is people talking loudly on the phone.",
+        regex: /(what\s+([a-z']+\s+){1,2}(is|was))|(the\s+thing\s+(that\s+)?([a-z']+\s+){1,3}(is|was))/i
+      }
+    ];
+
+    let activePromptIndex = 0;
+    let promptCompletionState = [false, false, false];
+
+    function initWritingSection() {
+      elements.trainer.classList.add('hidden');
+      elements.writing.classList.remove('hidden');
+      switchPrompt(0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchPrompt(index) {
+      SoundEngine.playClick();
+      activePromptIndex = index;
+
+      // Update tabs UI
+      const tabs = document.querySelectorAll('.prompt-tab');
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle('active-tab', i === index);
+      });
+
+      // Update prompt content
+      elements.activePromptGuide.innerHTML = JOURNAL_PROMPTS[index].guide;
+      elements.journalInput.value = '';
+      elements.modelAnswerBox.classList.add('hidden');
+      elements.btnShowModel.textContent = 'Compare with Model';
+
+      evaluateJournalText();
+    }
+
+    function evaluateJournalText() {
+      const text = elements.journalInput.value.trim();
+      const words = text.split(/\s+/).filter(w => w.length > 0);
+
+      // Verify rule 1: Min 15 words
+      const satisfiedMinWords = words.length >= 15;
+      const ruleMinWords = document.getElementById('ruleMinWords');
+      ruleMinWords.classList.toggle('satisfied', satisfiedMinWords);
+
+      // Verify rule 2: Target grammar structure match
+      const targetRegex = JOURNAL_PROMPTS[activePromptIndex].regex;
+      const satisfiedGrammar = targetRegex.test(text);
+      const ruleGrammar = document.getElementById('ruleGrammarPattern');
+      ruleGrammar.classList.toggle('satisfied', satisfiedGrammar);
+
+      // Determine prompt eligibility
+      const isEligible = satisfiedMinWords && satisfiedGrammar;
+      elements.btnSaveJournal.disabled = !isEligible;
+    }
+
+    function toggleModelAnswer() {
+      SoundEngine.playClick();
+      const hidden = elements.modelAnswerBox.classList.contains('hidden');
+      if (hidden) {
+        elements.modelTextContainer.textContent = JOURNAL_PROMPTS[activePromptIndex].model;
+        elements.modelAnswerBox.classList.remove('hidden');
+        elements.btnShowModel.textContent = 'Hide Model';
+      } else {
+        elements.modelAnswerBox.classList.add('hidden');
+        elements.btnShowModel.textContent = 'Compare with Model';
+      }
+    }
+
+    function saveJournalEntry() {
+      SoundEngine.playClick();
+      promptCompletionState[activePromptIndex] = true;
+
+      // Check if all three prompts are completed
+      const allDone = promptCompletionState.every(state => state === true);
+      if (allDone) {
+        finishWritingBlock();
+      } else {
+        // Find next incomplete prompt
+        const nextIncomplete = promptCompletionState.findIndex(state => state === false);
+        switchPrompt(nextIncomplete);
+      }
+    }
+
+    function finishWritingBlock() {
+      elements.writing.classList.add('hidden');
+      elements.trainer.classList.add('hidden');
+      elements.final.classList.remove('hidden');
+      SoundEngine.playSuccess();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Update final stats display
+      elements.progressRibbon.style.width = '100%';
+      elements.finalScoreStrip.textContent = isReviewMode ? 'Tricky questions cleared!' : `Your score: ${score} / ${QUESTION_BANK.length}`;
+
+      if (isReviewMode) {
+        elements.finalMsgTxt.textContent = "Excellent work! You have successfully reviewed and corrected all your mistakes. This is the best way to master grammar!";
+        elements.btnReviewMistakes.style.display = 'none';
+      } else {
+        elements.finalMsgTxt.textContent = "Congratulations! You have completed the comprehensive review and successfully composed all three journal entries. You are now fully equipped with Cleft and Inversion structures.";
+
+        if (mistakesBasket.length > 0) {
+          elements.btnReviewMistakes.style.display = 'inline-block';
+          elements.btnReviewMistakes.textContent = `Practise Mistakes (${mistakesBasket.length})`;
+        } else {
+          elements.btnReviewMistakes.style.display = 'none';
+        }
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* REVIEW MODE & APPLICATIVE RESET */
+    /* ═══════════════════════════════════════════════════════════════ */
+    function startMistakesReview() {
+      initTrainer([...mistakesBasket], true);
+    }
+
+    function resetApplication() {
+      SoundEngine.playClick();
+      elements.final.classList.add('hidden');
+      elements.hero.classList.remove('hidden');
+      elements.theory.classList.remove('hidden');
+
+      score = 0;
+      streak = 0;
+      mistakesBasket = [];
+      isReviewMode = false;
+      promptCompletionState = [false, false, false];
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+  </script>
+
+</body>
+</html>
