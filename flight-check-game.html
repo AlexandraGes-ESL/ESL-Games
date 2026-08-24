@@ -28,266 +28,84 @@ body{
 
 .fc-app{position:fixed;inset:0}
 
-/* ============ SCREEN + BACKGROUND LAYERS ============ */
-.screen{
-  position:absolute;
-  inset:0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:32px 20px;
-}
+.screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:32px 20px}
 .screen.active{display:flex}
 
-/* the raw photo layer — animated from sharp to blurred */
-.bg{
-  position:absolute;
-  inset:-40px;                    /* overscan so blur has no soft edges */
-  background-size:cover;
-  background-position:center;
-  transform:scale(1.06);
-  filter:blur(0px) brightness(1) saturate(1.05);
-  transition:filter 1600ms cubic-bezier(.4,0,.2,1),
-             transform 2600ms cubic-bezier(.4,0,.2,1);
-  z-index:0;
-}
-.screen.settled .bg{
-  filter:blur(9px) brightness(0.32) saturate(0.85);
-  transform:scale(1.02);
-}
+.bg{position:absolute;inset:-40px;background-size:cover;background-position:center;transform:scale(1.06);filter:blur(0px) brightness(1) saturate(1.05);transition:filter 1600ms cubic-bezier(.4,0,.2,1),transform 2600ms cubic-bezier(.4,0,.2,1);z-index:0}
+.screen.settled .bg{filter:blur(9px) brightness(0.32) saturate(0.85);transform:scale(1.02)}
 
-/* dark vignette + grid, appears with the settle */
-.bg-veil{
-  position:absolute;inset:0;z-index:1;pointer-events:none;
-  opacity:0;
-  transition:opacity 1400ms ease;
-  background:
-    radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.72) 78%),
-    linear-gradient(rgba(38,231,255,0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(38,231,255,0.045) 1px, transparent 1px);
-  background-size:100% 100%, 44px 44px, 44px 44px;
-}
+.bg-veil{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;transition:opacity 1400ms ease;background:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.72) 78%),linear-gradient(rgba(38,231,255,0.045) 1px, transparent 1px),linear-gradient(90deg, rgba(38,231,255,0.045) 1px, transparent 1px);background-size:100% 100%, 44px 44px, 44px 44px}
 .screen.settled .bg-veil{opacity:1}
 
-/* horizontal sweep line, part of the "systems coming online" beat */
-.sweep{
-  position:absolute;left:0;right:0;height:2px;z-index:2;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-  box-shadow:0 0 18px var(--cyan);
-  opacity:0;pointer-events:none;
-}
+.sweep{position:absolute;left:0;right:0;height:2px;z-index:2;background:linear-gradient(90deg,transparent,var(--cyan),transparent);box-shadow:0 0 18px var(--cyan);opacity:0;pointer-events:none}
 .screen.settled .sweep{animation:sweep 1500ms ease-out 200ms 1}
-@keyframes sweep{
-  0%{top:8%;opacity:0}
-  15%{opacity:.9}
-  85%{opacity:.5}
-  100%{top:92%;opacity:0}
-}
+@keyframes sweep{0%{top:8%;opacity:0} 15%{opacity:.9} 85%{opacity:.5} 100%{top:92%;opacity:0}}
 
-/* content rises after the background settles */
-.layer{
-  position:relative;z-index:3;
-  width:100%;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;
-  transform:translateY(18px);
-  transition:opacity 900ms ease 500ms, transform 900ms cubic-bezier(.2,.8,.2,1) 500ms;
-}
+.layer{position:relative;z-index:3;width:100%;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(18px);transition:opacity 900ms ease 500ms, transform 900ms cubic-bezier(.2,.8,.2,1) 500ms}
 .screen.settled .layer{opacity:1;transform:translateY(0)}
 
-/* ============ SHARED UI ATOMS ============ */
-.mono{font-family:'Share Tech Mono',monospace}
-
-.hud-tag{
-  font-family:'Share Tech Mono',monospace;
-  font-size:11px;letter-spacing:.24em;text-transform:uppercase;
-  color:rgba(223,246,255,.5);
-}
-
 .ico{width:1em;height:1em;flex:0 0 auto;vertical-align:-.12em}
-.ico path,.ico circle,.ico rect,.ico line,.ico polyline{
-  fill:none;stroke:currentColor;stroke-width:2;
-  stroke-linecap:round;stroke-linejoin:round;
-}
-.ico.fill path{fill:currentColor;fill-opacity:.22}
+.ico path,.ico circle,.ico rect,.ico line{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-.glow-c{filter:drop-shadow(0 0 4px rgba(38,231,255,.85))}
-.glow-g{filter:drop-shadow(0 0 4px rgba(125,255,72,.85))}
-
-/* ============ START SCREEN ============ */
-.start-card{
-  width:100%;max-width:620px;text-align:center;
-}
-.brand{
-  display:flex;align-items:center;justify-content:center;gap:16px;
-  margin-bottom:6px;
-}
+.start-card{width:100%;max-width:620px;text-align:center}
+.brand{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:6px}
 .brand svg{width:46px;height:46px;color:var(--green)}
-.brand h1{
-  font-family:'Share Tech Mono',monospace;
-  font-size:clamp(30px,5.2vw,48px);
-  letter-spacing:.08em;
-  color:var(--green);
-  text-shadow:0 0 22px rgba(125,255,72,.55);
-}
-.brand-sub{
-  font-family:'Share Tech Mono',monospace;
-  color:var(--cyan);
-  letter-spacing:.2em;font-size:13px;text-transform:uppercase;
-  margin-bottom:34px;
-  text-shadow:0 0 12px rgba(38,231,255,.5);
-}
+.brand h1{font-family:'Share Tech Mono',monospace;font-size:clamp(30px,5.2vw,48px);letter-spacing:.08em;color:var(--green);text-shadow:0 0 22px rgba(125,255,72,.55)}
+.brand-sub{font-family:'Share Tech Mono',monospace;color:var(--cyan);letter-spacing:.2em;font-size:13px;text-transform:uppercase;margin-bottom:34px;text-shadow:0 0 12px rgba(38,231,255,.5)}
 
-.rule{
-  height:1px;margin:0 auto 30px;max-width:340px;
-  background:linear-gradient(90deg,transparent,var(--line),transparent);
-}
+.rule{height:1px;margin:0 auto 30px;max-width:340px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
 
-.brief{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-left:2px solid var(--cyan);
-  border-radius:4px;
-  padding:14px 18px;
-  margin-bottom:30px;
-  text-align:left;
-  font-size:15px;
-  color:rgba(223,246,255,.82);
-  line-height:1.55;
-  backdrop-filter:blur(6px);
-}
+.brief{background:var(--panel);border:1px solid var(--line);border-left:2px solid var(--cyan);border-radius:4px;padding:14px 18px;margin-bottom:30px;text-align:left;font-size:15px;color:rgba(223,246,255,.82);line-height:1.55;backdrop-filter:blur(6px)}
 .brief b{color:var(--green);font-weight:700}
 
-.levels{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.levels{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
 
-.lvl{
-  position:relative;
-  display:flex;align-items:center;gap:12px;
-  padding:15px 18px;
-  background:var(--panel);
-  border:1px solid currentColor;
-  border-radius:6px;
-  cursor:pointer;
-  text-align:left;
-  font-family:'Share Tech Mono',monospace;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  font-size:14px;
-  transition:transform 220ms ease, box-shadow 220ms ease, background 220ms ease;
-  backdrop-filter:blur(6px);
-}
+.lvl{position:relative;display:flex;align-items:center;gap:12px;padding:15px 18px;background:var(--panel);border:1px solid currentColor;border-radius:6px;cursor:pointer;text-align:left;font-family:'Share Tech Mono',monospace;letter-spacing:.1em;text-transform:uppercase;font-size:14px;transition:transform 220ms ease, box-shadow 220ms ease, background 220ms ease;backdrop-filter:blur(6px)}
 .lvl svg{width:20px;height:20px}
-.lvl .lvl-meta{
-  display:block;font-size:10px;letter-spacing:.16em;
-  color:rgba(223,246,255,.45);margin-top:3px;
-}
+.lvl .lvl-meta{display:block;font-size:10px;letter-spacing:.16em;color:rgba(223,246,255,.45);margin-top:3px}
 .lvl:hover{transform:translateY(-4px);box-shadow:0 0 26px -4px currentColor}
 .lvl:active{transform:translateY(-1px) scale(.985)}
 .lvl.l-easy{color:var(--green)}
 .lvl.l-medium{color:#e8ff5a}
 .lvl.l-hard{color:var(--amber)}
 .lvl.l-expert{color:var(--red)}
-.lvl .best{
-  position:absolute;top:8px;right:10px;
-  font-size:9px;letter-spacing:.12em;
-  color:rgba(223,246,255,.42);
-}
+.lvl .best{position:absolute;top:8px;right:10px;font-size:9px;letter-spacing:.12em;color:rgba(223,246,255,.42)}
 
-/* ============ QUIZ SCREEN ============ */
-.quiz-card{
-  width:100%;max-width:660px;
-  background:var(--panel-solid);
-  border:1px solid var(--line);
-  border-radius:10px;
-  padding:26px 30px 28px;
-  box-shadow:0 24px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(38,231,255,.06) inset;
-  backdrop-filter:blur(10px);
-}
-.quiz-top{
-  display:flex;align-items:center;justify-content:space-between;
-  padding-bottom:12px;margin-bottom:16px;
-  border-bottom:1px solid var(--line);
-}
-.q-level{
-  font-family:'Share Tech Mono',monospace;font-size:12px;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--green);
-}
+.ref-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.ref-btn{display:flex;align-items:center;gap:8px;padding:11px 18px;background:transparent;border:1px solid currentColor;border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all 220ms ease}
+.ref-gram{color:var(--amber)}
+.ref-vocab{color:var(--cyan)}
+.ref-btn svg{width:16px;height:16px}
+.ref-btn:hover{transform:translateY(-2px);box-shadow:0 0 18px -6px currentColor}
+.ref-btn:active{transform:translateY(0) scale(.97)}
+
+.quiz-card{width:100%;max-width:660px;background:var(--panel-solid);border:1px solid var(--line);border-radius:10px;padding:26px 30px 28px;box-shadow:0 24px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(38,231,255,.06) inset;backdrop-filter:blur(10px)}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.q-level{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--green)}
 .q-right{display:flex;align-items:center;gap:18px}
-.q-count,.q-score{
-  font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.14em;
-}
+.q-count,.q-score{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.14em}
 .q-count{color:rgba(223,246,255,.55)}
 .q-score{color:var(--cyan)}
 
 .bar{height:3px;background:rgba(38,231,255,.12);border-radius:2px;overflow:hidden;margin-bottom:22px}
-.bar i{
-  display:block;height:100%;width:0%;
-  background:linear-gradient(90deg,var(--cyan),var(--green));
-  box-shadow:0 0 10px rgba(125,255,72,.7);
-  transition:width 420ms cubic-bezier(.2,.8,.2,1);
-}
+.bar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),var(--green));box-shadow:0 0 10px rgba(125,255,72,.7);transition:width 420ms cubic-bezier(.2,.8,.2,1)}
 
-.q-icon{
-  width:76px;height:76px;margin:0 auto 18px;display:block;
-}
-.q-icon path,.q-icon circle,.q-icon rect{
-  fill:none;stroke:currentColor;stroke-width:2;
-  stroke-linecap:round;stroke-linejoin:round;
-}
+.q-icon{width:76px;height:76px;margin:0 auto 18px;display:block}
+.q-icon path,.q-icon circle,.q-icon rect{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-.q-text{
-  font-family:'Share Tech Mono',monospace;
-  font-size:clamp(17px,2.4vw,21px);
-  line-height:1.6;text-align:center;
-  color:#eafff2;
-  margin-bottom:24px;
-}
-.q-text .gap{
-  color:var(--green);
-  text-shadow:0 0 12px rgba(125,255,72,.6);
-  border-bottom:2px solid rgba(125,255,72,.45);
-  padding:0 6px;
-}
+.q-text{font-family:'Share Tech Mono',monospace;font-size:clamp(17px,2.4vw,21px);line-height:1.6;text-align:center;color:#eafff2;margin-bottom:24px}
+.q-text .gap{color:var(--green);text-shadow:0 0 12px rgba(125,255,72,.6);border-bottom:2px solid rgba(125,255,72,.45);padding:0 6px}
 
 .opts{display:grid;gap:10px}
-.opt{
-  display:flex;align-items:center;gap:14px;
-  padding:13px 16px;
-  background:rgba(38,231,255,.04);
-  border:1px solid rgba(38,231,255,.22);
-  border-radius:6px;
-  color:#cfeef8;
-  font-family:'Share Tech Mono',monospace;
-  font-size:15px;
-  cursor:pointer;
-  text-align:left;
-  transition:all 200ms ease;
-}
-.opt .key{
-  width:24px;height:24px;flex:0 0 auto;
-  display:grid;place-items:center;
-  border:1px solid currentColor;border-radius:3px;
-  font-size:11px;opacity:.75;
-}
-.opt:hover:not(:disabled){
-  border-color:var(--cyan);background:rgba(38,231,255,.1);
-  box-shadow:0 0 18px -6px var(--cyan);
-}
+.opt{display:flex;align-items:center;gap:14px;padding:13px 16px;background:rgba(38,231,255,.04);border:1px solid rgba(38,231,255,.22);border-radius:6px;color:#cfeef8;font-family:'Share Tech Mono',monospace;font-size:15px;cursor:pointer;text-align:left;transition:all 200ms ease}
+.opt .key{width:24px;height:24px;flex:0 0 auto;display:grid;place-items:center;border:1px solid currentColor;border-radius:3px;font-size:11px;opacity:.75}
+.opt:hover:not(:disabled){border-color:var(--cyan);background:rgba(38,231,255,.1);box-shadow:0 0 18px -6px var(--cyan)}
 .opt:disabled{cursor:default}
-.opt.correct{
-  border-color:var(--green);background:rgba(125,255,72,.14);color:var(--green);
-  box-shadow:0 0 22px -6px var(--green);
-}
-.opt.wrong{
-  border-color:var(--red);background:rgba(255,77,77,.12);color:var(--red);
-}
+.opt.correct{border-color:var(--green);background:rgba(125,255,72,.14);color:var(--green);box-shadow:0 0 22px -6px var(--green)}
+.opt.wrong{border-color:var(--red);background:rgba(255,77,77,.12);color:var(--red)}
 .opt.dim{opacity:.32}
 
-.feedback{
-  margin-top:16px;padding:12px 14px;border-radius:5px;
-  font-size:14px;line-height:1.5;
-  display:none;
-}
+.feedback{margin-top:16px;padding:12px 14px;border-radius:5px;font-size:14px;line-height:1.5;display:none}
 .feedback.show{display:block;animation:pop 320ms ease}
 .feedback.ok{background:rgba(125,255,72,.1);border-left:2px solid var(--green);color:#cdffb4}
 .feedback.no{background:rgba(255,77,77,.1);border-left:2px solid var(--red);color:#ffd0d0}
@@ -295,16 +113,7 @@ body{
 @keyframes pop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 
 .acts{display:flex;gap:12px;margin-top:22px}
-.btn{
-  flex:1;
-  display:flex;align-items:center;justify-content:center;gap:9px;
-  padding:12px 16px;border-radius:6px;
-  background:transparent;border:1px solid currentColor;
-  font-family:'Share Tech Mono',monospace;
-  font-size:13px;letter-spacing:.14em;text-transform:uppercase;
-  cursor:pointer;
-  transition:all 220ms ease;
-}
+.btn{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 16px;border-radius:6px;background:transparent;border:1px solid currentColor;font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all 220ms ease}
 .btn svg{width:16px;height:16px}
 .btn:hover:not(:disabled){box-shadow:0 0 22px -6px currentColor;transform:translateY(-2px)}
 .btn:disabled{opacity:.34;cursor:not-allowed}
@@ -312,62 +121,62 @@ body{
 .btn-next{color:var(--cyan);background:rgba(38,231,255,.06)}
 .btn-go{color:var(--green);background:rgba(125,255,72,.06)}
 
-/* ============ RESULTS ============ */
 .res-card{width:100%;max-width:560px;text-align:center}
-.res-head{
-  display:flex;align-items:center;justify-content:center;gap:14px;
-  margin-bottom:26px;
-}
+.res-head{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:26px}
 .res-head svg{width:40px;height:40px;color:var(--green)}
-.res-head h2{
-  font-family:'Share Tech Mono',monospace;
-  font-size:clamp(22px,4vw,34px);letter-spacing:.06em;
-  color:var(--green);text-shadow:0 0 20px rgba(125,255,72,.5);
-}
-.res-panel{
-  background:var(--panel-solid);
-  border:1px solid var(--line);
-  border-radius:10px;padding:24px 26px;margin-bottom:24px;
-  backdrop-filter:blur(10px);
-  box-shadow:0 20px 60px rgba(0,0,0,.55);
-}
-.res-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:11px 0;font-family:'Share Tech Mono',monospace;font-size:15px;
-  border-bottom:1px dashed rgba(38,231,255,.14);
-}
+.res-head h2{font-family:'Share Tech Mono',monospace;font-size:clamp(22px,4vw,34px);letter-spacing:.06em;color:var(--green);text-shadow:0 0 20px rgba(125,255,72,.5)}
+.res-rank{font-family:'Share Tech Mono',monospace;letter-spacing:.2em;text-transform:uppercase;font-size:12px;color:var(--amber);margin-bottom:20px}
+.res-panel{background:var(--panel-solid);border:1px solid var(--line);border-radius:10px;padding:24px 26px;margin-bottom:24px;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,.55)}
+.res-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;font-family:'Share Tech Mono',monospace;font-size:15px;border-bottom:1px dashed rgba(38,231,255,.14)}
 .res-row:last-child{border-bottom:none}
 .res-row .k{color:rgba(223,246,255,.6);letter-spacing:.1em}
 .res-row .v{color:var(--cyan)}
-.res-row.total{
-  margin-top:10px;padding-top:16px;
-  border-top:1px solid var(--line);border-bottom:none;
-  font-size:19px;
-}
+.res-row.total{margin-top:10px;padding-top:16px;border-top:1px solid var(--line);border-bottom:none;font-size:19px}
 .res-row.total .k{color:#dff6ff}
 .res-row.total .v{color:var(--green);text-shadow:0 0 14px rgba(125,255,72,.55)}
-.res-rank{
-  font-family:'Share Tech Mono',monospace;
-  letter-spacing:.2em;text-transform:uppercase;
-  font-size:12px;color:var(--amber);
-  margin-bottom:20px;
-}
 .res-acts{display:flex;gap:12px}
+
+.modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;opacity:0;transition:opacity 300ms ease;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex;opacity:1}
+
+.modal-card{width:100%;max-width:580px;background:var(--panel-solid);border:1px solid var(--line);border-radius:12px;padding:28px 30px;max-height:80vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.8);transform:translateY(20px);opacity:0;transition:transform 400ms cubic-bezier(.2,.8,.2,1), opacity 400ms ease}
+.modal-overlay.show .modal-card{transform:translateY(0);opacity:1}
+
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.modal-title{display:flex;align-items:center;gap:12px;font-family:'Share Tech Mono',monospace;font-size:18px;font-weight:bold;color:var(--green);text-shadow:0 0 12px rgba(125,255,72,.4)}
+.modal-title svg{width:24px;height:24px;color:var(--green)}
+.modal-close{background:none;border:none;color:var(--cyan);font-size:24px;cursor:pointer;width:32px;height:32px;display:grid;place-items:center;transition:all 200ms ease;font-weight:bold}
+.modal-close:hover{transform:rotate(90deg);box-shadow:0 0 18px -6px var(--cyan)}
+
+.gram-table{width:100%;border-collapse:collapse;margin-top:16px}
+.gram-table th,.gram-table td{padding:12px 10px;text-align:left;border-bottom:1px solid rgba(38,231,255,.15);font-family:'Share Tech Mono',monospace;font-size:13px}
+.gram-table th{background:rgba(38,231,255,.08);color:var(--cyan);font-weight:bold}
+.gram-table td{color:#d0e8f2}
+.gram-table .typ{color:var(--green);font-weight:600}
+
+.vocab-search{width:100%;padding:10px 12px;background:rgba(38,231,255,.06);border:1px solid rgba(38,231,255,.2);border-radius:6px;color:#d0e8f2;font-family:'Share Tech Mono',monospace;font-size:13px;margin-bottom:16px}
+.vocab-search::placeholder{color:rgba(223,246,255,.3)}
+
+.vocab-list{display:grid;gap:12px;margin-top:16px}
+.vocab-item{padding:12px 14px;background:rgba(38,231,255,.05);border-left:2px solid var(--cyan);border-radius:4px;transition:all 200ms ease}
+.vocab-item:hover{background:rgba(38,231,255,.1);transform:translateX(4px)}
+.vocab-word{font-family:'Share Tech Mono',monospace;color:var(--cyan);font-weight:600;font-size:14px;margin-bottom:4px}
+.vocab-def{color:rgba(223,246,255,.75);font-size:13px;line-height:1.4}
 
 @media (max-width:640px){
   .levels{grid-template-columns:1fr}
   .quiz-card{padding:22px 18px 24px}
   .acts,.res-acts{flex-direction:column}
+  .ref-btns{flex-direction:column;width:100%;max-width:340px;margin:20px auto 0}
+  .ref-btn{width:100%}
+  .modal-card{padding:22px 18px;max-height:85vh}
 }
-@media (prefers-reduced-motion:reduce){
-  *{transition-duration:.01ms!important;animation-duration:.01ms!important}
-}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <div class="fc-app">
 
-  <!-- ================= START ================= -->
   <section class="screen active" id="scStart">
     <div class="bg" style="background-image:url('https://i.yapx.ru/eIVgA.jpg')"></div>
     <div class="bg-veil"></div>
@@ -375,24 +184,29 @@ body{
     <div class="layer">
       <div class="start-card">
         <div class="brand">
-          <svg viewBox="0 0 48 48" class="ico fill glow-g" aria-hidden="true">
-            <path d="M24 5l3.2 13.5L42 24l-14.8 5.5L24 43l-3.2-13.5L6 24l14.8-5.5z"/>
-            <path d="M24 11v26"/>
-          </svg>
+          <svg viewBox="0 0 48 48" class="ico" aria-hidden="true"><path d="M24 5l3.2 13.5L42 24l-14.8 5.5L24 43l-3.2-13.5L6 24l14.8-5.5z"/><path d="M24 11v26"/></svg>
           <h1>FLIGHT CHECK</h1>
         </div>
-        <p class="brand-sub">There is / There are &nbsp;·&nbsp; some / any</p>
+        <p class="brand-sub">There is / There are · some / any</p>
         <div class="rule"></div>
         <div class="brief">
-          <b>PRE-FLIGHT BRIEFING.</b> You are in the cockpit. Read each report from the crew
-          and choose the missing word. Fast answers earn a speed bonus.
+          <b>PRE-FLIGHT BRIEFING.</b> You are in the cockpit. Read each report from the crew and choose the missing word. Fast answers earn a speed bonus.
         </div>
         <div class="levels" id="levels"></div>
+        <div class="ref-btns">
+          <button class="ref-btn ref-gram" id="btnGram">
+            <svg viewBox="0 0 24 24" class="ico"><path d="M4 4h16v14H4zM8 9l4 4 4-4M8 15h8"/></svg>
+            Grammar
+          </button>
+          <button class="ref-btn ref-vocab" id="btnVocab">
+            <svg viewBox="0 0 24 24" class="ico"><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8 8h8M8 12h6M8 16h4"/></svg>
+            Vocabulary
+          </button>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= QUIZ ================= -->
   <section class="screen" id="scQuiz">
     <div class="bg" style="background-image:url('https://i.yapx.ru/eIVf9.jpg')"></div>
     <div class="bg-veil"></div>
@@ -414,7 +228,7 @@ body{
         <div class="acts">
           <button class="btn btn-tip" id="btnTip">
             <svg viewBox="0 0 24 24" class="ico"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-3.5 10.9V16h7v-2.1A6 6 0 0012 3z"/></svg>
-            Hint &minus;2
+            Hint −2
           </button>
           <button class="btn btn-next" id="btnNext" disabled>
             Next
@@ -425,7 +239,6 @@ body{
     </div>
   </section>
 
-  <!-- ================= RESULTS ================= -->
   <section class="screen" id="scDone">
     <div class="bg" style="background-image:url('https://i.yapx.ru/eIVgA.jpg')"></div>
     <div class="bg-veil"></div>
@@ -433,10 +246,7 @@ body{
     <div class="layer">
       <div class="res-card">
         <div class="res-head">
-          <svg viewBox="0 0 48 48" class="ico glow-g" aria-hidden="true">
-            <circle cx="24" cy="24" r="19"/>
-            <path d="M15 24.5l6.5 6.5L33 19"/>
-          </svg>
+          <svg viewBox="0 0 48 48" class="ico" aria-hidden="true"><circle cx="24" cy="24" r="19"/><path d="M15 24.5l6.5 6.5L33 19"/></svg>
           <h2>MISSION COMPLETE</h2>
         </div>
         <p class="res-rank" id="rRank"></p>
@@ -462,308 +272,141 @@ body{
     </div>
   </section>
 
+  <div class="modal-overlay" id="gramModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title"><svg viewBox="0 0 24 24" class="ico"><path d="M4 4h16v14H4zM8 9l4 4 4-4M8 15h8"/></svg> Grammar Reference</div>
+        <button class="modal-close" id="closeGram">&times;</button>
+      </div>
+      <p style="color:rgba(223,246,255,.8);line-height:1.7;margin-bottom:16px;font-size:14px">
+        <b style="color:var(--green)">4️⃣ ГЛАВНЫХ ПРАВИЛА:</b><br>
+        1️⃣ <b>is</b> = один предмет (singular)<br>
+        2️⃣ <b>are</b> = много предметов (plural)<br>
+        3️⃣ <b>some</b> = в утвердительных предложениях<br>
+        4️⃣ <b>any</b> = в вопросах и отрицаниях
+      </p>
+      <table class="gram-table">
+        <thead><tr><th>Тип</th><th>Пример</th><th>Правило</th></tr></thead>
+        <tbody>
+          <tr><td class="typ">Утверд. (1)</td><td>There <b>is a</b> pilot.</td><td>один = is</td></tr>
+          <tr><td class="typ">Утверд. (много)</td><td>There <b>are some</b> passengers.</td><td>много = are + some</td></tr>
+          <tr><td class="typ">Утверд. (неисч.)</td><td>There <b>is some</b> fuel.</td><td>топливо = is + some</td></tr>
+          <tr><td class="typ">Отриц. (1)</td><td>There <b>is not a</b> doctor.</td><td>один = is not</td></tr>
+          <tr><td class="typ">Отриц. (много)</td><td>There <b>are not any</b> seats.</td><td>много = are not any</td></tr>
+          <tr><td class="typ">Отриц. (неисч.)</td><td>There <b>is not any</b> turbulence.</td><td>неисч. = is not any</td></tr>
+          <tr><td class="typ">Вопрос (1)</td><td><b>Is there a</b> problem?</td><td>один = is?</td></tr>
+          <tr><td class="typ">Вопрос (много)</td><td><b>Are there any</b> tickets?</td><td>много = are any?</td></tr>
+          <tr><td class="typ">Вопрос (неисч.)</td><td><b>Is there any</b> coffee?</td><td>неисч. = is any?</td></tr>
+        </tbody>
+      </table>
+      <div style="background:rgba(125,255,72,.12);border-left:3px solid var(--green);padding:14px;margin-top:18px;border-radius:5px;font-size:12px;color:#d4ff99;line-height:1.8;font-family:'Share Tech Mono',monospace">
+        <b>→ БЫСТРАЯ ШПАРГАЛКА:</b><br>
+        <b>Singular (1)</b> → is/is not<br>
+        <b>Plural (много)</b> → are/are not + some/any<br>
+        <b>Uncountable (неисч.)</b> → is/is not + some/any
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="vocabModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title"><svg viewBox="0 0 24 24" class="ico"><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8 8h8M8 12h6M8 16h4"/></svg> Vocabulary</div>
+        <button class="modal-close" id="closeVocab">&times;</button>
+      </div>
+      <input type="text" id="vocabSearch" class="vocab-search" placeholder="Search words..." autocomplete="off">
+      <div class="vocab-list" id="vocabList"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
 (function(){
 'use strict';
 
-/* ---------------- AUDIO ---------------- */
 var AC=null;
-function ac(){
-  if(!AC){var C=window.AudioContext||window.webkitAudioContext;if(C)AC=new C();}
-  if(AC&&AC.state==='suspended')AC.resume();
-  return AC;
-}
-function tone(f,d,type,vol){
-  var c=ac();if(!c)return;
-  var o=c.createOscillator(),g=c.createGain();
-  o.connect(g);g.connect(c.destination);
-  o.type=type||'sine';o.frequency.value=f;
-  g.gain.setValueAtTime(vol||0.07,c.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.0008,c.currentTime+d);
-  o.start();o.stop(c.currentTime+d);
-}
-var sfx={
-  ok:function(){tone(880,.14);setTimeout(function(){tone(1320,.18)},110);},
-  no:function(){tone(200,.28,'square',.05);setTimeout(function(){tone(150,.26,'square',.05)},90);},
-  click:function(){tone(660,.07,'triangle',.05);},
-  tip:function(){tone(520,.12,'triangle',.05);},
-  done:function(){[660,880,1100,1320].forEach(function(f,i){setTimeout(function(){tone(f,.2)},i*110)});}
-};
+function ac(){var C=window.AudioContext||window.webkitAudioContext;if(C&&!AC)AC=new C();if(AC&&AC.state==='suspended')AC.resume();return AC;}
+function tone(f,d,type,vol){var c=ac();if(!c)return;var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(vol||0.07,c.currentTime);g.gain.exponentialRampToValueAtTime(0.0008,c.currentTime+d);o.start();o.stop(c.currentTime+d);}
+var sfx={ok:function(){tone(880,.14);setTimeout(function(){tone(1320,.18)},110);},no:function(){tone(200,.28,'square',.05);setTimeout(function(){tone(150,.26,'square',.05)},90);},click:function(){tone(660,.07,'triangle',.05);},tip:function(){tone(520,.12,'triangle',.05);},done:function(){[660,880,1100,1320].forEach(function(f,i){setTimeout(function(){tone(f,.2)},i*110);});}};
 
-/* ---------------- ICONS ---------------- */
-var ICON={
-  pilot:'<path d="M24 34v-6c0-10 7-17 16-17s16 7 16 17v6"/><path d="M20 34h7M53 34h7M20 34v10M60 34v10"/><path d="M29 35c2 3 6 5 11 5s9-2 11-5"/><path d="M31 31h7M42 31h7"/><path d="M28 52c3-6 8-9 12-9s9 3 12 9v13H28z"/><path d="M22 65h36"/>',
-  fuel:'<rect x="25" y="17" width="30" height="47" rx="3"/><path d="M31 17v-4h18v4M25 43h30M30 48h20"/><circle cx="40" cy="30" r="8"/><path d="M40 30l5-4M55 24h7v31c0 4-2 7-6 7h-1M58 24l5 6"/>',
-  jets:'<path d="M40 10l5 16 11 5-3 3-8-1 2 15-7 12-7-12 2-15-8 1-3-3 11-5z"/><path d="M20 23l4 12 8 4-2 2-6-1 1 11-5 8-5-8 1-11-6 1-2-2 8-4z"/><path d="M60 23l4 12 8 4-2 2-6-1 1 11-5 8-5-8 1-11-6 1-2-2 8-4z"/>',
-  clouds:'<path d="M17 50h43c7 0 12-5 12-11 0-7-5-12-12-12-2 0-4 .5-6 1.5C51 21 45 18 38 18c-9 0-16 6-18 14-1-1-3-1-4-1-5 0-9 4-9 9s4 10 10 10z"/><path d="M24 57h30M30 63h19"/>',
-  runway:'<path d="M30 12h20l22 56H8z"/><path d="M30 12L8 68M50 12l22 56"/><path d="M40 17v7M40 31v8M40 48v10M40 66v3"/>',
-  turb:'<path d="M12 20c8-8 16 8 24 0s16 8 24 0 12 2 14 0"/><path d="M8 29c8-8 16 8 24 0s16 8 24 0 12 2 16 0"/><path d="M12 38c8-8 16 8 24 0s16 8 24 0 12 2 14 0"/><path d="M8 47c8-8 16 8 24 0s16 8 24 0 12 2 16 0"/><path d="M12 56c8-8 16 8 24 0s16 8 24 0 12 2 14 0"/>',
-  bag:'<rect x="14" y="26" width="52" height="36" rx="5"/><path d="M30 26v-6a4 4 0 014-4h12a4 4 0 014 4v6M14 40h52M32 62v4M48 62v4"/>',
-  seat:'<path d="M22 20h10a8 8 0 018 8v18H22z"/><path d="M22 46h30a6 6 0 016 6v4H22z"/><path d="M22 20v42M56 56v8"/>'
-};
+var ICON={pilot:'<path d="M24 34v-6c0-10 7-17 16-17s16 7 16 17v6"/><path d="M20 34h7M53 34h7M20 34v10M60 34v10"/><path d="M29 35c2 3 6 5 11 5s9-2 11-5"/><path d="M31 31h7M42 31h7"/><path d="M28 52c3-6 8-9 12-9s9 3 12 9v13H28z"/><path d="M22 65h36"/>',fuel:'<rect x="25" y="17" width="30" height="47" rx="3"/><path d="M31 17v-4h18v4M25 43h30M30 48h20"/><circle cx="40" cy="30" r="8"/><path d="M40 30l5-4M55 24h7v31c0 4-2 7-6 7h-1M58 24l5 6"/>',jets:'<path d="M40 10l5 16 11 5-3 3-8-1 2 15-7 12-7-12 2-15-8 1-3-3 11-5z"/><path d="M20 23l4 12 8 4-2 2-6-1 1 11-5 8-5-8 1-11-6 1-2-2 8-4z"/><path d="M60 23l4 12 8 4-2 2-6-1 1 11-5 8-5-8 1-11-6 1-2-2 8-4z"/>',clouds:'<path d="M17 50h43c7 0 12-5 12-11 0-7-5-12-12-12-2 0-4 .5-6 1.5C51 21 45 18 38 18c-9 0-16 6-18 14-1-1-3-1-4-1-5 0-9 4-9 9s4 10 10 10z"/><path d="M24 57h30M30 63h19"/>',runway:'<path d="M30 12h20l22 56H8z"/><path d="M30 12L8 68M50 12l22 56"/><path d="M40 17v7M40 31v8M40 48v10M40 66v3"/>',turb:'<path d="M12 20c8-8 16 8 24 0s16 8 24 0 12 2 14 0"/><path d="M8 29c8-8 16 8 24 0s16 8 24 0 12 2 16 0"/><path d="M12 38c8-8 16 8 24 0s16 8 24 0 12 2 14 0"/><path d="M8 47c8-8 16 8 24 0s16 8 24 0 12 2 16 0"/><path d="M12 56c8-8 16 8 24 0s16 8 24 0 12 2 14 0"/>',bag:'<rect x="14" y="26" width="52" height="36" rx="5"/><path d="M30 26v-6a4 4 0 014-4h12a4 4 0 014 4v6M14 40h52M32 62v4M48 62v4"/>',seat:'<path d="M22 20h10a8 8 0 018 8v18H22z"/><path d="M22 46h30a6 6 0 016 6v4H22z"/><path d="M22 20v42M56 56v8"/>'};
 var ICON_TONE={pilot:'--cyan',fuel:'--green',jets:'--green',clouds:'--cyan',runway:'--green',turb:'--cyan',bag:'--cyan',seat:'--green'};
 
-/* ---------------- QUESTION BANK ---------------- */
-/* text uses ___ for the gap; a is the index of the correct option */
-var BANK={
-  easy:[
-    {ic:'pilot', t:'There ___ a pilot in the cockpit.', o:['is','are','some','any'], a:0, w:'One pilot = singular, so we use "is".'},
-    {ic:'jets',  t:'There ___ two engines on this plane.', o:['is','are','any','some'], a:1, w:'Two engines = plural, so we use "are".'},
-    {ic:'fuel',  t:'There ___ a lot of fuel in the tank.', o:['are','is','some','any'], a:1, w:'"Fuel" is uncountable, so we use "is".'},
-    {ic:'clouds',t:'There ___ big clouds over the sea.', o:['is','any','are','some'], a:2, w:'"Clouds" is plural, so we use "are".'},
-    {ic:'runway',t:'There ___ one runway at this airport.', o:['is','are','some','any'], a:0, w:'One runway = singular, so we use "is".'},
-    {ic:'seat',  t:'There ___ 120 seats on board.', o:['is','some','are','any'], a:2, w:'120 seats = plural, so we use "are".'}
-  ],
-  medium:[
-    {ic:'bag',   t:'There are ___ bags in the cargo hold.', o:['any','some','is','a'], a:1, w:'Positive sentence + plural noun = "some".'},
-    {ic:'fuel',  t:'There is ___ coffee for the crew.', o:['some','any','are','a'], a:0, w:'Positive sentence + uncountable = "some".'},
-    {ic:'pilot', t:'There ___ some passengers at gate 4.', o:['is','are','any','a'], a:1, w:'"Passengers" is plural, so "are" + "some".'},
-    {ic:'clouds',t:'There is ___ fog near the mountains.', o:['any','a','some','are'], a:2, w:'"Fog" is uncountable in a positive sentence = "some".'},
-    {ic:'seat',  t:'There ___ some free seats in row 12.', o:['is','any','a','are'], a:3, w:'"Seats" is plural, so "are" + "some".'},
-    {ic:'turb',  t:'There is ___ light turbulence now.', o:['some','any','are','a'], a:0, w:'Positive + uncountable "turbulence" = "some".'},
-    {ic:'runway',t:'There ___ some lights on the runway.', o:['is','are','any','a'], a:1, w:'"Lights" is plural, so we use "are".'},
-    {ic:'jets',  t:'There ___ some planes in the hangar.', o:['is','a','are','any'], a:2, w:'"Planes" is plural, so we use "are".'}
-  ],
-  hard:[
-    {ic:'bag',   t:'Is there ___ water in your bag?', o:['some','any','are','a'], a:1, w:'Questions normally take "any".'},
-    {ic:'seat',  t:'Are there ___ free seats in business class?', o:['some','a','any','is'], a:2, w:'Questions with plural nouns take "any".'},
-    {ic:'turb',  t:'There is not ___ turbulence today.', o:['some','any','a','are'], a:1, w:'Negative sentences take "any".'},
-    {ic:'clouds',t:'There aren\'t ___ clouds in the sky.', o:['any','some','is','a'], a:0, w:'Negative + plural = "any".'},
-    {ic:'fuel',  t:'Is there ___ problem with the fuel pump?', o:['any','some','a','are'], a:2, w:'"Problem" is singular and countable, so we need "a".'},
-    {ic:'pilot', t:'There isn\'t ___ doctor on this flight.', o:['some','any','a','are'], a:2, w:'Singular countable noun always needs "a", even in negatives.'},
-    {ic:'runway',t:'Are there ___ planes on the runway?', o:['some','any','is','a'], a:1, w:'Question + plural = "any".'},
-    {ic:'jets',  t:'There aren\'t ___ tickets for the 7 a.m. flight.', o:['any','some','a','is'], a:0, w:'Negative + plural = "any".'},
-    {ic:'bag',   t:'Is there ___ space for my suitcase?', o:['a','any','some','are'], a:1, w:'Question + uncountable "space" = "any".'},
-    {ic:'seat',  t:'There isn\'t ___ food on this short flight.', o:['some','a','any','are'], a:2, w:'Negative + uncountable = "any".'}
-  ],
-  expert:[
-    {ic:'pilot', t:'There ___ two pilots and ___ flight attendant on board.', o:['are / a','is / a','are / any','is / some'], a:0, w:'"Two pilots" = are. "Flight attendant" is one, so "a".'},
-    {ic:'bag',   t:'There aren\'t ___ bags here, but there is ___ box.', o:['some / a','any / a','any / some','any / any'], a:1, w:'Negative plural = "any"; one box = "a".'},
-    {ic:'fuel',  t:'Is there ___ coffee? Yes, there is ___ in the galley.', o:['any / some','some / any','any / a','some / some'], a:0, w:'Question = "any"; positive answer = "some".'},
-    {ic:'clouds',t:'There ___ some clouds, but there isn\'t ___ rain.', o:['is / some','are / any','are / some','is / any'], a:1, w:'"Clouds" = are + some; negative uncountable = "any".'},
-    {ic:'seat',  t:'Are there ___ seats free? No, there aren\'t ___.', o:['some / any','any / some','any / any','a / any'], a:2, w:'Both the question and the negative take "any".'},
-    {ic:'turb',  t:'There isn\'t ___ turbulence, so there ___ no problem.', o:['any / is','some / is','any / are','some / are'], a:0, w:'Negative uncountable = "any"; "problem" is singular = is.'},
-    {ic:'runway',t:'There ___ one runway open and there ___ some lights on it.', o:['are / is','is / are','is / is','are / are'], a:1, w:'One runway = is; some lights = are.'},
-    {ic:'jets',  t:'There ___ three planes, but there isn\'t ___ pilot yet.', o:['are / a','is / a','are / any','are / some'], a:0, w:'Three planes = are; one pilot = a.'},
-    {ic:'bag',   t:'Is there ___ information about my luggage? There isn\'t ___ news.', o:['some / any','any / some','any / any','a / any'], a:2, w:'"Information" and "news" are uncountable: question and negative both take "any".'},
-    {ic:'pilot', t:'There ___ some passengers waiting and there ___ a queue at the desk.', o:['is / are','are / is','are / are','is / is'], a:1, w:'"Passengers" = are; "a queue" = is.'},
-    {ic:'fuel',  t:'There isn\'t ___ water on the trolley, but there are ___ juices.', o:['any / some','some / any','any / any','a / some'], a:0, w:'Negative uncountable = "any"; positive plural = "some".'},
-    {ic:'clouds',t:'Are there ___ storms ahead? There is ___ small one near the coast.', o:['some / a','any / a','any / some','any / any'], a:1, w:'Question plural = "any"; "one storm" = a.'}
-  ]
-};
+var BANK={easy:[{ic:'pilot',t:'There ___ a pilot in the cockpit.',o:['is','are','some','any'],a:0,w:'One pilot = singular, so we use "is".'},{ic:'jets',t:'There ___ two engines on this plane.',o:['is','are','any','some'],a:1,w:'Two engines = plural, so we use "are".'},{ic:'fuel',t:'There ___ a lot of fuel in the tank.',o:['are','is','some','any'],a:1,w:'"Fuel" is uncountable, so we use "is".'},{ic:'clouds',t:'There ___ big clouds over the sea.',o:['is','any','are','some'],a:2,w:'"Clouds" is plural, so we use "are".'},{ic:'runway',t:'There ___ one runway at this airport.',o:['is','are','some','any'],a:0,w:'One runway = singular, so we use "is".'},{ic:'seat',t:'There ___ 120 seats on board.',o:['is','some','are','any'],a:2,w:'120 seats = plural, so we use "are".'}],medium:[{ic:'bag',t:'There are ___ bags in the cargo hold.',o:['any','some','is','a'],a:1,w:'Positive sentence + plural noun = "some".'},{ic:'fuel',t:'There is ___ coffee for the crew.',o:['some','any','are','a'],a:0,w:'Positive sentence + uncountable = "some".'},{ic:'pilot',t:'There ___ some passengers at gate 4.',o:['is','are','any','a'],a:1,w:'"Passengers" is plural, so "are" + "some".'},{ic:'clouds',t:'There is ___ fog near the mountains.',o:['any','a','some','are'],a:2,w:'"Fog" is uncountable in a positive sentence = "some".'},{ic:'seat',t:'There ___ some free seats in row 12.',o:['is','any','a','are'],a:3,w:'"Seats" is plural, so "are" + "some".'},{ic:'turb',t:'There is ___ light turbulence now.',o:['some','any','are','a'],a:0,w:'Positive + uncountable "turbulence" = "some".'},{ic:'runway',t:'There ___ some lights on the runway.',o:['is','are','any','a'],a:1,w:'"Lights" is plural, so we use "are".'},{ic:'jets',t:'There ___ some planes in the hangar.',o:['is','a','are','any'],a:2,w:'"Planes" is plural, so we use "are".'}],hard:[{ic:'bag',t:'Is there ___ water in your bag?',o:['some','any','are','a'],a:1,w:'Questions normally take "any".'},{ic:'seat',t:'Are there ___ free seats in business class?',o:['some','a','any','is'],a:2,w:'Questions with plural nouns take "any".'},{ic:'turb',t:'There is not ___ turbulence today.',o:['some','any','a','are'],a:1,w:'Negative sentences take "any".'},{ic:'clouds',t:'There aren\'t ___ clouds in the sky.',o:['any','some','is','a'],a:0,w:'Negative + plural = "any".'},{ic:'fuel',t:'Is there ___ problem with the fuel pump?',o:['any','some','a','are'],a:2,w:'"Problem" is singular and countable, so we need "a".'},{ic:'pilot',t:'There isn\'t ___ doctor on this flight.',o:['some','any','a','are'],a:2,w:'Singular countable noun always needs "a", even in negatives.'},{ic:'runway',t:'Are there ___ planes on the runway?',o:['some','any','is','a'],a:1,w:'Question + plural = "any".'},{ic:'jets',t:'There aren\'t ___ tickets for the 7 a.m. flight.',o:['any','some','a','is'],a:0,w:'Negative + plural = "any".'},{ic:'bag',t:'Is there ___ space for my suitcase?',o:['a','any','some','are'],a:1,w:'Question + uncountable "space" = "any".'},{ic:'seat',t:'There isn\'t ___ food on this short flight.',o:['some','a','any','are'],a:2,w:'Negative + uncountable = "any".'}],expert:[{ic:'pilot',t:'There ___ two pilots and ___ flight attendant on board.',o:['are / a','is / a','are / any','is / some'],a:0,w:'"Two pilots" = are. "Flight attendant" is one, so "a".'},{ic:'bag',t:'There aren\'t ___ bags here, but there is ___ box.',o:['some / a','any / a','any / some','any / any'],a:1,w:'Negative plural = "any"; one box = "a".'},{ic:'fuel',t:'Is there ___ coffee? Yes, there is ___ in the galley.',o:['any / some','some / any','any / a','some / some'],a:0,w:'Question = "any"; positive answer = "some".'},{ic:'clouds',t:'There ___ some clouds, but there isn\'t ___ rain.',o:['is / some','are / any','are / some','is / any'],a:1,w:'"Clouds" = are + some; negative uncountable = "any".'},{ic:'seat',t:'Are there ___ seats free? No, there aren\'t ___.',o:['some / any','any / some','any / any','a / any'],a:2,w:'Both the question and the negative take "any".'},{ic:'turb',t:'There isn\'t ___ turbulence, so there ___ no problem.',o:['any / is','some / is','any / are','some / are'],a:0,w:'Negative uncountable = "any"; "problem" is singular = is.'},{ic:'runway',t:'There ___ one runway open and there ___ some lights on it.',o:['are / is','is / are','is / is','are / are'],a:1,w:'One runway = is; some lights = are.'},{ic:'jets',t:'There ___ three planes, but there isn\'t ___ pilot yet.',o:['are / a','is / a','are / any','are / some'],a:0,w:'Three planes = are; one pilot = a.'},{ic:'bag',t:'Is there ___ information about my luggage? There isn\'t ___ news.',o:['some / any','any / some','any / any','a / any'],a:2,w:'"Information" and "news" are uncountable: question and negative both take "any".'},{ic:'pilot',t:'There ___ some passengers waiting and there ___ a queue at the desk.',o:['is / are','are / is','are / are','is / is'],a:1,w:'"Passengers" = are; "a queue" = is.'},{ic:'fuel',t:'There isn\'t ___ water on the trolley, but there are ___ juices.',o:['any / some','some / any','any / any','a / some'],a:0,w:'Negative uncountable = "any"; positive plural = "some".'},{ic:'clouds',t:'Are there ___ storms ahead? There is ___ small one near the coast.',o:['some / a','any / a','any / some','any / any'],a:1,w:'Question plural = "any"; "one storm" = a.'}]};
 
-var LEVEL_META={
-  easy:{label:'Easy',focus:'is / are',cls:'l-easy',ic:'<svg viewBox="0 0 24 24" class="ico"><path d="M12 3l2.3 6.2L21 12l-6.7 2.8L12 21l-2.3-6.2L3 12l6.7-2.8z"/></svg>'},
-  medium:{label:'Medium',focus:'+ some',cls:'l-medium',ic:'<svg viewBox="0 0 24 24" class="ico"><path d="M3 17c4-6 8 4 12-2s4 3 6 1"/><path d="M3 11c4-6 8 4 12-2s4 3 6 1"/></svg>'},
-  hard:{label:'Hard',focus:'+ any',cls:'l-hard',ic:'<svg viewBox="0 0 24 24" class="ico"><path d="M12 4l8 16H4z"/><path d="M12 10v4M12 17h.01"/></svg>'},
-  expert:{label:'Expert',focus:'all mixed',cls:'l-expert',ic:'<svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg>'}
-};
+var LEVEL_META={easy:{label:'Easy',focus:'is / are',cls:'l-easy',ic:'<svg viewBox="0 0 24 24" class="ico"><path d="M12 3l2.3 6.2L21 12l-6.7 2.8L12 21l-2.3-6.2L3 12l6.7-2.8z"/></svg>'},medium:{label:'Medium',focus:'+ some',cls:'l-medium',ic:'<svg viewBox="0 0 24 24" class="ico"><path d="M3 17c4-6 8 4 12-2s4 3 6 1"/><path d="M3 11c4-6 8 4 12-2s4 3 6 1"/></svg>'},hard:{label:'Hard',focus:'+ any',cls:'l-hard',ic:'<svg viewBox="0 0 24 24" class="ico"><path d="M12 4l8 16H4z"/><path d="M12 10v4M12 17h.01"/></svg>'},expert:{label:'Expert',focus:'all mixed',cls:'l-expert',ic:'<svg viewBox="0 0 24 24" class="ico"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 17v3M4 12h3M17 12h3"/></svg>'}};
 
-/* ---------------- STATE ---------------- */
+var VOCAB=[
+{w:'affirmative',d:'✓ Утвердительное предложение — "There is a pilot."'},
+{w:'any',d:'❓ "any" в вопросах и отрицаниях — "Is there any coffee?"'},
+{w:'boarding pass',d:'🎫 Посадочный талон — документ для входа в самолёт'},
+{w:'cargo',d:'📦 Груз — вещи и товары в самолёте'},
+{w:'cockpit',d:'🛩️ Кабина пилота — место впереди самолёта'},
+{w:'crew',d:'👥 Экипаж — люди, работающие на самолёте'},
+{w:'gate',d:'🚪 Выход на посадку — вход в самолёт'},
+{w:'luggage',d:'🧳 Багаж — чемоданы и сумки пассажира'},
+{w:'negative',d:'✗ Отрицательное — "There is NOT a doctor."'},
+{w:'passenger',d:'👤 Пассажир — человек в самолёте'},
+{w:'pilot',d:'🧑‍✈️ Пилот — управляет самолётом'},
+{w:'plural',d:'👥 Множественное число — много (cats, planes, people)'},
+{w:'question',d:'❓ Вопрос — заканчивается знаком "?"'},
+{w:'runway',d:'✈️ Взлётная полоса — где самолёт взлетает'},
+{w:'singular',d:'👤 Единственное число — один (cat, plane, person)'},
+{w:'some',d:'"some" в утвердительных — "There are SOME passengers."'},
+{w:'turbulence',d:'〰️ Турбулентность — самолёт трясётся'}
+];
+
 var S={level:'easy',i:0,score:0,correct:0,bonus:0,locked:false,tStart:0,tipUsed:false};
-
 function $(id){return document.getElementById(id);}
 var SCREENS={start:$('scStart'),quiz:$('scQuiz'),done:$('scDone')};
 
-/* reveal: show background sharp, then settle it and raise the UI */
 function goto(name){
-  Object.keys(SCREENS).forEach(function(k){
-    SCREENS[k].classList.remove('active','settled');
-  });
-  var el=SCREENS[name];
-  el.classList.add('active');
-  // force a frame so the browser paints the sharp background first
-  requestAnimationFrame(function(){
-    setTimeout(function(){el.classList.add('settled');},700);
-  });
+  Object.keys(SCREENS).forEach(function(k){SCREENS[k].classList.remove('active','settled');});
+  var el=SCREENS[name];el.classList.add('active');
+  requestAnimationFrame(function(){setTimeout(function(){el.classList.add('settled');},700);});
 }
 
-/* ---------------- START SCREEN ---------------- */
-function buildLevels(){
-  var wrap=$('levels');
-  wrap.innerHTML='';
-  Object.keys(LEVEL_META).forEach(function(key){
-    var m=LEVEL_META[key];
-    var best=localStorage.getItem('fc_best_'+key);
-    var b=document.createElement('button');
-    b.className='lvl '+m.cls;
-    b.innerHTML=m.ic+'<span>'+m.label+
-      '<span class="lvl-meta">'+BANK[key].length+' reports · '+m.focus+'</span></span>'+
-      (best?'<span class="best">BEST '+best+'</span>':'');
-    b.addEventListener('click',function(){
-      sfx.click();
-      startRun(key);
-    });
-    wrap.appendChild(b);
-  });
-}
-
-function startRun(level){
-  S.level=level;S.i=0;S.score=0;S.correct=0;S.bonus=0;
-  goto('quiz');
-  render();
-}
-
-/* ---------------- QUIZ ---------------- */
-/* Fills every ___ in a sentence. When answer is null the gaps stay blank.
-   Expert items have two gaps and options written as "are / a", so the
-   answer is split on "/" and each part goes into its own gap. */
 function fillGaps(text,answer){
   var parts=answer===null?null:String(answer).split('/');
   var n=-1;
-  return text.replace(/___/g,function(){
-    n++;
-    if(parts===null)return '<span class="gap">&nbsp;?&nbsp;</span>';
-    var word=(parts[n]!==undefined?parts[n]:parts[parts.length-1]).trim();
-    return '<span class="gap">'+word+'</span>';
-  });
+  return text.replace(/___/g,function(){n++;if(parts===null)return '<span class="gap"> ? </span>';var word=(parts[n]!==undefined?parts[n]:parts[parts.length-1]).trim();return '<span class="gap">'+word+'</span>';});
 }
 
-/* A hint must not spell out the answer. Every word of the correct option is
-   masked in the explanation, so the learner still gets the rule but has to
-   make the choice themselves. */
-function redact(q){
-  var words=String(q.o[q.a]).split('/').map(function(w){return w.trim()}).filter(Boolean);
-  var out=q.w;
-  words.forEach(function(w){
-    out=out.replace(new RegExp('"'+w+'"','gi'),'"…"');
-    out=out.replace(new RegExp('(^|[\\s(])'+w+'($|[\\s.,;:!?)])','gi'),'$1…$2');
-  });
-  return out;
+function buildVocab(){
+  var list=$('vocabList'),search=($('vocabSearch').value||'').toLowerCase().trim(),shown=0;
+  list.innerHTML='';
+  VOCAB.forEach(function(item){var match=!search || item.w.indexOf(search)>-1 || item.d.toLowerCase().indexOf(search)>-1;if(match){var div=document.createElement('div');div.className='vocab-item';div.innerHTML='<div class="vocab-word">'+item.w+'</div><div class="vocab-def">'+item.d+'</div>';list.appendChild(div);shown++;}});
+  if(shown===0)list.innerHTML='<div style="color:rgba(223,246,255,.5);padding:20px;text-align:center">No matches found.</div>';
 }
 
-function render(){
-  var list=BANK[S.level],q=list[S.i];
-  S.locked=false;S.tipUsed=false;S.tStart=Date.now();
+function showModal(id){$(id).classList.add('show');}
+function hideModal(id){$(id).classList.remove('show');}
 
-  $('qLevel').textContent=LEVEL_META[S.level].label.toUpperCase();
-  $('qNow').textContent=S.i+1;
-  $('qTotal').textContent=list.length;
-  $('qScore').textContent=S.score;
-  $('qBar').style.width=(S.i/list.length*100)+'%';
+$('vocabSearch').addEventListener('input',buildVocab);
+$('btnGram').addEventListener('click',function(){showModal('gramModal');});
+$('closeGram').addEventListener('click',function(){hideModal('gramModal');});
+$('btnVocab').addEventListener('click',function(){buildVocab();showModal('vocabModal');});
+$('closeVocab').addEventListener('click',function(){hideModal('vocabModal');});
+['gramModal','vocabModal'].forEach(function(id){$(id).addEventListener('click',function(e){if(e.target===this)hideModal(id);});});
 
-  var icon=$('qIcon');
-  icon.innerHTML=ICON[q.ic]||ICON.jets;
-  icon.style.color='var('+(ICON_TONE[q.ic]||'--cyan')+')';
-  icon.style.filter='drop-shadow(0 0 6px currentColor)';
+function buildLevels(){var wrap=$('levels');wrap.innerHTML='';Object.keys(LEVEL_META).forEach(function(key){var m=LEVEL_META[key],best=localStorage.getItem('fc_best_'+key),b=document.createElement('button');b.className='lvl '+m.cls;b.innerHTML=m.ic+'<span>'+m.label+'<span class="lvl-meta">'+BANK[key].length+' reports · '+m.focus+'</span></span>'+(best?'<span class="best">BEST '+best+'</span>':'');b.addEventListener('click',function(){sfx.click();startRun(key);});wrap.appendChild(b);});}
 
-  $('qText').innerHTML=fillGaps(q.t,null);
+function startRun(level){S.level=level;S.i=0;S.score=0;S.correct=0;S.bonus=0;goto('quiz');render();}
 
-  var box=$('qOpts');box.innerHTML='';
-  q.o.forEach(function(txt,idx){
-    var b=document.createElement('button');
-    b.className='opt';
-    b.innerHTML='<span class="key">'+String.fromCharCode(65+idx)+'</span><span>'+txt+'</span>';
-    b.addEventListener('click',function(){answer(idx,b);});
-    box.appendChild(b);
-  });
+function render(){var list=BANK[S.level],q=list[S.i];S.locked=false;S.tipUsed=false;S.tStart=Date.now();$('qLevel').textContent=LEVEL_META[S.level].label.toUpperCase();$('qNow').textContent=S.i+1;$('qTotal').textContent=list.length;$('qScore').textContent=S.score;$('qBar').style.width=(S.i/list.length*100)+'%';var icon=$('qIcon');icon.innerHTML=ICON[q.ic]||ICON.jets;icon.style.color='var('+(ICON_TONE[q.ic]||'--cyan')+')';icon.style.filter='drop-shadow(0 0 6px currentColor)';$('qText').innerHTML=fillGaps(q.t,null);var box=$('qOpts');box.innerHTML='';q.o.forEach(function(txt,idx){var b=document.createElement('button');b.className='opt';b.innerHTML='<span class="key">'+String.fromCharCode(65+idx)+'</span><span>'+txt+'</span>';b.addEventListener('click',function(){answer(idx,b);});box.appendChild(b);});var f=$('qFeed');f.className='feedback';f.textContent='';$('btnTip').disabled=false;var next=$('btnNext');next.disabled=true;next.firstChild.nodeValue=(S.i===list.length-1)?'Debrief ':'Next ';}
 
-  var f=$('qFeed');f.className='feedback';f.textContent='';
-  $('btnTip').disabled=false;
-  var next=$('btnNext');
-  next.disabled=true;
-  next.firstChild.nodeValue=(S.i===list.length-1)?'Debrief ':'Next ';
-}
+function answer(idx,btn){if(S.locked)return;S.locked=true;var q=BANK[S.level][S.i],ok=(idx===q.a),secs=(Date.now()-S.tStart)/1000,btns=$('qOpts').querySelectorAll('.opt');for(var i=0;i<btns.length;i++){btns[i].disabled=true;if(i===q.a)btns[i].classList.add('correct');else if(i===idx)btns[i].classList.add('wrong');else btns[i].classList.add('dim');}$('qText').innerHTML=fillGaps(q.t,q.o[q.a]);var f=$('qFeed');if(ok){S.correct++;var pts=10;if(!S.tipUsed&&secs<5){S.bonus+=5;pts+=5;}S.score+=pts;f.className='feedback ok show';f.innerHTML='<b>Correct.</b> '+q.w;sfx.ok();}else{f.className='feedback no show';f.innerHTML='<b>Not quite.</b> '+q.w;sfx.no();}$('qScore').textContent=S.score;$('btnTip').disabled=true;$('btnNext').disabled=false;}
 
-function answer(idx,btn){
-  if(S.locked)return;
-  S.locked=true;
-  var q=BANK[S.level][S.i];
-  var ok=(idx===q.a);
-  var secs=(Date.now()-S.tStart)/1000;
+$('btnTip').addEventListener('click',function(){if(S.locked||S.tipUsed)return;S.tipUsed=true;S.score=Math.max(0,S.score-2);$('qScore').textContent=S.score;var q=BANK[S.level][S.i],f=$('qFeed');f.className='feedback tip show';f.innerHTML='<b>Hint.</b> '+q.w.split('"').join('…');this.disabled=true;sfx.tip();});
 
-  var btns=$('qOpts').querySelectorAll('.opt');
-  for(var i=0;i<btns.length;i++){
-    btns[i].disabled=true;
-    if(i===q.a)btns[i].classList.add('correct');
-    else if(i===idx)btns[i].classList.add('wrong');
-    else btns[i].classList.add('dim');
-  }
+$('btnNext').addEventListener('click',function(){var list=BANK[S.level];if(S.i<list.length-1){S.i++;sfx.click();render();}else finish();});
 
-  $('qText').innerHTML=fillGaps(q.t,q.o[q.a]);
-
-  var f=$('qFeed');
-  if(ok){
-    S.correct++;
-    var pts=10, note='';
-    if(!S.tipUsed && secs<5){S.bonus+=5;pts+=5;note=' Speed bonus +5.';}
-    S.score+=pts;
-    f.className='feedback ok show';
-    f.innerHTML='<b>Correct.</b> '+q.w+note;
-    sfx.ok();
-  }else{
-    f.className='feedback no show';
-    f.innerHTML='<b>Not quite.</b> '+q.w;
-    sfx.no();
-  }
-  $('qScore').textContent=S.score;
-  $('btnTip').disabled=true;
-  $('btnNext').disabled=false;
-}
-
-$('btnTip').addEventListener('click',function(){
-  if(S.locked||S.tipUsed)return;
-  S.tipUsed=true;
-  S.score=Math.max(0,S.score-2);
-  $('qScore').textContent=S.score;
-  var q=BANK[S.level][S.i];
-  var f=$('qFeed');
-  f.className='feedback tip show';
-  f.innerHTML='<b>Hint.</b> '+redact(q);
-  this.disabled=true;
-  sfx.tip();
-});
-
-$('btnNext').addEventListener('click',function(){
-  var list=BANK[S.level];
-  if(S.i<list.length-1){S.i++;sfx.click();render();}
-  else finish();
-});
-
-/* keyboard: A-D to answer, Enter to advance */
-document.addEventListener('keydown',function(e){
-  if(!SCREENS.quiz.classList.contains('active'))return;
-  var k=e.key.toUpperCase();
-  if(k>='A'&&k<='D'&&!S.locked){
-    var b=$('qOpts').querySelectorAll('.opt')[k.charCodeAt(0)-65];
-    if(b)b.click();
-  }else if(e.key==='Enter'&&!$('btnNext').disabled){
-    $('btnNext').click();
-  }
-});
-
-/* ---------------- RESULTS ---------------- */
-function finish(){
-  var list=BANK[S.level];
-  var acc=Math.round(S.correct/list.length*100);
-  var key='fc_best_'+S.level;
-  var prev=parseInt(localStorage.getItem(key)||'0',10);
-  var isNew=S.score>prev;
-  if(isNew)localStorage.setItem(key,S.score);
-
-  var rank= acc===100?'Captain — flawless checklist'
-          : acc>=80 ?'First officer — cleared for takeoff'
-          : acc>=60 ?'Cadet — more cockpit hours needed'
-          :          'Ground crew — run the checklist again';
-
-  $('rRank').textContent=rank;
-  $('rLevel').textContent=LEVEL_META[S.level].label.toUpperCase();
-  $('rCorrect').textContent=S.correct+' / '+list.length;
-  $('rAcc').textContent=acc+'%';
-  $('rBonus').textContent='+'+S.bonus+' pts';
-  $('rBest').textContent=(isNew?'NEW · ':'')+Math.max(prev,S.score)+' pts';
-  $('rScore').textContent=S.score+' pts';
-
-  goto('done');
-  sfx.done();
-}
+function finish(){var list=BANK[S.level],acc=Math.round(S.correct/list.length*100),key='fc_best_'+S.level,prev=parseInt(localStorage.getItem(key)||'0',10),isNew=S.score>prev;if(isNew)localStorage.setItem(key,S.score);var rank=acc===100?'Captain — flawless checklist':acc>=80?'First officer — cleared for takeoff':acc>=60?'Cadet — more cockpit hours needed':'Ground crew — run the checklist again';$('rRank').textContent=rank;$('rLevel').textContent=LEVEL_META[S.level].label.toUpperCase();$('rCorrect').textContent=S.correct+' / '+list.length;$('rAcc').textContent=acc+'%';$('rBonus').textContent='+'+S.bonus+' pts';$('rBest').textContent=(isNew?'NEW · ':'')+Math.max(prev,S.score)+' pts';$('rScore').textContent=S.score+' pts';goto('done');sfx.done();}
 
 $('btnAgain').addEventListener('click',function(){sfx.click();startRun(S.level);});
 $('btnMenu').addEventListener('click',function(){sfx.click();buildLevels();goto('start');});
 
-/* ---------------- BOOT ---------------- */
 buildLevels();
 goto('start');
 
