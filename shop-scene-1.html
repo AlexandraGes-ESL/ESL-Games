@@ -23,22 +23,22 @@
   }
 
   body {
-  background: #1a1008;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  font-family: 'Georgia', serif;
-  overflow: hidden;
-}
+    background: #1a1008;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Georgia', serif;
+    overflow: hidden;
+  }
 
   /* ── RESPONSIVE SCALE WRAPPER ─────────────────────────────── */
   #scale-wrap {
-  width: 1280px;
-  height: 720px;
-  transform-origin: center center;   /* ← было top left */
-  flex-shrink: 0;                    /* ← не сжимать flex-ом */
-}
+    width: 1280px;
+    height: 720px;
+    transform-origin: center center;
+    flex-shrink: 0;
+  }
 
   /* ── GAME CONTAINER ───────────────────────────────────────── */
   #game {
@@ -85,15 +85,24 @@
   }
 
   #sprite-ginie {
-    right: 5%;
-    height: 76%;           /* slightly smaller — she's behind the counter */
+    right: 3%;
+    bottom: 190px;         /* push up so feet sit behind counter top */
+    height: 62%;           /* shorter — counter hides lower body */
     transform-origin: bottom right;
   }
 
   #sprite-yeojin {
-    left: 5%;
-    height: 82%;
+    left: 6%;
+    height: 58%;           /* smaller — standing outside/near entrance */
     transform-origin: bottom left;
+  }
+
+  /* outside scene: Yeo-jin is mirrored (faces right toward shop door) */
+  #sprite-yeojin.outside {
+    transform: scaleX(-1);
+  }
+  #sprite-yeojin.outside.speaking {
+    transform: scaleX(-1) scale(1.045);
   }
 
   /* hidden = fully invisible */
@@ -441,7 +450,7 @@
     const scaleY = window.innerHeight / 720;
     const scale  = Math.min(scaleX, scaleY);
     wrap.style.transform = `scale(${scale})`;
-    // убираем ручной margin — flex сам центрирует
+    // flex centres the block; clear any leftover manual margins
     wrap.style.marginLeft = '';
     wrap.style.marginTop  = '';
   }
@@ -929,14 +938,25 @@ function runOpening() {
       break;
 
     case 'showYeojin':
-    case 'showYeojinFront':
+      // outside: mirror + smaller bottom offset
       setSprite('yeojin', step.asset);
+      document.getElementById('sprite-yeojin').classList.add('outside');
+      document.getElementById('sprite-yeojin').style.bottom = '148px';
+      runOpening();
+      break;
+
+    case 'showYeojinFront':
+      // inside: normal orientation, restore bottom
+      setSprite('yeojin', step.asset);
+      document.getElementById('sprite-yeojin').classList.remove('outside');
+      document.getElementById('sprite-yeojin').style.bottom = '148px';
       runOpening();
       break;
 
     case 'showGinie':
-      // FIX: enter active, not dim
+      // FIX: enter active, not dim; raise bottom so feet hide behind counter
       setSprite('ginie', step.asset);
+      document.getElementById('sprite-ginie').style.bottom = '190px';
       runOpening();
       break;
 
@@ -945,6 +965,8 @@ function runOpening() {
         setBG(step.newBG);
         hideSprite('yeojin');
         hideSprite('ginie');
+        // reset any inline styles set for outside scene
+        document.getElementById('sprite-yeojin').classList.remove('outside');
         fadeIn();
         setTimeout(() => runOpening(), 300);
       });
