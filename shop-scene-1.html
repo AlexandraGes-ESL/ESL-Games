@@ -5,196 +5,218 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scene 1 — The Village Shop</title>
 <style>
-  /* ── RESET & BASE ─────────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --warm-amber:   #f5a623;
-    --cold-blue:    #6a8fa8;
-    --text-main:    #2c1a0e;
-    --bg-dialog:    rgba(255, 248, 235, 0.93);
-    --border:       rgba(139, 90, 43, 0.35);
-    --btn-bg:       rgba(255, 248, 235, 0.9);
-    --btn-hover:    #f5a623;
-    --btn-border:   rgba(139, 90, 43, 0.4);
-    --mood-cold:    #6a8fa8;
-    --mood-neutral: #a0946b;
-    --mood-warm:    #e8843a;
+    --amber:      #c8720a;
+    --amber-lt:   #f5a623;
+    --cold:       #6a8fa8;
+    --neutral:    #a0946b;
+    --warm:       #e8843a;
+    --cream:      rgba(255, 246, 228, 0.96);
+    --border:     rgba(139, 90, 43, 0.30);
+    --text:       #2c1a0e;
+    --text-muted: #7a5c35;
   }
 
-  body {
-    background: #1a1008;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: transparent;
     font-family: 'Georgia', serif;
-    overflow: hidden;
   }
 
-  /* ── RESPONSIVE SCALE WRAPPER ─────────────────────────────── */
+  /* ── SCALE WRAPPER ─────────────────────────────────────────── */
   #scale-wrap {
-    width: 1280px;
-    height: 720px;
-    transform-origin: center center;
-    flex-shrink: 0;
+    position: absolute;
+    top: 0; left: 0;
+    width: 1280px; height: 720px;
+    transform-origin: top left;
   }
 
-  /* ── GAME CONTAINER ───────────────────────────────────────── */
-  #game {
-    position: relative;
-    width: 1280px;
-    height: 720px;
+  /* ── STAGE ─────────────────────────────────────────────────── */
+  #stage {
+    position: absolute;
+    inset: 0;
     overflow: hidden;
+  }
+
+  /* ── MOOD BAR ──────────────────────────────────────────────── */
+  #mood-bar-wrap {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+    background: rgba(255,246,228,0.88);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    backdrop-filter: blur(6px);
+  }
+  #mood-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  #mood-track {
+    width: 160px; height: 7px;
+    background: rgba(139, 90, 43, 0.14);
     border-radius: 4px;
-    box-shadow: 0 0 60px rgba(0,0,0,0.85);
-    cursor: pointer;
+    overflow: hidden;
+  }
+  #mood-fill {
+    height: 100%;
+    width: 25%;
+    background: var(--cold);
+    border-radius: 4px;
+    transition: width 0.6s ease, background 0.6s ease;
+  }
+  #mood-emoji {
+    font-size: 16px;
+    line-height: 1;
+    transition: opacity 0.4s;
   }
 
-  /* ── BACKGROUND ───────────────────────────────────────────── */
-  #bg {
+  /* ── SPRITES ───────────────────────────────────────────────── */
+  /* Yeo-jin — left, full height */
+  #sprite-yeojin-wrap {
     position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    transition: opacity 0.8s ease;
-  }
-
-  /* ── OVERLAY (mood tint) ──────────────────────────────────── */
-  #mood-overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    transition: background 1.2s ease;
-    background: rgba(106, 143, 168, 0.08);
-  }
-
-  /* ── SPRITES ──────────────────────────────────────────────── */
-  .sprite {
-    position: absolute;
+    left: 2%;
     bottom: 148px;
+    height: 82%;
     width: auto;
-    object-fit: contain;
-    pointer-events: none;
-    /* hide broken-image icon when src empty */
-    font-size: 0;
-    color: transparent;
-    transition: transform 0.35s ease, filter 0.35s ease, opacity 0.4s ease;
-    filter: brightness(0.88) saturate(0.92);
-    opacity: 1;
-  }
-
-  #sprite-ginie {
-    right: 3%;
-    bottom: 190px;         /* push up so feet sit behind counter top */
-    height: 62%;           /* shorter — counter hides lower body */
-    transform-origin: bottom right;
-  }
-
-  #sprite-yeojin {
-    left: 6%;
-    height: 58%;           /* smaller — standing outside/near entrance */
     transform-origin: bottom left;
+    transition: transform 0.35s ease, filter 0.35s ease, opacity 0.4s ease;
   }
-
-  /* outside scene: Yeo-jin is mirrored (faces right toward shop door) */
-  #sprite-yeojin.outside {
-    transform: scaleX(-1);
-  }
-  #sprite-yeojin.outside.speaking {
-    transform: scaleX(-1) scale(1.045);
-  }
-
-  /* hidden = fully invisible */
-  .sprite.hidden {
-    opacity: 0;
+  #sprite-yeojin {
+    height: 100%;
+    width: auto;
+    display: block;
     pointer-events: none;
   }
 
-  /* dim = slightly faded, no movement */
-  .sprite.dim {
-    filter: brightness(0.72) saturate(0.7);
-    opacity: 0.82;
+  /* Ginie — right, clipped behind counter */
+  #sprite-ginie-wrap {
+    position: absolute;
+    right: 1%;
+    bottom: 148px;
+    height: 82%;
+    width: auto;
+    /* clip bottom 36% — simulates counter hiding her lower body */
+    clip-path: inset(0 0 36% 0);
+    transform-origin: bottom right;
+    transition: transform 0.35s ease, filter 0.35s ease, opacity 0.4s ease;
+  }
+  #sprite-ginie {
+    height: 100%;
+    width: auto;
+    display: block;
+    pointer-events: none;
   }
 
-  /* active = normal baseline */
-  .sprite.active {
-    filter: brightness(0.88) saturate(0.92);
-    opacity: 1;
-  }
-
-  /* speaking = scale up + warm glow */
-  .sprite.speaking {
-    transform: scale(1.045);
+  /* speaking state */
+  .speaking-wrap {
     filter: brightness(1.06) saturate(1.08)
-            drop-shadow(0 0 22px rgba(245, 166, 35, 0.28));
-    opacity: 1;
+            drop-shadow(0 0 22px rgba(245,166,35,0.30)) !important;
+    transform: scale(1.04) !important;
+  }
+  .dim-wrap {
+    filter: brightness(0.70) saturate(0.65) !important;
+    opacity: 0.82 !important;
+  }
+  .hidden-wrap {
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
-  /* ── DIALOG BOX ───────────────────────────────────────────── */
+  /* ── DIALOG BOX ────────────────────────────────────────────── */
   #dialog-box {
     position: absolute;
     bottom: 0; left: 0; right: 0;
     height: 148px;
-    background: var(--bg-dialog);
+    background: var(--cream);
     border-top: 2px solid var(--border);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 16px 44px 14px;
+    padding: 14px 44px 12px;
     backdrop-filter: blur(8px);
+    z-index: 20;
     transition: opacity 0.4s ease;
   }
-
   #speaker-name {
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-bottom: 8px;
-    transition: color 0.4s;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    transition: color 0.3s;
   }
-
   #dialog-text {
-    font-size: 17px;
+    font-size: 16px;
     line-height: 1.6;
-    color: var(--text-main);
-    min-height: 52px;
+    color: var(--text);
+    min-height: 50px;
   }
-
   #continue-hint {
     position: absolute;
-    bottom: 14px; right: 30px;
-    font-size: 13px;
-    color: var(--warm-amber);
+    bottom: 13px; right: 26px;
+    font-size: 12px;
+    color: var(--amber);
     opacity: 0;
-    cursor: pointer;
+    pointer-events: none;
     transition: opacity 0.3s;
     user-select: none;
   }
-  #continue-hint.visible { opacity: 1; }
+  #continue-hint.visible { opacity: 1; pointer-events: all; cursor: pointer; }
 
-  /* ── QUIZ PANEL ───────────────────────────────────────────── */
+  /* progress dots */
+  #dialog-dots {
+    position: absolute;
+    bottom: 16px; left: 44px;
+    display: flex; gap: 5px; align-items: center;
+  }
+  .ddot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(139,90,43,0.18);
+    transition: background 0.25s;
+  }
+  .ddot.active { background: var(--amber); }
+
+  /* ── QUIZ PANEL ────────────────────────────────────────────── */
   #quiz-panel {
     position: absolute;
-    bottom: 158px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 580px;
+    transform: translate(-50%, -50%) translateY(10px);
+    width: 520px;
     background: rgba(255, 250, 242, 0.97);
-    border: 1.5px solid rgba(139, 90, 43, 0.25);
+    border: 1.5px solid rgba(139, 90, 43, 0.22);
     border-radius: 14px;
-    padding: 18px 22px 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    padding: 18px 22px 18px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.14);
     display: none;
     flex-direction: column;
-    gap: 14px;
-    z-index: 10;
+    gap: 12px;
+    z-index: 15;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
   }
-  #quiz-panel.visible { display: flex; }
+  #quiz-panel.visible {
+    display: flex;
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+  }
 
   #quiz-progress {
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #9a8570;
@@ -204,793 +226,624 @@
 
   #quiz-def-box {
     background: linear-gradient(135deg, #fff8ed, #ffefd6);
-    border: 1.5px solid rgba(217, 140, 95, 0.5);
-    border-radius: 10px;
-    padding: 13px 18px;
+    border: 1.5px solid rgba(217,140,95,0.45);
+    border-radius: 9px;
+    padding: 11px 16px;
     text-align: center;
   }
-
-  #quiz-label {
+  #quiz-def-box span.lbl {
     display: block;
-    font-size: 11.5px;
-    letter-spacing: 0.08em;
+    font-size: 10px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #9a7050;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
-
   #quiz-definition {
-    font-size: 16px;
+    font-size: 14px;
     font-style: italic;
-    color: #2c1a0e;
+    color: var(--text);
     line-height: 1.5;
   }
 
   #quiz-options {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 9px;
+    gap: 8px;
   }
-
-  .quiz-btn {
+  .qbtn {
     background: #fff;
-    border: 1.5px solid rgba(139, 90, 43, 0.3);
-    border-radius: 8px;
-    padding: 11px 14px;
-    font-size: 15px;
+    border: 1.5px solid rgba(139,90,43,0.26);
+    border-radius: 7px;
+    padding: 9px 12px;
+    font-size: 14px;
     font-family: 'Georgia', serif;
-    color: var(--text-main);
+    color: var(--text);
     cursor: pointer;
     text-align: center;
-    transition: background 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.18s;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
   }
-  .quiz-btn:hover {
-    background: var(--btn-hover);
-    border-color: #c8720a;
+  .qbtn:hover:not(:disabled) {
+    background: var(--amber-lt);
+    border-color: var(--amber);
     color: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 4px 14px rgba(217, 140, 95, 0.3);
   }
-  .quiz-btn.correct {
-    background: #d4edda;
-    border-color: #4caf50;
-    color: #1a5c1e;
-    pointer-events: none;
+  .qbtn.correct {
+    background: #d4edda; border-color: #4caf50;
+    color: #1a5c1e; pointer-events: none;
   }
-  .quiz-btn.wrong {
-    background: #fde8e8;
-    border-color: #e57373;
-    color: #7a1a1a;
-    pointer-events: none;
+  .qbtn.wrong {
+    background: #fde8e8; border-color: #e57373;
+    color: #7a1a1a; pointer-events: none;
   }
-  .quiz-btn:disabled { cursor: default; }
+  .qbtn:disabled { cursor: default; }
 
-  /* ── FEEDBACK FLASH ───────────────────────────────────────── */
-  #feedback {
-    position: absolute;
-    top: 42%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 21px;
-    font-weight: 700;
-    padding: 11px 30px;
-    border-radius: 8px;
-    pointer-events: none;
+  #quiz-feedback {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text-muted);
+    line-height: 1.5;
+    min-height: 18px;
     opacity: 0;
-    transition: opacity 0.28s;
-    z-index: 20;
+    transition: opacity 0.3s;
   }
-  #feedback.show-correct {
-    background: rgba(76, 175, 80, 0.92);
-    color: #fff;
-    opacity: 1;
-  }
-  #feedback.show-wrong {
-    background: rgba(229, 115, 115, 0.92);
-    color: #fff;
-    opacity: 1;
-  }
+  #quiz-feedback.show { opacity: 1; }
 
-  /* ── MOOD BAR ─────────────────────────────────────────────── */
-  #mood-bar-wrap {
+  #quiz-next-wrap {
+    display: flex; justify-content: flex-end;
+  }
+  #quiz-next {
+    background: var(--amber);
+    color: #fff; border: none;
+    border-radius: 5px;
+    padding: 7px 18px;
+    font-size: 12px;
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    opacity: 0; pointer-events: none;
+    transition: background 0.15s, opacity 0.3s;
+  }
+  #quiz-next.visible { opacity: 1; pointer-events: all; }
+  #quiz-next:hover { background: #a35808; }
+
+  /* ── FINALE PANEL ──────────────────────────────────────────── */
+  #finale-panel {
     position: absolute;
-    top: 18px; left: 50%;
-    transform: translateX(-50%);
-    display: flex;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 520px;
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 28px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.16);
+    text-align: center;
+    display: none;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    z-index: 5;
-    transition: opacity 0.4s ease;
+    gap: 12px;
+    z-index: 25;
   }
-  #mood-label {
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.7);
+  #finale-panel.visible { display: flex; }
+  #finale-icon { font-size: 42px; line-height: 1; }
+  #finale-title { font-size: 20px; font-weight: 700; color: var(--text); }
+  #finale-text {
+    font-size: 14px; font-style: italic;
+    color: var(--text-muted); line-height: 1.65;
+    max-width: 400px;
   }
-  #mood-bar {
-    width: 140px; height: 7px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  #mood-fill {
-    height: 100%;
-    width: 25%;
-    background: var(--mood-cold);
-    border-radius: 4px;
-    transition: width 0.6s ease, background 0.6s ease;
+  #finale-score {
+    font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #9a7050;
   }
 
-  /* ── SCENE TITLE CARD ─────────────────────────────────────── */
+  /* ── TITLE CARD ────────────────────────────────────────────── */
   #title-card {
     position: absolute;
     inset: 0;
-    background: rgba(20, 10, 4, 0.9);
+    background: #1a1008;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    z-index: 50;
-    transition: opacity 0.8s;
+    gap: 18px;
+    z-index: 30;
+    transition: opacity 0.8s ease;
   }
-  #title-card.hidden { opacity: 0; pointer-events: none; }
-
-  #title-card h2 {
-    font-size: 13px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: var(--warm-amber);
+  #title-card .tc-ep {
+    font-size: 12px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--amber);
   }
   #title-card h1 {
-    font-size: 36px;
-    color: #fff;
-    text-align: center;
+    font-size: 42px; color: #f5ead5;
+    letter-spacing: 0.04em; text-align: center;
   }
   #title-card p {
-    font-size: 15px;
-    color: rgba(255,255,255,0.52);
-    margin-top: 4px;
+    font-size: 15px; color: #b09068;
+    font-style: italic; text-align: center;
+    max-width: 520px; line-height: 1.6;
   }
-  #title-card .loading-note {
-    font-size: 12px;
-    color: rgba(255,255,255,0.38);
-    letter-spacing: 0.05em;
-    min-height: 18px;
-    transition: opacity 0.3s;
-  }
-  #title-card button {
-    margin-top: 22px;
-    padding: 12px 38px;
-    background: var(--warm-amber);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
+  #begin-btn {
+    margin-top: 10px;
+    background: transparent;
+    border: 1.5px solid var(--amber);
+    color: var(--amber);
+    padding: 10px 32px;
+    font-size: 14px;
     font-family: 'Georgia', serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     cursor: pointer;
-    letter-spacing: 0.05em;
-    transition: background 0.2s, opacity 0.2s;
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
   }
-  #title-card button:hover:not(:disabled) { background: #c8720a; }
-  #title-card button:disabled {
-    opacity: 0.55;
-    cursor: wait;
-  }
-
-  /* ── SCREEN FADE ──────────────────────────────────────────── */
-  #fade {
-    position: absolute;
-    inset: 0;
-    background: #000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.7s ease;
-    z-index: 40;
-  }
-  #fade.active { opacity: 1; pointer-events: all; }
+  #begin-btn:hover { background: var(--amber); color: #fff; }
+  #begin-btn:disabled { opacity: 0.4; cursor: default; }
 </style>
 </head>
 <body>
 
 <div id="scale-wrap">
-<div id="game">
+  <div id="stage">
 
-  <div id="bg"></div>
-  <div id="mood-overlay"></div>
-
-  <!-- Sprites — no alt text, no src to avoid broken-image icons -->
-  <img id="sprite-ginie"  class="sprite hidden" alt="">
-  <img id="sprite-yeojin" class="sprite hidden" alt="">
-
-  <div id="mood-bar-wrap">
-    <span id="mood-label">Mood</span>
-    <div id="mood-bar"><div id="mood-fill"></div></div>
-  </div>
-
-  <div id="feedback"></div>
-
-  <div id="dialog-box">
-    <div id="speaker-name"></div>
-    <div id="dialog-text"></div>
-    <div id="continue-hint">▼ click to continue</div>
-  </div>
-
-  <!-- Quiz panel replaces old choice-panel -->
-  <div id="quiz-panel">
-    <div id="quiz-progress">Question <span id="qnum">1</span> / <span id="qtotal">8</span></div>
-    <div id="quiz-def-box">
-      <span id="quiz-label">What word matches this definition?</span>
-      <span id="quiz-definition"></span>
+    <!-- mood bar -->
+    <div id="mood-bar-wrap">
+      <span id="mood-label">Ginie's mood</span>
+      <div id="mood-track"><div id="mood-fill"></div></div>
+      <span id="mood-emoji">❄️</span>
     </div>
-    <div id="quiz-options"></div>
-  </div>
 
-  <div id="fade"></div>
+    <!-- sprites -->
+    <div id="sprite-yeojin-wrap" class="hidden-wrap">
+      <img id="sprite-yeojin" src="" alt="Yeo-jin">
+    </div>
+    <div id="sprite-ginie-wrap" class="hidden-wrap">
+      <img id="sprite-ginie" src="" alt="Ginie">
+    </div>
 
-  <div id="title-card">
-    <h2>Scene 1</h2>
-    <h1>The Village Shop</h1>
-    <p>만물상회 · Manmul Sanghoe</p>
-    <div class="loading-note" id="loading-note">Loading assets…</div>
-    <button id="begin-btn" onclick="startScene()" disabled>Begin →</button>
-  </div>
+    <!-- dialog box -->
+    <div id="dialog-box">
+      <div id="speaker-name"></div>
+      <div id="dialog-text"></div>
+      <div id="continue-hint" onclick="advance()">Click to continue ▸</div>
+      <div id="dialog-dots"></div>
+    </div>
 
-</div>
+    <!-- quiz panel -->
+    <div id="quiz-panel">
+      <div id="quiz-progress"></div>
+      <div id="quiz-def-box">
+        <span class="lbl">What word matches this definition?</span>
+        <div id="quiz-definition"></div>
+      </div>
+      <div id="quiz-options"></div>
+      <div id="quiz-feedback"></div>
+      <div id="quiz-next-wrap">
+        <button id="quiz-next" onclick="quizNext()">Next ▸</button>
+      </div>
+    </div>
+
+    <!-- finale -->
+    <div id="finale-panel">
+      <div id="finale-icon"></div>
+      <div id="finale-title"></div>
+      <div id="finale-text"></div>
+      <div id="finale-score"></div>
+    </div>
+
+  </div><!-- /stage -->
+</div><!-- /scale-wrap -->
+
+<!-- title card (outside scale-wrap so it covers everything) -->
+<div id="title-card">
+  <div class="tc-ep">Scene 1 · The Village Shop</div>
+  <h1>Prove It.</h1>
+  <p>"I'll tell you where the farm is — after you prove you know something about the countryside."</p>
+  <button id="begin-btn" onclick="startGame()" disabled>Loading…</button>
 </div>
 
 <script>
-// ─────────────────────────────────────────────────────────────
-// RESPONSIVE SCALING
-// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────
+//  ASSET BASE
+// ─────────────────────────────────────────────────
+const BASE = 'https://raw.githubusercontent.com/Taliya-ESL/ESL-Games/main/assets/';
+
+const ASSETS = {
+  yeojin_neutral:  BASE + 'yeojin-neutral.png',
+  yeojin_happy:    BASE + 'yeojin-happy.png',
+  yeojin_excited:  BASE + 'yeojin-excited.png',
+  yeojin_thinking: BASE + 'yeojin-thinking.png',
+  ginie_cold:      BASE + 'ginie-cold.png',
+  ginie_neutral:   BASE + 'ginie-neutral.png',
+  ginie_warm:      BASE + 'ginie-warm.png',
+};
+
+// ─────────────────────────────────────────────────
+//  PRELOAD
+// ─────────────────────────────────────────────────
+let loaded = 0;
+const total = Object.keys(ASSETS).length;
+function preload() {
+  Object.values(ASSETS).forEach(src => {
+    const img = new Image();
+    img.onload = img.onerror = () => {
+      loaded++;
+      if (loaded >= total) {
+        document.getElementById('begin-btn').disabled = false;
+        document.getElementById('begin-btn').textContent = 'Begin ▶';
+      }
+    };
+    img.src = src;
+  });
+}
+preload();
+
+// ─────────────────────────────────────────────────
+//  SCALE
+// ─────────────────────────────────────────────────
 (function scaleGame() {
   function resize() {
-    const wrap   = document.getElementById('scale-wrap');
-    const scaleX = window.innerWidth  / 1280;
-    const scaleY = window.innerHeight / 720;
-    const scale  = Math.min(scaleX, scaleY);
-    wrap.style.transform = `scale(${scale})`;
-    // flex centres the block; clear any leftover manual margins
-    wrap.style.marginLeft = '';
-    wrap.style.marginTop  = '';
+    const wrap = document.getElementById('scale-wrap');
+    const s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    wrap.style.transform = `scale(${s})`;
+    wrap.style.left = ((window.innerWidth  - 1280 * s) / 2) + 'px';
+    wrap.style.top  = ((window.innerHeight - 720  * s) / 2) + 'px';
+    // title card is outside scale-wrap so scale it too
+    const tc = document.getElementById('title-card');
+    tc.style.transform = `scale(${s})`;
+    tc.style.transformOrigin = 'top left';
+    tc.style.left = ((window.innerWidth  - 1280 * s) / 2) + 'px';
+    tc.style.top  = ((window.innerHeight - 720  * s) / 2) + 'px';
+    tc.style.width  = '1280px';
+    tc.style.height = '720px';
   }
   resize();
   window.addEventListener('resize', resize);
 })();
 
-// ─────────────────────────────────────────────────────────────
-// ASSETS
-// ─────────────────────────────────────────────────────────────
-const BASE = 'https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/';
+// ─────────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────────
+let scriptIdx = 0;
+let mood      = -2;   // −2 … +2
+let quizIdx   = 0;
+let score     = 0;
+let quizAnswered = false;
+let dialogMode = true; // true = dialog phase, false = quiz phase
 
-const ASSETS = {
-  bg_outside          : BASE + 'background-shop-outside.jpg',
-  bg_inside           : BASE + 'background-shop-inside.jpg',
-  ginie_cold          : BASE + 'ginie_cold.png',
-  ginie_neutral_front : BASE + 'ginie_neutral_front.png',
-  ginie_neutral_aside : BASE + 'ginie_neutral_aside.png',
-  ginie_neutral_back  : BASE + 'ginie_neutral_back.png',
-  ginie_warm          : BASE + 'ginie_warm.png',
-  yeojin_cold         : BASE + 'yeojin_cold.png',
-  yeojin_neutral_front: BASE + 'yeojin_neutral_front.png',
-  yeojin_neutral_aside: BASE + 'yeojin_neutral_aside.png',
-  yeojin_neutral_back : BASE + 'yeojin_neutral_back.png',
-  yeojin_has_an_idea  : BASE + 'yeojin_has_an_idea.png',
-  yeojin_smiling_warm : BASE + 'yeojin_smiling_warm.png',
-};
-
-// ─────────────────────────────────────────────────────────────
-// PRELOAD
-// ─────────────────────────────────────────────────────────────
-let assetsReady = false;
-
-function preloadAssets(cb) {
-  const urls  = Object.values(ASSETS);
-  let loaded  = 0;
-  const total = urls.length;
-  if (total === 0) { cb(); return; }
-  urls.forEach(url => {
-    const img   = new Image();
-    img.onload  = () => { if (++loaded >= total) cb(); };
-    img.onerror = () => { if (++loaded >= total) cb(); };
-    img.src     = url;
-  });
-}
-
-preloadAssets(() => {
-  assetsReady = true;
-  const btn  = document.getElementById('begin-btn');
-  const note = document.getElementById('loading-note');
-  btn.disabled    = false;
-  note.textContent = '';
-});
-
-// ─────────────────────────────────────────────────────────────
-// MOOD SYSTEM  −2 (cold) … 0 … +2 (warm)
-// ─────────────────────────────────────────────────────────────
-let mood = -2;
-
-function adjustMood(delta) {
-  mood = Math.max(-2, Math.min(2, mood + delta));
-  updateMoodUI();
-}
-
-function getMoodTier() {
-  if (mood <= -1) return 'cold';
-  if (mood >= 1)  return 'warm';
-  return 'neutral';
-}
-
-function updateMoodUI() {
-  const fill    = document.getElementById('mood-fill');
-  const overlay = document.getElementById('mood-overlay');
-  const tier    = getMoodTier();
-  const pct     = ((mood + 2) / 4) * 90 + 5;
-  fill.style.width = pct + '%';
-
-  const colors = {
-    cold:    { fill: '#6a8fa8', overlay: 'rgba(106,143,168,0.10)' },
-    neutral: { fill: '#a0946b', overlay: 'rgba(160,148,107,0.06)' },
-    warm:    { fill: '#e8843a', overlay: 'rgba(232,132,58,0.08)'  },
-  };
-  fill.style.background    = colors[tier].fill;
-  overlay.style.background = colors[tier].overlay;
-
-  // update Ginie if visible
-  const g = document.getElementById('sprite-ginie');
-  if (!g.classList.contains('hidden') && g.src) {
-    const map = { cold:'ginie_cold', neutral:'ginie_neutral_front', warm:'ginie_warm' };
-    swapSpriteSrc(g, ASSETS[map[tier]]);
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// SPRITE HELPERS
-// ─────────────────────────────────────────────────────────────
-
-// Smooth src swap: preload, then update
-function swapSpriteSrc(el, url) {
-  if (el.src === url) return;
-  const tmp   = new Image();
-  tmp.onload  = () => { el.src = url; };
-  tmp.onerror = () => {};
-  tmp.src     = url;
-}
-
-function setSprite(who, assetKey, { speaking = false, dim = false } = {}) {
-  const el  = document.getElementById('sprite-' + who);
-  const url = ASSETS[assetKey] || assetKey;
-
-  el.classList.remove('hidden', 'dim', 'active', 'speaking');
-
-  const tmp   = new Image();
-  tmp.onload  = () => {
-    el.src = url;
-    el.classList.add(dim ? 'dim' : 'active');
-    if (speaking) el.classList.add('speaking');
-  };
-  tmp.onerror = () => {
-    // show anyway even if preload failed
-    el.src = url;
-    el.classList.add(dim ? 'dim' : 'active');
-    if (speaking) el.classList.add('speaking');
-  };
-  tmp.src = url;
-}
-
-function hideSprite(who) {
-  const el = document.getElementById('sprite-' + who);
-  el.classList.add('hidden');
-  el.classList.remove('active', 'dim', 'speaking');
-}
-
-function setSpeaker(who) {
-  const sprites = { ginie: 'sprite-ginie', yeojin: 'sprite-yeojin' };
-  Object.entries(sprites).forEach(([name, id]) => {
-    const el = document.getElementById(id);
-    if (el.classList.contains('hidden')) return;
-    el.classList.remove('speaking', 'active', 'dim');
-    if (name === who) {
-      el.classList.add('speaking');
-    } else if (who === null) {
-      el.classList.add('dim');
-    } else {
-      el.classList.add('active');
-    }
-  });
-}
-
-// ─────────────────────────────────────────────────────────────
-// BG HELPER
-// ─────────────────────────────────────────────────────────────
-function setBG(assetKey) {
-  document.getElementById('bg').style.backgroundImage =
-    `url('${ASSETS[assetKey] || assetKey}')`;
-}
-
-// ─────────────────────────────────────────────────────────────
-// DIALOG SYSTEM
-// ─────────────────────────────────────────────────────────────
-const nameColors   = { ginie: '#2d5a3d', yeojin: '#8b3a3a', narrator: '#5a4a30' };
-const displayNames = { ginie: 'Ginie',   yeojin: 'Yeo-jin', narrator: '' };
-
-let waitingForClick  = false;
-let pendingAfterClick = null;
-
-function showDialog(speaker, text) {
-  const nameEl = document.getElementById('speaker-name');
-  const textEl = document.getElementById('dialog-text');
-  const hint   = document.getElementById('continue-hint');
-
-  nameEl.textContent = displayNames[speaker] || '';
-  nameEl.style.color = nameColors[speaker]   || nameColors.narrator;
-  textEl.textContent = text;
-  hint.classList.remove('visible');
-
-  setSpeaker(speaker === 'narrator' ? null : speaker);
-  setTimeout(() => hint.classList.add('visible'), 600);
-  waitingForClick = true;
-}
-
-// ─────────────────────────────────────────────────────────────
-// QUIZ DATA — 8 farm/nature vocabulary words
-// ─────────────────────────────────────────────────────────────
-const QUIZ = [
-  {
-    definition: 'A row of bushes or shrubs planted close together, used as a boundary between fields.',
-    answer:  'hedge',
-    options: ['hedge', 'fence', 'bush', 'gate'],
-    feedbackCorrect: "Ginie nods. 'A hedge. Living, growing, older than any fence on this road.'",
-    feedbackWrong:   "Ginie: 'A fence is metal or wood. A hedge is alive — it grows. Very different things out here.'",
-  },
-  {
-    definition: 'A steep, high face of rock, usually at the edge of the sea or a river.',
-    answer:  'cliff',
-    options: ['cliff', 'hill', 'valley', 'slope'],
-    feedbackCorrect: "Ginie: 'Good. Cliffs are what happen when the land just gives up.'",
-    feedbackWrong:   "Ginie: 'A hill is rounded and gentle. A cliff is a sheer drop. Matthew's land has both — know the difference.'",
-  },
-  {
-    definition: 'A low area of land lying between hills or mountains.',
-    answer:  'valley',
-    options: ['valley', 'field', 'plain', 'hill'],
-    feedbackCorrect: "Ginie: 'The farm sits in a valley. Now you'll recognize it when you see it.'",
-    feedbackWrong:   "Ginie: 'A field is flat farmland. A valley is the low land between high ground. Look for where the stream runs — that's your valley.'",
-  },
-  {
-    definition: 'A small, narrow flow of water — smaller than a river.',
-    answer:  'stream',
-    options: ['stream', 'lake', 'well', 'river'],
-    feedbackCorrect: "Ginie: 'Follow the stream and you'll find the gate. That's your route.'",
-    feedbackWrong:   "Ginie: 'A lake doesn't move. A well is dug by hand. A stream runs — shallow, quick, always downhill.'",
-  },
-  {
-    definition: 'A deep hole dug into the ground to reach water underground.',
-    answer:  'well',
-    options: ['well', 'stream', 'fountain', 'pump'],
-    feedbackCorrect: "Ginie: 'There's a well at the crossroads. You can't miss it — stone, old, lichen on the sides.'",
-    feedbackWrong:   "Ginie: 'A fountain is decorative. A pump is modern. A well is ancient — stone, deep, and still working.'",
-  },
-  {
-    definition: 'A large building on a farm used to store crops, hay, or to shelter animals.',
-    answer:  'barn',
-    options: ['barn', 'farmhouse', 'shed', 'stable'],
-    feedbackCorrect: "Ginie: 'The barn is the biggest thing on Matthew's farm. Red roof. You'll see it first.'",
-    feedbackWrong:   "Ginie: 'A farmhouse is where people live. A shed is tiny. A barn is the large one — animals, hay, everything.'",
-  },
-  {
-    definition: 'An adult male chicken.',
-    answer:  'cockerel',
-    options: ['cockerel', 'hen', 'chick', 'lamb'],
-    feedbackCorrect: "Ginie almost smiles. 'Most city people say rooster. Cockerel — remember that word.'",
-    feedbackWrong:   "Ginie: 'A hen is female. A chick is newborn. A cockerel — that's the one that wakes the whole village at five in the morning.'",
-  },
-  {
-    definition: 'Young sheep, usually less than one year old.',
-    answer:  'lambs',
-    options: ['lambs', 'sheep', 'cows', 'donkeys'],
-    feedbackCorrect: "Ginie: 'Lambs in spring. Matthew has a dozen of them this year. They'll run straight at you — fair warning.'",
-    feedbackWrong:   "Ginie: 'Sheep are the adults. Lambs are the young ones — woolly, loud, very curious about strangers.'",
-  },
-];
-
-let currentQuestion = 0;
-
-function showQuestion(idx) {
-  const q     = QUIZ[idx];
-  const panel = document.getElementById('quiz-panel');
-  const hint  = document.getElementById('continue-hint');
-
-  // Update progress counter
-  document.getElementById('qnum').textContent   = idx + 1;
-  document.getElementById('qtotal').textContent = QUIZ.length;
-  document.getElementById('quiz-definition').textContent = q.definition;
-
-  // Ginie "asks" in dialog box
-  const intro = idx === 0
-    ? "She picks up a jar, examines it, sets it down. 'Alright. Let's see what you actually know. I'll give you a definition — you tell me the word.'"
-    : idx === QUIZ.length - 1
-    ? "'Last one.'"
-    : "'Next.'";
-  showDialog('ginie', intro);
-  hint.classList.remove('visible');
-  waitingForClick = false;
-
-  // Build option buttons
-  const optContainer = document.getElementById('quiz-options');
-  optContainer.innerHTML = '';
-  // Shuffle options
-  const shuffled = [...q.options].sort(() => Math.random() - 0.5);
-  shuffled.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className   = 'quiz-btn';
-    btn.textContent = opt;
-    btn.onclick     = () => handleAnswer(opt === q.answer, idx, btn, optContainer);
-    optContainer.appendChild(btn);
-  });
-
-  setTimeout(() => panel.classList.add('visible'), 350);
-}
-
-function handleAnswer(isCorrect, qIdx, btn, container) {
-  // Disable all
-  container.querySelectorAll('.quiz-btn').forEach(b => {
-    b.disabled = true;
-    b.style.pointerEvents = 'none';
-  });
-  btn.classList.add(isCorrect ? 'correct' : 'wrong');
-
-  // If wrong, reveal the correct one
-  if (!isCorrect) {
-    container.querySelectorAll('.quiz-btn').forEach(b => {
-      if (b.textContent === QUIZ[qIdx].answer) b.classList.add('correct');
-    });
-  }
-
-  adjustMood(isCorrect ? 1 : -1);
-
-  // Yeojin reacts
-  if (isCorrect) {
-    setSprite('yeojin', 'yeojin_has_an_idea');
-  } else {
-    setSprite('yeojin', 'yeojin_cold', { dim: true });
-  }
-
-  // Feedback flash
-  const fb = document.getElementById('feedback');
-  fb.textContent = isCorrect ? '✓ Correct!' : '✗ Not quite';
-  fb.className   = isCorrect ? 'show-correct' : 'show-wrong';
-  setTimeout(() => { fb.className = ''; }, 1300);
-
-  setTimeout(() => {
-    document.getElementById('quiz-panel').classList.remove('visible');
-
-    const feedbackText = isCorrect
-      ? QUIZ[qIdx].feedbackCorrect
-      : QUIZ[qIdx].feedbackWrong;
-
-    showDialog('ginie', feedbackText);
-    setSprite('yeojin', 'yeojin_neutral_front', { dim: true });
-
-    waitingForClick  = true;
-    pendingAfterClick = () => {
-      currentQuestion++;
-      if (currentQuestion < QUIZ.length) {
-        showQuestion(currentQuestion);
-      } else {
-        showOutro();
-      }
-    };
-  }, 1500);
-}
-
-// ─────────────────────────────────────────────────────────────
-// OUTRO (mood-branching)
-// ─────────────────────────────────────────────────────────────
-function showOutro() {
-  const tier = getMoodTier();
-
-  const warm = [
-    {
-      speaker: 'ginie', gSprite: 'ginie_warm', gSpeaking: true,
-      text: "She steps out from behind the counter. 'Matthew's farm. Follow the stream, cross at the stone bridge, through the gate at the bottom of the hill. The barn has a red roof — you won't miss it.'",
-    },
-    {
-      speaker: 'yeojin', ySprite: 'yeojin_smiling_warm', ySpeaking: true,
-      text: "Yeo-jin's shoulders drop with relief. 'Thank you. Really.'",
-    },
-    {
-      speaker: 'ginie', gSprite: 'ginie_warm', gSpeaking: true,
-      text: "'Hmm. Come back if you get lost. I'll be here.' She almost smiles.",
-    },
-    { speaker: 'narrator', exit: true,
-      text: 'Yeo-jin steps out into the golden afternoon light — and follows the stream.' },
-  ];
-
-  const cold = [
-    {
-      speaker: 'ginie', gSprite: 'ginie_cold', gSpeaking: true,
-      text: "She goes back to stacking shelves without looking up. 'Matthew's farm is somewhere past the hill. Ask the signpost.'",
-    },
-    {
-      speaker: 'yeojin', ySprite: 'yeojin_cold', ySpeaking: false,
-      text: 'Yeo-jin lingers a moment — then nods quietly and turns to go.',
-    },
-    { speaker: 'narrator', exit: true,
-      text: 'She finds the path on her own. The sign at the crossroads reads: HILL FARM — 800m.' },
-  ];
-
-  runOutro(tier === 'warm' ? warm : cold, 0);
-}
-
-function runOutro(queue, idx) {
-  if (idx >= queue.length) return;
-  const step = queue[idx];
-
-  if (step.gSprite) {
-    setSprite('ginie', step.gSprite, { speaking: !!step.gSpeaking });
-  }
-  if (step.ySprite) {
-    setSprite('yeojin', step.ySprite, { speaking: !!step.ySpeaking, dim: !step.ySpeaking });
-  }
-
-  showDialog(step.speaker, step.text);
-  pendingAfterClick = step.exit ? () => endScene() : () => runOutro(queue, idx + 1);
-  waitingForClick   = true;
-}
-
-// ─────────────────────────────────────────────────────────────
-// END SCENE
-// ─────────────────────────────────────────────────────────────
-function endScene() {
-  setSprite('yeojin', 'yeojin_neutral_back');
-  setSpeaker(null);
-  document.getElementById('dialog-box').style.opacity   = '0';
-  document.getElementById('mood-bar-wrap').style.opacity = '0';
-
-  setTimeout(() => {
-    fadeOut(() => {
-      document.getElementById('dialog-box').style.opacity   = '1';
-      document.getElementById('mood-bar-wrap').style.opacity = '1';
-      document.getElementById('title-card').innerHTML =
-        '<h2>Scene 2</h2><h1>The Farm</h1><p>Coming soon…</p>';
-      document.getElementById('title-card').classList.remove('hidden');
-      fadeIn();
-    });
-  }, 900);
-}
-
-// ─────────────────────────────────────────────────────────────
-// CLICK HANDLER
-// ─────────────────────────────────────────────────────────────
-document.getElementById('game').addEventListener('click', e => {
-  if (e.target.classList.contains('quiz-btn')) return;
-  if (!waitingForClick) return;
-
-  waitingForClick = false;
-  document.getElementById('continue-hint').classList.remove('visible');
-
-  if (pendingAfterClick) {
-    const fn      = pendingAfterClick;
-    pendingAfterClick = null;
-    fn();
-  }
-});
-
-// ─────────────────────────────────────────────────────────────
-// FADE HELPERS
-// ─────────────────────────────────────────────────────────────
-function fadeOut(cb) {
-  const f = document.getElementById('fade');
-  f.classList.add('active');
-  setTimeout(cb, 750);
-}
-function fadeIn() {
-  document.getElementById('fade').classList.remove('active');
-}
-
-// ─────────────────────────────────────────────────────────────
-// OPENING SEQUENCE
-// ─────────────────────────────────────────────────────────────
-const openingScript = [
-  { type: 'setBG',    asset: 'bg_outside' },
-  { type: 'dialog',   speaker: 'narrator',
-    text: 'The village of Hadong-ri. Population: 340. One bus a day. No cell signal.' },
-  { type: 'dialog',   speaker: 'narrator',
-    text: "Yeo-jin has a list, a deadline, and absolutely no idea where Matthew's farm is." },
-  { type: 'showYeojin', asset: 'yeojin_neutral_aside' },
-  { type: 'dialog',   speaker: 'yeojin',
-    text: "She stares at the hand-painted sign above the door. \"만물상회... General store. Okay. Someone in there has to know.\"" },
-  { type: 'fadeTransition', newBG: 'bg_inside' },
-  { type: 'showGinie', asset: 'ginie_cold' },
-  { type: 'dialog',   speaker: 'narrator',
-    text: "Inside: warm light, the smell of dried herbs, and a woman who doesn't look up." },
-  { type: 'dialog',   speaker: 'ginie',
-    text: "Still counting stock, back half-turned. \"We're not hiring. And the Wi-Fi password isn't for customers.\"" },
-  { type: 'showYeojinFront', asset: 'yeojin_neutral_front' },
-  { type: 'dialog',   speaker: 'yeojin',
-    text: "\"Oh — I'm not here for Wi-Fi. I'm looking for Matthew's farm. The organic one, up the hill?\"" },
-  { type: 'dialog',   speaker: 'ginie',
-    text: "She finally looks up. Eyes sharp, measuring. \"Matthew's farm. City girl, alone, no boots, no map.\" A pause. \"You know anything about the countryside at all?\"" },
-  { type: 'dialog',   speaker: 'yeojin',
-    text: "\"I... know some things.\" Not entirely convincing." },
-  { type: 'dialog',   speaker: 'ginie',
-    text: "\"Hmm. We'll see about that. I'll tell you where the farm is — but first, let's find out if you actually speak the language out here.\"" },
+// ─────────────────────────────────────────────────
+//  OPENING SCRIPT  (dialog before quiz)
+// ─────────────────────────────────────────────────
+const SCRIPT = [
+  { type: 'show',   who: 'yeojin', asset: 'yeojin_neutral' },
+  { type: 'show',   who: 'ginie',  asset: 'ginie_cold' },
+  { type: 'dialog', who: 'yeojin', color: '#8b3a3a',
+    text: '"Excuse me — do you know Matthew\'s farm? The organic one, up the hill somewhere?"' },
+  { type: 'dialog', who: 'ginie',  color: '#4a6070',
+    text: '"We\'re not a tourist information centre."',
+    ginAsset: 'ginie_cold' },
+  { type: 'dialog', who: 'yeojin', color: '#8b3a3a',
+    text: '"I\'m not a tourist. I have a work placement there — I just need directions."',
+    yeoAsset: 'yeojin_thinking' },
+  { type: 'dialog', who: 'ginie',  color: '#4a6070',
+    text: '"City girl. Heels, blazer, no idea where she\'s going." A pause. "You know anything about the countryside at all?"',
+    ginAsset: 'ginie_neutral' },
+  { type: 'dialog', who: 'yeojin', color: '#8b3a3a',
+    text: '"I… know some things."',
+    yeoAsset: 'yeojin_neutral' },
+  { type: 'dialog', who: 'ginie',  color: '#4a6070',
+    text: '"We\'ll see about that. Answer my questions — then I\'ll tell you where the farm is."',
+    ginAsset: 'ginie_cold' },
   { type: 'startQuiz' },
 ];
 
-let openingIdx = 0;
+// ─────────────────────────────────────────────────
+//  QUIZ DATA
+// ─────────────────────────────────────────────────
+const QUIZ = [
+  {
+    def:     'A row of bushes planted close together as a boundary between fields.',
+    answer:  'hedge',
+    options: ['hedge','fence','bush','gate'],
+    correct: '"A hedge. It grows, changes with the seasons. Different from anything you\'d find in the city."',
+    wrong:   '"A fence is wood or metal — it\'s dead. A hedge is alive. Very different things out here."',
+    ginCorrect: 'ginie_neutral', ginWrong: 'ginie_cold',
+    yeoCorrect: 'yeojin_happy',  yeoWrong: 'yeojin_thinking',
+  },
+  {
+    def:     'A steep, high face of rock at the edge of the sea or a river.',
+    answer:  'cliff',
+    options: ['cliff','hill','valley','slope'],
+    correct: '"Good. Cliffs are where the land runs out of patience."',
+    wrong:   '"A hill is rounded and gentle. A cliff drops straight down. Matthew\'s farm has both nearby."',
+    ginCorrect: 'ginie_neutral', ginWrong: 'ginie_cold',
+    yeoCorrect: 'yeojin_happy',  yeoWrong: 'yeojin_thinking',
+  },
+  {
+    def:     'A low area of land between hills or mountains.',
+    answer:  'valley',
+    options: ['valley','field','plain','hill'],
+    correct: '"The farm sits in a valley. Now you\'ll recognise it when you see it."',
+    wrong:   '"A field is flat farmland. A valley is the low space between high ground — shaped like a bowl."',
+    ginCorrect: 'ginie_neutral', ginWrong: 'ginie_cold',
+    yeoCorrect: 'yeojin_happy',  yeoWrong: 'yeojin_thinking',
+  },
+  {
+    def:     'A small, narrow flow of water — smaller than a river.',
+    answer:  'stream',
+    options: ['stream','lake','well','river'],
+    correct: '"Follow the stream and you\'ll find the gate. That\'s your route."',
+    wrong:   '"A lake is still. A river is wide. A stream runs shallow and quick, always downhill."',
+    ginCorrect: 'ginie_neutral', ginWrong: 'ginie_cold',
+    yeoCorrect: 'yeojin_happy',  yeoWrong: 'yeojin_thinking',
+  },
+  {
+    def:     'A deep hole dug into the ground to reach underground water.',
+    answer:  'well',
+    options: ['well','stream','fountain','pump'],
+    correct: '"There\'s a well at the crossroads. Stone, old — the lichen\'s been growing there longer than I have."',
+    wrong:   '"A fountain is decorative city nonsense. A well is dug by hand — ancient, practical, still working."',
+    ginCorrect: 'ginie_warm',    ginWrong: 'ginie_cold',
+    yeoCorrect: 'yeojin_happy',  yeoWrong: 'yeojin_thinking',
+  },
+  {
+    def:     'A large farm building used to store crops, hay, or shelter animals.',
+    answer:  'barn',
+    options: ['barn','farmhouse','shed','stable'],
+    correct: '"The barn is the biggest thing on Matthew\'s farm. Red roof — you\'ll see it from the road."',
+    wrong:   '"A farmhouse is where people sleep. A shed is tiny. A barn is the big one — animals, hay, everything."',
+    ginCorrect: 'ginie_warm',    ginWrong: 'ginie_cold',
+    yeoCorrect: 'yeojin_excited',yeoWrong: 'yeojin_thinking',
+  },
+  {
+    def:     'An adult male chicken.',
+    answer:  'cockerel',
+    options: ['cockerel','hen','chick','lamb'],
+    correct: 'Almost a smile. "Most city people say rooster. Cockerel — remember that one."',
+    wrong:   '"A hen lays eggs. A chick just hatched. A cockerel wakes the entire village at five in the morning."',
+    ginCorrect: 'ginie_warm',    ginWrong: 'ginie_neutral',
+    yeoCorrect: 'yeojin_excited',yeoWrong: 'yeojin_thinking',
+  },
+  {
+    def:     'Young sheep, usually less than one year old.',
+    answer:  'lambs',
+    options: ['lambs','sheep','cows','donkeys'],
+    correct: '"Lambs in spring. Matthew has a dozen this year. Fair warning — they\'ll run straight at you."',
+    wrong:   '"Sheep are the adults. Lambs are the young ones — small, woolly, extremely curious about strangers."',
+    ginCorrect: 'ginie_warm',    ginWrong: 'ginie_neutral',
+    yeoCorrect: 'yeojin_excited',yeoWrong: 'yeojin_thinking',
+  },
+];
 
-function runOpening() {
-  if (openingIdx >= openingScript.length) return;
-  const step = openingScript[openingIdx++];
+// ─────────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────────
+function setSprite(who, assetKey) {
+  const img = document.getElementById('sprite-' + who);
+  img.src = ASSETS[assetKey] || '';
+}
+
+function setSpriteState(who, state) {
+  const wrap = document.getElementById('sprite-' + who + '-wrap');
+  wrap.classList.remove('speaking-wrap','dim-wrap','hidden-wrap');
+  if (state) wrap.classList.add(state);
+}
+
+function setMood(delta) {
+  mood = Math.max(-2, Math.min(2, mood + delta));
+  const pct   = ((mood + 2) / 4) * 82 + 9;
+  const color = mood <= -1 ? '#6a8fa8' : mood >= 1 ? '#e8843a' : '#a0946b';
+  const emoji = mood <= -1 ? '❄️' : mood >= 1 ? '🌿' : '🌤️';
+  document.getElementById('mood-fill').style.width      = pct + '%';
+  document.getElementById('mood-fill').style.background = color;
+  document.getElementById('mood-emoji').textContent     = emoji;
+}
+
+function buildDots(total, current) {
+  const wrap = document.getElementById('dialog-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('span');
+    d.className = 'ddot' + (i === current ? ' active' : '');
+    wrap.appendChild(d);
+  }
+}
+
+// count dialog steps only
+const DIALOG_STEPS = SCRIPT.filter(s => s.type === 'dialog');
+
+function showDialog(who, color, text) {
+  document.getElementById('speaker-name').textContent = who.charAt(0).toUpperCase() + who.slice(1);
+  document.getElementById('speaker-name').style.color = color;
+  document.getElementById('dialog-text').textContent  = text;
+
+  // dots
+  const dialogIdx = SCRIPT.slice(0, scriptIdx)
+    .filter(s => s.type === 'dialog').length - 1;
+  buildDots(DIALOG_STEPS.length, Math.max(0, dialogIdx));
+
+  const hint = document.getElementById('continue-hint');
+  hint.classList.remove('visible');
+  setTimeout(() => hint.classList.add('visible'), 600);
+}
+
+// ─────────────────────────────────────────────────
+//  SCRIPT RUNNER
+// ─────────────────────────────────────────────────
+function runScript() {
+  if (scriptIdx >= SCRIPT.length) return;
+  const step = SCRIPT[scriptIdx];
 
   switch (step.type) {
-    case 'setBG':
-      setBG(step.asset);
-      runOpening();
+
+    case 'show':
+      setSprite(step.who, step.asset);
+      setSpriteState(step.who, 'active');
+      scriptIdx++;
+      runScript();
       break;
 
     case 'dialog':
-      showDialog(step.speaker, step.text);
-      pendingAfterClick = () => runOpening();
-      waitingForClick   = true;
-      break;
+      // swap sprites if needed
+      if (step.yeoAsset) setSprite('yeojin', step.yeoAsset);
+      if (step.ginAsset) setSprite('ginie',  step.ginAsset);
 
-    case 'showYeojin':
-      // outside: mirror + smaller bottom offset
-      setSprite('yeojin', step.asset);
-      document.getElementById('sprite-yeojin').classList.add('outside');
-      document.getElementById('sprite-yeojin').style.bottom = '148px';
-      runOpening();
-      break;
-
-    case 'showYeojinFront':
-      // inside: normal orientation, restore bottom
-      setSprite('yeojin', step.asset);
-      document.getElementById('sprite-yeojin').classList.remove('outside');
-      document.getElementById('sprite-yeojin').style.bottom = '148px';
-      runOpening();
-      break;
-
-    case 'showGinie':
-      // FIX: enter active, not dim; raise bottom so feet hide behind counter
-      setSprite('ginie', step.asset);
-      document.getElementById('sprite-ginie').style.bottom = '190px';
-      runOpening();
-      break;
-
-    case 'fadeTransition':
-      fadeOut(() => {
-        setBG(step.newBG);
-        hideSprite('yeojin');
-        hideSprite('ginie');
-        // reset any inline styles set for outside scene
-        document.getElementById('sprite-yeojin').classList.remove('outside');
-        fadeIn();
-        setTimeout(() => runOpening(), 300);
-      });
+      // speaking / dim states
+      if (step.who === 'yeojin') {
+        setSpriteState('yeojin', 'speaking-wrap');
+        setSpriteState('ginie',  'dim-wrap');
+      } else {
+        setSpriteState('ginie',  'speaking-wrap');
+        setSpriteState('yeojin', 'dim-wrap');
+      }
+      showDialog(step.who, step.color, step.text);
+      // advance on click (via continue-hint or stage click)
       break;
 
     case 'startQuiz':
-      currentQuestion = 0;
-      showQuestion(0);
+      // hide dialog, show quiz
+      document.getElementById('dialog-box').style.opacity = '0';
+      document.getElementById('dialog-dots').style.display = 'none';
+      document.getElementById('continue-hint').classList.remove('visible');
+      // both sprites neutral / active
+      setSpriteState('yeojin', 'active');
+      setSpriteState('ginie',  'active');
+      setSprite('yeojin','yeojin_neutral');
+      setSprite('ginie', 'ginie_neutral');
+      setTimeout(() => {
+        document.getElementById('dialog-box').style.display = 'none';
+        showQuizQuestion();
+      }, 400);
       break;
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// START
-// ─────────────────────────────────────────────────────────────
-function startScene() {
-  if (!assetsReady) return; // button is disabled anyway, but belt & braces
+function advance() {
+  if (!dialogMode) return;
+  const step = SCRIPT[scriptIdx];
+  if (!step || step.type !== 'dialog') return;
+  scriptIdx++;
+  runScript();
+}
 
-  document.getElementById('title-card').classList.add('hidden');
-  fadeOut(() => {
-    setBG('bg_outside');
-    fadeIn();
-    setTimeout(() => runOpening(), 400);
+// click anywhere on stage advances dialog
+document.getElementById('stage').addEventListener('click', () => {
+  if (dialogMode) advance();
+});
+
+// ─────────────────────────────────────────────────
+//  QUIZ
+// ─────────────────────────────────────────────────
+function showQuizQuestion() {
+  dialogMode = false;
+  const panel = document.getElementById('quiz-panel');
+  panel.style.display = 'flex';
+  setTimeout(() => panel.classList.add('visible'), 20);
+
+  const q = QUIZ[quizIdx];
+  document.getElementById('quiz-progress').textContent =
+    `Question ${quizIdx + 1} / ${QUIZ.length}`;
+  document.getElementById('quiz-definition').textContent = q.def;
+  document.getElementById('quiz-feedback').textContent   = '';
+  document.getElementById('quiz-feedback').classList.remove('show');
+  document.getElementById('quiz-next').classList.remove('visible');
+  quizAnswered = false;
+
+  // shuffle options
+  const opts = [...q.options].sort(() => Math.random() - 0.5);
+  const container = document.getElementById('quiz-options');
+  container.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className   = 'qbtn';
+    btn.textContent = opt;
+    btn.onclick     = () => handleAnswer(btn, opt === q.answer, q);
+    container.appendChild(btn);
   });
+}
+
+function handleAnswer(btn, isCorrect, q) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  // mark buttons
+  document.querySelectorAll('.qbtn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.answer) b.classList.add('correct');
+  });
+  if (!isCorrect) btn.classList.add('wrong');
+
+  // mood + score
+  setMood(isCorrect ? 1 : -1);
+  if (isCorrect) score++;
+
+  // swap sprites
+  setSprite('yeojin', isCorrect ? q.yeoCorrect : q.yeoWrong);
+  setSprite('ginie',  isCorrect ? q.ginCorrect : q.ginWrong);
+  setSpriteState('ginie',  isCorrect ? 'speaking-wrap' : 'dim-wrap');
+  setSpriteState('yeojin', isCorrect ? 'active' : 'dim-wrap');
+
+  // feedback from Ginie
+  const fb = document.getElementById('quiz-feedback');
+  fb.textContent = isCorrect ? q.correct : q.wrong;
+  fb.classList.add('show');
+
+  const nextBtn = document.getElementById('quiz-next');
+  nextBtn.textContent = quizIdx === QUIZ.length - 1 ? 'See result ▸' : 'Next ▸';
+  nextBtn.classList.add('visible');
+}
+
+function quizNext() {
+  quizIdx++;
+  if (quizIdx < QUIZ.length) {
+    showQuizQuestion();
+    setSpriteState('yeojin','active');
+    setSpriteState('ginie', 'active');
+  } else {
+    showFinale();
+  }
+}
+
+// ─────────────────────────────────────────────────
+//  FINALE
+// ─────────────────────────────────────────────────
+function showFinale() {
+  document.getElementById('quiz-panel').style.display = 'none';
+  document.getElementById('mood-bar-wrap').style.opacity = '0';
+
+  const warm = mood >= 1;
+  const icon  = warm ? '🌿' : '❄️';
+  const title = warm ? 'Ginie warms up.' : 'Ginie stays cold.';
+  const text  = warm
+    ? '"Matthew\'s farm. Follow the stream north, cross at the stone bridge, through the gate at the bottom of the hill. The barn has a red roof — you won\'t miss it." She almost smiles. "Don\'t let the lambs knock you over."'
+    : '"Matthew\'s farm is somewhere past the hill." She turns back to her shelves. "Ask the signpost."';
+
+  // sprites
+  setSprite('yeojin', warm ? 'yeojin_excited' : 'yeojin_thinking');
+  setSprite('ginie',  warm ? 'ginie_warm'     : 'ginie_cold');
+  setSpriteState('yeojin', warm ? 'speaking-wrap' : 'dim-wrap');
+  setSpriteState('ginie',  warm ? 'speaking-wrap' : 'active');
+
+  document.getElementById('finale-icon').textContent  = icon;
+  document.getElementById('finale-title').textContent = title;
+  document.getElementById('finale-text').textContent  = text;
+  document.getElementById('finale-score').textContent =
+    `${score} / ${QUIZ.length} correct`;
+
+  document.getElementById('finale-panel').classList.add('visible');
+}
+
+// ─────────────────────────────────────────────────
+//  START
+// ─────────────────────────────────────────────────
+function startGame() {
+  const tc = document.getElementById('title-card');
+  tc.style.opacity = '0';
+  setTimeout(() => { tc.style.display = 'none'; }, 800);
+  setMood(0); // draw initial bar
+  runScript();
 }
 </script>
 </body>
