@@ -262,14 +262,14 @@ var VOCAB_C = [
 ];
 
 var PRON_A = {
-  example: { word: 'farm', match: 'drama' },
+  example: { word: 'farm', match: 'drama', highlight_pos: 0 },
   bank: ['sitcom','volume','leaf','stone','wood'],
   rows: [
-    { n:1, word:'pick', sound:'', slots:1, correct:['sitcom'] },
-    { n:2, word:'cockerel', sound:'', slots:1, correct:['volume'] },
-    { n:3, word:'donkey', sound:'', slots:1, correct:['leaf'] },
-    { n:4, word:'show', sound:'', slots:1, correct:['stone'] },
-    { n:5, word:'bush', sound:'', slots:1, correct:['wood'] }
+    { n:1, word:'pick', highlight_pos: 1, sound:'ɪ', slots:1, correct:['sitcom'] },
+    { n:2, word:'cockerel', highlight_pos: 0, sound:'ɒ', slots:1, correct:['volume'] },
+    { n:3, word:'donkey', highlight_pos: 1, sound:'eɪ', slots:1, correct:['leaf'] },
+    { n:4, word:'show', highlight_pos: 2, sound:'əʊ', slots:1, correct:['stone'] },
+    { n:5, word:'bush', highlight_pos: 1, sound:'ʊ', slots:1, correct:['wood'] }
   ]
 };
 
@@ -349,8 +349,15 @@ function buildMatch(sectionEl,data){
     var slots='';
     for(var s=0;s<row.slots;s++)slots+='<div class="match-drop" data-row="'+i+'" data-slot="'+s+'"></div>';
     // ЖИРНО выделяем первую букву!
-    var wordDisplay='<strong style="color:var(--accent);font-size:1.3em;">'+row.word.charAt(0)+'</strong>'+row.word.slice(1);
-    c.innerHTML+='<div class="match-row" data-row="'+i+'"><span class="q-number">'+row.n+'</span><div style="flex:1;font-size:1.1rem;">'+wordDisplay+'</div><div class="match-slots">'+slots+'</div></div>';
+    var wordDisplay='';
+for(var k=0; k<row.word.length; k++){
+  if(k === row.highlight_pos){
+    wordDisplay += '<strong style="color:var(--accent);font-size:1.3em;">'+row.word.charAt(k)+'</strong>';
+  } else {
+    wordDisplay += row.word.charAt(k);
+  }
+}
+c.innerHTML+='<div class="match-row" data-row="'+i+'"><span class="q-number">'+row.n+'</span><div style="flex:1;font-size:1.1rem;">'+wordDisplay+'</div><div class="match-slots">'+slots+'</div></div>';
   });
   initDragDrop(c);
 }
