@@ -206,22 +206,16 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:19p
 
 // GRAMMAR A - с глаголами в скобках!
 var GRAM_A = [
-  { type: "single", text: "Oh no! I ___ my ticket. (lose)", answers: [["have lost","'ve lost"]] },
-  { type: "single", text: "Bella ___ for her passport all morning. I hope she finds it. (look)", answers: [["has been looking"]] },
-  { type: "double", text: "How long ___ you ___ your motorbike? (have)", inputs: [
-    { answer: [["have"]] },
-    { answer: [["had"]] }
-  ]},
-  { type: "single", text: "A Do you know where Ravi is? B I think he ___ to the post office. He'll be back soon. (go)", answers: [["has gone"]] },
-  { type: "double", text: "___ you ___ writing that report yet? (not finish)", inputs: [
-    { answer: [["Haven't","have not"]] },
-    { answer: [["finished"]] }
-  ]},
-  { type: "single", text: "We're looking for a new TV, but we ___ one we like yet. (not find)", answers: [["haven't found"]] },
-  { type: "single", text: "How long ___ Andrea ___ Japanese? (learn)", answers: [["has","been learning"]] },
-  { type: "single", text: "I'm very healthy. I ___ to the doctor's for about six years. (not be)", answers: [["haven't been"]] },
-  { type: "single", text: "David's hands are covered in paint. What ___ he ___? (paint)", answers: [["has","been painting"]] },
-  { type: "single", text: "That was the best documentary we ___ ever ___. (see)", answers: [["have","seen"]] }
+  { text: "Oh no! I ___ my ticket. (lose)", answers: [["have lost","'ve lost"]] },
+  { text: "Bella ___ for her passport all morning. I hope she finds it. (look)", answers: [["has been looking"]] },
+  { text: "How long ___ you ___ your motorbike? (have)", answers: [["have","had"]] },
+  { text: "A Do you know where Ravi is? B I think he ___ to the post office. He'll be back soon. (go)", answers: [["has gone"]] },
+  { text: "___ you ___ writing that report yet? (not finish)", answers: [["Haven't","have not"]] },
+  { text: "We're looking for a new TV, but we ___ one we like yet. (not find)", answers: [["haven't found"]] },
+  { text: "How long ___ Andrea ___ Japanese? (learn)", answers: [["has","been learning"]] },
+  { text: "I'm very healthy. I ___ to the doctor's for about six years. (not be)", answers: [["haven't been"]] },
+  { text: "David's hands are covered in paint. What ___ he ___? (paint)", answers: [["has","been painting"]] },
+  { text: "That was the best documentary we ___ ever ___. (see)", answers: [["have","seen"]] }
 ];
 
 var GRAM_B = [
@@ -314,18 +308,19 @@ function buildFill(containerId,data){
   var c=document.getElementById(containerId);
   c.innerHTML='';
   data.forEach(function(q,i){
-    var html='<div class="q-card"><span class="q-number">'+(i+1)+'</span><div class="q-body">';
+    var text = q.text;
+    var blanks = (text.match(/___/g) || []).length;
+    var parts = text.split('___');
     
-    if(q.type==='double'){
-      html+='<span class="q-text">'+q.text+' <input type="text" class="q-inline-input" data-i="'+i+'" data-word="1" placeholder="'+q.hint1+'" autocomplete="off" spellcheck="false"> <input type="text" class="q-inline-input" data-i="'+i+'" data-word="2" placeholder="'+q.hint2+'" autocomplete="off" spellcheck="false"> '+q.suffix+'</span>';
-    } else if(q.type==='single'){
-      html+='<span class="q-text">'+q.text+' <input type="text" class="q-inline-input" data-i="'+i+'" placeholder="'+q.hint+'" autocomplete="off" spellcheck="false"> '+q.suffix+'</span>';
-    } else {
-      var parts=q.text.split('___');
-      html+='<span class="q-text">'+parts[0]+'<input type="text" class="q-inline-input" data-i="'+i+'" autocomplete="off" spellcheck="false">'+((parts[1]||''))+'</span>';
+    var html='<div class="q-card"><span class="q-number">'+(i+1)+'</span><div class="q-body"><span class="q-text">';
+    
+    for(var b=0; b<blanks; b++){
+      html += parts[b];
+      html += '<input type="text" class="q-inline-input" data-i="'+i+'" data-blank="'+b+'" autocomplete="off" spellcheck="false">';
     }
+    html += parts[blanks];
     
-    html+='<div class="q-solution" data-sol="'+containerId+'-'+i+'"></div></div></div>';
+    html += '</span><div class="q-solution" data-sol="'+containerId+'-'+i+'"></div></div></div>';
     c.innerHTML+=html;
   });
 }
