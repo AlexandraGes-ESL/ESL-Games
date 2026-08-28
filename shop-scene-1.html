@@ -517,7 +517,7 @@ let dialogMode = true; // true = dialog phase, false = quiz phase
 //  OPENING SCRIPT  (dialog before quiz)
 // ─────────────────────────────────────────────────
 const SCRIPT = [
-  { type: 'show',   who: 'yeojin', asset: 'yeojin_neutral' },
+  { type: 'show',   who: 'yeojin', asset: 'yeojin_neutral_front' },
   { type: 'show',   who: 'ginie',  asset: 'ginie_cold' },
   { type: 'dialog', who: 'yeojin', color: '#8b3a3a',
     text: '"Excuse me — do you know Matthew\'s farm? The organic one, up the hill somewhere?"' },
@@ -526,13 +526,13 @@ const SCRIPT = [
     ginAsset: 'ginie_cold' },
   { type: 'dialog', who: 'yeojin', color: '#8b3a3a',
     text: '"I\'m not a tourist. I have a work placement there — I just need directions."',
-    yeoAsset: 'yeojin_thinking' },
+    yeoAsset: 'yeojin_neutral_aside' },
   { type: 'dialog', who: 'ginie',  color: '#4a6070',
     text: '"City girl. Heels, blazer, no idea where she\'s going." A pause. "You know anything about the countryside at all?"',
-    ginAsset: 'ginie_neutral' },
+    ginAsset: 'ginie_neutral_front' },
   { type: 'dialog', who: 'yeojin', color: '#8b3a3a',
     text: '"I… know some things."',
-    yeoAsset: 'yeojin_neutral' },
+    yeoAsset: 'yeojin_neutral_front' },
   { type: 'dialog', who: 'ginie',  color: '#4a6070',
     text: '"We\'ll see about that. Answer my questions — then I\'ll tell you where the farm is."',
     ginAsset: 'ginie_cold' },
@@ -549,8 +549,8 @@ const QUIZ = [
     options: ['hedge','fence','bush','gate'],
     correct: '"A hedge. It grows, changes with the seasons. Different from anything you\'d find in the city."',
     wrong:   '"A fence is wood or metal — it\'s dead. A hedge is alive. Very different things out here."',
-    ginCorrect: 'ginie_neutral', ginWrong: 'ginie_cold',
-    yeoCorrect: 'yeojin_happy',  yeoWrong: 'yeojin_thinking',
+    ginCorrect: 'ginie_neutral_front', ginWrong: 'ginie_cold',
+    yeoCorrect: 'yeojin_smiling_warm',  yeoWrong: 'yeojin_neutral_aside',
   },
   {
     def:     'A steep, high face of rock at the edge of the sea or a river.',
@@ -558,8 +558,8 @@ const QUIZ = [
     options: ['cliff','hill','valley','slope'],
     correct: '"Good. Cliffs are where the land runs out of patience."',
     wrong:   '"A hill is rounded and gentle. A cliff drops straight down. Matthew\'s farm has both nearby."',
-    ginCorrect: 'ginie_neutral', ginWrong: 'ginie_cold',
-    yeoCorrect: 'yeojin_happy',  yeoWrong: 'yeojin_thinking',
+    ginCorrect: 'ginie_neutral_front', ginWrong: 'ginie_cold',
+    yeoCorrect: 'yeojin_smiling_warm',  yeoWrong: 'yeojin_neutral_aside',
   },
   {
     def:     'A low area of land between hills or mountains.',
@@ -567,8 +567,8 @@ const QUIZ = [
     options: ['valley','field','plain','hill'],
     correct: '"The farm sits in a valley. Now you\'ll recognise it when you see it."',
     wrong:   '"A field is flat farmland. A valley is the low space between high ground — shaped like a bowl."',
-    ginCorrect: 'ginie_neutral', ginWrong: 'ginie_cold',
-    yeoCorrect: 'yeojin_happy',  yeoWrong: 'yeojin_thinking',
+    ginCorrect: 'ginie_neutral_front', ginWrong: 'ginie_cold',
+    yeoCorrect: 'yeojin_smiling_warm',  yeoWrong: 'yeojin_neutral_aside',
   },
   {
     def:     'A small, narrow flow of water — smaller than a river.',
@@ -576,8 +576,8 @@ const QUIZ = [
     options: ['stream','lake','well','river'],
     correct: '"Follow the stream and you\'ll find the gate. That\'s your route."',
     wrong:   '"A lake is still. A river is wide. A stream runs shallow and quick, always downhill."',
-    ginCorrect: 'ginie_neutral', ginWrong: 'ginie_cold',
-    yeoCorrect: 'yeojin_happy',  yeoWrong: 'yeojin_thinking',
+    ginCorrect: 'ginie_neutral_front', ginWrong: 'ginie_cold',
+    yeoCorrect: 'yeojin_smiling_warm',  yeoWrong: 'yeojin_neutral_aside',
   },
   {
     def:     'A deep hole dug into the ground to reach underground water.',
@@ -586,7 +586,7 @@ const QUIZ = [
     correct: '"There\'s a well at the crossroads. Stone, old — the lichen\'s been growing there longer than I have."',
     wrong:   '"A fountain is decorative city nonsense. A well is dug by hand — ancient, practical, still working."',
     ginCorrect: 'ginie_warm',    ginWrong: 'ginie_cold',
-    yeoCorrect: 'yeojin_happy',  yeoWrong: 'yeojin_thinking',
+    yeoCorrect: 'yeojin_smiling_warm',  yeoWrong: 'yeojin_neutral_aside',
   },
   {
     def:     'A large farm building used to store crops, hay, or shelter animals.',
@@ -595,7 +595,7 @@ const QUIZ = [
     correct: '"The barn is the biggest thing on Matthew\'s farm. Red roof — you\'ll see it from the road."',
     wrong:   '"A farmhouse is where people sleep. A shed is tiny. A barn is the big one — animals, hay, everything."',
     ginCorrect: 'ginie_warm',    ginWrong: 'ginie_cold',
-    yeoCorrect: 'yeojin_excited',yeoWrong: 'yeojin_thinking',
+    yeoCorrect: 'yeojin_has_an_idea',yeoWrong: 'yeojin_neutral_aside',
   },
   {
     def:     'An adult male chicken.',
@@ -603,8 +603,8 @@ const QUIZ = [
     options: ['cockerel','hen','chick','lamb'],
     correct: 'Almost a smile. "Most city people say rooster. Cockerel — remember that one."',
     wrong:   '"A hen lays eggs. A chick just hatched. A cockerel wakes the entire village at five in the morning."',
-    ginCorrect: 'ginie_warm',    ginWrong: 'ginie_neutral',
-    yeoCorrect: 'yeojin_excited',yeoWrong: 'yeojin_thinking',
+    ginCorrect: 'ginie_warm',    ginWrong: 'ginie_neutral_front',
+    yeoCorrect: 'yeojin_has_an_idea',yeoWrong: 'yeojin_neutral_aside',
   },
   {
     def:     'Young sheep, usually less than one year old.',
@@ -612,8 +612,8 @@ const QUIZ = [
     options: ['lambs','sheep','cows','donkeys'],
     correct: '"Lambs in spring. Matthew has a dozen this year. Fair warning — they\'ll run straight at you."',
     wrong:   '"Sheep are the adults. Lambs are the young ones — small, woolly, extremely curious about strangers."',
-    ginCorrect: 'ginie_warm',    ginWrong: 'ginie_neutral',
-    yeoCorrect: 'yeojin_excited',yeoWrong: 'yeojin_thinking',
+    ginCorrect: 'ginie_warm',    ginWrong: 'ginie_neutral_front',
+    yeoCorrect: 'yeojin_has_an_idea',yeoWrong: 'yeojin_neutral_aside',
   },
 ];
 
@@ -710,8 +710,8 @@ function runScript() {
       // both sprites neutral / active
       setSpriteState('yeojin', 'active');
       setSpriteState('ginie',  'active');
-      setSprite('yeojin','yeojin_neutral');
-      setSprite('ginie', 'ginie_neutral');
+      setSprite('yeojin','yeojin_neutral_front');
+      setSprite('ginie', 'ginie_neutral_front');
       setTimeout(() => {
         document.getElementById('dialog-box').style.display = 'none';
         showQuizQuestion();
@@ -821,7 +821,7 @@ function showFinale() {
     : '"Matthew\'s farm is somewhere past the hill." She turns back to her shelves. "Ask the signpost."';
 
   // sprites
-  setSprite('yeojin', warm ? 'yeojin_excited' : 'yeojin_thinking');
+  setSprite('yeojin', warm ? 'yeojin_has_an_idea' : 'yeojin_neutral_aside');
   setSprite('ginie',  warm ? 'ginie_warm'     : 'ginie_cold');
   setSpriteState('yeojin', warm ? 'speaking-wrap' : 'dim-wrap');
   setSpriteState('ginie',  warm ? 'speaking-wrap' : 'active');
