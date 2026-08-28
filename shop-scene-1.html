@@ -23,21 +23,22 @@
   }
 
   body {
-    background: #1a1008;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    font-family: 'Georgia', serif;
-    overflow: hidden;
-  }
+  background: #1a1008;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Georgia', serif;
+  overflow: hidden;
+}
 
   /* ── RESPONSIVE SCALE WRAPPER ─────────────────────────────── */
   #scale-wrap {
-    width: 1280px;
-    height: 720px;
-    transform-origin: top left;
-  }
+  width: 1280px;
+  height: 720px;
+  transform-origin: center center;   /* ← было top left */
+  flex-shrink: 0;                    /* ← не сжимать flex-ом */
+}
 
   /* ── GAME CONTAINER ───────────────────────────────────────── */
   #game {
@@ -435,13 +436,14 @@
 // ─────────────────────────────────────────────────────────────
 (function scaleGame() {
   function resize() {
-    const wrap = document.getElementById('scale-wrap');
+    const wrap   = document.getElementById('scale-wrap');
     const scaleX = window.innerWidth  / 1280;
     const scaleY = window.innerHeight / 720;
     const scale  = Math.min(scaleX, scaleY);
     wrap.style.transform = `scale(${scale})`;
-    wrap.style.marginLeft = ((window.innerWidth  - 1280 * scale) / 2) + 'px';
-    wrap.style.marginTop  = ((window.innerHeight - 720  * scale) / 2) + 'px';
+    // убираем ручной margin — flex сам центрирует
+    wrap.style.marginLeft = '';
+    wrap.style.marginTop  = '';
   }
   resize();
   window.addEventListener('resize', resize);
