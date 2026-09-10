@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday! English Lesson 🎂</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #d97706;
+      --primary-light: #f59e0b;
+      --surface: #ffffff;
+      --surface-alt: #faf8f3;
+      --text: #1f2937;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --accent-blue: #3b82f6;
+      --accent-green: #10b981;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .presentation {
+      width: 100%;
+      max-width: 1400px;
+      aspect-ratio: 16 / 9;
+      background: var(--surface);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      flex: 1;
+      padding: 60px;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    h1 {
+      font-size: 56px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 44px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 30px;
+    }
+
+    p, .text {
+      font-size: 22px;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+
+    .subtitle {
+      font-size: 26px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .speaking-frame {
+      background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+      border: 2px solid var(--accent-blue);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    .qa-section {
+      background: var(--surface-alt);
+      border-radius: 12px;
+      padding: 28px;
+      margin: 20px 0;
+    }
+
+    .question {
+      font-size: 22px;
+      margin: 16px 0;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .question:before {
+      content: "❓";
+      position: absolute;
+      left: 0;
+    }
+
+    .vocab-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 12px 0;
+    }
+
+    .vocab-item {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .word {
+      font-weight: 700;
+      font-size: 24px;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .translation {
+      font-size: 18px;
+      color: var(--text-muted);
+    }
+
+    .canvas-section {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .canvas-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 200px;
+    }
+
+    #drawCanvas {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: white;
+      cursor: crosshair;
+      flex: 1;
+      max-width: 400px;
+      max-height: 300px;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 16px;
+      padding: 10px 16px;
+      border: 2px solid var(--primary);
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
+    }
+
+    button.secondary {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    button.secondary:hover {
+      background: var(--surface-alt);
+    }
+
+    .word-display {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary);
+      padding: 20px;
+      background: var(--surface-alt);
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 12px;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .word-display.hidden {
+      filter: blur(8px);
+      user-select: none;
+    }
+
+    .gift-description {
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+      border: 2px solid var(--accent-green);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    .cloze-text {
+      background: var(--surface-alt);
+      padding: 24px;
+      border-radius: 12px;
+      line-height: 1.8;
+      font-size: 20px;
+      margin: 20px 0;
+    }
+
+    .blank {
+      border-bottom: 2px solid var(--primary);
+      display: inline-block;
+      width: 120px;
+      margin: 0 4px;
+      text-align: center;
+    }
+
+    .randomizer-output {
+      background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+      border: 2px solid #ec4899;
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .greeting {
+      font-size: 32px;
+      font-weight: 700;
+      color: #be185d;
+      margin-bottom: 12px;
+    }
+
+    .prediction {
+      font-size: 22px;
+      color: var(--text);
+      margin: 16px 0;
+      line-height: 1.6;
+    }
+
+    .emojis {
+      font-size: 48px;
+      margin: 16px 0;
+      letter-spacing: 8px;
+    }
+
+    .extra-task {
+      background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+      border: 2px solid #a855f7;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+
+    .extra-task h3 {
+      font-size: 24px;
+      color: #7e22ce;
+      margin-bottom: 16px;
+    }
+
+    .task-item {
+      font-size: 20px;
+      margin: 12px 0;
+      padding-left: 28px;
+      position: relative;
+    }
+
+    .task-item:before {
+      content: "✏️";
+      position: absolute;
+      left: 0;
+    }
+
+    .controls-bottom {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+    }
+
+    .slide-counter {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 18px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .emoji-celebration {
+      text-align: center;
+      font-size: 64px;
+      margin: 20px 0;
+      letter-spacing: 12px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      max-width: 150px;
+    }
+
+    .color-picker {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .color-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .color-btn.active {
+      border-color: var(--text);
+      box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--text);
+    }
+  </style>
+</head>
+<body>
+
+<div class="presentation">
+  <div class="slide-counter"><span id="current">1</span> / 10</div>
+
+  <!-- SLIDE 1: Welcome & Birthday -->
+  <div class="slide active">
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px;">
+      <div class="emoji-celebration">🎂 🎉 🥳</div>
+      <h1>Happy Birthday!</h1>
+      <p class="subtitle">You turned 14 yesterday!</p>
+      <p style="font-size: 24px; margin-top: 20px;">Let's celebrate and practice English together today! 🌟</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Speaking - How did you celebrate? -->
+  <div class="slide">
+    <h2>How did you celebrate? 🎊</h2>
+    <div class="qa-section">
+      <p class="question">How did you celebrate your birthday yesterday?</p>
+      <div class="speaking-frame">
+        Yesterday I... / My friends... / My family...
+      </div>
+      
+      <p class="question">What gifts did you receive?</p>
+      <div class="speaking-frame">
+        I got... / I received... / Someone gave me...
+      </div>
+
+      <p class="question">What is your favorite gift you ever got? Why?</p>
+      <div class="speaking-frame">
+        My favorite gift is... because it's...
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Vocabulary - Gifts & Celebrations -->
+  <div class="slide">
+    <h2>Birthday Vocabulary 🎁</h2>
+    <div class="vocab-row">
+      <div class="vocab-item">
+        <div class="word">to celebrate</div>
+        <div class="translation">праздновать, отмечать</div>
+      </div>
+      <div class="vocab-item">
+        <div class="word">gift / present</div>
+        <div class="translation">подарок</div>
+      </div>
+    </div>
+    <div class="vocab-row">
+      <div class="vocab-item">
+        <div class="word">to turn (14)</div>
+        <div class="translation">исполниться (14 лет)</div>
+      </div>
+      <div class="vocab-item">
+        <div class="word">party</div>
+        <div class="translation">вечеринка, праздник</div>
+      </div>
+    </div>
+    <div class="vocab-row">
+      <div class="vocab-item">
+        <div class="word">to receive</div>
+        <div class="translation">получать, получить</div>
+      </div>
+      <div class="vocab-item">
+        <div class="word">to wish</div>
+        <div class="translation">желать, пожелание</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Grammar - Present Simple about gifts -->
+  <div class="slide">
+    <h2>Grammar: Present Simple 📚</h2>
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-around;">
+      <div class="qa-section">
+        <p style="font-weight: 700; margin-bottom: 12px; color: var(--primary);">Usually (habits):</p>
+        <p style="font-size: 20px;">• I always get gifts on my birthday.</p>
+        <p style="font-size: 20px;">• My friends usually bring presents.</p>
+        <p style="font-size: 20px;">• We have cake and ice cream.</p>
+      </div>
+
+      <div class="qa-section">
+        <p style="font-weight: 700; margin-bottom: 12px; color: var(--primary);">People love:</p>
+        <p style="font-size: 20px;">• People love getting gifts.</p>
+        <p style="font-size: 20px;">• Everyone enjoys birthday parties.</p>
+        <p style="font-size: 20px;">• I like receiving surprises.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: GAME #1 - Draw & Guess -->
+  <div class="slide">
+    <h2>GAME #1: Draw & Guess 🎨</h2>
+    <div style="flex: 1; display: flex; gap: 30px; align-items: flex-start;">
+      <div class="canvas-section" style="flex: 1;">
+        <div style="flex: 1;">
+          <div style="margin-bottom: 12px;">
+            <button onclick="toggleWord()" style="width: 100%; margin-bottom: 8px;">👀 Show/Hide Word</button>
+            <div class="word-display hidden" id="wordDisplay">bicycle</div>
+          </div>
+          <canvas id="drawCanvas" width="400" height="300"></canvas>
+          <div class="control-group" style="margin-top: 12px;">
+            <button onclick="clearCanvas()">Clear</button>
+            <button onclick="nextWord()" class="secondary">Next Word</button>
+          </div>
+        </div>
+      </div>
+      <div style="min-width: 200px;">
+        <p style="font-weight: 700; color: var(--primary); margin-bottom: 12px;">🎯 Words to draw:</p>
+        <div id="wordList" style="font-size: 18px; line-height: 2; color: var(--text-muted);">
+          • bicycle<br>• watch<br>• book<br>• guitar<br>• skateboard<br>• camera<br>• phone<br>• game
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: GAME #2 - Guess My Gift -->
+  <div class="slide">
+    <h2>GAME #2: Guess My Gift 🎁</h2>
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-around;">
+      <div class="gift-description">
+        <strong>Description 1:</strong> It's small and round. You wear it on your wrist. It shows time. You use it every day.
+      </div>
+      <div class="gift-description">
+        <strong>Description 2:</strong> It has 6 strings. You play music with it. It's brown or black. Many people love this instrument.
+      </div>
+      <div class="gift-description">
+        <strong>Description 3:</strong> It has 4 wheels. You stand on it and ride. It's popular with teenagers. You can do tricks with it.
+      </div>
+      <div class="gift-description">
+        <strong>Description 4:</strong> It's a present. You have many of them at home. You read it. It has pages and a story.
+      </div>
+      <p style="text-align: center; color: var(--text-muted); margin-top: 20px;">💭 What gifts are they? Guess in English!</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Cloze Text - Funny Story -->
+  <div class="slide">
+    <h2>Funny Story: My Birthday 😄</h2>
+    <div class="cloze-text">
+      <p>Yesterday I <span class="blank"></span> fourteen. My family organized a surprise <span class="blank"></span>. My mom <span class="blank"></span> a big cake. My friends gave me <span class="blank"></span> gifts — a new <span class="blank"></span>, a book, and a skateboard. I was so happy! We <span class="blank"></span> pizza and played games all night. At midnight, everyone <span class="blank"></span> "Happy Birthday!" I <span class="blank"></span> so much fun. It was the best birthday ever!</p>
+    </div>
+    <p style="text-align: center; color: var(--text-muted); font-size: 18px; margin-top: 20px;">💡 <strong>Words to fill:</strong> turned • party • made • three • game • had • sang • had</p>
+  </div>
+
+  <!-- SLIDE 8: Birthday Randomizer & Wishes -->
+  <div class="slide">
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      <div class="randomizer-output">
+        <div class="greeting" id="greeting">🌟 Predictions for your year! 🌟</div>
+        <div class="emojis" id="emojis">📚 ✈️ ⛸️ 🎮 🏆</div>
+        <div class="prediction" id="prediction">
+          This year you will get better at English, play amazing games, and maybe travel somewhere cool! You will have an awesome year! 🎊
+        </div>
+      </div>
+      <button onclick="newPrediction()" style="margin-top: 20px; font-size: 18px;">🔮 New Prediction</button>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Extra Task -->
+  <div class="slide">
+    <h2>Extra Task (Homework or Free Time) 📝</h2>
+    <div class="extra-task">
+      <h3>Writing Task: "My Perfect Birthday"</h3>
+      <div class="task-item">Write 6-8 sentences about your ideal birthday.</div>
+      <div class="task-item">Use Present Simple at least 3 times (what people usually do, what you usually do).</div>
+      <div class="task-item">Use have/has at least 2 times (e.g., "My party has...").</div>
+      <div class="task-item">Use some/any (e.g., "I want some gifts" or "I don't have any regrets").</div>
+      <div class="task-item">Past Simple too! What happened yesterday? (at least 2 sentences)</div>
+    </div>
+    <p style="text-align: center; color: var(--text-muted); margin-top: 20px;">Example: "My perfect birthday is in summer. I usually celebrate with friends. My family has a big cake. Yesterday I got some amazing gifts..."</p>
+  </div>
+
+  <!-- SLIDE 10: Goodbye -->
+  <div class="slide">
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; text-align: center;">
+      <div class="emoji-celebration">🎊 🎁 ✨</div>
+      <h1>Happy Birthday! 🥳</h1>
+      <p class="subtitle">You did an amazing job today!</p>
+      <p style="font-size: 24px; margin-top: 20px;">Keep practicing English. You're getting better every day! 🌟</p>
+      <p style="font-size: 20px; color: var(--text-muted); margin-top: 30px;">Have a wonderful year ahead! 🎂💕</p>
+    </div>
+  </div>
+
+  <div class="controls-bottom">
+    <button id="prevBtn" onclick="prevSlide()" style="opacity: 0.5;">← Previous</button>
+    <button id="nextBtn" onclick="nextSlide()">Next →</button>
+  </div>
+</div>
+
+<script>
+  let currentSlide = 0;
+  let wordIndex = 0;
+  let isWordHidden = true;
+  const words = ['bicycle', 'watch', 'book', 'guitar', 'skateboard', 'camera', 'phone', 'game'];
+  const greetings = [
+    '🌟 Amazing year ahead! 🌟',
+    '✨ Fantastic things coming! ✨',
+    '🎯 Great goals this year! 🎯',
+    '🚀 Sky is the limit! 🚀',
+    '💪 You will be stronger! 💪'
+  ];
+  const predictions = [
+    'This year you will get better at English, travel to new places, and make new friends!',
+    'You will learn new skills, have amazing adventures, and achieve your dreams!',
+    'This year brings exciting challenges, new hobbies, and lots of fun!',
+    'You will improve your hobbies, visit cool places, and become even more awesome!',
+    'This year is perfect for new goals, great experiences, and personal growth!'
+  ];
+
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+
+  function showSlide(n) {
+    slides.forEach(s => s.classList.remove('active'));
+    slides[n].classList.add('active');
+    document.getElementById('current').textContent = n + 1;
+    document.getElementById('prevBtn').style.opacity = n === 0 ? '0.5' : '1';
+    document.getElementById('nextBtn').style.opacity = n === totalSlides - 1 ? '0.5' : '1';
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+      currentSlide++;
+      showSlide(currentSlide);
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      showSlide(currentSlide);
+    }
+  }
+
+  // Canvas drawing
+  const canvas = document.getElementById('drawCanvas');
+  const ctx = canvas ? canvas.getContext('2d') : null;
+  let isDrawing = false;
+
+  if (canvas) {
+    canvas.addEventListener('mousedown', () => { isDrawing = true; });
+    canvas.addEventListener('mouseup', () => { isDrawing = false; });
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#d97706';
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    });
+  }
+
+  function clearCanvas() {
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  function toggleWord() {
+    const display = document.getElementById('wordDisplay');
+    isWordHidden = !isWordHidden;
+    display.classList.toggle('hidden');
+  }
+
+  function nextWord() {
+    wordIndex = (wordIndex + 1) % words.length;
+    document.getElementById('wordDisplay').textContent = words[wordIndex];
+    clearCanvas();
+    isWordHidden = true;
+    document.getElementById('wordDisplay').classList.add('hidden');
+  }
+
+  function newPrediction() {
+    const idx = Math.floor(Math.random() * greetings.length);
+    document.getElementById('greeting').textContent = greetings[idx];
+    document.getElementById('prediction').textContent = predictions[idx];
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+
+  showSlide(0);
+</script>
+
+</body>
+</html>
