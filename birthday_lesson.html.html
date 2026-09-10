@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Lesson: Happy Birthday! 🎂</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-bg: #f8f6f1;
+      --color-surface: #ffffff;
+      --color-accent: #e87f4a;
+      --color-accent-light: #f5a573;
+      --color-text: #2c2c2c;
+      --color-text-muted: #6b6b6b;
+      --color-border: #e8e2d7;
+      --spacing: 8px;
+      --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-display: 'Georgia', serif;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      overflow: hidden;
+    }
+
+    .presentation {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #fef5ed 0%, #f5f0e8 100%);
+    }
+
+    .slide {
+      width: 90%;
+      max-width: 1600px;
+      aspect-ratio: 16 / 9;
+      background: var(--color-surface);
+      border-radius: 24px;
+      padding: 60px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 72px;
+      color: var(--color-accent);
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-size: 48px;
+      color: var(--color-text);
+      margin-bottom: 32px;
+    }
+
+    .subtitle {
+      font-size: 28px;
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+    }
+
+    p, .text {
+      font-size: 24px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      color: var(--color-text);
+    }
+
+    .content {
+      flex: 1;
+    }
+
+    .vocab-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 24px 0;
+    }
+
+    .vocab-card {
+      background: linear-gradient(135deg, #fff8f3 0%, #fffbf7 100%);
+      border: 2px solid var(--color-border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .vocab-word {
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--color-accent);
+      margin-bottom: 8px;
+    }
+
+    .vocab-translation {
+      font-size: 20px;
+      color: var(--color-text-muted);
+    }
+
+    .speaking-bubble {
+      background: linear-gradient(135deg, #e87f4a 0%, #d4654f 100%);
+      color: white;
+      padding: 32px;
+      border-radius: 16px;
+      font-size: 24px;
+      line-height: 1.6;
+      margin: 16px 0;
+    }
+
+    .grammar-box {
+      background: #f0f8ff;
+      border-left: 5px solid var(--color-accent);
+      padding: 24px;
+      border-radius: 8px;
+      margin: 24px 0;
+      font-size: 22px;
+    }
+
+    .question-list {
+      font-size: 24px;
+      line-height: 2;
+      margin: 24px 0;
+    }
+
+    .question-list li {
+      margin: 12px 0;
+      list-style: none;
+      padding-left: 32px;
+      position: relative;
+    }
+
+    .question-list li:before {
+      content: "✈️";
+      position: absolute;
+      left: 0;
+    }
+
+    .activity-section {
+      background: linear-gradient(135deg, #fff8f3 0%, #fffbf7 100%);
+      padding: 32px;
+      border-radius: 16px;
+      margin: 24px 0;
+      border: 2px solid var(--color-border);
+    }
+
+    .controls {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 16px;
+      z-index: 100;
+    }
+
+    button {
+      font-family: var(--font-main);
+      font-size: 18px;
+      padding: 12px 28px;
+      border: 2px solid var(--color-accent);
+      background: var(--color-accent);
+      color: white;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: var(--color-accent-light);
+      border-color: var(--color-accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(232, 127, 74, 0.2);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .button-secondary {
+      background: transparent;
+      color: var(--color-accent);
+      border: 2px solid var(--color-accent);
+    }
+
+    .button-secondary:hover {
+      background: var(--color-bg);
+    }
+
+    .slide-number {
+      position: absolute;
+      top: 24px;
+      right: 40px;
+      font-size: 18px;
+      color: var(--color-text-muted);
+    }
+
+    .emoji-large {
+      font-size: 80px;
+      text-align: center;
+      margin: 24px 0;
+    }
+
+    .emoji-grid {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      font-size: 64px;
+      margin: 32px 0;
+    }
+
+    .highlight {
+      background: linear-gradient(120deg, rgba(232, 127, 74, 0.1) 0%, rgba(245, 165, 115, 0.1) 100%);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--color-accent);
+      font-weight: 600;
+    }
+
+    .game-section {
+      background: linear-gradient(135deg, #fff0f3 0%, #fffaf7 100%);
+      padding: 28px;
+      border-radius: 16px;
+      border: 2px solid var(--color-border);
+      margin: 16px 0;
+    }
+
+    .score {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--color-accent);
+      text-align: center;
+      margin: 16px 0;
+    }
+
+    .footer-text {
+      font-size: 20px;
+      color: var(--color-text-muted);
+      margin-top: 24px;
+    }
+
+    @media (max-width: 1280px) {
+      .slide {
+        padding: 40px;
+      }
+      h1 {
+        font-size: 56px;
+      }
+      h2 {
+        font-size: 40px;
+      }
+      p, .text {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="presentation">
+  <!-- SLIDE 1: Birthday Welcome -->
+  <div class="slide active">
+    <div class="slide-number">1 / 8</div>
+    <div class="content">
+      <div class="emoji-large">🎂 🎉 ✈️</div>
+      <h1>Happy Birthday! 🎊</h1>
+      <p style="font-size: 32px; color: var(--color-accent-light); margin: 32px 0;">You're 14 now!</p>
+      <p class="subtitle" style="color: var(--color-text); font-size: 28px;">Today's lesson is special — it's all about <span class="highlight">YOU</span>!</p>
+      <div class="emoji-grid">
+        <span>🎮</span>
+        <span>⛸️</span>
+        <span>✈️</span>
+      </div>
+      <p style="font-size: 24px; color: var(--color-text-muted); text-align: center; margin-top: 40px;">
+        Let's practice English and celebrate your interests.
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Birthday Vocabulary -->
+  <div class="slide">
+    <div class="slide-number">2 / 8</div>
+    <div class="content">
+      <h2>Birthday Vocabulary 🎁</h2>
+      <div class="vocab-grid">
+        <div class="vocab-card">
+          <div class="vocab-word">birthday</div>
+          <div class="vocab-translation">день рождения</div>
+        </div>
+        <div class="vocab-card">
+          <div class="vocab-word">celebrate</div>
+          <div class="vocab-translation">праздновать, отмечать</div>
+        </div>
+        <div class="vocab-card">
+          <div class="vocab-word">wish / to wish</div>
+          <div class="vocab-translation">желать, пожелание</div>
+        </div>
+        <div class="vocab-card">
+          <div class="vocab-word">turn (a year)</div>
+          <div class="vocab-translation">исполниться (лет)</div>
+        </div>
+      </div>
+      <p style="margin-top: 32px;">
+        <span class="highlight">Example:</span> "Today I turn 14. I'm having a birthday party with my friends."
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Your Interests - Vocabulary -->
+  <div class="slide">
+    <div class="slide-number">3 / 8</div>
+    <div class="content">
+      <h2>Your World 🌍</h2>
+      <div class="vocab-grid">
+        <div class="vocab-card">
+          <div class="vocab-word">Roblox</div>
+          <div class="vocab-translation">онлайн-игра</div>
+        </div>
+        <div class="vocab-card">
+          <div class="vocab-word">Minecraft</div>
+          <div class="vocab-translation">игра, строительство</div>
+        </div>
+        <div class="vocab-card">
+          <div class="vocab-word">pilot</div>
+          <div class="vocab-translation">пилот</div>
+        </div>
+        <div class="vocab-card">
+          <div class="vocab-word">figure skating</div>
+          <div class="vocab-translation">фигурное катание</div>
+        </div>
+      </div>
+      <p style="margin-top: 32px;">
+        <span class="highlight">Today's goal:</span> Talk about your interests in English! 🎯
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Speaking Practice - Personal Questions -->
+  <div class="slide">
+    <div class="slide-number">4 / 8</div>
+    <div class="content">
+      <h2>Let's Talk! 💬</h2>
+      <div class="question-list">
+        <li>What's your favorite game — Roblox or Minecraft?</li>
+        <li>Do you like playing games alone or with friends?</li>
+        <li>How long do you usually play?</li>
+        <li>Do you want to be a pilot? Why or why not?</li>
+        <li>How often do you go figure skating?</li>
+      </div>
+      <p class="footer-text" style="margin-top: 40px;">
+        💡 <strong>Tip:</strong> Use complete sentences. Don't worry about mistakes — that's how we learn!
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Grammar Focus - "To Be" + "Want to Be" -->
+  <div class="slide">
+    <div class="slide-number">5 / 8</div>
+    <div class="content">
+      <h2>Grammar: "To Be" 📚</h2>
+      <div class="grammar-box">
+        <strong style="font-size: 26px;">Present Simple of "to be":</strong><br>
+        I <span class="highlight">am</span> 14. I <span class="highlight">am</span> a figure skater.<br>
+        You <span class="highlight">are</span> smart. You <span class="highlight">are</span> into gaming.<br>
+        He/She <span class="highlight">is</span> a pilot. It <span class="highlight">is</span> exciting.
+      </div>
+      <div class="grammar-box" style="margin-top: 24px;">
+        <strong style="font-size: 26px;">I want to be + noun:</strong><br>
+        I want to <span class="highlight">be</span> a pilot.<br>
+        I want to <span class="highlight">be</span> a professional gamer.
+      </div>
+      <p class="footer-text" style="margin-top: 32px;">
+        ✍️ <strong>Now you try:</strong> Complete: "I am ___. I want to be ___."
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Reading - Micro Text -->
+  <div class="slide">
+    <div class="slide-number">6 / 8</div>
+    <div class="content">
+      <h2>Reading Time 📖</h2>
+      <div class="activity-section">
+        <p style="font-size: 26px; line-height: 1.8;">
+          <strong>"My Birthday Wish"</strong><br><br>
+          Hi! My name is Dima. I'm 14 years old today. I love Minecraft and Roblox. 
+          I play games every day after school. But my biggest dream is to be a pilot. 
+          I want to fly planes and see the world. I also do figure skating on weekends. 
+          It's difficult but I love it. This year, I wish to improve both skating and gaming. 
+          My friends are coming to my birthday party. We are going to play games and eat cake. 
+          I'm happy and excited!
+        </p>
+      </div>
+      <p class="footer-text" style="margin-top: 32px;">
+        ❓ <strong>Question:</strong> What are Dima's three favorite things?
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Game - "Build & Create" Challenge -->
+  <div class="slide">
+    <div class="slide-number">7 / 8</div>
+    <div class="content">
+      <h2>Game: Describe the Scene 🎮</h2>
+      <div class="game-section">
+        <p style="text-align: center; font-size: 28px; margin-bottom: 24px;">
+          Imagine a scene in Minecraft or Roblox.<br>
+          Tell me about it in English!
+        </p>
+        <div class="speaking-bubble">
+          "I am in a Minecraft world. There is a big castle. I want to build a flying machine. 
+          The sky is blue. It is amazing!"
+        </div>
+        <p style="text-align: center; margin-top: 32px; font-size: 24px; color: var(--color-text-muted);">
+          ✨ <strong>Now it's your turn!</strong> What's YOUR favorite scene?
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Outro & Homework -->
+  <div class="slide">
+    <div class="slide-number">8 / 8</div>
+    <div class="content">
+      <h2>Happy Birthday! 🎊</h2>
+      <div class="emoji-large">🎂 ✨ 🥳</div>
+      
+      <div class="activity-section">
+        <p style="font-size: 26px;"><strong>Your homework:</strong></p>
+        <div class="question-list" style="margin-top: 16px; margin-bottom: 24px;">
+          <li>Write 5 sentences about your birthday or interests</li>
+          <li>Use at least 2 sentences with "I am..." or "I want to be..."</li>
+          <li>Practice saying them out loud!</li>
+        </div>
+      </div>
+
+      <p style="font-size: 26px; color: var(--color-accent); text-align: center; margin-top: 40px;">
+        🌟 You did amazing today! 🌟
+      </p>
+      <p style="font-size: 22px; color: var(--color-text-muted); text-align: center; margin-top: 16px;">
+        Keep practicing English and following your dreams. Next year you'll be even better!
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button id="prevBtn" class="button-secondary" onclick="previousSlide()">← Back</button>
+  <button id="nextBtn" onclick="nextSlide()">Next →</button>
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+
+  function showSlide(n) {
+    slides.forEach(slide => slide.classList.remove('active'));
+    slides[n].classList.add('active');
+    
+    document.getElementById('prevBtn').disabled = n === 0;
+    document.getElementById('nextBtn').disabled = n === totalSlides - 1;
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides - 1) {
+      currentSlide++;
+      showSlide(currentSlide);
+    }
+  }
+
+  function previousSlide() {
+    if (currentSlide > 0) {
+      currentSlide--;
+      showSlide(currentSlide);
+    }
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextSlide();
+    if (e.key === 'ArrowLeft') previousSlide();
+  });
+
+  // Initialize
+  showSlide(0);
+</script>
+
+</body>
+</html>
