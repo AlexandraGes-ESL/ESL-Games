@@ -1,610 +1,98 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dragon Kitchen Quest — ESL A1 Game</title>
-  <style>
-    :root {
-      --primary: #c25e38;
-      --primary-dark: #9a4827;
-      --accent: #d97706;
-      --bg-wood: #2c1810;
-      --surface: #fffbeb;
-      --text: #292524;
-      --muted: #78716c;
-      --success: #15803d;
-      --error: #b91c1c;
-      --shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg-wood);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 12px;
-    }
-    .game-window {
-      width: 100%;
-      max-width: 1300px;
-      aspect-ratio: 16 / 9;
-      background: var(--surface);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      border: 4px solid #b45309;
-      position: relative;
-    }
-    /* TOP HUD */
-    header {
-      background: #78350f;
-      color: #fef3c7;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 3px solid #b45309;
-      height: 64px;
-      z-index: 10;
-    }
-    .hud-title { font-size: 20px; font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
-    .hud-stats { display: flex; gap: 16px; align-items: center; font-size: 16px; font-weight: 600; }
-    .badge { background: #92400e; padding: 4px 10px; border-radius: 6px; border: 1px solid #b45309; }
-
-    /* STAGE AREA (SCENE BACKGROUND) */
-    .stage {
-      flex: 1;
-      position: relative;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 20px;
-    }
-    /* Полупрозрачная подложка для читаемости контента поверх живописного фона */
-    .stage-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(255, 251, 235, 0.88);
-      backdrop-filter: blur(2px);
-      z-index: 1;
-    }
-    .stage-content {
-      position: relative;
-      z-index: 2;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    /* DRAGON & SPEECH */
-    .dragon-box {
-      position: absolute;
-      left: 20px;
-      bottom: 20px;
-      z-index: 5;
-      display: flex;
-      align-items: flex-end;
-      gap: 12px;
-      pointer-events: none;
-    }
-    .dragon-img {
-      width: 140px;
-      height: 140px;
-      object-fit: contain;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-    }
-    .speech-bubble {
-      background: #fff;
-      border: 3px solid #b45309;
-      border-radius: 12px;
-      padding: 10px 14px;
-      max-width: 260px;
-      font-size: 14px;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      position: relative;
-      pointer-events: auto;
-    }
-    .speech-bubble::after {
-      content: '';
-      position: absolute;
-      left: -12px;
-      bottom: 15px;
-      border-width: 6px 12px 6px 0;
-      border-style: solid;
-      border-color: transparent #b45309 transparent;
-      display: block;
-    }
-
-    /* LEVEL TABS */
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .tab {
-      flex: 1;
-      padding: 8px 12px;
-      background: #e7e5e4;
-      border: 2px solid #d6d3d1;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-      color: var(--muted);
-      transition: all 0.2s;
-    }
-    .tab.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary-dark);
-      box-shadow: 0 2px 6px rgba(194,94,56,0.3);
-    }
-    .tab:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    /* TASK CARD CONTAINER */
-    .task-card {
-      background: rgba(255, 255, 255, 0.95);
-      border: 2px solid #d6d3d1;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      margin-left: 160px; /* оставляем место под дракона слева */
-      min-height: 340px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .task-title { font-size: 20px; font-weight: 800; color: #78350f; margin-bottom: 6px; }
-    .theory-box {
-      font-size: 14px;
-      color: #44403c;
-      background: #fef3c7;
-      border-left: 4px solid var(--accent);
-      padding: 8px 12px;
-      border-radius: 0 6px 6px 0;
-      margin-bottom: 12px;
-    }
-
-    /* CONTROLS & BUTTONS */
-    .btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 15px;
-      transition: background 0.2s;
-    }
-    .btn:hover { background: var(--primary-dark); }
-    .options-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-    .opt-btn {
-      background: #fff;
-      border: 2px solid #a8a29e;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 15px;
-    }
-    .opt-btn:hover { background: #f5f5f4; }
-    .opt-btn.correct { background: #dcfce7 !important; border-color: var(--success) !important; color: var(--success); }
-    .opt-btn.incorrect { background: #fee2e2 !important; border-color: var(--error) !important; color: var(--error); }
-
-    /* DRAG & DROP FOR LEVEL 1 & 4 */
-    .dd-container { display: flex; gap: 16px; align-items: flex-start; margin-top: 8px; }
-    .source-pool {
-      display: grid;
-      grid-template-columns: repeat(4, 64px);
-      gap: 8px;
-      background: #f5f5f4;
-      padding: 10px;
-      border-radius: 10px;
-      border: 2px dashed #a8a29e;
-      max-height: 220px;
-      overflow-y: auto;
-    }
-    .food-chip {
-      width: 60px;
-      height: 60px;
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-color: #fff;
-      border-radius: 6px;
-      border: 1px solid #d6d3d1;
-      cursor: grab;
-    }
-    .drop-zones-group { display: flex; gap: 12px; flex: 1; }
-    .drop-target {
-      flex: 1;
-      min-height: 180px;
-      background: #fafaf9;
-      border: 3px dashed #b45309;
-      border-radius: 10px;
-      padding: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      align-content: flex-start;
-      gap: 6px;
-    }
-    .drop-target h4 { width: 100%; font-size: 14px; color: #78350f; margin-bottom: 6px; text-align: center; }
-
-    /* FOOTER BAR */
-    .footer-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-      border-top: 1px solid #e7e5e4;
-      padding-top: 8px;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="game-window">
-    <header>
-      <div class="hud-title">🐉 Dragon Kitchen Quest</div>
-      <div class="hud-stats">
-        <div class="badge" id="timerBadge">⏱️ 05:00</div>
-        <div class="badge" id="scoreBadge">⭐ 0 / 4 пройдено</div>
-      </div>
-    </header>
-
-    <!-- СЦЕНА С ФОНОМ ИЗБЫ -->
-    <div class="stage" id="gameStage" style="background-image: url('https://i.yapx.ru/eNLcW.jpg');">
-      <div class="stage-overlay"></div>
-      
-      <div class="stage-content">
-        <!-- Дракон и реплика -->
-        <div class="dragon-box">
-          <img id="dragonImg" class="dragon-img" src="https://i.yapx.ru/eNKrF.png" alt="Dragon" />
-          <div class="speech-bubble" id="dragonSpeech">
-            "Привет! Я очень голоден. Помоги мне разобраться с продуктами в избе!" 🍎
-          </div>
-        </div>
-
-        <!-- Навигация по уровням -->
-        <div style="max-width: 900px; margin: 0 auto; width: 100%;">
-          <div class="nav-tabs">
-            <button class="tab active" onclick="switchLevel(0)">1. Countable / Uncountable</button>
-            <button class="tab" onclick="switchLevel(1)" id="tab1" disabled>2. A vs AN</button>
-            <button class="tab" onclick="switchLevel(2)" id="tab2" disabled>3. There is / There are</button>
-            <button class="tab" onclick="switchLevel(3)" id="tab3" disabled>4. Shopping & Some/Any</button>
-          </div>
-
-          <!-- Карточка задания -->
-          <div class="task-card" id="taskCardContainer">
-            <!-- Динамический контент уровня -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Точная база ассетов с Yapx
-    const ASSETS = {
-      dragons: {
-        happy: 'https://i.yapx.ru/eNKrD.png',
-        thought: 'https://i.yapx.ru/eNKrE.png',
-        hungry: 'https://i.yapx.ru/eNKrF.png',
-        proud: 'https://i.yapx.ru/eNKrH.png'
-      },
-      backgrounds: {
-        closed: 'https://i.yapx.ru/eNLcW.jpg',
-        open: 'https://i.yapx.ru/eNLd2.jpg'
-      },
-      food: {
-        apple: 'https://i.yapx.ru/eNKrP.png',
-        banana: 'https://i.yapx.ru/eNKrQ.png',
-        milk: 'https://i.yapx.ru/eNKrR.png',
-        cheese: 'https://i.yapx.ru/eNKrS.png',
-        carrot: 'https://i.yapx.ru/eNKrT.png',
-        tomato: 'https://i.yapx.ru/eNKrU.png',
-        egg: 'https://i.yapx.ru/eNKrV.png',
-        bread: 'https://i.yapx.ru/eNKrW.png',
-        cake: 'https://i.yapx.ru/eNKrX.png',
-        pizza: 'https://i.yapx.ru/eNKrY.png',
-        juice: 'https://i.yapx.ru/eNKrZ.png',
-        mushrooms: 'https://i.yapx.ru/eNKra.png',
-        honey: 'https://i.yapx.ru/eNKrc.png',
-        icecream: 'https://i.yapx.ru/eNKrd.png',
-        chicken: 'https://i.yapx.ru/eNKre.png',
-        soup: 'https://i.yapx.ru/eNKrf.png'
-      }
-    };
-
-    let currentLevel = 0;
-    let levelProgress = [false, false, false, false];
-
-    function switchLevel(index) {
-      currentLevel = index;
-      document.querySelectorAll('.tab').forEach((t, i) => {
-        t.classList.toggle('active', i === index);
-      });
-      
-      // Меняем фон (на 3 и 4 уровне открываем холодильник!)
-      if (index >= 2) {
-        document.getElementById('gameStage').style.backgroundImage = `url('${ASSETS.backgrounds.open}')`;
-      } else {
-        document.getElementById('gameStage').style.backgroundImage = `url('${ASSETS.backgrounds.closed}')`;
-      }
-
-      renderLevel();
-    }
-
-    function renderLevel() {
-      const container = document.getElementById('taskCardContainer');
-      
-      if (currentLevel === 0) {
-        // Уровень 1: Countable vs Uncountable (Сортировка)
-        setDragon('hungry', "Разложи еду по двум группам: что можно посчитать (Countable) и что нельзя (Uncountable).");
-        container.innerHTML = `
-          <div>
-            <div class="task-title">Уровень 1: Исчисляемые и неисчисляемые продукты</div>
-            <div class="theory-box">
-              📌 <b>Правило:</b> <b>Countable</b> — то, что можно посчитать штуками (1 apple, 2 apples). <b>Uncountable</b> — жидкости, сыпучие массы, продукты кусками (milk, cheese, bread).
-            </div>
-            <div class="dd-container">
-              <div class="source-pool" id="poolL1">
-                <div class="food-chip" draggable="true" ondragstart="event.dataTransfer.setData('text', 'apple')" style="background-image:url('${ASSETS.food.apple}')" title="apple"></div>
-                <div class="food-chip" draggable="true" ondragstart="event.dataTransfer.setData('text', 'milk')" style="background-image:url('${ASSETS.food.milk}')" title="milk"></div>
-                <div class="food-chip" draggable="true" ondragstart="event.dataTransfer.setData('text', 'carrot')" style="background-image:url('${ASSETS.food.carrot}')" title="carrot"></div>
-                <div class="food-chip" draggable="true" ondragstart="event.dataTransfer.setData('text', 'cheese')" style="background-image:url('${ASSETS.food.cheese}')" title="cheese"></div>
-              </div>
-              <div class="drop-zones-group">
-                <div class="drop-target" ondragover="event.preventDefault()" ondrop="dropL1(event, 'countable')">
-                  <h4>✅ Countable (Можно посчитать)</h4>
-                  <div id="boxCountable" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
-                </div>
-                <div class="drop-target" ondragover="event.preventDefault()" ondrop="dropL1(event, 'uncountable')">
-                  <h4>❌ Uncountable (Нельзя посчитать)</h4>
-                  <div id="boxUncountable" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="footer-bar">
-            <span id="resL1" style="font-weight:700; color:var(--muted);">Перетащи все 4 продукта в правильные коробки</span>
-            <button class="btn" id="nextBtnL1" style="display:none;" onclick="completeLevel(0)">Далее ➔</button>
-          </div>
-        `;
-      } 
-      else if (currentLevel === 1) {
-        // Уровень 2: A vs AN
-        setDragon('thought', "Выбери правильный артикль 'a' или 'an' для исчисляемых продуктов!");
-        container.innerHTML = `
-          <div>
-            <div class="task-title">Уровень 2: Артикли A / AN</div>
-            <div class="theory-box">
-              📌 <b>Правило:</b> <b>A</b> используется перед согласными звуками (a banana). <b>AN</b> — перед гласными звуками a, e, i, o, u (an apple).
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
-              <div style="background:#f5f5f4; padding:12px; border-radius:8px; display:flex; align-items:center; gap:12px;">
-                <img src="${ASSETS.food.apple}" style="width:50px; height:50px; object-fit:contain;">
-                <div>
-                  <p style="font-weight:600; margin-bottom:4px;">___ apple</p>
-                  <div class="options-row">
-                    <button class="opt-btn" onclick="checkL2(this, 'an', 0)">an</button>
-                    <button class="opt-btn" onclick="checkL2(this, 'a', 0)">a</button>
-                  </div>
-                </div>
-              </div>
-              <div style="background:#f5f5f4; padding:12px; border-radius:8px; display:flex; align-items:center; gap:12px;">
-                <img src="${ASSETS.food.carrot}" style="width:50px; height:50px; object-fit:contain;">
-                <div>
-                  <p style="font-weight:600; margin-bottom:4px;">___ carrot</p>
-                  <div class="options-row">
-                    <button class="opt-btn" onclick="checkL2(this, 'a', 1)">a</button>
-                    <button class="opt-btn" onclick="checkL2(this, 'an', 1)">an</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="footer-bar">
-            <span id="resL2" style="font-weight:700; color:var(--muted);">Ответь на оба вопроса правильно</span>
-            <button class="btn" id="nextBtnL2" style="display:none;" onclick="completeLevel(1)">Далее ➔</button>
-          </div>
-        `;
-      }
-      else if (currentLevel === 2) {
-        // Уровень 3: There is / There are на фоне холодильника
-        setDragon('happy', "Загляни в наш открытый шкаф-холодильник и выбери правильную форму There is / There are!");
-        container.innerHTML = `
-          <div>
-            <div class="task-title">Уровень 3: Конструкции There is / There are</div>
-            <div class="theory-box">
-              📌 <b>Правило:</b> <b>There is</b> — для 1 предмета или неисчисляемого (There is a carrot / There is some milk). <b>There are</b> — для множественного числа (There are some apples).
-            </div>
-            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
-              <div style="background:#f5f5f4; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                <span>1. There ___ a tomato on the shelf.</span>
-                <div><button class="opt-btn" onclick="checkL3(this, 'is', 0)">is</button> <button class="opt-btn" onclick="checkL3(this, 'are', 0)">are</button></div>
-              </div>
-              <div style="background:#f5f5f4; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-                <span>2. There ___ some eggs in the bowl.</span>
-                <div><button class="opt-btn" onclick="checkL3(this, 'are', 1)">are</button> <button class="opt-btn" onclick="checkL3(this, 'is', 1)">is</button></div>
-              </div>
-            </div>
-          </div>
-          <div class="footer-bar">
-            <span id="resL3" style="font-weight:700; color:var(--muted);">Ответь верно на оба вопроса</span>
-            <button class="btn" id="nextBtnL3" style="display:none;" onclick="completeLevel(2)">Далее ➔</button>
-          </div>
-        `;
-      }
-      else if (currentLevel === 3) {
-        // Уровень 4: Shopping List & Some/Any
-        setDragon('proud', "Собери по списку покупок продукты в холодильник и напиши итоговое предложение!");
-        container.innerHTML = `
-          <div>
-            <div class="task-title">Уровень 4: Shopping List & Some / Any</div>
-            <div class="theory-box">
-              📌 <b>Правило:</b> В утверждениях пишем <b>some</b> (There are some eggs), в отрицаниях и вопросах — <b>any</b> (There aren't any tomatoes).
-            </div>
-            <div class="dd-container">
-              <div class="source-pool" id="poolL4">
-                <div class="food-chip" draggable="true" ondragstart="event.dataTransfer.setData('text', 'egg')" style="background-image:url('${ASSETS.food.egg}')"></div>
-                <div class="food-chip" draggable="true" ondragstart="event.dataTransfer.setData('text', 'pizza')" style="background-image:url('${ASSETS.food.pizza}')"></div>
-                <div class="food-chip" draggable="true" ondragstart="event.dataTransfer.setData('text', 'juice')" style="background-image:url('${ASSETS.food.juice}')"></div>
-              </div>
-              <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
-                <div style="background:#fef3c7; padding:8px; border-radius:6px; font-size:13px;">
-                  📋 <b>Список покупок дракона:</b> перетащи <u>только</u> яйца (egg) и сок (juice) в открытый шкаф!
-                </div>
-                <div class="drop-target" ondragover="event.preventDefault()" ondrop="dropL4(event)" id="fridgeDropZone" style="min-height:120px;">
-                  <h4>🚪 Открытая полка холодильника</h4>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="footer-bar">
-            <span id="resL4" style="font-weight:700; color:var(--muted);">Собери продукты в холодильник</span>
-            <button class="btn" id="nextBtnL4" style="display:none;" onclick="finishGame()">Завершить квест 🎉</button>
-          </div>
-        `;
-      }
-    }
-
-    // Логика уровня 1 (Drag & Drop сортировка)
-    let sortedL1 = { countable: 0, uncountable: 0 };
-    function dropL1(e, type) {
-      e.preventDefault();
-      const item = e.dataTransfer.getData('text');
-      if ((type === 'countable' && (item === 'apple' || item === 'carrot')) ||
-          (type === 'uncountable' && (item === 'milk' || item === 'cheese'))) {
-        const zone = type === 'countable' ? document.getElementById('boxCountable') : document.getElementById('boxUncountable');
-        const el = document.createElement('div');
-        el.className = 'food-chip';
-        el.style.backgroundImage = `url('${ASSETS.food[item]}')`;
-        zone.appendChild(el);
-        
-        // удаляем из пула
-        event.target.closest('.dd-container').querySelector(`[title="${item}"]`)?.remove();
-        sortedL1[type]++;
-        
-        if (sortedL1.countable === 2 && sortedL1.uncountable === 2) {
-          document.getElementById('resL1').textContent = "Отлично! Все продукты распределены верно.";
-          document.getElementById('resL1').style.color = "var(--success)";
-          document.getElementById('nextBtnL1').style.display = 'block';
-        }
-      } else {
-        alert("Ой, этот продукт относится к другой группе! Вспомни правило.");
-      }
-    }
-
-    // Логика уровня 2 (A vs AN)
-    let solvedL2 = [false, false];
-    function checkL2(btn, choice, index) {
-      const parent = btn.closest('div');
-      parent.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
-      const correct = (index === 0 && choice === 'an') || (index === 1 && choice === 'a');
-      if (correct) {
-        btn.classList.add('correct');
-        solvedL2[index] = true;
-      } else {
-        btn.classList.add('incorrect');
-      }
-      if (solvedL2[0] && solvedL2[1]) {
-        document.getElementById('resL2').textContent = "Супер! Артикли освоены.";
-        document.getElementById('resL2').style.color = "var(--success)";
-        document.getElementById('nextBtnL2').style.display = 'block';
-      }
-    }
-
-    // Логика уровня 3 (There is / There are)
-    let solvedL3 = [false, false];
-    function checkL3(btn, choice, index) {
-      const parent = btn.closest('div');
-      parent.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
-      const correct = (index === 0 && choice === 'is') || (index === 1 && choice === 'are');
-      if (correct) {
-        btn.classList.add('correct');
-        solvedL3[index] = true;
-      } else {
-        btn.classList.add('incorrect');
-      }
-      if (solvedL3[0] && solvedL3[1]) {
-        document.getElementById('resL3').textContent = "Молодец! Конструкции усвоены.";
-        document.getElementById('resL3').style.color = "var(--success)";
-        document.getElementById('nextBtnL3').style.display = 'block';
-      }
-    }
-
-    // Логика уровня 4 (Shopping list)
-    let l4Collected = [];
-    function dropL4(e) {
-      e.preventDefault();
-      const item = e.dataTransfer.getData('text');
-      const zone = document.getElementById('fridgeDropZone');
-      
-      if (item === 'egg' || item === 'juice') {
-        if (!l4Collected.includes(item)) {
-          l4Collected.push(item);
-          const el = document.createElement('div');
-          el.className = 'food-chip';
-          el.style.backgroundImage = `url('${ASSETS.food[item]}')`;
-          zone.appendChild(el);
-          event.target.closest('.dd-container').querySelector(`[draggable="true"][ondragstart*="${item}"]`)?.remove();
-        }
-        if (l4Collected.length === 2) {
-          document.getElementById('resL4').textContent = "Все продукты по списку собраны в холодильник!";
-          document.getElementById('resL4').style.color = "var(--success)";
-          document.getElementById('nextBtnL4').style.display = 'block';
-        }
-      } else {
-        alert("Этого продукта нет в списке покупок дракона!");
-      }
-    }
-
-    function completeLevel(idx) {
-      levelProgress[idx] = true;
-      let passedCount = levelProgress.filter(Boolean).length;
-      document.getElementById('scoreBadge').textContent = `⭐ ${passedCount} / 4 пройдено`;
-      
-      if (idx < 3) {
-        document.getElementById(`tab${idx + 1}`).disabled = false;
-        switchLevel(idx + 1);
-      }
-    }
-
-    function finishGame() {
-      levelProgress[3] = true;
-      document.getElementById('scoreBadge').textContent = `⭐ 4 / 4 пройдено`;
-      setDragon('proud', "Ура! Квест полностью пройден, я сыт и счастлив благодаря тебе!");
-      alert("🎉 Потрясающе! Вы с учеником успешно завершили сказочный квест по кухне!");
-    }
-
-    function setDragon(mood, speech) {
-      document.getElementById('dragonImg').src = ASSETS.dragons[mood] || ASSETS.dragons.hungry;
-      document.getElementById('dragonSpeech').textContent = `"${speech}"`;
-    }
-
-    // Таймер
-    let seconds = 300;
-    setInterval(() => {
-      if (seconds > 0) seconds--;
-      let m = Math.floor(seconds / 60).toString().padStart(2, '0');
-      let s = (seconds % 60).toString().padStart(2, '0');
-      document.getElementById('timerBadge').textContent = `⏱️ ${m}:${s}`;
-    }, 1000);
-
-    // Старт
-    switchLevel(0);
-  </script>
-</body>
-</html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dragon Kitchen Quest — A1</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --ink:#3b2415; --ink2:#6b4a2f; --paper:#fff8ec; --paper2:#fdf0dc;
+    --gold:#c8842a; --gold-d:#96601a; --red:#b4442e; --green:#4a7c31;
+    --shadow:0 6px 18px rgba(60,32,12,.22);
+  }
+  html,body{height:100%}
+  body{
+    font-family:"Segoe UI",-apple-system,System-ui,Roboto,sans-serif;
+    background:#2a1a10; color:var(--ink); overflow:hidden;
+  }
+  /* ---------- SCENE ---------- */
+  #scene{
+    position:fixed; inset:0;
+    background-image:url('https://i.yapx.ru/eNLcW.jpg');
+    background-size:cover; background-position:center;
+    transition:background-image .5s ease;
+  }
+  #scene::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg,rgba(255,240,215,.30) 0%,rgba(255,240,215,.12) 45%,rgba(60,30,10,.32) 100%);
+    pointer-events:none;
+  }
+  /* ---------- HUD ---------- */
+  #hud{
+    position:absolute; top:0; left:0; right:0; z-index:30;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px; padding:10px 16px;
+    background:linear-gradient(180deg,rgba(59,36,21,.92),rgba(59,36,21,.72));
+    border-bottom:3px solid var(--gold);
+    color:#ffeccc; flex-wrap:wrap;
+  }
+  #hud .title{font-size:17px;font-weight:800;letter-spacing:.3px;color:#ffd894}
+  #hud .stats{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .chip{
+    background:rgba(255,248,236,.14); border:1px solid rgba(255,216,148,.45);
+    padding:4px 10px; border-radius:20px; font-size:13px; font-weight:700; color:#ffeccc;
+  }
+  .chip b{color:#ffd894}
+  .chip.warn{background:rgba(180,68,46,.35);border-color:#e0876f}
+  /* ---------- TABS ---------- */
+  #tabs{
+    position:absolute; top:58px; left:0; right:0; z-index:25;
+    display:flex; gap:6px; padding:8px 16px; overflow-x:auto;
+    background:rgba(59,36,21,.55); backdrop-filter:blur(3px);
+  }
+  .tab{
+    flex:1 0 auto; min-width:132px;
+    border:2px solid rgba(255,216,148,.35); background:rgba(255,248,236,.10);
+    color:#ffeccc; font:inherit; font-size:13px; font-weight:700;
+    padding:7px 10px; border-radius:9px; cursor:pointer;
+    display:flex; align-items:center; gap:6px; justify-content:center;
+    transition:all .18s; white-space:nowrap;
+  }
+  .tab:hover:not(:disabled){background:rgba(255,248,236,.22)}
+  .tab.active{background:var(--gold); border-color:#ffd894; color:#2a1a10}
+  .tab:disabled{opacity:.42; cursor:not-allowed}
+  .tab .num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:19px; height:19px; border-radius:50%;
+    background:rgba(0,0,0,.25); font-size:11px;
+  }
+  .tab.active .num{background:rgba(0,0,0,.18)}
+  .tab.done::after{content:'✓'; color:#8fd06a; font-weight:900}
+  .tab.active.done::after{color:#2a1a10}
+  /* ---------- PANEL ---------- */
+  #panelWrap{
+    position:absolute; inset:104px 16px 14px 16px; z-index:20;
+    display:flex; gap:14px; align-items:stretch; pointer-events:none;
+  }
+  #dragonCol{
+    width:196px; flex:0 0 196px; pointer-events:none;
+    display:flex; flex-direction:column; justify-content:flex-end; gap:6px;
+  }
+  #dragonImg{
+    width:100%; max-height:270px; object-fit:contain; object-position:bottom;
+    filter:drop-shadow(0 8px 14px rgba(0,0,0,.45));
+    transition:opacity .25s;
+  }
+  #speech{
+    background:var(--paper); border:3px solid var(--gold-d); border-radius:14px;
+    padding:9px 12px; font-size:13.5px; font-weight:600; line-height:1.4;
+    color:var(--ink); box-shadow:var(--shadow); position:relative;
+  }
+  #speech::after{
+    content:''; position:absolute; bottom:-11px; left:26px;
+    border:8px solid transparent; border-top-color:var(--gold-d);
+  }
+  #panel{
+    flex:1; min-width:0; pointer-events:auto;
+    background:rgba(255,248,236,.96); border:3px s
