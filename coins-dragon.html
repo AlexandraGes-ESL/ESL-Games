@@ -10,7 +10,7 @@
 
 #cg-field{position:absolute!important;top:100px!important;left:0!important;width:1200px!important;height:420px!important;overflow:hidden!important;z-index:10!important;}
 
-.cg-coin{position:absolute!important;width:60px!important;height:60px!important;background-image:url('https://i.yapx.ru/eOiF0.png')!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.3))!important;z-index:20!important;}
+.cg-coin{position:absolute!important;width:80px!important;height:80px!important;background-image:url('https://i.yapx.ru/eOiF0.png')!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.3))!important;z-index:20!important;}
 
 #cg-catcher{position:absolute!important;top:420px!important;left:0!important;width:220px!important;height:180px!important;z-index:50!important;pointer-events:none!important;transition:left 0.08s linear!important;}
 #cg-catcher img{width:100%!important;height:100%!important;object-fit:contain!important;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.3))!important;display:block!important;}
@@ -144,12 +144,12 @@ try{window.__CG__.destroy();}catch(e){}
 window.__CG__=null;
 
 var QUIZ_DATA=[
-{q:"What does 'apple' start with?",opts:["A vowel","A consonant","The letter 'a'","Uppercase"],ans:1},
-{q:"Which word means 'to consume food'?",opts:["drink","eat","sleep","run"],ans:1},
-{q:"Complete: 'I ___ a student'",opts:["are","am","is","be"],ans:1},
-{q:"What is the opposite of 'hot'?",opts:["warm","cold","cool","chilly"],ans:1},
-{q:"Choose the correct plural",opts:["childs","children","childes","chields"],ans:1},
-{q:"Which is a color?",opts:["happy","orange","quick","run"],ans:1}
+{q:"I need ___ milk for breakfast",opts:["some","any","a","an"],ans:0},
+{q:"Do you have ___ apples?",opts:["some","any","a","an"],ans:1},
+{q:"There are ___ oranges in the basket",opts:["some","any","a","an"],ans:0},
+{q:"I don't want ___ sugar in my tea",opts:["some","any","a","an"],ans:1},
+{q:"Can you give me ___ water?",opts:["some","any","a","an"],ans:0},
+{q:"There isn't ___ cheese left",opts:["some","any","a","an"],ans:1}
 ];
 
 var ROOT=null,S=null,audioCtx=null,masterGain=null,listeners=[],isEditorMode=false;
@@ -235,7 +235,7 @@ function spawnCoin(){
 if(!S||!S.running||isEditorMode)return;
 var field=byId('cg-field');if(!field)return;
 var coin=document.createElement('div');coin.className='cg-coin';
-var x=Math.random()*(1200-60);
+var x=Math.random()*(1200-80);
 sp(coin,'left',x+'px');sp(coin,'top','-70px');
 field.appendChild(coin);
 if(S.coins)S.coins.push({el:coin,x:x,y:-70,caught:false});
@@ -269,7 +269,7 @@ S.spawnInterval=null;
 function gameLoop(){
 if(!S||!S.running||isEditorMode)return;
 
-var speed=7;
+var speed=10;
 if(S.keys.left)S.catcherX=Math.max(110,S.catcherX-speed);
 if(S.keys.right)S.catcherX=Math.min(1090,S.catcherX+speed);
 
@@ -284,7 +284,7 @@ else if(S.keys.right){sp(img,'transform','scaleX(-1)');}
 }
 
 var catcherLeft=S.catcherX-110,catcherRight=S.catcherX+110,catcherY=420;
-var fallSpeed=3.5;
+var fallSpeed=2.5;
 
 for(var i=S.coins.length-1;i>=0;i--){
 var c=S.coins[i];
@@ -292,10 +292,10 @@ if(!c||c.caught){S.coins.splice(i,1);continue;}
 c.y+=fallSpeed;
 sp(c.el,'top',c.y+'px');
 
-var coinCX=c.x+30;
+var coinCX=c.x+40;
 if(c.y>=catcherY&&c.y<=catcherY+180&&coinCX>=catcherLeft&&coinCX<=catcherRight){
 S.coins.splice(i,1);
-SFX.coin();screenFlash('good');sparkle(c.x+30,c.y+30);
+SFX.coin();screenFlash('good');sparkle(c.x+40,c.y+40);
 if(c.el.parentNode)c.el.remove();
 S.caught++;
 byId('cg-caught-display-text').textContent=S.caught+'/'+S.needCatch;
@@ -333,7 +333,7 @@ opts.appendChild(btn);
 }
 
 S.quizActive=true;
-S.quizTime=12;
+S.quizTime=20;
 byId('cg-quiz-overlay').classList.add('visible');
 byId('cg-quiz-modal').classList.add('visible');
 
@@ -342,7 +342,7 @@ S.quizInterval=setInterval(updateQuizTimer,100);
 }
 
 function updateQuizTimer(){
-var pct=Math.max(0,(S.quizTime/12)*100);
+var pct=Math.max(0,(S.quizTime/20)*100);
 var fill=byId('cg-timer-fill');
 if(fill){
 sp(fill,'width',pct+'%');
@@ -433,7 +433,7 @@ S={
 cycle:1,caught:0,needCatch:2,bankCoins:0,
 catcherX:600,coins:[],running:false,
 keys:{left:false,right:false},
-quizActive:false,quizTime:12,quizInterval:null,
+quizActive:false,quizTime:20,quizInterval:null,
 gameLoop:null,spawnInterval:null
 };
 byId('cg-end-screen').classList.remove('visible');
@@ -446,7 +446,7 @@ ROOT=document.getElementById('coinGame');
 
 isEditorMode=detectEditorMode();
 
-S={cycle:1,caught:0,needCatch:2,bankCoins:0,catcherX:600,coins:[],running:false,keys:{left:false,right:false},quizActive:false,quizTime:12,quizInterval:null,gameLoop:null,spawnInterval:null};
+S={cycle:1,caught:0,needCatch:2,bankCoins:0,catcherX:600,coins:[],running:false,keys:{left:false,right:false},quizActive:false,quizTime:20,quizInterval:null,gameLoop:null,spawnInterval:null};
 
 updateHUD();
 
