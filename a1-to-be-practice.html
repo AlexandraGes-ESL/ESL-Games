@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A1 Practice · Numbers, Days, Pronouns, To Be</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#f9f6f1;--sand:#e8dfd4;--rose:#d4a89e;--sage:#a8b6a1;--mocha:#8c6d5a;--ink:#3a2e28;--paper:#fffcf8;--mint:#d8ebe2;--peach:#f4d9ce;--sky:#dfe9f0;--lavender:#e5dff5}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--cream);color:var(--ink);font-family:Inter,Arial,sans-serif;line-height:1.6;padding-bottom:60px}.wrap{max-width:920px;margin:auto;padding:40px 20px}.hero{text-align:center;padding:60px 20px;background:linear-gradient(135deg,#f4d9ce 0%,#e8dfd4 50%,#d8ebe2 100%);border-radius:20px;margin-bottom:35px;position:relative;overflow:hidden}.hero::before{content:'';position:absolute;top:-50px;right:-80px;width:300px;height:300px;background:rgba(255,255,255,.25);border-radius:50%}.hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:250px;height:250px;background:rgba(168,182,161,.15);border-radius:50%}h1{font-family:'Crimson Pro',Georgia,serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:700;margin:0 0 12px;color:var(--mocha);position:relative}.tagline{font-size:1.05rem;color:#6b544a;margin:0;position:relative}.banner{width:100%;border-radius:12px;margin-bottom:16px;display:block;object-fit:cover}.banner-wide{aspect-ratio:21/9}.banner-std{aspect-ratio:16/9}.progress-box{background:var(--paper);border:2px solid var(--sand);border-radius:16px;padding:18px 22px;margin-bottom:28px;box-shadow:0 4px 14px rgba(138,109,90,.08)}.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:.88rem;color:var(--mocha);font-weight:600}.progress-bar{height:12px;background:#f0ebe3;border-radius:100px;overflow:hidden}.progress-fill{height:100%;width:0;background:repeating-linear-gradient(90deg,var(--sage) 0 15px,#93a589 15px 24px);transition:width .4s}.section{background:var(--paper);border:2px solid var(--sand);border-radius:18px;padding:28px;margin-bottom:24px;position:relative}.section-title{font-family:'Crimson Pro',Georgia,serif;font-size:1.75rem;font-weight:700;color:var(--mocha);margin:0 0 6px}.section-subtitle{color:#8a7368;font-size:.9rem;margin:0 0 20px}.hint-chip{display:inline-block;background:var(--mint);color:#3a5a3a;font-size:.78rem;font-weight:600;padding:4px 10px;border-radius:20px;margin:0 0 16px}.word-search-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:460px;margin:20px auto;user-select:none}.ws-cell{aspect-ratio:1;background:var(--cream);border:2px solid var(--sand);border-radius:6px;display:grid;place-items:center;font:700 .85rem Inter,sans-serif;color:var(--ink);cursor:pointer;transition:.15s}.ws-cell.selecting{background:var(--peach);border-color:var(--rose)}.ws-cell.found{background:var(--sage);color:#fff;border-color:#8a9c80}.ws-found-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}.ws-word{font:600 .82rem Inter,sans-serif;padding:7px 12px;background:var(--cream);border:2px solid var(--sand);border-radius:8px;color:var(--mocha)}.ws-word.found{background:var(--mint);border-color:var(--sage);color:#3a5a3a;text-decoration:line-through}.scramble-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:20px}.scramble-item{background:var(--cream);border:2px solid var(--sand);border-radius:12px;padding:16px}.scramble-label{font-weight:600;color:var(--mocha);margin-bottom:10px;font-size:.9rem}.tiles{display:flex;gap:6px;flex-wrap:wrap;min-height:40px;margin-bottom:10px}.tile{background:var(--paper);border:2px solid var(--rose);border-radius:6px;padding:8px 10px;font:700 .9rem Inter,sans-serif;color:var(--mocha);cursor:grab;user-select:none;transition:.15s}.tile:active{cursor:grabbing;transform:scale(.95)}.tile.placed{background:var(--sage);border-color:#8a9c80;color:#fff}.answer-zone{min-height:44px;background:var(--paper);border:2px dashed var(--sand);border-radius:8px;padding:8px;display:flex;gap:4px;flex-wrap:wrap}.pronoun-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:20px}.pronoun-card{background:var(--cream);border:2px solid var(--sand);border-radius:12px;padding:16px;transition:.2s;text-align:center}.pronoun-img{width:100%;max-width:220px;height:150px;border-radius:10px;margin:0 auto 12px;display:block;object-fit:cover}.pronoun-sent{font-size:.92rem;color:#6b544a;margin-bottom:10px;line-height:1.5}.pronoun-choices{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}.pronoun-choice{font:600 .82rem Inter,sans-serif;background:var(--paper);border:2px solid var(--sand);color:var(--mocha);padding:6px 12px;border-radius:6px;cursor:pointer;transition:.15s}.pronoun-choice:hover{border-color:var(--sage)}.pronoun-choice.selected{background:var(--sage);border-color:#8a9c80;color:#fff}.pronoun-choice.correct{background:var(--sage);border-color:#8a9c80;color:#fff}.pronoun-choice.wrong{background:var(--rose);border-color:var(--rose);color:#fff}.tobe-grid{display:grid;gap:16px;margin-top:20px}.tobe-item{background:var(--cream);border:2px solid var(--sand);border-radius:12px;padding:16px}.tobe-dialogue{display:flex;gap:12px;align-items:flex-start}.avatar{width:56px;height:56px;border-radius:50%;flex-shrink:0;object-fit:cover;border:2px solid var(--sand)}.speech{background:var(--paper);border:2px solid var(--sand);border-radius:12px;padding:10px 14px;font-size:.9rem;color:#6b544a;flex:1;line-height:1.5}.blank{display:inline-block;min-width:70px;border-bottom:2px solid var(--rose);margin:0 4px;text-align:center}.response-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}.response-row input{font:600 .9rem Inter,sans-serif;background:var(--paper);border:2px solid var(--sand);border-radius:8px;padding:8px 12px;outline:0;width:110px}.response-row input:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(168,182,161,.15)}.response-row input.correct{border-color:var(--sage);background:var(--mint)}.response-row input.wrong{border-color:var(--rose);background:var(--peach)}.footer-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:30px}.btn{font:700 .92rem Inter,sans-serif;border:0;padding:13px 22px;border-radius:10px;cursor:pointer;transition:.2s}.btn-check{background:var(--sage);color:#fff;box-shadow:0 4px 0 #8a9c80}.btn-check:hover{transform:translateY(-2px)}.btn-reset{background:var(--paper);color:var(--mocha);border:2px solid var(--sand)}.result{display:none}.result.show{display:block;background:linear-gradient(135deg,#edfaf5,#d8ebe2);border:2px solid #a8b6a1;border-radius:16px;padding:24px;margin-top:24px;text-align:center}.result h2{font-family:'Crimson Pro',Georgia,serif;font-size:1.6rem;margin:0 0 8px;color:#3a5a3a}.result p{margin:0 0 6px;color:#5a7a5a;font-size:.96rem}.result .breakdown{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}.result .bd{font:600 .78rem Inter,sans-serif;padding:6px 11px;border-radius:20px;background:var(--paper);border:2px solid var(--sand);color:var(--mocha)}.result .bd.done{background:var(--sage);border-color:#8a9c80;color:#fff}.result .bd.partial{background:var(--peach);border-color:var(--rose);color:#6b3a30}@media(max-width:768px){.wrap{padding:30px 14px}.hero{padding:45px 18px;margin-bottom:24px}.hero::before,.hero::after{width:200px;height:200px}.section{padding:20px 16px}.section-title{font-size:1.45rem}.word-search-grid{grid-template-columns:repeat(10,1fr);gap:2px;max-width:100%}.ws-cell{font-size:.62rem;padding:2px}.ws-word{font-size:.72rem;padding:5px 8px}.scramble-grid,.pronoun-grid,.tobe-grid{grid-template-columns:1fr}.pronoun-img{max-width:100%;height:130px}.avatar{width:48px;height:48px}.speech{font-size:.85rem;padding:9px 11px}.progress-box{padding:14px 16px}.btn{font-size:.87rem;padding:11px 18px}}@media(max-width:480px){.hero{padding:35px 14px}h1{font-size:1.8rem}.tagline{font-size:.95rem}.word-search-grid{grid-template-columns:repeat(10,1fr);gap:1px}.ws-cell{font-size:.55rem;border-radius:3px}.ws-word{font-size:.68rem;padding:4px 7px}.pronoun-img{height:110px}.tobe-dialogue{gap:8px}.avatar{width:42px;height:42px}.speech{font-size:.8rem}.response-row input{width:100%;max-width:200px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero"><h1>A1 Practice</h1><p class="tagline">Numbers, days, pronouns, and to be</p></header>
+<div class="progress-box"><div class="progress-label"><span>Overall progress</span><strong id="progressText">0 / 4 sections</strong></div><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+
+<section class="section"><img class="banner banner-std" src="https://i.yapx.ru/eO5eM.jpg" alt="Numbers illustration"><h2 class="section-title">Numbers 1–20 Word Search</h2><p class="section-subtitle">Click and drag across letters to select a word.</p><div class="hint-chip">Words go left→right and top→down. They can cross each other.</div><div class="word-search-grid" id="wordSearchGrid"></div><div class="ws-found-list" id="foundList"></div></section>
+
+<section class="section"><img class="banner banner-wide" src="https://i.yapx.ru/eO5eN.jpg" alt="Days illustration"><h2 class="section-title">Days of the Week Scramble</h2><p class="section-subtitle">Click or drag the letters to spell each day correctly.</p><div class="scramble-grid" id="scrambleGrid"></div></section>
+
+<section class="section"><h2 class="section-title">Subject Pronouns Match</h2><p class="section-subtitle">Choose the correct pronoun for each picture.</p><div class="pronoun-grid" id="pronounGrid"></div></section>
+
+<section class="section"><h2 class="section-title">To Be Mini-Dialogues</h2><p class="section-subtitle">Complete each conversation with am, is, or are.</p><div class="tobe-grid" id="tobeGrid"></div></section>
+
+<div class="footer-actions"><button class="btn btn-reset" id="reset" type="button">Reset</button><button class="btn btn-check" id="check" type="button">Check my work</button></div>
+<div class="result" id="result"></div>
+</div>
+<script>
+const norm=x=>x.trim().replace(/\s+/g,'').toLowerCase();
+const audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+function beep(freq,dur,vol){const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.frequency.value=freq;osc.connect(gain);gain.connect(audioCtx.destination);gain.gain.setValueAtTime(vol||.08,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+dur);osc.start();osc.stop(audioCtx.currentTime+dur)}
+function playCorrect(){beep(780,.1);setTimeout(()=>beep(1040,.16),85)}
+function playWrong(){beep(190,.22)}
+function playDone(){[660,880,1100].forEach((f,i)=>setTimeout(()=>beep(f,.18),i*130))}
+
+const grid=[
+  ['T','W','E','L','V','E','X','Q','Z','P'],
+  ['W','O','N','E','K','J','S','I','Y','L'],
+  ['E','F','I','V','E','M','E','X','U','A'],
+  ['N','I','N','E','R','G','V','T','E','B'],
+  ['T','F','O','U','R','N','E','E','I','C'],
+  ['Y','E','S','I','X','H','N','E','G','D'],
+  ['F','I','F','T','E','E','N','N','H','E'],
+  ['K','L','M','N','O','P','Q','R','T','T']
+];
+const wordsToFind=[
+  {word:'TWELVE',row:0,col:0,dir:'h'},
+  {word:'ONE',row:1,col:1,dir:'h'},
+  {word:'FIVE',row:2,col:1,dir:'h'},
+  {word:'NINE',row:3,col:1,dir:'h'},
+  {word:'FOUR',row:4,col:1,dir:'h'},
+  {word:'SIX',row:5,col:3,dir:'h'},
+  {word:'FIFTEEN',row:6,col:1,dir:'h'},
+  {word:'TEN',row:0,col:0,dir:'v'},
+  {word:'SEVEN',row:2,col:6,dir:'v'},
+  {word:'EIGHT',row:3,col:8,dir:'v'}
+];
+let foundWords=new Set(),selecting=[],isSelecting=false,lastIdx=null;
+document.querySelector('#wordSearchGrid').innerHTML=grid.flat().map((l,i)=>`<div class="ws-cell" data-index="${i}">${l}</div>`).join('');
+document.querySelector('#foundList').innerHTML=wordsToFind.map(w=>`<div class="ws-word" data-word="${w.word}">${w.word}</div>`).join('');
+const cells=[...document.querySelectorAll('.ws-cell')];
+
+function clearSelection(){selecting.forEach(i=>cells[i].classList.remove('selecting'));selecting=[]}
+function startSel(i){isSelecting=true;clearSelection();selecting=[i];lastIdx=i;cells[i].classList.add('selecting')}
+function extendSel(i){
+  if(!isSelecting||i===lastIdx)return;
+  const lr=Math.floor(lastIdx/10),lc=lastIdx%10,r=Math.floor(i/10),c=i%10;
+  const horizontal=(r===lr),vertical=(c===lc);
+  if(!horizontal&&!vertical)return; // only straight lines
+  clearSelection();
+  if(horizontal){const from=Math.min(lc,c),to=Math.max(lc,c);for(let x=from;x<=to;x++){const idx=lr*10+x;selecting.push(idx);cells[idx].classList.add('selecting')}}
+  else{const from=Math.min(lr,r),to=Math.max(lr,r);for(let y=from;y<=to;y++){const idx=y*10+lc;selecting.push(idx);cells[idx].classList.add('selecting')}}
+}
+function endSel(){
+  if(!isSelecting)return;
+  const word=selecting.map(i=>grid[Math.floor(i/10)][i%10]).join('');
+  const reversed=[...selecting].reverse().map(i=>grid[Math.floor(i/10)][i%10]).join('');
+  const match=wordsToFind.find(w=>(w.word===word||w.word===reversed)&&!foundWords.has(w.word));
+  if(match){
+    foundWords.add(match.word);
+    playCorrect();
+    // подсветить зелёным ДО очистки выделения
+    selecting.forEach(i=>{cells[i].classList.remove('selecting');cells[i].classList.add('found')});
+    document.querySelector(`[data-word="${match.word}"]`).classList.add('found');
+  }else{
+    playWrong();
+  }
+  // отдельная очистка розового выделения
+  selecting.forEach(i=>cells[i].classList.remove('selecting'));
+  selecting=[];
+  isSelecting=false;
+  lastIdx=null;
+}
+cells.forEach(cell=>{
+  const i=parseInt(cell.dataset.index);
+  cell.addEventListener('mousedown',e=>{e.preventDefault();startSel(i)});
+  cell.addEventListener('mouseenter',()=>extendSel(i));
+  cell.addEventListener('touchstart',e=>{e.preventDefault();startSel(i)},{passive:false});
+  cell.addEventListener('touchmove',e=>{e.preventDefault();const t=e.touches[0];const el=document.elementFromPoint(t.clientX,t.clientY);if(el&&el.classList.contains('ws-cell'))extendSel(parseInt(el.dataset.index))},{passive:false});
+});
+document.addEventListener('mouseup',endSel);
+document.addEventListener('touchend',endSel);
+
+const days=[{day:'Monday',scrambled:'OMDYNA'},{day:'Tuesday',scrambled:'UTSYADE'},{day:'Wednesday',scrambled:'NEYWSADDE'},{day:'Thursday',scrambled:'RSUHTYAD'},{day:'Friday',scrambled:'ADIYFR'},{day:'Saturday',scrambled:'RUTYASAD'},{day:'Sunday',scrambled:'NUYSAD'}];
+document.querySelector('#scrambleGrid').innerHTML=days.map((d,i)=>`<div class="scramble-item" data-answer="${d.day}"><div class="scramble-label">Day ${i+1}</div><div class="tiles" id="tiles-${i}">${d.scrambled.split('').map(l=>`<div class="tile">${l}</div>`).join('')}</div><div class="answer-zone" id="zone-${i}"></div></div>`).join('');
+days.forEach((d,i)=>{
+  const zone=document.querySelector(`#zone-${i}`),tiles=document.querySelector(`#tiles-${i}`);
+  zone.dataset.tilesId='tiles-'+i;
+  zone.onclick=()=>{const last=zone.querySelector('.tile:last-child');if(last){tiles.appendChild(last);last.classList.remove('placed')}};
+  tiles.querySelectorAll('.tile').forEach(tile=>{
+    tile.onclick=()=>{if(!tile.classList.contains('placed')){zone.appendChild(tile);tile.classList.add('placed')}};
+    tile.ondragstart=e=>e.dataTransfer.setData('text',tile.textContent);
+  });
+  zone.ondragover=e=>e.preventDefault();
+  zone.ondrop=e=>{e.preventDefault();const l=e.dataTransfer.getData('text');const t=[...tiles.querySelectorAll('.tile')].find(x=>x.textContent===l&&!x.classList.contains('placed'));if(t){zone.appendChild(t);t.classList.add('placed')}};
+});
+
+const pronouns=[
+  {img:'https://i.yapx.ru/eO50O.jpg',sentence:'___  is my teacher.',choices:['He','She','They'],answer:'He'},
+  {img:'https://i.yapx.ru/eO5eL.jpg',sentence:'___ is a doctor.',choices:['He','She','It'],answer:'She'},
+  {img:'https://i.yapx.ru/eO5eK.jpg',sentence:'___ are students.',choices:['We','They','You'],answer:'They'},
+  {img:'https://i.yapx.ru/eO5eJ.jpg',sentence:'___ am happy.',choices:['I','You','We'],answer:'I'},
+  {img:'https://i.yapx.ru/eO50F.jpg',sentence:'___ is a dog.',choices:['He','She','It'],answer:'It'}
+];
+document.querySelector('#pronounGrid').innerHTML=pronouns.map((p,i)=>`<div class="pronoun-card" data-answer="${p.answer}"><img class="pronoun-img" src="${p.img}" alt="Illustration"><div class="pronoun-sent">${p.sentence}</div><div class="pronoun-choices">${p.choices.map(c=>`<button class="pronoun-choice" type="button">${c}</button>`).join('')}</div></div>`).join('');
+document.querySelectorAll('.pronoun-choice').forEach(btn=>btn.onclick=()=>{btn.closest('.pronoun-choices').querySelectorAll('.pronoun-choice').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected')});
+
+const tobe=[
+  {avatar:'https://i.yapx.ru/eO5eI.jpg',speech:'Hi! My name ___ Tom.',answer:'is'},
+  {avatar:'https://i.yapx.ru/eO5eH.jpg',speech:'I ___ a teacher.',answer:'am'},
+  {avatar:'https://i.yapx.ru/eO5eG.jpg',speech:'We ___ a family.',answer:'are'},
+  {avatar:'https://i.yapx.ru/eO5eF.jpg',speech:'It ___ a cat.',answer:'is'},
+  {avatar:'https://i.yapx.ru/eO5eE.jpg',speech:'They ___ friends.',answer:'are'},
+  {avatar:'https://i.yapx.ru/eO5eD.jpg',speech:'You ___ very kind!',answer:'are'}
+];
+document.querySelector('#tobeGrid').innerHTML=tobe.map((t,i)=>`<div class="tobe-item" data-answer="${t.answer}"><div class="tobe-dialogue"><img class="avatar" src="${t.avatar}" alt="Avatar"><div class="speech">${t.speech.replace('___','<span class="blank">am / is / are</span>')}</div></div><div class="response-row"><input autocomplete="off" id="tobe-${i}" placeholder="type here"></div></div>`).join('');
+
+document.querySelector('#check').onclick=()=>{
+  const reports={};let sectionsDone=0;
+  // Word search
+  const wsFound=foundWords.size,wsTotal=wordsToFind.length;
+  document.querySelectorAll('.ws-cell.selecting').forEach(c=>c.classList.remove('selecting'));
+  reports['Word Search']={done:wsFound,total:wsTotal,ok:wsFound===wsTotal};
+  if(wsFound===wsTotal)sectionsDone++;
+  // Scramble
+  let dayOk=0;
+  days.forEach((d,i)=>{
+    const zone=document.querySelector(`#zone-${i}`);
+    const placed=[...zone.querySelectorAll('.tile')].map(t=>t.textContent).join('');
+    const ok=norm(placed)===norm(d.day);
+    zone.style.borderColor=ok?'#8a9c80':(placed?'#d4a89e':'#e8dfd4');
+    zone.style.background=ok?'var(--mint)':'var(--paper)';
+    if(ok)dayOk++;
+  });
+  reports['Days Scramble']={done:dayOk,total:days.length,ok:dayOk===days.length};
+  if(dayOk===days.length)sectionsDone++;
+  // Pronouns
+  let prOk=0;
+  document.querySelectorAll('.pronoun-card').forEach((card,i)=>{
+    const sel=card.querySelector('.selected'),ans=pronouns[i].answer;
+    card.querySelectorAll('.pronoun-choice').forEach(c=>c.classList.remove('correct','wrong'));
+    if(sel){const ok=norm(sel.textContent)===norm(ans);sel.classList.add(ok?'correct':'wrong');if(ok)prOk++}
+  });
+  reports['Pronouns']={done:prOk,total:pronouns.length,ok:prOk===pronouns.length};
+  if(prOk===pronouns.length)sectionsDone++;
+  // To be
+  let tbOk=0;
+  tobe.forEach((t,i)=>{
+    const inp=document.querySelector(`#tobe-${i}`);
+    const ok=norm(inp.value)===norm(t.answer);
+    inp.classList.toggle('correct',ok);inp.classList.toggle('wrong',!ok&&inp.value.trim()!=='');
+    if(ok)tbOk++;
+  });
+  reports['To Be']={done:tbOk,total:tobe.length,ok:tbOk===tobe.length};
+  if(tbOk===tobe.length)sectionsDone++;
+
+  document.querySelector('#progressText').textContent=`${sectionsDone} / 4 sections`;
+  document.querySelector('#progressFill').style.width=(sectionsDone/4*100)+'%';
+
+  const totalItems=wsTotal+days.length+pronouns.length+tobe.length;
+  const totalDone=wsFound+dayOk+prOk+tbOk;
+
+  const res=document.querySelector('#result');
+  res.className='result show';
+  const heading=sectionsDone===4?'Perfect! All four sections complete 🎉':sectionsDone>=2?`Almost there — ${sectionsDone}/4 sections complete`:`Keep going — ${sectionsDone}/4 sections complete`;
+  const line=sectionsDone===4?'Excellent work. You can move on to the next activity.':'Check the highlighted answers below and try the unfinished bits again.';
+  res.innerHTML=`<h2>${heading}</h2><p>${line}</p><p style="margin-top:8px;font-weight:600">Total: ${totalDone} / ${totalItems} correct</p><div class="breakdown">${Object.entries(reports).map(([k,v])=>`<span class="bd ${v.ok?'done':(v.done>0?'partial':'')}">${k}: ${v.done}/${v.total}</span>`).join('')}</div>`;
+  if(sectionsDone===4)playDone();
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+document.querySelector('#reset').onclick=()=>{
+  foundWords.clear();isSelecting=false;selecting=[];lastIdx=null;
+  document.querySelectorAll('.ws-cell').forEach(x=>x.classList.remove('found','selecting'));
+  document.querySelectorAll('.ws-word').forEach(x=>x.classList.remove('found'));
+  days.forEach((d,i)=>{
+    const zone=document.querySelector(`#zone-${i}`),tiles=document.querySelector(`#tiles-${i}`);
+    zone.style.borderColor='';zone.style.background='';
+    [...zone.querySelectorAll('.tile')].forEach(t=>{tiles.appendChild(t);t.classList.remove('placed')});
+    [...tiles.querySelectorAll('.tile')].sort((a,b)=>0).forEach(t=>tiles.appendChild(t));
+  });
+  document.querySelectorAll('.pronoun-card').forEach(c=>c.querySelectorAll('.pronoun-choice').forEach(b=>b.className='pronoun-choice'));
+  document.querySelectorAll('.tobe-item input').forEach(i=>{i.value='';i.className=''});
+  document.querySelector('#progressText').textContent='0 / 4 sections';
+  document.querySelector('#progressFill').style.width='0';
+  document.querySelector('#result').className='result';
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+</script>
+</body>
+</html>
