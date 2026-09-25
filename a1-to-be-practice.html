@@ -66,15 +66,6 @@ function clearSelection(){selecting.forEach(i=>cells[i].classList.remove('select
 function startSel(i){isSelecting=true;clearSelection();selecting=[i];lastIdx=i;cells[i].classList.add('selecting')}
 function extendSel(i){
   if(!isSelecting||i===lastIdx)return;
-  const lr=Math.floor(lastIdx/10),lc=lastIdx%10,r=Math.floor(i/10),c=i%10;
-  const horizontal=(r===lr),vertical=(c===lc);
-  if(!horizontal&&!vertical)return; // only straight lines
-  clearSelection();
-  if(horizontal){const from=Math.min(lc,c),to=Math.max(lc,c);for(let x=from;x<=to;x++){const idx=lr*10+x;selecting.push(idx);cells[idx].classList.add('selecting')}}
-  else{const from=Math.min(lr,r),to=Math.max(lr,r);for(let y=from;y<=to;y++){const idx=y*10+lc;selecting.push(idx);cells[idx].classList.add('selecting')}}
-}
-function extendSel(i){
-  if(!isSelecting||i===lastIdx)return;
   const start=selecting[0];
   const sr=Math.floor(start/10),sc=start%10;
   const r=Math.floor(i/10),c=i%10;
@@ -84,7 +75,19 @@ function extendSel(i){
   if(horizontal){const from=Math.min(sc,c),to=Math.max(sc,c);for(let x=from;x<=to;x++){const idx=sr*10+x;selecting.push(idx);cells[idx].classList.add('selecting')}}
   else{const from=Math.min(sr,r),to=Math.max(sr,r);for(let y=from;y<=to;y++){const idx=y*10+sc;selecting.push(idx);cells[idx].classList.add('selecting')}}
 }
-  // отдельная очистка розового выделения
+function endSel(){
+  if(!isSelecting)return;
+  const word=selecting.map(i=>grid[Math.floor(i/10)][i%10]).join('');
+  const reversed=[...selecting].reverse().map(i=>grid[Math.floor(i/10)][i%10]).join('');
+  const match=wordsToFind.find(w=>(w.word===word||w.word===reversed)&&!foundWords.has(w.word));
+  if(match){
+    foundWords.add(match.word);
+    playCorrect();
+    selecting.forEach(i=>{cells[i].classList.remove('selecting');cells[i].classList.add('found')});
+    document.querySelector(`[data-word="${match.word}"]`).classList.add('found');
+  }else{
+    playWrong();
+  }
   selecting.forEach(i=>cells[i].classList.remove('selecting'));
   selecting=[];
   isSelecting=false;
@@ -136,12 +139,10 @@ document.querySelector('#tobeGrid').innerHTML=tobe.map((t,i)=>`<div class="tobe-
 
 document.querySelector('#check').onclick=()=>{
   const reports={};let sectionsDone=0;
-  // Word search
   const wsFound=foundWords.size,wsTotal=wordsToFind.length;
   document.querySelectorAll('.ws-cell.selecting').forEach(c=>c.classList.remove('selecting'));
   reports['Word Search']={done:wsFound,total:wsTotal,ok:wsFound===wsTotal};
   if(wsFound===wsTotal)sectionsDone++;
-  // Scramble
   let dayOk=0;
   days.forEach((d,i)=>{
     const zone=document.querySelector(`#zone-${i}`);
@@ -153,7 +154,6 @@ document.querySelector('#check').onclick=()=>{
   });
   reports['Days Scramble']={done:dayOk,total:days.length,ok:dayOk===days.length};
   if(dayOk===days.length)sectionsDone++;
-  // Pronouns
   let prOk=0;
   document.querySelectorAll('.pronoun-card').forEach((card,i)=>{
     const sel=card.querySelector('.selected'),ans=pronouns[i].answer;
@@ -162,7 +162,6 @@ document.querySelector('#check').onclick=()=>{
   });
   reports['Pronouns']={done:prOk,total:pronouns.length,ok:prOk===pronouns.length};
   if(prOk===pronouns.length)sectionsDone++;
-  // To be
   let tbOk=0;
   tobe.forEach((t,i)=>{
     const inp=document.querySelector(`#tobe-${i}`);
@@ -172,13 +171,10 @@ document.querySelector('#check').onclick=()=>{
   });
   reports['To Be']={done:tbOk,total:tobe.length,ok:tbOk===tobe.length};
   if(tbOk===tobe.length)sectionsDone++;
-
   document.querySelector('#progressText').textContent=`${sectionsDone} / 4 sections`;
   document.querySelector('#progressFill').style.width=(sectionsDone/4*100)+'%';
-
   const totalItems=wsTotal+days.length+pronouns.length+tobe.length;
   const totalDone=wsFound+dayOk+prOk+tbOk;
-
   const res=document.querySelector('#result');
   res.className='result show';
   const heading=sectionsDone===4?'Perfect! All four sections complete 🎉':sectionsDone>=2?`Almost there — ${sectionsDone}/4 sections complete`:`Keep going — ${sectionsDone}/4 sections complete`;
@@ -196,7 +192,6 @@ document.querySelector('#reset').onclick=()=>{
     const zone=document.querySelector(`#zone-${i}`),tiles=document.querySelector(`#tiles-${i}`);
     zone.style.borderColor='';zone.style.background='';
     [...zone.querySelectorAll('.tile')].forEach(t=>{tiles.appendChild(t);t.classList.remove('placed')});
-    [...tiles.querySelectorAll('.tile')].sort((a,b)=>0).forEach(t=>tiles.appendChild(t));
   });
   document.querySelectorAll('.pronoun-card').forEach(c=>c.querySelectorAll('.pronoun-choice').forEach(b=>b.className='pronoun-choice'));
   document.querySelectorAll('.tobe-item input').forEach(i=>{i.value='';i.className=''});
