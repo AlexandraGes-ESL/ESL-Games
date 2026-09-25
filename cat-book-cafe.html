@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Enchanted Flatmate · Personality Adjectives</title>
+<style>
+:root{
+  --plum:#3d2b4f;--mauve:#6b5b8a;--rose:#c9738f;--peach:#f5c9a8;
+  --gold:#d9a34f;--sage:#7f9a85;--cream:#fdf6ee;--paper:#fffaf3;
+  --ink:#3a2b3d;--soft:#8a7a92;--line:#e7dacd;
+  --good:#5f8a68;--goodbg:#eef6ef;--bad:#c4635f;--badbg:#fbf0ee;
+  --magic:#a87fd1;--magicbg:#f6eefc;
+  --r:20px;--sh:0 10px 30px rgba(61,43,79,.10);--shl:0 18px 44px rgba(61,43,79,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse 120% 80% at 50% 0%,#f7ecf4 0%,#f4ede2 45%,#ece4d9 100%);
+  background-attachment:fixed;color:var(--ink);font-family:Nunito,system-ui,sans-serif;
+  line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:auto;padding:0 18px 90px}
+.ic{width:1.1em;height:1.1em;flex-shrink:0;vertical-align:-.18em}
+
+/* ---------- SCREENS ---------- */
+.screen{display:none}
+.screen.on{display:block;animation:riseIn .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes riseIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* ---------- INTRO ---------- */
+.banner-frame{position:relative;margin-top:26px;border-radius:24px;overflow:hidden;
+  border:3px solid #f2e6d9;box-shadow:var(--shl);animation:slowZoom 24s ease-in-out infinite alternate}
+@keyframes slowZoom{from{transform:scale(1)}to{transform:scale(1.03)}}
+.banner-frame img{width:100%;aspect-ratio:21/9;object-fit:cover;display:block}
+.banner-frame::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 45%,rgba(253,246,238,.35) 78%,var(--cream) 100%)}
+.title-block{text-align:center;margin-top:-56px;position:relative;z-index:3;padding:0 10px}
+.candle{width:78px;height:auto;max-width:78px;display:block;margin:0 auto -6px;
+  filter:drop-shadow(0 0 22px rgba(217,163,79,.55))}
+h1{font-family:Fraunces,serif;font-size:clamp(2rem,6.4vw,3.1rem);font-weight:700;color:var(--plum);
+  line-height:1.1;letter-spacing:-.015em;
+  text-shadow:0 2px 16px rgba(253,246,238,.95),0 0 40px rgba(253,246,238,.9)}
+h1 em{font-style:italic;color:var(--rose)}
+.sub{font-size:1.02rem;color:var(--soft);margin-top:10px;font-weight:600}
+.meta-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:16px}
+.chip{display:inline-flex;align-items:center;gap:6px;font:700 .78rem Nunito;background:var(--paper);
+  border:2px solid var(--line);color:var(--mauve);padding:7px 14px;border-radius:100px}
+.chip .ic{color:var(--gold)}
+
+.card{background:var(--paper);border:2px solid var(--line);border-radius:var(--r);padding:26px;
+  box-shadow:var(--sh);margin-top:22px}
+.card-label{display:inline-flex;align-items:center;gap:7px;font-family:Fraunces,serif;font-size:1.1rem;
+  font-weight:600;color:var(--mauve);margin-bottom:12px}
+.card-label .ic{color:var(--rose);width:1.25em;height:1.25em}
+.card p{font-size:.97rem;color:#5b4a63;margin-bottom:11px}
+.card p:last-child{margin-bottom:0}
+.card strong{color:var(--plum)}
+.pinned{font-family:Fraunces,serif;font-style:italic;font-size:1.05rem;color:var(--rose);
+  background:#fdf3f6;border:2px dashed #eccfd9;border-radius:14px;padding:14px 18px;
+  margin:14px 0;text-align:center;transform:rotate(-.6deg)}
+
+/* ---------- CAT ---------- */
+.cat-card{background:linear-gradient(135deg,var(--magicbg),#f8f2e9);border-color:#ddc9ef}
+.cat-top{display:flex;gap:16px;align-items:center;margin-bottom:14px}
+.cat-gif{width:78px;height:78px;max-width:78px;max-height:78px;object-fit:contain;
+  flex:0 0 78px;animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.cat-name{font-family:Fraunces,serif;font-size:1.22rem;font-weight:700;color:var(--plum)}
+.cat-role{font-size:.83rem;color:var(--soft);font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.said{font-style:italic;color:var(--plum);padding-left:15px;border-left:3px solid var(--magic);margin-bottom:11px}
+.sign{text-align:right;font-family:Fraunces,serif;font-weight:600;color:var(--mauve);
+  display:flex;align-items:center;justify-content:flex-end;gap:7px}
+
+/* ---------- HOW IT WORKS ---------- */
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.step{background:var(--cream);border:2px solid var(--line);border-radius:14px;padding:14px}
+.step-n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;
+  background:var(--mauve);color:#fff;font:800 .82rem Nunito;margin-bottom:8px}
+.step h4{font-family:Fraunces,serif;font-size:.98rem;color:var(--plum);margin-bottom:3px;font-weight:600}
+.step p{font-size:.86rem;color:var(--soft);margin:0}
+
+/* ---------- BUTTONS ---------- */
+.cta{display:flex;justify-content:center;margin-top:26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font:800 .95rem Nunito;
+  border:0;padding:15px 30px;border-radius:14px;cursor:pointer;
+  transition:transform .18s,box-shadow .18s,opacity .18s}
+.btn-go{background:linear-gradient(135deg,#7a64a0,var(--plum));color:#fff;
+  box-shadow:0 5px 0 #2e2039,0 10px 24px rgba(61,43,79,.28);font-size:1.02rem;padding:17px 36px}
+.btn-go:hover{transform:translateY(-3px);box-shadow:0 8px 0 #2e2039,0 14px 30px rgba(61,43,79,.3)}
+.btn-go:active{transform:translateY(1px);box-shadow:0 3px 0 #2e2039}
+.btn-ghost{background:var(--paper);color:var(--mauve);border:2px solid var(--line)}
+.btn-ghost:hover{border-color:var(--magic);transform:translateY(-2px)}
+.btn:disabled{opacity:.38;cursor:not-allowed;transform:none!important;box-shadow:0 5px 0 rgba(46,32,57,.3)}
+
+/* ---------- STICKY BAR ---------- */
+.bar{position:sticky;top:0;z-index:40;margin:0 -18px 20px;padding:13px 18px;
+  background:rgba(253,246,238,.88);backdrop-filter:blur(12px);border-bottom:2px solid var(--line);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bar-txt{font:800 .86rem Nunito;color:var(--plum);display:flex;align-items:center;gap:7px}
+.bar-txt .ic{color:var(--gold)}
+.pips{display:flex;gap:6px;margin-left:auto}
+.pip{width:30px;height:30px;border-radius:10px;background:var(--paper);border:2px solid var(--line);
+  font:800 .78rem Nunito;color:var(--soft);cursor:pointer;display:grid;place-items:center;
+  transition:.2s;padding:0}
+.pip:hover{border-color:var(--magic);color:var(--mauve)}
+.pip.now{border-color:var(--magic);background:var(--magicbg);color:var(--plum);
+  box-shadow:0 0 0 4px rgba(168,127,209,.16)}
+.pip.hit{background:var(--good);border-color:#4d7255;color:#fff}
+.pip.part{background:var(--gold);border-color:#bd8b3c;color:#fff}
+.pip.miss{background:#d7b3b1;border-color:var(--bad);color:#6b2f2c}
+.pip .ic{width:14px;height:14px}
+
+/* ---------- CANDIDATE ---------- */
+.who{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
+.portrait{width:164px;height:164px;border-radius:18px;object-fit:cover;border:3px solid #f2e6d9;
+  box-shadow:var(--sh);flex-shrink:0;animation:popIn .5s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes popIn{from{opacity:0;transform:scale(.88) rotate(-2deg)}to{opacity:1;transform:none}}
+.who-info{flex:1;min-width:230px}
+.who-name{font-family:Fraunces,serif;font-size:1.6rem;font-weight:700;color:var(--plum);line-height:1.15}
+.who-role{display:inline-flex;align-items:center;gap:6px;font:700 .78rem Nunito;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--rose);margin:4px 0 13px}
+.quote{font-family:Fraunces,serif;font-style:italic;font-size:1rem;color:#54445c;padding-left:15px;
+  border-left:3px solid var(--peach);margin-bottom:14px;line-height:1.55}
+.facts{display:grid;gap:8px}
+.fact{display:flex;gap:10px;align-items:flex-start;font-size:.9rem;color:#63536a;opacity:0;
+  animation:slideR .42s ease both;animation-delay:calc(var(--i)*.09s + .15s)}
+@keyframes slideR{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+.fact .ic{color:var(--mauve);width:1.15em;height:1.15em;margin-top:.18em}
+
+/* ---------- TASK ---------- */
+.task{background:linear-gradient(135deg,#fbf4fa,#fdf7ef);border:2px dashed #e0cbea;
+  border-radius:16px;padding:20px;margin-top:20px}
+.task-head{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.task-head .ic{color:var(--gold);width:1.3em;height:1.3em;animation:flick 2.6s ease-in-out infinite}
+@keyframes flick{0%,100%{opacity:1}45%{opacity:.6}}
+.task-head h3{font-family:Fraunces,serif;font-size:1.08rem;color:var(--plum);font-weight:600}
+.task-sub{font-size:.88rem;color:var(--soft);margin-bottom:15px}
+.counter{display:inline-flex;align-items:center;gap:6px;font:800 .78rem Nunito;background:var(--paper);
+  border:2px solid var(--line);color:var(--mauve);padding:4px 11px;border-radius:100px;
+  margin-left:8px;transition:.2s}
+.counter.full{background:var(--magic);border-color:#8f65bb;color:#fff}
+.words{display:grid;grid-template-columns:repeat(auto-fit,minmax(136px,1fr));gap:10px}
+.w{position:relative;background:var(--paper);border:2px solid var(--line);border-radius:13px;
+  padding:13px 10px;font:700 .89rem Nunito;color:var(--mauve);cursor:pointer;text-align:center;
+  transition:transform .16s,box-shadow .16s,background .2s,border-color .2s,color .2s;
+  opacity:0;animation:fadeUp .4s ease both;animation-delay:calc(var(--i)*.05s + .3s)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.w:hover:not(.lock){border-color:var(--magic);color:var(--plum);transform:translateY(-3px);
+  box-shadow:0 7px 18px rgba(168,127,209,.2)}
+.w.pick{background:linear-gradient(135deg,var(--magic),#8f65bb);border-color:#7d58a6;color:#fff;
+  box-shadow:0 6px 18px rgba(168,127,209,.38);animation:pop .3s cubic-bezier(.3,1.4,.4,1)}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+.w.lock{cursor:default}
+.w.dim{opacity:.4}
+.w.yes{background:linear-gradient(135deg,#78a882,var(--good));border-color:#4d7255;color:#fff;
+  opacity:1;box-shadow:0 6px 18px rgba(95,138,104,.32)}
+.w.no{background:var(--badbg);border-color:var(--bad);color:var(--bad);opacity:1;
+  text-decoration:line-through;text-decoration-thickness:2px}
+.w-tag{position:absolute;top:-9px;right:-6px;width:22px;height:22px;border-radius:50%;
+  display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.18);
+  animation:pop .34s cubic-bezier(.3,1.5,.4,1) both}
+.w-tag.ok{background:var(--good);color:#fff}
+.w-tag.bad{background:var(--bad);color:#fff}
+.w-tag .ic{width:13px;height:13px;stroke-width:2.6}
+
+/* ---------- REVEAL ---------- */
+.rev{margin-top:18px;border-radius:16px;padding:20px;border:2px solid;
+  animation:openUp .45s cubic-bezier(.2,.85,.25,1) both}
+@keyframes openUp{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.rev.perfect{background:var(--goodbg);border-color:#bcd4c0}
+.rev.partial{background:#fdf6e9;border-color:#e8d4a8}
+.rev.zero{background:var(--badbg);border-color:#e6c4c1}
+.rev-head{display:flex;align-items:center;gap:9px;font-family:Fraunces,serif;font-size:1.1rem;
+  font-weight:600;margin-bottom:8px}
+.rev.perfect .rev-head{color:#3f6347}
+.rev.partial .rev-head{color:#8a6a28}
+.rev.zero .rev-head{color:#8f423e}
+.rev-head .ic{width:1.3em;height:1.3em}
+.rev p{font-size:.93rem;color:#55475b;margin-bottom:12px}
+.truth{display:flex;gap:11px;align-items:flex-start;background:var(--paper);
+  border-left:4px solid var(--gold);border-radius:12px;padding:14px 16px;font-family:Fraunces,serif;
+  font-style:italic;font-size:.99rem;color:var(--plum);line-height:1.55}
+.truth .ic{color:var(--gold);width:1.2em;height:1.2em;margin-top:.2em;flex-shrink:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.spark{position:fixed;pointer-events:none;z-index:99;color:var(--gold);
+  animation:fly .9s ease-out forwards}
+@keyframes fly{0%{opacity:1;transform:translate(0,0) scale(.4) rotate(0)}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(160deg)}}
+
+/* ---------- FINALE ---------- */
+.score-ring{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:4px}
+.ring{--p:0;width:112px;height:112px;border-radius:50%;
+  background:conic-gradient(var(--good) calc(var(--p)*1%),#e8dfd4 0);
+  display:grid;place-items:center;position:relative;animation:spinUp .9s ease both}
+@keyframes spinUp{from{transform:rotate(-90deg) scale(.85);opacity:0}to{transform:none;opacity:1}}
+.ring::after{content:"";position:absolute;inset:9px;background:var(--paper);border-radius:50%}
+.ring span{position:relative;z-index:2;font-family:Fraunces,serif;font-size:1.5rem;
+  font-weight:700;color:var(--plum)}
+.score-txt{text-align:left;max-width:320px}
+.score-txt h3{font-family:Fraunces,serif;font-size:1.3rem;color:var(--plum);margin-bottom:5px}
+.score-txt p{font-size:.92rem;color:var(--soft);margin:0}
+.roster{display:grid;gap:10px;margin-top:6px}
+.row{display:flex;gap:13px;align-items:center;background:var(--paper);border:2px solid var(--line);
+  border-radius:15px;padding:11px 13px;cursor:pointer;transition:.2s;text-align:left;width:100%;
+  font-family:inherit;opacity:0;animation:fadeUp .4s ease both;animation-delay:calc(var(--i)*.07s)}
+.row:hover{border-color:var(--magic);transform:translateX(4px)}
+.row img{width:54px;height:54px;border-radius:12px;object-fit:cover;flex-shrink:0}
+.row-main{flex:1;min-width:0}
+.row-name{font-family:Fraunces,serif;font-weight:700;color:var(--plum);font-size:1.04rem}
+.row-traits{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tr{font:700 .72rem Nunito;background:var(--magicbg);color:var(--mauve);padding:3px 9px;
+  border-radius:100px;border:1px solid #e2d0f0}
+.row-mark{flex-shrink:0;color:var(--line);transition:.2s}
+.row-mark .ic{width:24px;height:24px}
+.row.chosen{border-color:var(--gold);background:linear-gradient(135deg,#fffaf0,#fdf2e2);
+  box-shadow:0 8px 24px rgba(217,163,79,.24)}
+.row.chosen .row-mark{color:var(--gold)}
+.prompts{background:var(--paper);border:2px solid var(--magic);border-radius:var(--r);
+  padding:24px;margin-top:20px}
+.pr{background:var(--magicbg);border-left:4px solid var(--magic);border-radius:12px;
+  padding:14px 16px;margin-bottom:11px}
+.pr:last-child{margin-bottom:0}
+.pr-q{font-weight:800;color:var(--plum);font-size:.95rem;margin-bottom:4px}
+.pr-d{font-size:.87rem;color:var(--soft)}
+.pr-d code{background:var(--paper);border:1px solid var(--line);border-radius:5px;
+  padding:1px 6px;font-family:inherit;color:var(--mauve);font-weight:700}
+
+@media(max-width:620px){
+  .wrap{padding:0 14px 70px}
+  .card{padding:20px}
+  .portrait{width:132px;height:132px}
+  .who{gap:16px}
+  .title-block{margin-top:-38px}
+  .candle{width:62px;max-width:62px}
+  .bar{margin:0 -14px 18px;padding:11px 14px}
+  .pips{margin-left:0;width:100%;justify-content:space-between}
+  .score-txt{text-align:center}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-bread" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13c0-3.3 4-6 9-6s9 2.7 9 6v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M8 11v6M12 10v7M16 11v6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="17" r="2.5"/><circle cx="17" cy="15" r="2.5"/><path d="M9.5 17V7l10-2v10"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H7a2 2 0 0 0-2 2z"/><path d="M9 8h6M9 12h6"/></symbol>
+  <symbol id="i-hush" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11h-8l-5 4v-4H4z"/><path d="M9 10.5h6"/></symbol>
+  <symbol id="i-cup" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h11v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 10h2a2 2 0 0 1 0 4h-2"/><path d="M7 4.5c.8.8.8 1.7 0 2.5M11 4c.8.8.8 1.7 0 2.5"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="4.2"/><path d="M11 11l8 8M16.5 16.5l-2 2M19 19l2-2"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10h-7l-4 4v-4H4z"/><circle cx="9" cy="10" r="1"/><circle cx="12" cy="10" r="1"/><circle cx="15" cy="10" r="1"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14z"/><path d="M5 19c4-4 7-6 11-8"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-brush" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3l5 5-9 9-5-5z"/><path d="M7 12l-3 8 8-3"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 12a6 6 0 0 0 12 0M12 18v3M9 21h6"/></symbol>
+  <symbol id="i-sleep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h6l-6 7h6"/><path d="M4 14h6l-6 6h6"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5v2a3 3 0 0 0 3 3M16 6h3v2a3 3 0 0 1-3 3"/><path d="M12 13v4M9 20h6"/></symbol>
+  <symbol id="i-aid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="3"/><path d="M12 10v6M9 13h6"/></symbol>
+  <symbol id="i-pot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M2 9h20M9 5l1 3M15 5l-1 3"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4 10-10"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 1 1-2.5-6"/><path d="M20 3.5V10h-6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+  <symbol id="i-paw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="9.5" r="1.9"/><circle cx="11.5" cy="7.6" r="1.9"/><circle cx="16.8" cy="9.5" r="1.9"/><path d="M11.8 12.5c3 0 5.2 2 5.2 4.4S14.3 20.5 11.8 20.5 6.6 19.3 6.6 16.9s2.2-4.4 5.2-4.4z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7"/><path d="M6.5 10v10h11V10"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="3.4"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 4 6 6.2 6 10a6 6 0 0 1-12 0c0-2 1-4 3-6 0 2 .9 3 2 3 1.6 0 1-4 1-7z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.6 6.1.8-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.9l6.1-.8z"/></symbol>
+</svg>
+
+<div class="wrap">
+
+<!-- ============ SCREEN 1 : INTRO ============ -->
+<section class="screen on" id="s-intro">
+  <div class="banner-frame"><img src="{{BANNER}}" alt="The Copper Kettle tea shop at dusk"></div>
+  <div class="title-block">
+    <img class="candle" src="{{CANDLE}}" alt="">
+    <h1>The Enchanted <em>Flatmate</em></h1>
+    <p class="sub">A cosy quest for the perfect housemate</p>
+    <div class="meta-row">
+      <span class="chip"><svg class="ic"><use href="#i-chat"></use></svg>Personality adjectives</span>
+      <span class="chip"><svg class="ic"><use href="#i-eye"></use></svg>6 candidates</span>
+      <span class="chip"><svg class="ic"><use href="#i-star"></use></svg>15&ndash;20 min</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="card-label"><svg class="ic"><use href="#i-note"></use></svg>The story</span>
+    <p>You&rsquo;ve just rented a tiny attic flat above <strong>The Copper Kettle</strong> &mdash; a tea shop where the kettle whistles by itself and the cat gives suspiciously good advice.</p>
+    <p>It&rsquo;s perfect. Almost. The rent is <strong>far too high for one person</strong>, so you&rsquo;ve pinned a note to the door:</p>
+    <div class="pinned">&ldquo;Looking for a flatmate. Must be kind. Must like tea. Must not steal my biscuits.&rdquo;</div>
+    <p>Six people replied. Six interviews tonight. The candle is lit &mdash; and somehow, by its light, you can <em>see</em> what a person is really like.</p>
+  </div>
+
+  <div class="card cat-card">
+    <div class="cat-top">
+      <img class="cat-gif" src="{{CAT}}" alt="">
+      <div>
+        <div class="cat-name">Marmalade</div>
+        <div class="cat-role">Tea-shop cat &middot; unpaid advisor</div>
+      </div>
+    </div>
+    <p class="said">&ldquo;So. Six people answered your little note. I read all of them, obviously &mdash; I read everything.&rdquo;</p>
+    <p class="said">&ldquo;Here&rsquo;s the trick, and I&rsquo;ll only say it once: <strong>people tell you who they are in the small things.</strong> Every single one of them wrote the word <em>kind</em> in their letter.&rdquo;</p>
+    <p class="said">&ldquo;But <em>kind</em> is cheap. Look at what they do at three in the morning. That&rsquo;s where the truth lives.&rdquo;</p>
+    <p class="sign">&mdash; Marmalade <svg class="ic"><use href="#i-paw"></use></svg></p>
+  </div>
+
+  <div class="card">
+    <span class="card-label"><svg class="ic"><use href="#i-target"></use></svg>How it works</span>
+    <div class="how">
+      <div class="step"><div class="step-n">1</div><h4>Read the clues</h4><p>A quote and three small habits for each candidate.</p></div>
+      <div class="step"><div class="step-n">2</div><h4>Pick 2 adjectives</h4><p>Watch out &mdash; opposites are mixed in on purpose.</p></div>
+      <div class="step"><div class="step-n">3</div><h4>See the truth</h4><p>The candle reveals what they are really like.</p></div>
+    </div>
+  </div>
+
+  <div class="cta"><button class="btn btn-go" id="begin">Light the candle<svg class="ic"><use href="#i-flame"></use></svg></button></div>
+</section>
+
+<!-- ============ SCREEN 2 : GAME ============ -->
+<section class="screen" id="s-game">
+  <div class="bar">
+    <span class="bar-txt"><svg class="ic"><use href="#i-flame"></use></svg><span id="barLabel">Candidate 1 of 6</span></span>
+    <div class="pips" id="pips"></div>
+  </div>
+  <div id="host"></div>
+</section>
+
+<!-- ============ SCREEN 3 : FINALE ============ -->
+<section class="screen" id="s-finale">
+  <div class="card">
+    <span class="card-label"><svg class="ic"><use href="#i-home"></use></svg>The morning after</span>
+    <div class="score-ring">
+      <div class="ring" id="ring"><span id="ringTxt">0/12</span></div>
+      <div class="score-txt"><h3 id="fHead">&nbsp;</h3><p id="fLine">&nbsp;</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="card-label"><svg class="ic"><use href="#i-key"></use></svg>Now choose: who moves in?</span>
+    <p style="font-size:.92rem;color:var(--soft);margin-bottom:6px">Tap one. There is no right answer &mdash; but you will have to defend it.</p>
+    <div class="roster" id="roster"></div>
+    <div id="verdictBox"></div>
+  </div>
+
+  <div class="prompts">
+    <span class="card-label"><svg class="ic"><use href="#i-chat"></use></svg>Let&rsquo;s talk about it</span>
+    <div class="pr"><div class="pr-q">Why that one? And who did you rule out first?</div><div class="pr-d">Try: <code>I&rsquo;d rather live with someone a bit &hellip; than someone really &hellip;</code></div></div>
+    <div class="pr"><div class="pr-q">Which adjective was hardest to guess from the clues?</div><div class="pr-d">Talk about the gap between what people show and what they are actually like.</div></div>
+    <div class="pr"><div class="pr-q">Describe your own ideal flatmate in three adjectives &mdash; then your worst nightmare.</div><div class="pr-d">Use the negative forms: <code>un-</code> words and opposites.</div></div>
+    <div class="pr"><div class="pr-q">Who would you be friends with but never live with?</div><div class="pr-d">Sociable is not the same as easy to live with. Explain the difference.</div></div>
+  </div>
+
+  <div class="nav" style="justify-content:center;margin-top:24px">
+    <button class="btn btn-ghost" id="again"><svg class="ic"><use href="#i-refresh"></use></svg>Play again</button>
+  </div>
+</section>
+
+</div>
+
+<script>
+const ic=n=>`<svg class="ic"><use href="#i-${n}"></use></svg>`;
+
+const OPP={cheerful:'grumpy',grumpy:'cheerful',sociable:'unsociable',unsociable:'sociable',
+calm:'anxious',anxious:'calm',patient:'impatient',impatient:'patient',
+sensitive:'insensitive',insensitive:'sensitive',confident:'shy',shy:'confident',
+ambitious:'unambitious',unambitious:'ambitious',helpful:'unhelpful',unhelpful:'helpful',
+talented:'untalented',untalented:'talented',active:'lazy',lazy:'active',
+sensible:'silly',silly:'sensible',inspiring:'uninspiring',uninspiring:'inspiring'};
+
+const CANDS=[
+ {id:'luna',name:'Luna Vex',role:'Night-shift baker',icon:'bread',img:'{{P_LUNA}}',
+  quote:'I bake from midnight to six. I hum while I work. Some people say I talk to the dough &mdash; I do, and the dough listens.',
+  facts:[['bread','Brings home leftover croissants every morning'],['moon','Wide awake at 3 a.m., asleep by noon'],['music','Knows 400 songs and sings all of them']],
+  yes:['cheerful','sociable'],extra:['impatient','talented'],
+  truth:'Luna really is cheerful, and relentlessly sociable. Her energy is lovely at breakfast. At 3 a.m., through a thin floor, less so.'},
+ {id:'bram',name:'Bram Ashgrove',role:'Retired lighthouse keeper',icon:'book',img:'{{P_BRAM}}',
+  quote:'I kept a light burning for thirty years. Now I would like somewhere quiet to read. I do not talk much. I do not need to.',
+  facts:[['book','Owns 900 books and no television'],['hush','Once went a whole year saying about 11 words a day'],['cup','Makes an excellent cup of tea, in silence']],
+  yes:['calm','unsociable'],extra:['sensible','grumpy'],
+  truth:'Bram is deeply calm and genuinely unsociable &mdash; those two belong together here. He is also the most reliable flatmate you will ever have.'},
+ {id:'pip',name:'Pip Thistledown',role:'Trainee illusionist',icon:'sparkle',img:'{{P_PIP}}',
+  quote:'I can make your keys disappear! Not on purpose, usually. I am still learning. Practising. Practising a LOT.',
+  facts:[['key','Has locked himself out 14 times this year'],['sparkle','Practises card tricks at 6 a.m.'],['chat','Shows every trick to every visitor']],
+  yes:['silly','sociable'],extra:['untalented','active'],
+  truth:'Pip is gloriously silly and endlessly sociable. Note what he is not: he is not untalented, just very loud about learning. He will never leave you alone.'},
+ {id:'wren',name:'Wren Aldercroft',role:'Botanist &amp; insomniac',icon:'leaf',img:'{{P_WREN}}',
+  quote:'My plants are my family. The flat needs north-facing windows. Also I get worried if the ferns look wrong. The ferns have been looking wrong.',
+  facts:[['leaf','62 plants, and she knows every name'],['lock','Checks the front door five times a night'],['brush','Paints tiny portraits of individual leaves']],
+  yes:['anxious','sensitive'],extra:['inspiring','unsociable'],
+  truth:'Wren is anxious and very sensitive &mdash; she notices everything. She will water your plants beautifully. She will also notice the biscuits.'},
+ {id:'cass',name:'Cass Hollow',role:'Stand-up comedian',icon:'mic',img:'{{P_CASS}}',
+  quote:'I write jokes at night and sleep till two. I am brilliant. Objectively. My last show had three hecklers and I dealt with all of them.',
+  facts:[['mic','Tests new material on the cat'],['sleep','Never awake before noon'],['trophy','Very confident. Very. Confident.']],
+  yes:['confident','lazy'],extra:['shy','helpful'],
+  truth:'Cass is confident, and honestly lazy about anything that is not comedy. Funny flatmate. Impossible to get near a dirty plate.'},
+ {id:'ivy',name:'Ivy Stonebrook',role:'Volunteer paramedic',icon:'aid',img:'{{P_IVY}}',
+  quote:'I am on shift 60 hours a week. When I am home I just want to help &mdash; cook, fix, listen. It is not a job, it is just who I am.',
+  facts:[['aid','Has helped eleven people out of danger this year'],['pot','Cooks for the whole building on Sundays'],['bolt','Never, ever stops moving']],
+  yes:['helpful','ambitious'],extra:['impatient','unsociable'],
+  truth:'Ivy is helpful and quietly ambitious. Warm, driven, exhausting to watch. The best flatmate on paper &mdash; if she is ever actually home.'}
+];
+
+const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(p=>p[1]);
+const state={i:0,res:{},pool:{}};
+CANDS.forEach(c=>{state.pool[c.id]=shuffle([...c.yes,...c.yes.map(w=>OPP[w]),...c.extra]);});
+
+const $=s=>document.querySelector(s);
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function sparkle(el){
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const r=el.getBoundingClientRect();
+  for(let k=0;k<10;k++){
+    const s=document.createElement('div');
+    s.className='spark';s.innerHTML=ic('sparkle');
+    s.style.left=(r.left+r.width/2)+'px';
+    s.style.top=(r.top+r.height/2)+'px';
+    s.style.fontSize=(9+Math.random()*10)+'px';
+    s.style.setProperty('--dx',(Math.random()*130-65)+'px');
+    s.style.setProperty('--dy',(-40-Math.random()*70)+'px');
+    document.body.appendChild(s);setTimeout(()=>s.remove(),950);
+  }
+}
+
+function pips(){
+  $('#pips').innerHTML=CANDS.map((c,k)=>{
+    const r=state.res[c.id];
+    const cls=k===state.i?'now':r===2?'hit':r===1?'part':r===0?'miss':'';
+    const inner=r===2?ic('check'):r===0?ic('x'):(k+1);
+    return `<button class="pip ${cls}" data-k="${k}" title="${c.name}">${inner}</button>`;
+  }).join('');
+  $('#pips').querySelectorAll('.pip').forEach(p=>p.onclick=()=>{state.i=+p.dataset.k;draw();});
+  $('#barLabel').textContent=`Candidate ${state.i+1} of ${CANDS.length}`;
+}
+
+function draw(){
+  const c=CANDS[state.i], done=state.res[c.id]!==undefined;
+  $('#host').innerHTML=`
+  <div class="card">
+    <div class="who">
+      <img class="portrait" src="${c.img}" alt="${c.name}">
+      <div class="who-info">
+        <div class="who-name">${c.name}</div>
+        <div class="who-role">${ic(c.icon)}${c.role}</div>
+        <div class="quote">&ldquo;${c.quote}&rdquo;</div>
+        <div class="facts">${c.facts.map((f,k)=>`<div class="fact" style="--i:${k}">${ic(f[0])}<span>${f[1]}</span></div>`).join('')}</div>
+      </div>
+    </div>
+    <div class="task">
+      <div class="task-head">${ic('flame')}<h3>By candlelight, what do you really see?</h3></div>
+      <div class="task-sub">Choose the <strong>two</strong> adjectives that are true about ${c.name.split(' ')[0]}.<span class="counter" id="cnt">0 of 2</span></div>
+      <div class="words" id="words">${state.pool[c.id].map((w,k)=>`<button class="w" data-w="${w}" style="--i:${k}">${w}</button>`).join('')}</div>
+    </div>
+    <div id="revHost"></div>
+    <div class="nav">
+      <button class="btn btn-ghost" id="prev" ${state.i===0?'style="visibility:hidden"':''}>${ic('left')}Back</button>
+      <button class="btn btn-go" id="confirm" disabled>Look closer${ic('eye')}</button>
+    </div>
+  </div>`;
+  pips();
+
+  const words=$('#words'),cnt=$('#cnt'),ok=$('#confirm');
+  words.querySelectorAll('.w').forEach(b=>b.onclick=()=>{
+    if(b.classList.contains('lock'))return;
+    const n=words.querySelectorAll('.w.pick').length;
+    if(b.classList.contains('pick'))b.classList.remove('pick');
+    else{if(n>=2)return;b.classList.add('pick');}
+    const m=words.querySelectorAll('.w.pick').length;
+    cnt.textContent=`${m} of 2`;
+    cnt.classList.toggle('full',m===2);
+    ok.disabled=m<2;
+  });
+  $('#prev').onclick=()=>{if(state.i>0){state.i--;draw();}};
+  ok.onclick=()=>judge(false);
+  if(done)judge(true);
+}
+
+function judge(silent){
+  const c=CANDS[state.i],words=$('#words');
+  let picked=[...words.querySelectorAll('.w.pick')].map(b=>b.dataset.w);
+  if(silent)picked=c.yes.slice(0,state.res[c.id]);
+  const hits=picked.filter(w=>c.yes.includes(w));
+  const missed=c.yes.filter(w=>!picked.includes(w));
+  const wrong=picked.filter(w=>!c.yes.includes(w));
+  state.res[c.id]=hits.length;
+
+  words.querySelectorAll('.w').forEach(b=>{
+    const w=b.dataset.w;b.classList.add('lock','dim');
+    if(c.yes.includes(w)){
+      b.classList.remove('dim');b.classList.add('yes');
+      if(picked.includes(w))b.insertAdjacentHTML('beforeend',`<span class="w-tag ok">${ic('check')}</span>`);
+    } else if(picked.includes(w)){
+      b.classList.remove('dim');b.classList.add('no');
+      b.insertAdjacentHTML('beforeend',`<span class="w-tag bad">${ic('x')}</span>`);
+    }
+  });
+  const cf=$('#confirm'); if(cf)cf.remove();
+
+  const tone=hits.length===2?'perfect':hits.length===1?'partial':'zero';
+  const head=hits.length===2?'You saw straight through them':hits.length===1?'Half right &mdash; look again':'The candle flickers&hellip;';
+  let line=`You found <strong>${hits.length} of 2</strong>.`;
+  if(missed.length)line+=` You missed <strong>${missed.join('</strong> and <strong>')}</strong>.`;
+  if(wrong.length)line+=` <strong>${wrong.join('</strong> and <strong>')}</strong> ${wrong.length>1?'are':'is'} the opposite of what the clues show.`;
+  const last=state.i===CANDS.length-1;
+
+  $('#revHost').innerHTML=`
+    <div class="rev ${tone}">
+      <div class="rev-head">${ic(tone==='perfect'?'star':tone==='partial'?'eye':'flame')}${head}</div>
+      <p>${line}</p>
+      <div class="truth">${ic('paw')}<span>${c.truth}</span></div>
+      <div class="nav" style="justify-content:flex-end">
+        <button class="btn btn-go" id="next">${last?'See the morning after':'Next candidate'}${ic(last?'home':'right')}</button>
+      </div>
+    </div>`;
+  $('#next').onclick=()=>{if(last){finale();}else{state.i++;draw();}};
+  pips();
+  if(hits.length===2&&!silent)sparkle(words.querySelector('.w.yes'));
+}
+
+function finale(){
+  const total=CANDS.reduce((s,c)=>s+(state.res[c.id]||0),0),max=CANDS.length*2;
+  const pct=Math.round(total/max*100);
+  $('#ringTxt').textContent=`${total}/${max}`;
+  $('#ring').style.setProperty('--p',pct);
+  $('#fHead').innerHTML=pct>=85?'Sharp eyes':pct>=55?'Not bad at all':'Tricky, were they not?';
+  $('#fLine').innerHTML=pct>=85?'You read almost everyone correctly &mdash; including the ones who hid it well.'
+    :pct>=55?'You caught most of them. The opposites are what catch people out.'
+    :'Most of these traits were hiding in the small habits, not in what people said about themselves.';
+  $('#roster').innerHTML=CANDS.map((c,k)=>`
+    <button class="row" data-id="${c.id}" style="--i:${k}">
+      <img src="${c.img}" alt="">
+      <div class="row-main">
+        <div class="row-name">${c.name}</div>
+        <div class="row-traits">${c.yes.map(w=>`<span class="tr">${w}</span>`).join('')}</div>
+      </div>
+      <span class="row-mark">${ic('home')}</span>
+    </button>`).join('');
+  $('#roster').querySelectorAll('.row').forEach(r=>r.onclick=()=>{
+    $('#roster').querySelectorAll('.row').forEach(x=>x.classList.remove('chosen'));
+    r.classList.add('chosen');
+    const c=CANDS.find(x=>x.id===r.dataset.id);
+    $('#verdictBox').innerHTML=`<div class="truth" style="margin-top:14px">${ic('key')}<span>${c.name} moves in. Now tell me why &mdash; and use at least three adjectives to do it.</span></div>`;
+    sparkle(r);
+  });
+  show('#s-finale');
+}
+
+$('#begin').onclick=()=>{show('#s-game');draw();};
+$('#again').onclick=()=>{
+  state.i=0;state.res={};
+  CANDS.forEach(c=>{state.pool[c.id]=shuffle([...c.yes,...c.yes.map(w=>OPP[w]),...c.extra]);});
+  $('#verdictBox').innerHTML='';
+  show('#s-intro');
+};
+</script>
+</body>
+</html>
