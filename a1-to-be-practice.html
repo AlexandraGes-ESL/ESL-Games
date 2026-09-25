@@ -73,20 +73,17 @@ function extendSel(i){
   if(horizontal){const from=Math.min(lc,c),to=Math.max(lc,c);for(let x=from;x<=to;x++){const idx=lr*10+x;selecting.push(idx);cells[idx].classList.add('selecting')}}
   else{const from=Math.min(lr,r),to=Math.max(lr,r);for(let y=from;y<=to;y++){const idx=y*10+lc;selecting.push(idx);cells[idx].classList.add('selecting')}}
 }
-function endSel(){
-  if(!isSelecting)return;
-  const word=selecting.map(i=>grid[Math.floor(i/10)][i%10]).join('');
-  const reversed=[...selecting].reverse().map(i=>grid[Math.floor(i/10)][i%10]).join('');
-  const match=wordsToFind.find(w=>(w.word===word||w.word===reversed)&&!foundWords.has(w.word));
-  if(match){
-    foundWords.add(match.word);
-    playCorrect();
-    // подсветить зелёным ДО очистки выделения
-    selecting.forEach(i=>{cells[i].classList.remove('selecting');cells[i].classList.add('found')});
-    document.querySelector(`[data-word="${match.word}"]`).classList.add('found');
-  }else{
-    playWrong();
-  }
+function extendSel(i){
+  if(!isSelecting||i===lastIdx)return;
+  const start=selecting[0];
+  const sr=Math.floor(start/10),sc=start%10;
+  const r=Math.floor(i/10),c=i%10;
+  const horizontal=(r===sr),vertical=(c===sc);
+  if(!horizontal&&!vertical)return;
+  clearSelection();
+  if(horizontal){const from=Math.min(sc,c),to=Math.max(sc,c);for(let x=from;x<=to;x++){const idx=sr*10+x;selecting.push(idx);cells[idx].classList.add('selecting')}}
+  else{const from=Math.min(sr,r),to=Math.max(sr,r);for(let y=from;y<=to;y++){const idx=y*10+sc;selecting.push(idx);cells[idx].classList.add('selecting')}}
+}
   // отдельная очистка розового выделения
   selecting.forEach(i=>cells[i].classList.remove('selecting'));
   selecting=[];
@@ -128,7 +125,7 @@ document.querySelector('#pronounGrid').innerHTML=pronouns.map((p,i)=>`<div class
 document.querySelectorAll('.pronoun-choice').forEach(btn=>btn.onclick=()=>{btn.closest('.pronoun-choices').querySelectorAll('.pronoun-choice').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected')});
 
 const tobe=[
-  {avatar:'https://i.yapx.ru/eO5eI.jpg',speech:'Hi! My name ___ Tom.',answer:'is'},
+  {avatar:'https://i.yapx.ru/eO5eI.jpg',speech:'Hi! My name ___ Kate.',answer:'is'},
   {avatar:'https://i.yapx.ru/eO5eH.jpg',speech:'I ___ a teacher.',answer:'am'},
   {avatar:'https://i.yapx.ru/eO5eG.jpg',speech:'We ___ a family.',answer:'are'},
   {avatar:'https://i.yapx.ru/eO5eF.jpg',speech:'It ___ a cat.',answer:'is'},
