@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -119,8 +120,8 @@ var QUESTIONS=[
  {q:'We have ___ apples in the fridge.',a:'some'},
  {q:'There is ___ juice in the jug.',a:'some'},
  {q:'Do you have ___ eggs?',a:'any'},
- {q:'There isn\\'t ___ bread left.',a:'any'},
- {q:'They don\\'t need ___ tomatoes.',a:'any'}
+  {q:"There isn't ___ bread left.",a:"any"},
+  {q:"They don't need ___ tomatoes.",a:"any"}
 ];
 var COIN_SIZE=56,COIN_HALF=COIN_SIZE/2;
 var SPAWN_MS=1000,FALL_SPEED=145,DRAGON_SPEED=720;
@@ -179,11 +180,11 @@ function showQuestion(){
 function answer(chosen,correct,box){
  if(state!=='quiz')return;state='feedback';
  var buttons=box.querySelectorAll('button');buttons.forEach(function(b){b.disabled=true;if(b.getAttribute('data-word')===correct)b.classList.add('correct');else if(b.getAttribute('data-word')===chosen&&chosen!==correct)b.classList.add('wrong');});
- if(chosen===correct){bank+=caught;$('cg-quiz-feedback').textContent='Correct! '+caught+' coins added to the bank.';sound(880,.25);setTimeout(function(){sound(1175,.3);},100);}
- else{$('cg-quiz-feedback').textContent='Not quite. The coins scatter. Correct answer: '+correct+'.';flash('bad');sound(240,.35,'triangle');}
+ if(chosen===correct){bank+=caught;$('cg-feedback').textContent='Correct! '+caught+' coins added to the bank.';sound(880,.25);setTimeout(function(){sound(1175,.3);},100);}
+ else{$('cg-feedback').textContent='Not quite. The coins scatter. Correct answer: '+correct+'.';flash('bad');sound(240,.35,'triangle');}
  $('cg-bank-count').textContent=bank;feedbackElapsed=0;last=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
 }
-function timeout(){if(state!=='quiz')return;state='feedback';$('cg-quiz-feedback').textContent='Time is up. The coins scatter.';$('cg-quiz-options').querySelectorAll('button').forEach(function(b){b.disabled=true;if(b.getAttribute('data-word')===QUESTIONS[deck[cycle-1]].a)b.classList.add('correct');});feedbackElapsed=0;last=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);}
+function timeout(){if(state!=='quiz')return;state='feedback';$('cg-feedback').textContent='Time is up. The coins scatter.';$('cg-quiz-options').querySelectorAll('button').forEach(function(b){b.disabled=true;if(b.getAttribute('data-word')===QUESTIONS[deck[cycle-1]].a)b.classList.add('correct');});feedbackElapsed=0;last=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);}
 function pause(){if(state!=='playing'&&state!=='quiz')return;resumeState=state;state='paused';keys.left=keys.right=false;cancelAnimationFrame(raf);setOverlay('cg-quiz-overlay',false);setOverlay('cg-pause-overlay',true);}
 function resume(){if(state!=='paused')return;setOverlay('cg-pause-overlay',false);state=resumeState;if(state==='quiz')setOverlay('cg-quiz-overlay',true);last=0;raf=requestAnimationFrame(tick);}
 function finish(){state='end';cleanCoins();$('cg-caught-display').style.display='none';root.classList.remove('is-active');$('cg-end-score').textContent=bank+' COINS';setOverlay('cg-end-overlay',true);sound(660,.3);}
@@ -220,3 +221,5 @@ $('cg-again-btn').addEventListener('click',function(){setOverlay('cg-end-overlay
 </script>
 </body>
 </html>
+
+```
