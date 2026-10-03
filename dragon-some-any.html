@@ -1,98 +1,222 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dragon Kitchen Quest — A1</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Coin Quest — Some or Any?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Comfortaa:wght@600;700&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --ink:#3b2415; --ink2:#6b4a2f; --paper:#fff8ec; --paper2:#fdf0dc;
-    --gold:#c8842a; --gold-d:#96601a; --red:#b4442e; --green:#4a7c31;
-    --shadow:0 6px 18px rgba(60,32,12,.22);
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:transparent}
+#coinGame{all:initial;display:block;position:absolute;left:0;top:0;width:1200px;height:675px;overflow:hidden;box-sizing:border-box;font-family:sans-serif;transform-origin:0 0;background:transparent}
+#coinGame *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
+#cg-hud{position:absolute;top:20px;left:20px;right:20px;height:60px;display:flex;justify-content:space-between;align-items:center;padding:0 24px;background:rgba(255,246,223,.96);border:3px solid #d4a84a;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.2);z-index:200;font-family:'Fredoka',sans-serif}
+.cg-hud-item{display:flex;align-items:center;gap:8px;color:#3a2613;font-size:15px;font-weight:700;letter-spacing:.5px}
+.cg-hud-item span{font-family:'Comfortaa',sans-serif;font-size:18px;font-weight:800;color:#c27a2c}
+#cg-field{position:absolute;top:100px;left:0;width:1200px;height:475px;overflow:hidden;z-index:60;pointer-events:none}
+.cg-coin{position:absolute;width:56px;height:56px;background-image:url('https://i.yapx.ru/eOiF0.png');background-size:contain;background-position:center;background-repeat:no-repeat;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35));z-index:1;pointer-events:none}
+#cg-catcher{position:absolute;top:420px;left:0;width:220px;height:180px;z-index:50;pointer-events:none;transition:left .06s linear}
+#cg-catcher img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,.3));display:block;transform-origin:center}
+#cg-bank{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:12px;padding:12px 24px;background:linear-gradient(135deg,#f4b63f,#e89b2f);border:3px solid #d4a84a;border-radius:12px;box-shadow:0 0 20px rgba(244,182,63,.45),0 6px 16px rgba(0,0,0,.2);font-family:'Fredoka',sans-serif;font-size:16px;font-weight:800;color:#3a2613;letter-spacing:1px}
+#cg-bank-count{font-size:20px;color:#9e482c}
+#cg-controls{position:absolute;bottom:20px;left:20px;display:flex;gap:16px;z-index:200}
+.cg-btn,#cg-pause-btn{width:60px;height:60px;border:2px solid #d4a84a;border-radius:50%;background:rgba(244,182,63,.92);color:#3a2613;font-size:24px;cursor:pointer;box-shadow:0 6px 12px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;touch-action:none}
+.cg-btn:active,#cg-pause-btn:active{transform:scale(.94)}
+#cg-pause-btn{position:absolute;right:20px;bottom:20px;z-index:450;font-size:20px;display:none}
+#coinGame.is-active #cg-pause-btn{display:flex}
+#cg-caught-display{position:absolute;bottom:100px;right:20px;background:rgba(255,246,223,.96);border:2px solid #d4a84a;border-radius:12px;padding:10px 16px;font-family:'Fredoka',sans-serif;font-size:14px;font-weight:700;color:#3a2613;z-index:200;display:none}
+.cg-overlay{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;background:rgba(10,20,14,.76);z-index:300}
+.cg-overlay.hidden{display:none}
+.cg-modal{width:620px;padding:46px 48px;text-align:center;background:linear-gradient(135deg,rgba(26,62,48,.99),rgba(11,37,31,.99));border:4px solid #d4a84a;border-radius:28px;box-shadow:0 0 60px rgba(212,168,74,.34),0 40px 100px rgba(0,0,0,.55);font-family:'Comfortaa',sans-serif;color:#fff6df}
+.cg-title{font-family:'Fredoka',sans-serif;font-size:42px;font-weight:800;letter-spacing:2px;margin-bottom:10px;color:#fff6df}
+.cg-subtitle{font-size:15px;color:#e3bb66;font-weight:700;letter-spacing:1px;margin-bottom:25px}
+#cg-start-rules{text-align:left;background:rgba(212,168,74,.08);border-left:4px solid #d4a84a;padding:20px 22px;border-radius:12px;margin-bottom:26px}
+.cg-rule{display:flex;gap:12px;align-items:flex-start;margin:0 0 12px;color:#ead9b6;font-size:13px;line-height:1.5}
+.cg-rule:last-child{margin-bottom:0}
+.cg-rule-num{flex:0 0 22px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#d4a84a;color:#173326;font:700 12px 'Fredoka',sans-serif}
+.cg-main-btn{padding:15px 42px;border:0;border-radius:13px;background:linear-gradient(135deg,#e6bd62,#c7952f);color:#19382b;font:800 17px 'Fredoka',sans-serif;letter-spacing:1px;cursor:pointer;box-shadow:0 7px 20px rgba(212,168,74,.3)}
+.cg-main-btn:hover{filter:brightness(1.08);transform:translateY(-2px)}
+#cg-quiz-overlay{z-index:400}
+#cg-quiz-modal{width:520px;padding:32px 36px}
+#cg-quiz-title{font:800 18px 'Fredoka',sans-serif;color:#e3bb66;letter-spacing:1px;margin-bottom:16px}
+#cg-quiz-question{font:700 19px 'Comfortaa',sans-serif;line-height:1.55;color:#fff6df;margin-bottom:23px}
+#cg-quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cg-option{min-height:58px;padding:13px;border:2px solid rgba(212,168,74,.58);border-radius:12px;background:rgba(212,168,74,.13);color:#fff6df;font:700 19px 'Comfortaa',sans-serif;text-transform:lowercase;cursor:pointer}
+.cg-option:hover{background:rgba(212,168,74,.28);border-color:#e3bb66}
+.cg-option.correct{background:#2e7650;border-color:#8bd4a0;color:#fff}
+.cg-option.wrong{background:#8a3b32;border-color:#e09a87;color:#fff}
+.cg-option:disabled{cursor:default;opacity:.85}
+#cg-timer-label{font:700 12px 'Fredoka',sans-serif;color:#e6d6b6;text-align:right;margin:0 0 5px}
+#cg-timer-bar{height:7px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;margin-bottom:20px}
+#cg-timer-fill{width:100%;height:100%;background:linear-gradient(90deg,#56b66c,#e2b348);border-radius:4px}
+#cg-feedback{min-height:24px;margin-top:15px;font:700 13px 'Comfortaa',sans-serif;color:#e3bb66}
+#cg-pause-overlay{z-index:500}
+#cg-pause-modal{width:420px;padding:40px}
+#cg-pause-title{font:800 36px 'Fredoka',sans-serif;color:#fff6df;letter-spacing:2px;margin-bottom:22px}
+#cg-end-overlay{z-index:550}
+#cg-end-modal{width:520px;padding:45px}
+#cg-end-score{font:800 28px 'Comfortaa',sans-serif;color:#e3bb66;margin:18px 0}
+#cg-end-text{font:600 14px 'Comfortaa',sans-serif;color:#ead9b6;line-height:1.6;margin-bottom:24px}
+.cg-particle{position:absolute;width:7px;height:7px;border-radius:50%;pointer-events:none;z-index:5}
+.cg-pop{position:absolute;z-index:8;pointer-events:none;color:#ffd66c;font:800 24px 'Fredoka',sans-serif;animation:cgPop .8s ease-out forwards}
+@keyframes cgPop{to{transform:translateY(-55px);opacity:0}}
+#cg-screen-flash{position:absolute;inset:0;opacity:0;pointer-events:none;z-index:250}
+#cg-screen-flash.good{background:radial-gradient(circle,rgba(66,196,111,.32),transparent 70%);animation:cgFlash .35s}
+#cg-screen-flash.bad{background:radial-gradient(circle,rgba(218,73,54,.35),transparent 70%);animation:cgFlash .35s}
+@keyframes cgFlash{30%{opacity:1}100%{opacity:0}}
+@media (max-width:650px){.cg-modal{width:590px;padding:34px}.cg-title{font-size:36px}}
+</style>
+</head>
+<body>
+<div id="coinGame">
+  <div id="cg-hud">
+    <div class="cg-hud-item">CYCLE <span id="cg-cycle">1</span> / 6</div>
+    <div class="cg-hud-item">CAUGHT <span id="cg-caught-count">0</span> / <span id="cg-need-count">0</span></div>
+  </div>
+  <div id="cg-field"></div>
+  <div id="cg-catcher"><img src="https://i.yapx.ru/eOiFv.png" alt="Dragon carrying a basket"></div>
+  <div id="cg-bank"><span>COINS</span><span id="cg-bank-count">0</span></div>
+  <div id="cg-caught-display">ROUND COINS <span id="cg-round-count">0</span></div>
+  <div id="cg-controls"><button class="cg-btn" id="cg-left" aria-label="Move left">&#9664;</button><button class="cg-btn" id="cg-right" aria-label="Move right">&#9654;</button></div>
+  <button id="cg-pause-btn" aria-label="Pause">&#10074;&#10074;</button>
+
+  <div class="cg-overlay" id="cg-start-overlay">
+    <div class="cg-modal">
+      <div class="cg-title">COIN QUEST</div><div class="cg-subtitle">CATCH COINS. CHOOSE SOME OR ANY.</div>
+      <div id="cg-start-rules">
+        <div class="cg-rule"><span class="cg-rule-num">1</span><span>Move the dragon left and right to catch coins.</span></div>
+        <div class="cg-rule"><span class="cg-rule-num">2</span><span>Catch 2 or 3 coins. The number changes each round.</span></div>
+        <div class="cg-rule"><span class="cg-rule-num">3</span><span>Choose <b>some</b> or <b>any</b> to complete the sentence.</span></div>
+        <div class="cg-rule"><span class="cg-rule-num">4</span><span>A correct answer puts your caught coins in the bank.</span></div>
+        <div class="cg-rule"><span class="cg-rule-num">5</span><span>Play 6 rounds. Questions do not repeat.</span></div>
+      </div>
+      <button class="cg-main-btn" id="cg-start-btn">START</button>
+    </div>
+  </div>
+
+  <div class="cg-overlay hidden" id="cg-quiz-overlay">
+    <div class="cg-modal" id="cg-quiz-modal">
+      <div id="cg-quiz-title">CHOOSE THE WORD</div>
+      <div id="cg-timer-label">25</div><div id="cg-timer-bar"><div id="cg-timer-fill"></div></div>
+      <div id="cg-quiz-question"></div><div id="cg-quiz-options"></div><div id="cg-feedback"></div>
+    </div>
+  </div>
+
+  <div class="cg-overlay hidden" id="cg-pause-overlay">
+    <div class="cg-modal" id="cg-pause-modal"><div id="cg-pause-title">PAUSED</div><button class="cg-main-btn" id="cg-resume-btn">RESUME</button></div>
+  </div>
+
+  <div id="cg-screen-flash"></div>
+  <div class="cg-overlay hidden" id="cg-end-overlay">
+    <div class="cg-modal" id="cg-end-modal"><div class="cg-title">QUEST COMPLETE</div><div id="cg-end-score">0 COINS</div><div id="cg-end-text">The dragon's treasure is safe!</div><button class="cg-main-btn" id="cg-again-btn">PLAY AGAIN</button></div>
+  </div>
+</div>
+<script>
+(function(){
+'use strict';
+var W=1200,H=675;
+var QUESTIONS=[
+ {q:'I packed ___ sandwiches for lunch.',a:'some'},
+ {q:'We have ___ apples in the fridge.',a:'some'},
+ {q:'There is ___ juice in the jug.',a:'some'},
+ {q:'Do you have ___ eggs?',a:'any'},
+ {q:'There isn\\'t ___ bread left.',a:'any'},
+ {q:'They don\\'t need ___ tomatoes.',a:'any'}
+];
+var COIN_SIZE=56,COIN_HALF=COIN_SIZE/2;
+var SPAWN_MS=1000,FALL_SPEED=145,DRAGON_SPEED=720;
+/* Catch centre radius: 95 px horizontally, 34 px vertically.
+   Basket target is the middle of the dragon asset: canvas y=510. */
+var CATCH_X=95,CATCH_Y=34,BASKET_Y=510,QUIZ_SECONDS=25;
+var root=document.getElementById('coinGame');
+if(!root)return;
+var $=function(id){return document.getElementById(id);};
+var state='intro',resumeState='playing',raf=0,last=0,spawnElapsed=0,feedbackElapsed=0;
+var xDragon=600,coins=[],caught=0,need=2,bank=0,cycle=0,deck=[],quizRemaining=QUIZ_SECONDS,keys={left:false,right:false};
+var audio=null;
+
+function fit(){
+ var pw=window.innerWidth||W,ph=window.innerHeight||H;
+ var scale=Math.min(pw/W,ph/H);
+ root.style.transform='translate('+((pw-W*scale)/2)+'px,'+((ph-H*scale)/2)+'px) scale('+scale+')';
+}
+window.addEventListener('resize',fit);fit();
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function sound(freq,duration,type){try{if(!audio){audio=new(window.AudioContext||window.webkitAudioContext)();}if(audio.state==='suspended')audio.resume();var o=audio.createOscillator(),g=audio.createGain(),now=audio.currentTime;o.type=type||'sine';o.frequency.setValueAtTime(freq,now);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.12,now+.015);g.gain.exponentialRampToValueAtTime(.0001,now+duration);o.connect(g);g.connect(audio.destination);o.start(now);o.stop(now+duration+.02);}catch(e){}}
+function updateHud(){ $('cg-cycle').textContent=Math.min(cycle+1,6);$('cg-caught-count').textContent=caught;$('cg-need-count').textContent=need;$('cg-bank-count').textContent=bank;$('cg-round-count').textContent=caught; }
+function setOverlay(id,on){$(id).classList.toggle('hidden',!on);}
+function cleanCoins(){for(var i=coins.length-1;i>=0;i--){if(coins[i].el.parentNode)coins[i].el.remove();}coins=[];}
+function start(){
+ $('cg-start-overlay').classList.add('hidden');root.classList.add('is-active');
+ cycle=0;bank=0;deck=shuffle([0,1,2,3,4,5]);
+ $('cg-bank-count').textContent='0';nextRound();
+}
+function nextRound(){
+ if(cycle>=6){finish();return;}
+ cycle++;caught=0;need=Math.random()<.5?2:3;spawnElapsed=0;cleanCoins();updateHud();
+ $('cg-caught-display').style.display='block';state='playing';last=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+}
+function spawnCoin(){
+ var el=document.createElement('div');el.className='cg-coin';
+ var px=Math.random()*(W-COIN_SIZE);el.style.left=px+'px';el.style.top='-60px';$('cg-field').appendChild(el);
+ coins.push({el:el,x:px,y:-60});
+}
+function catchCoin(c,index){
+ if(c.el.parentNode)c.el.remove();coins.splice(index,1);caught++;updateHud();sound(1320,.16);
+ flash('good');sparkle(c.x+COIN_HALF,c.y+COIN_HALF);pop(c.x+COIN_HALF,c.y+COIN_HALF,'+1');
+ if(caught>=need){cleanCoins();showQuestion();}
+}
+function flash(kind){var f=$('cg-screen-flash');f.className='';void f.offsetWidth;f.className=kind;}
+function pop(x,y,text){var p=document.createElement('div');p.className='cg-pop';p.textContent=text;p.style.left=(x-10)+'px';p.style.top=(y-12)+'px';$('cg-field').appendChild(p);setTimeout(function(){if(p.parentNode)p.remove();},850);}
+function sparkle(x,y){for(var i=0;i<9;i++){var p=document.createElement('i');p.className='cg-particle';p.style.left=x+'px';p.style.top=y+'px';p.style.background=['#ffe06b','#fff','#dd8b32'][i%3];var a=Math.PI*2*i/9,d=20+Math.random()*25;try{p.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+(Math.cos(a)*d)+'px,'+(Math.sin(a)*d)+'px)',opacity:0}],{duration:450,fill:'forwards'});}catch(e){}$('cg-field').appendChild(p);setTimeout((function(q){return function(){if(q.parentNode)q.remove();};})(p),500);}}
+function showQuestion(){
+ state='quiz';quizRemaining=QUIZ_SECONDS;
+ var q=QUESTIONS[deck[cycle-1]];$('cg-quiz-question').textContent=q.q;
+ $('cg-feedback').textContent='';$('cg-timer-fill').style.width='100%';$('cg-timer-label').textContent=QUIZ_SECONDS+' seconds';
+ var box=$('cg-quiz-options');box.innerHTML='';
+ ['some','any'].forEach(function(word){var b=document.createElement('button');b.type='button';b.className='cg-option';b.textContent=word;b.setAttribute('data-word',word);b.addEventListener('click',function(){answer(word,q.a,box);});box.appendChild(b);});
+ setOverlay('cg-quiz-overlay',true);last=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+}
+function answer(chosen,correct,box){
+ if(state!=='quiz')return;state='feedback';
+ var buttons=box.querySelectorAll('button');buttons.forEach(function(b){b.disabled=true;if(b.getAttribute('data-word')===correct)b.classList.add('correct');else if(b.getAttribute('data-word')===chosen&&chosen!==correct)b.classList.add('wrong');});
+ if(chosen===correct){bank+=caught;$('cg-quiz-feedback').textContent='Correct! '+caught+' coins added to the bank.';sound(880,.25);setTimeout(function(){sound(1175,.3);},100);}
+ else{$('cg-quiz-feedback').textContent='Not quite. The coins scatter. Correct answer: '+correct+'.';flash('bad');sound(240,.35,'triangle');}
+ $('cg-bank-count').textContent=bank;feedbackElapsed=0;last=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+}
+function timeout(){if(state!=='quiz')return;state='feedback';$('cg-quiz-feedback').textContent='Time is up. The coins scatter.';$('cg-quiz-options').querySelectorAll('button').forEach(function(b){b.disabled=true;if(b.getAttribute('data-word')===QUESTIONS[deck[cycle-1]].a)b.classList.add('correct');});feedbackElapsed=0;last=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);}
+function pause(){if(state!=='playing'&&state!=='quiz')return;resumeState=state;state='paused';keys.left=keys.right=false;cancelAnimationFrame(raf);setOverlay('cg-quiz-overlay',false);setOverlay('cg-pause-overlay',true);}
+function resume(){if(state!=='paused')return;setOverlay('cg-pause-overlay',false);state=resumeState;if(state==='quiz')setOverlay('cg-quiz-overlay',true);last=0;raf=requestAnimationFrame(tick);}
+function finish(){state='end';cleanCoins();$('cg-caught-display').style.display='none';root.classList.remove('is-active');$('cg-end-score').textContent=bank+' COINS';setOverlay('cg-end-overlay',true);sound(660,.3);}
+function tick(ts){
+ raf=0;if(state==='paused'||state==='intro'||state==='end')return;
+ var dt=last?Math.min((ts-last)/1000,.05):0;last=ts;
+ if(state==='playing'){
+  if(keys.left)xDragon=Math.max(110,xDragon-DRAGON_SPEED*dt);
+  if(keys.right)xDragon=Math.min(1090,xDragon+DRAGON_SPEED*dt);
+  var dragon=$('cg-catcher');dragon.style.left=(xDragon-110)+'px';var img=dragon.querySelector('img');if(keys.left)img.style.transform='scaleX(1)';else if(keys.right)img.style.transform='scaleX(-1)';
+  spawnElapsed+=dt*1000;while(spawnElapsed>=SPAWN_MS){spawnElapsed-=SPAWN_MS;spawnCoin();}
+  var basketX=xDragon;
+  for(var i=coins.length-1;i>=0;i--){var c=coins[i];c.y+=FALL_SPEED*dt;c.el.style.top=c.y+'px';var centerX=c.x+COIN_HALF,centerY=100+c.y+COIN_HALF;var dx=(centerX-basketX)/CATCH_X,dy=(centerY-BASKET_Y)/CATCH_Y;
+   /* Elliptical catch radius around the basket midpoint: horizontal 95px, vertical 34px. */
+   if(dx*dx+dy*dy<=1){catchCoin(c,i);if(state!=='playing')break;continue;}
+   if(c.y>480){if(c.el.parentNode)c.el.remove();coins.splice(i,1);}
   }
-  html,body{height:100%}
-  body{
-    font-family:"Segoe UI",-apple-system,System-ui,Roboto,sans-serif;
-    background:#2a1a10; color:var(--ink); overflow:hidden;
-  }
-  /* ---------- SCENE ---------- */
-  #scene{
-    position:fixed; inset:0;
-    background-image:url('https://i.yapx.ru/eNLcW.jpg');
-    background-size:cover; background-position:center;
-    transition:background-image .5s ease;
-  }
-  #scene::after{
-    content:''; position:absolute; inset:0;
-    background:linear-gradient(180deg,rgba(255,240,215,.30) 0%,rgba(255,240,215,.12) 45%,rgba(60,30,10,.32) 100%);
-    pointer-events:none;
-  }
-  /* ---------- HUD ---------- */
-  #hud{
-    position:absolute; top:0; left:0; right:0; z-index:30;
-    display:flex; align-items:center; justify-content:space-between;
-    gap:12px; padding:10px 16px;
-    background:linear-gradient(180deg,rgba(59,36,21,.92),rgba(59,36,21,.72));
-    border-bottom:3px solid var(--gold);
-    color:#ffeccc; flex-wrap:wrap;
-  }
-  #hud .title{font-size:17px;font-weight:800;letter-spacing:.3px;color:#ffd894}
-  #hud .stats{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .chip{
-    background:rgba(255,248,236,.14); border:1px solid rgba(255,216,148,.45);
-    padding:4px 10px; border-radius:20px; font-size:13px; font-weight:700; color:#ffeccc;
-  }
-  .chip b{color:#ffd894}
-  .chip.warn{background:rgba(180,68,46,.35);border-color:#e0876f}
-  /* ---------- TABS ---------- */
-  #tabs{
-    position:absolute; top:58px; left:0; right:0; z-index:25;
-    display:flex; gap:6px; padding:8px 16px; overflow-x:auto;
-    background:rgba(59,36,21,.55); backdrop-filter:blur(3px);
-  }
-  .tab{
-    flex:1 0 auto; min-width:132px;
-    border:2px solid rgba(255,216,148,.35); background:rgba(255,248,236,.10);
-    color:#ffeccc; font:inherit; font-size:13px; font-weight:700;
-    padding:7px 10px; border-radius:9px; cursor:pointer;
-    display:flex; align-items:center; gap:6px; justify-content:center;
-    transition:all .18s; white-space:nowrap;
-  }
-  .tab:hover:not(:disabled){background:rgba(255,248,236,.22)}
-  .tab.active{background:var(--gold); border-color:#ffd894; color:#2a1a10}
-  .tab:disabled{opacity:.42; cursor:not-allowed}
-  .tab .num{
-    display:inline-flex; align-items:center; justify-content:center;
-    width:19px; height:19px; border-radius:50%;
-    background:rgba(0,0,0,.25); font-size:11px;
-  }
-  .tab.active .num{background:rgba(0,0,0,.18)}
-  .tab.done::after{content:'✓'; color:#8fd06a; font-weight:900}
-  .tab.active.done::after{color:#2a1a10}
-  /* ---------- PANEL ---------- */
-  #panelWrap{
-    position:absolute; inset:104px 16px 14px 16px; z-index:20;
-    display:flex; gap:14px; align-items:stretch; pointer-events:none;
-  }
-  #dragonCol{
-    width:196px; flex:0 0 196px; pointer-events:none;
-    display:flex; flex-direction:column; justify-content:flex-end; gap:6px;
-  }
-  #dragonImg{
-    width:100%; max-height:270px; object-fit:contain; object-position:bottom;
-    filter:drop-shadow(0 8px 14px rgba(0,0,0,.45));
-    transition:opacity .25s;
-  }
-  #speech{
-    background:var(--paper); border:3px solid var(--gold-d); border-radius:14px;
-    padding:9px 12px; font-size:13.5px; font-weight:600; line-height:1.4;
-    color:var(--ink); box-shadow:var(--shadow); position:relative;
-  }
-  #speech::after{
-    content:''; position:absolute; bottom:-11px; left:26px;
-    border:8px solid transparent; border-top-color:var(--gold-d);
-  }
-  #panel{
-    flex:1; min-width:0; pointer-events:auto;
-    background:rgba(255,248,236,.96); border:3px s
+ }else if(state==='quiz'){
+  quizRemaining-=dt;if(quizRemaining<=0){quizRemaining=0;timeout();}
+  $('cg-timer-fill').style.width=(quizRemaining/QUIZ_SECONDS*100)+'%';$('cg-timer-label').textContent=Math.ceil(quizRemaining)+' seconds';
+ }else if(state==='feedback'){
+  feedbackElapsed+=dt;if(feedbackElapsed>=1.15){setOverlay('cg-quiz-overlay',false);if(cycle>=6)finish();else nextRound();}
+ }
+ if(state!=='paused'&&state!=='intro'&&state!=='end')raf=requestAnimationFrame(tick);
+}
+function setKey(dir,on){keys[dir]=on;}
+function bindHold(id,dir){var b=$(id);b.addEventListener('pointerdown',function(e){e.preventDefault();b.setPointerCapture(e.pointerId);setKey(dir,true);});['pointerup','pointercancel','lostpointercapture'].forEach(function(ev){b.addEventListener(ev,function(){setKey(dir,false);});});}
+bindHold('cg-left','left');bindHold('cg-right','right');
+document.addEventListener('keydown',function(e){if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();setKey(e.key==='ArrowLeft'?'left':'right',true);}});
+document.addEventListener('keyup',function(e){if(e.key==='ArrowLeft')setKey('left',false);if(e.key==='ArrowRight')setKey('right',false);});
+$('cg-start-btn').addEventListener('click',start);$('cg-pause-btn').addEventListener('click',pause);$('cg-resume-btn').addEventListener('click',resume);
+$('cg-again-btn').addEventListener('click',function(){setOverlay('cg-end-overlay',false);xDragon=600;keys.left=keys.right=false;start();});
+})();
+</script>
+</body>
+</html>
