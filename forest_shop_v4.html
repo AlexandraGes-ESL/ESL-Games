@@ -172,10 +172,12 @@ var A={
 var GOODS=[
   {key:'honey',    img:A.honey,    name:'honey',     want:true },
   {key:'mushroom', img:A.mushroom, name:'mushrooms', want:true },
+  {key:'bread',    img:A.bread,    name:'bread',     want:true },
+  {key:'cake',     img:A.cake,     name:'cake',      want:true },
   {key:'apples',   img:A.apple,    name:'apples',    want:false},
-  {key:'bread',    img:A.bread,    name:'bread',     want:false},
   {key:'cheese',   img:A.cheese,   name:'cheese',    want:false},
-  {key:'cake',     img:A.cake,     name:'cake',      want:false}
+  {key:'pizza',    img:A.pizza,    name:'pizza',     want:false},
+  {key:'juice',    img:A.juice,    name:'juice',     want:false}
 ];
 
 /* ==========================================================
@@ -189,26 +191,49 @@ var INTRO=[
 /* Stage 2 — two food requests with any */
 var REQUESTS=[
   { want:'honey',
+    who:'DRAGON NEEDS HELP',
     q:'Have you got <u>___</u> honey?',
     opts:['any','some','a'], ans:'any',
+    yesWho:'HEDGEHOG',
     yes:'Yes, I have! Here is <i>some</i> honey for you.',
     no :'Almost! We ask with <b>any</b>: Have you got <b>any</b> honey?',
     hint:'To ask for something, use <b>any</b>.' },
+
   { want:'mushroom',
+    who:'DRAGON NEEDS HELP',
     q:'And have you got <u>___</u> mushrooms?',
     opts:['any','some','a'], ans:'any',
+    yesWho:'HEDGEHOG',
     yes:'Of course! Here are <i>some</i> mushrooms.',
     no :'Almost! We ask with <b>any</b>: Have you got <b>any</b> mushrooms?',
-    hint:'A question? Then <b>any</b>.' }
+    hint:'A question? Then <b>any</b>.' },
+
+  { want:'bread',
+    who:'DRAGON NEEDS HELP',
+    q:"I'd like <u>___</u> bread, please!",
+    opts:['some','any','a'], ans:'some',
+    yesWho:'HEDGEHOG',
+    yes:'Here is <i>some</i> fresh bread for you.',
+    no :'Almost! In a request we say: I would like <b>some</b> bread.',
+    hint:'It is not a question — so <b>some</b>.' },
+
+  { want:'cake',
+    who:'HEDGEHOG SAYS',
+    q:'Would you like <u>___</u> cake, little dragon?',
+    opts:['some','any','a'], ans:'some',
+    yesWho:'DRAGON',
+    yes:'Yes, please! I love cake!',
+    no :'Almost! The hedgehog offers, so: Would you like <b>some</b> cake?',
+    hint:'An offer works like a yes-answer — <b>some</b>.' }
 ];
 
 /* Stage 3 — drink with there is + any */
 var DRINK={
-  q:'<u>___</u> there <u>___</u> hot apple drink in the pot?',
-  opts:['Is ... any','Are ... some','Is ... a'], ans:'Is ... any',
+  q:'<u>___</u> there any hot apple drink in the pot?',
+  opts:['Is','Are'], ans:'Is',
   yes:'Yes! There <i>is</i> some warm apple drink. With spices — just for you!',
-  no :'Almost! We ask: <b>Is there any</b> hot apple drink?',
-  hint:'One pot = <b>is</b>. A question = <b>any</b>.'
+  no :'Almost! One pot = one thing: <b>Is</b> there any hot apple drink?',
+  hint:'One pot, so <b>Is</b>.'
 };
 
 /* Stage 4 — payment with there are + coins */
@@ -353,7 +378,7 @@ function ask(c,onDone){
   state='card';
   lockGoods();
   card=c;cardDone=onDone;
-  $('cWho').textContent='DRAGON NEEDS HELP';
+  $('cWho').textContent=c.who||'DRAGON NEEDS HELP';
   $('cQ').innerHTML=c.q;
   $('cFb').innerHTML='';
   $('cNext').classList.remove('on');
@@ -437,7 +462,7 @@ function toDrink(){
 function drinkScene(){
   $('wrap').classList.remove('on');
   state='drink';
-  say('HEDGEHOG',DRINK.yes);
+  say(REQUESTS[reqIndex].yesWho||'HEDGEHOG',REQUESTS[reqIndex].yes);
   var cup=document.createElement('div');
   cup.className='goods';
   cup.dataset.src=A.hotChoc;
