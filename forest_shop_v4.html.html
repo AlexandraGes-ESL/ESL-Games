@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Forest Shop — Warm Apple Drink</title>
+<style>
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:transparent}
+#shopScene{all:initial;display:block;position:absolute;left:0;top:0;width:1200px;height:675px;overflow:hidden;box-sizing:border-box;font-family:sans-serif;transform-origin:0 0;background:transparent}
+#shopScene *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
+
+/* ---------------- dragon ---------------- */
+#dragon{position:absolute;left:34px;bottom:132px;width:200px;height:215px;z-index:50;pointer-events:none;transition:opacity .25s ease}
+#dragon img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 12px 22px rgba(40,22,8,.38))}
+#dragon.swap{animation:dragonSwap .5s ease}
+@keyframes dragonSwap{0%{opacity:0;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}
+
+/* ---------------- speech bubble (centered) ---------------- */
+#bubble{position:absolute;left:50%;top:46px;transform:translateX(-50%);max-width:540px;min-height:76px;padding:20px 26px;background:rgba(255,251,240,.98);border:3px solid #c89640;border-radius:24px;box-shadow:0 16px 34px rgba(40,22,8,.32);z-index:90;font:700 20px 'Trebuchet MS',Trebuchet,sans-serif;line-height:1.42;color:#3a2410;opacity:0;transform:translateX(-50%) translateY(10px);transition:opacity .26s ease,transform .26s ease;text-align:center}
+#bubble.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#bubble b{color:#a4531f}
+#bubble i{font-style:normal;color:#256b48;background:rgba(46,118,80,.16);border-radius:5px;padding:0 5px}
+#bubble u{color:#b3521c;text-decoration-style:wavy;text-underline-offset:5px}
+#bubble .who{display:block;font:800 11px 'Trebuchet MS',sans-serif;letter-spacing:2.6px;color:#a4762a;margin-bottom:7px}
+
+/* ---------------- tap-to-continue overlay ---------------- */
+#tapGate{position:absolute;inset:0;z-index:85;display:none;align-items:center;justify-content:center;background:rgba(20,12,4,.24);cursor:pointer}
+#tapGate.on{display:flex}
+#tapHint{padding:16px 32px;border:3px solid #e6bd62;border-radius:18px;background:rgba(60,38,14,.94);color:#fff4dd;font:800 15px 'Trebuchet MS',sans-serif;letter-spacing:2px;animation:hintPulse 1.5s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.04);opacity:1}}
+
+/* ---------------- shelf ---------------- */
+#trayWrap{position:absolute;left:26px;right:26px;bottom:14px;height:124px;z-index:100}
+#trayWrap::before{content:'';position:absolute;inset:0;border-radius:22px;background:linear-gradient(180deg,rgba(122,76,34,.50) 0%,rgba(86,50,20,.62) 100%);border:2px solid rgba(240,200,120,.55);box-shadow:0 10px 26px rgba(30,14,4,.34),inset 0 2px 0 rgba(255,230,170,.34);backdrop-filter:blur(2px)}
+#tray{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:12px}
+.goods{position:relative;width:104px;height:104px;border-radius:18px;border:2px solid rgba(240,205,130,.28);background:rgba(255,246,223,.10);display:flex;align-items:center;justify-content:center;cursor:default;opacity:.40;filter:grayscale(.6);transition:opacity .22s,filter .22s,transform .16s,border-color .22s}
+.goods img{width:84%;height:84%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.3))}
+.goods.live{opacity:1;filter:none;border-color:#ffd66c;cursor:pointer}
+.goods.live:hover{transform:translateY(-7px) scale(1.06)}
+.goods.glow{animation:glow 1.6s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(255,214,108,0)}50%{box-shadow:0 0 20px 5px rgba(255,214,108,.5)}}
+.goods.taken{opacity:0;transform:scale(.4);pointer-events:none}
+
+/* ---------------- basket ---------------- */
+#basket{position:absolute;left:300px;bottom:150px;width:132px;height:132px;z-index:60;pointer-events:none}
+#basket img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 10px 20px rgba(40,22,8,.42))}
+#basket.pop{animation:bpop .42s ease}
+@keyframes bpop{0%{transform:scale(1)}45%{transform:scale(1.16)}100%{transform:scale(1)}}
+#basketCount{position:absolute;left:300px;bottom:288px;width:132px;text-align:center;font:800 15px 'Trebuchet MS',sans-serif;color:#fff4dd;text-shadow:0 2px 8px rgba(0,0,0,.95);z-index:61;letter-spacing:1px;opacity:0;transition:opacity .25s}
+#basketCount.on{opacity:1}
+
+/* ---------------- flyers ---------------- */
+.flyer{position:absolute;width:92px;height:92px;z-index:200;pointer-events:none}
+.flyer img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,.4))}
+
+/* ---------------- coins ---------------- */
+#coins{position:absolute;left:50%;transform:translateX(-50%);bottom:158px;display:none;gap:14px;z-index:150}
+#coins.on{display:flex}
+.coin{width:86px;height:86px;border:0;background:transparent;cursor:pointer;transition:transform .16s,opacity .3s;position:relative}
+.coin::before{content:'';position:absolute;inset:0;background:url('https://i.yapx.ru/eOiF0.png') center/contain no-repeat}
+.coin:hover{transform:translateY(-7px) scale(1.07)}
+.coin.gone{opacity:0;transform:scale(.3) translateY(40px);pointer-events:none}
+#coinLabel{position:absolute;left:50%;transform:translateX(-50%);bottom:256px;z-index:150;display:none;font:800 16px 'Trebuchet MS',sans-serif;letter-spacing:1.6px;color:#fff4dd;text-shadow:0 3px 10px rgba(0,0,0,.95)}
+#coinLabel.on{display:block}
+
+/* ---------------- question card ---------------- */
+#wrap{position:absolute;inset:0;display:none;align-items:flex-start;justify-content:center;padding-top:46px;background:rgba(24,14,5,.30);z-index:300}
+#wrap.on{display:flex}
+#card{width:640px;padding:26px 34px 22px;border:4px solid #d4a84a;border-radius:26px;background:linear-gradient(135deg,rgba(31,58,45,.985),rgba(14,34,28,.985));box-shadow:0 0 56px rgba(212,168,74,.26),0 30px 70px rgba(0,0,0,.5);text-align:center;font-family:'Trebuchet MS',Trebuchet,sans-serif}
+#cWho{font:800 13px 'Trebuchet MS',sans-serif;letter-spacing:2.6px;color:#e3bb66;margin-bottom:11px}
+#cQ{font:700 22px 'Trebuchet MS',sans-serif;line-height:1.48;color:#fff6df;margin-bottom:20px}
+#cQ u{color:#ffd66c;text-decoration-style:wavy;text-underline-offset:5px}
+#cOpts{display:flex;gap:13px;justify-content:center;flex-wrap:wrap}
+.opt{min-width:136px;min-height:58px;padding:13px 20px;border:2px solid rgba(212,168,74,.6);border-radius:14px;background:rgba(212,168,74,.14);color:#fff6df;font:700 21px 'Trebuchet MS',sans-serif;cursor:pointer;transition:background .18s,border-color .18s}
+.opt:hover{background:rgba(212,168,74,.3);border-color:#e3bb66}
+.opt.correct{background:#2e7650;border-color:#8ed6a2;color:#fff}
+.opt.wrong{background:#8a3b32;border-color:#e09a87;color:#fff}
+.opt:disabled{cursor:default;opacity:.85}
+#cFb{min-height:46px;margin-top:15px;font:700 15px 'Trebuchet MS',sans-serif;line-height:1.48;color:#ffd9a0}
+#cFb .ok{color:#9ee6b4}
+#cFb .no{color:#ffb3a0}
+#cNext{margin-top:6px;padding:12px 38px;border:0;border-radius:13px;background:linear-gradient(135deg,#e6bd62,#c7952f);color:#2c1c09;font:800 16px 'Trebuchet MS',sans-serif;letter-spacing:1px;cursor:pointer;display:none}
+#cNext.on{display:inline-block}
+
+/* ---------------- start gate ---------------- */
+#gate{position:absolute;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:rgba(20,12,4,.42);cursor:pointer}
+#gate.off{display:none}
+#gateIn{padding:26px 54px;border:4px solid #d4a84a;border-radius:22px;background:linear-gradient(135deg,rgba(31,58,45,.97),rgba(14,34,28,.97));color:#fff6df;font:800 22px 'Trebuchet MS',sans-serif;letter-spacing:2px;box-shadow:0 22px 60px rgba(0,0,0,.5)}
+
+/* ---------------- rail ---------------- */
+#rail{position:absolute;top:16px;right:20px;display:flex;gap:9px;z-index:400}
+.dot{width:28px;height:28px;border-radius:50%;border:2px solid #b9812f;background:rgba(255,246,223,.92);display:flex;align-items:center;justify-content:center;font:800 13px 'Trebuchet MS',sans-serif;color:#8a5a1c}
+.dot.on{background:#e6bd62;color:#2c1c09;box-shadow:0 0 0 3px rgba(230,189,98,.34)}
+.dot.ok{background:#2e7650;border-color:#8ed6a2;color:#eaffe9}
+</style>
+</head>
+<body>
+<div id="shopScene">
+  <div id="dragon"><img src="https://i.yapx.ru/eNKrD.png" alt="Dragon" id="dragonImg"></div>
+
+  <div id="bubble"><span class="who" id="bubbleWho"></span><span id="bubbleText"></span></div>
+
+  <div id="tapGate"><div id="tapHint">TAP TO CONTINUE</div></div>
+
+  <div id="basket"><img src="https://i.yapx.ru/eNKrN.png" alt="Basket"></div>
+  <div id="basketCount">IN THE BASKET: 0</div>
+
+  <div id="trayWrap"><div id="tray"></div></div>
+
+  <div id="coins">
+    <button class="coin" type="button" aria-label="coin"></button>
+    <button class="coin" type="button" aria-label="coin"></button>
+    <button class="coin" type="button" aria-label="coin"></button>
+  </div>
+  <div id="coinLabel">COINS: 0 / 3</div>
+
+  <div id="rail">
+    <div class="dot" data-step="1">1</div>
+    <div class="dot" data-step="2">2</div>
+    <div class="dot" data-step="3">3</div>
+    <div class="dot" data-step="4">4</div>
+  </div>
+
+  <div id="wrap">
+    <div id="card">
+      <div id="cWho"></div>
+      <div id="cQ"></div>
+      <div id="cOpts"></div>
+      <div id="cFb"></div>
+      <button id="cNext" type="button">NEXT</button>
+    </div>
+  </div>
+
+  <div id="gate"><div id="gateIn">TAP TO START</div></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ==========================================================
+   ASSETS
+   ========================================================== */
+var A={
+  basket   :'https://i.yapx.ru/eNKrN.png',
+  apple    :'https://i.yapx.ru/eNKrP.png',
+  banana   :'https://i.yapx.ru/eNKrQ.png',
+  milk     :'https://i.yapx.ru/eNKrR.png',
+  cheese   :'https://i.yapx.ru/eNKrS.png',
+  carrot   :'https://i.yapx.ru/eNKrT.png',
+  tomato   :'https://i.yapx.ru/eNKrU.png',
+  egg      :'https://i.yapx.ru/eNKrV.png',
+  bread    :'https://i.yapx.ru/eNKrW.png',
+  cake     :'https://i.yapx.ru/eNKrX.png',
+  pizza    :'https://i.yapx.ru/eNKrY.png',
+  juice    :'https://i.yapx.ru/eNKrZ.png',
+  mushroom :'https://i.yapx.ru/eNKra.png',
+  honey    :'https://i.yapx.ru/eNKrc.png',
+  icecream :'https://i.yapx.ru/eNKrd.png',
+  chicken  :'https://i.yapx.ru/eNKre.png',
+  soup     :'https://i.yapx.ru/eNKrf.png',
+  hotChoc  :'https://i.yapx.ru/eOUiy.png',
+  coin     :'https://i.yapx.ru/eOiF0.png',
+  dragHappy:'https://i.yapx.ru/eNKrD.png',
+  dragSad  :'https://i.yapx.ru/eNKrF.png',
+  dragDrink:'https://i.yapx.ru/eNKrI.png'
+};
+
+/* ==========================================================
+   GOODS ON THE SHELF
+   ========================================================== */
+var GOODS=[
+  {key:'honey',    img:A.honey,    name:'honey',     want:true },
+  {key:'mushroom', img:A.mushroom, name:'mushrooms', want:true },
+  {key:'apples',   img:A.apple,    name:'apples',    want:false},
+  {key:'bread',    img:A.bread,    name:'bread',     want:false},
+  {key:'cheese',   img:A.cheese,   name:'cheese',    want:false},
+  {key:'cake',     img:A.cake,     name:'cake',      want:false}
+];
+
+/* ==========================================================
+   DIALOGUE SEQUENCE
+   ========================================================== */
+var INTRO=[
+  {who:'HEDGEHOG', text:'Hello, little dragon! Welcome to my shop!'},
+  {who:'DRAGON',   text:'Good morning! I need some food, and something <b>hot and spicy</b> to drink.'}
+];
+
+/* Stage 2 — two food requests with any */
+var REQUESTS=[
+  { want:'honey',
+    q:'Have you got <u>___</u> honey?',
+    opts:['any','some','a'], ans:'any',
+    yes:'Yes, I have! Here is <i>some</i> honey for you.',
+    no :'Almost! We ask with <b>any</b>: Have you got <b>any</b> honey?',
+    hint:'To ask for something, use <b>any</b>.' },
+  { want:'mushroom',
+    q:'And have you got <u>___</u> mushrooms?',
+    opts:['any','some','a'], ans:'any',
+    yes:'Of course! Here are <i>some</i> mushrooms.',
+    no :'Almost! We ask with <b>any</b>: Have you got <b>any</b> mushrooms?',
+    hint:'A question? Then <b>any</b>.' }
+];
+
+/* Stage 3 — drink with there is + any */
+var DRINK={
+  q:'<u>___</u> there <u>___</u> hot apple drink in the pot?',
+  opts:['Is ... any','Are ... some','Is ... a'], ans:'Is ... any',
+  yes:'Yes! There <i>is</i> some warm apple drink. With spices — just for you!',
+  no :'Almost! We ask: <b>Is there any</b> hot apple drink?',
+  hint:'One pot = <b>is</b>. A question = <b>any</b>.'
+};
+
+/* Stage 4 — payment with there are + coins */
+var PAY={
+  intro:'Look! There <u>___</u> some coins in my basket!',
+  opts:['are','is'], ans:'are',
+  yes:'Wonderful! The drink is three coins.',
+  no :'Almost! Many coins = <b>There are</b> some coins.',
+  hint:'Many coins = <b>are</b>.'
+};
+
+var L_END_DRAGON="Mmm! Now I have <i>some</i> food and <i>some</i> warm apple drink. Thank you!";
+var L_END_HEDGE="Come again soon, little dragon!";
+
+/* ==========================================================
+   ENGINE
+   ========================================================== */
+var S=document.getElementById('shopScene');
+if(!S)return;
+var $=function(id){return document.getElementById(id);};
+function sp(el,p,v){if(el&&el.style)el.style.setProperty(p,v,'important');}
+
+var state='idle',reqIndex=0,introStep=0,paid=0,got=0,busy=false,cardDone=null;
+var audio=null,L=[];
+function addL(t,ev,fn,op){if(!t)return;t.addEventListener(ev,fn,op);L.push({t:t,ev:ev,fn:fn,op:op});}
+function tone(f,d,type,vol){
+  try{
+    if(!audio)audio=new(window.AudioContext||window.webkitAudioContext)();
+    if(audio.state==='suspended')audio.resume();
+    var o=audio.createOscillator(),g=audio.createGain(),n=audio.currentTime;
+    o.type=type||'sine';o.frequency.setValueAtTime(f,n);
+    g.gain.setValueAtTime(.0001,n);
+    g.gain.exponentialRampToValueAtTime(vol||.1,n+.015);
+    g.gain.exponentialRampToValueAtTime(.0001,n+d);
+    o.connect(g);g.connect(audio.destination);o.start(n);o.stop(n+d+.03);
+  }catch(e){}
+}
+function sfxTap(){tone(700,.08,'triangle',.07);}
+function sfxGood(){tone(880,.2);setTimeout(function(){tone(1175,.24);},90);}
+function sfxBad(){tone(235,.26,'triangle',.09);}
+function sfxCoin(){tone(1320,.14,'sine',.12);}
+function sfxSwallow(){tone(420,.2,'sine',.09);setTimeout(function(){tone(300,.26,'sine',.08);},160);}
+
+function say(who,html){
+  $('bubbleWho').textContent=who;
+  $('bubbleText').innerHTML=html;
+  $('bubble').classList.add('on');
+}
+function hideBubble(){
+  $('bubble').classList.remove('on');
+}
+function rail(step,done){
+  var d=S.querySelectorAll('.dot');
+  for(var i=0;i<d.length;i++){
+    var n=+d[i].getAttribute('data-step');
+    d[i].classList.toggle('on',n===step);
+    d[i].classList.toggle('ok',!!done&&n<step);
+  }
+}
+
+/* ---------------- shelf ---------------- */
+function buildTray(){
+  var tray=$('tray');tray.innerHTML='';
+  GOODS.forEach(function(g){
+    var b=document.createElement('div');
+    b.className='goods';
+    b.setAttribute('data-key',g.key);
+    b.innerHTML='<img src="'+g.img+'" alt="'+g.name+'">';
+    addL(b,'click',onGoods);
+    tray.appendChild(b);
+  });
+}
+function liveGoods(key){
+  var all=S.querySelectorAll('.goods');
+  for(var i=0;i<all.length;i++){
+    var k=all[i].getAttribute('data-key');
+    all[i].classList.toggle('live',k===key);
+    all[i].classList.toggle('glow',k===key);
+  }
+}
+function lockGoods(){
+  var all=S.querySelectorAll('.goods');
+  for(var i=0;i<all.length;i++){all[i].classList.remove('live');all[i].classList.remove('glow');}
+}
+function nameOf(k){for(var i=0;i<GOODS.length;i++){if(GOODS[i].key===k)return GOODS[i].name;}return k;}
+
+/* ---------------- picking an item ---------------- */
+function onGoods(){
+  if(state!=='pick'||busy)return;
+  var key=this.getAttribute('data-key');
+  var want=REQUESTS[reqIndex].want;
+  if(key!==want){
+    sfxBad();
+    say('HEDGEHOG','Oh, we have <i>some</i> '+nameOf(key)+' too! But you want <i>some</i> '+nameOf(want)+', right? Try again!');
+    return;
+  }
+  busy=true;
+  sfxGood();
+  var self=this;
+  flyTo(this,$('basket'),function(){
+    self.classList.add('taken');
+    self.classList.remove('live');
+    $('basket').classList.add('pop');
+    setTimeout(function(){$('basket').classList.remove('pop');},440);
+    got++;
+    $('basketCount').classList.add('on');
+    $('basketCount').textContent='IN THE BASKET: '+got;
+    say('HEDGEHOG',REQUESTS[reqIndex].yes);
+    busy=false;
+    reqIndex++;
+    setTimeout(nextRequest,1250);
+  });
+}
+
+/* ---------------- flying object ---------------- */
+function flyTo(fromEl,toEl,after){
+  var sr=S.getBoundingClientRect();
+  var k=sr.width/1200||1;
+  var a=fromEl.getBoundingClientRect(),b=toEl.getBoundingClientRect();
+  var x0=(a.left-sr.left)/k,y0=(a.top-sr.top)/k;
+  var x1=(b.left-sr.left)/k+b.width/k/2-46,y1=(b.top-sr.top)/k+b.height/k/2-46;
+  var src=fromEl.dataset.src||(fromEl.querySelector('img')?fromEl.querySelector('img').src:'');
+  var f=document.createElement('div');
+  f.className='flyer';
+  f.innerHTML='<img src="'+src+'" alt="">';
+  sp(f,'left',x0+'px');sp(f,'top',y0+'px');
+  S.appendChild(f);
+  var steps=26,i=0;
+  var t=setInterval(function(){
+    i++;
+    var p=i/steps,ease=p<.5?2*p*p:-1+(4-2*p)*p;
+    sp(f,'left',(x0+(x1-x0)*ease)+'px');
+    sp(f,'top',(y0+(y1-y0)*ease-Math.sin(Math.PI*p)*130)+'px');
+    sp(f,'transform','scale('+(1-.38*ease)+') rotate('+(ease*200)+'deg)');
+    if(i>=steps){clearInterval(t);if(f.parentNode)f.remove();after();}
+  },16);
+}
+
+/* ---------------- question card ---------------- */
+var card=null;
+function ask(c,onDone){
+  state='card';
+  lockGoods();
+  card=c;cardDone=onDone;
+  $('cWho').textContent='DRAGON NEEDS HELP';
+  $('cQ').innerHTML=c.q;
+  $('cFb').innerHTML='';
+  $('cNext').classList.remove('on');
+  var box=$('cOpts');box.innerHTML='';
+  shuffle(c.opts.slice()).forEach(function(v){
+    var b=document.createElement('button');
+    b.type='button';b.className='opt';b.textContent=v;b.setAttribute('data-v',v);
+    addL(b,'click',function(){pick(this,c);});
+    box.appendChild(b);
+  });
+  $('wrap').classList.add('on');
+}
+function pick(btn,c){
+  if(state!=='card')return;
+  state='locked';
+  var chosen=btn.getAttribute('data-v');
+  var all=$('cOpts').querySelectorAll('.opt');
+  for(var i=0;i<all.length;i++){
+    all[i].disabled=true;
+    if(all[i].getAttribute('data-v')===c.ans)all[i].classList.add('correct');
+    else if(all[i]===btn)all[i].classList.add('wrong');
+  }
+  if(chosen===c.ans){
+    sfxGood();
+    $('cFb').innerHTML='<span class="ok">'+c.yes+'</span>';
+  }else{
+    sfxBad();
+    $('cFb').innerHTML='<span class="no">'+c.no+'</span><br><span class="ok">'+c.hint+'</span>';
+  }
+  $('cNext').classList.add('on');
+}
+
+/* ---------------- intro sequence with click gates ---------------- */
+function startIntro(){
+  state='intro';
+  rail(1,false);
+  showIntroLine();
+}
+function showIntroLine(){
+  if(introStep>=INTRO.length){afterIntro();return;}
+  var line=INTRO[introStep];
+  say(line.who,line.text);
+  introStep++;
+  $('tapGate').classList.add('on');
+}
+function onTapGate(){
+  if(state!=='intro')return;
+  sfxTap();
+  $('tapGate').classList.remove('on');
+  setTimeout(showIntroLine,300);
+}
+function afterIntro(){
+  state='ready';
+  hideBubble();
+  setTimeout(function(){reqIndex=0;nextRequest();},500);
+}
+
+/* ---------------- flow ---------------- */
+function nextRequest(){
+  $('wrap').classList.remove('on');
+  if(reqIndex>=REQUESTS.length){toDrink();return;}
+  state='ask';
+  rail(2,false);
+  say('DRAGON',REQUESTS[reqIndex].q);
+  setTimeout(function(){
+    ask(REQUESTS[reqIndex],startPick);
+  },950);
+}
+function startPick(){
+  $('wrap').classList.remove('on');
+  state='pick';
+  liveGoods(REQUESTS[reqIndex].want);
+  say('DRAGON','Where is it? <b>Tap it on the shelf!</b>');
+}
+function toDrink(){
+  state='ask';
+  rail(3,false);
+  say('DRAGON',DRINK.q);
+  setTimeout(function(){ask(DRINK,drinkScene);},950);
+}
+function drinkScene(){
+  $('wrap').classList.remove('on');
+  state='drink';
+  say('HEDGEHOG',DRINK.yes);
+  var cup=document.createElement('div');
+  cup.className='goods';
+  cup.dataset.src=A.hotChoc;
+  cup.style.position='absolute';
+  cup.style.left='50%';cup.style.top='150px';
+  cup.style.transform='translateX(-50%)';
+  cup.style.width='110px';cup.style.height='110px';
+  cup.style.opacity='1';cup.style.filter='none';
+  cup.style.border='none';cup.style.background='transparent';
+  cup.style.zIndex='150';
+  cup.innerHTML='<img src="'+A.hotChoc+'" alt="hot apple drink">';
+  S.appendChild(cup);
+  setTimeout(function(){
+    flyTo(cup,$('dragon'),function(){
+      if(cup.parentNode)cup.remove();
+      sfxSwallow();
+      var d=$('dragonImg');
+      d.src=A.dragDrink;
+      $('dragon').classList.remove('swap');
+      void $('dragon').offsetWidth;
+      $('dragon').classList.add('swap');
+      say('HEDGEHOG','Be careful — it is hot!');
+      setTimeout(function(){
+        say('DRAGON','Oh, this is <b>delicious</b>! Now I must pay.');
+        setTimeout(function(){
+          d.src=A.dragHappy;
+          $('dragon').classList.remove('swap');
+          void $('dragon').offsetWidth;
+          $('dragon').classList.add('swap');
+          toPay();
+        },1700);
+      },1500);
+    });
+  },1400);
+}
+function toPay(){
+  state='ask';
+  rail(4,false);
+  say('DRAGON',PAY.intro);
+  setTimeout(function(){
+    ask(PAY,startCoins);
+  },950);
+}
+function startCoins(){
+  $('wrap').classList.remove('on');
+  state='pay';
+  $('coins').classList.add('on');
+  $('coinLabel').classList.add('on');
+  say('HEDGEHOG',PAY.yes);
+  setTimeout(function(){
+    say('DRAGON','Yes! I have <i>some</i> coins. One, two, three!');
+  },1200);
+  var c=$('coins').querySelectorAll('.coin');
+  for(var i=0;i<c.length;i++){addL(c[i],'click',onCoin);}
+}
+function onCoin(){
+  if(state!=='pay'||this.classList.contains('gone'))return;
+  this.classList.add('gone');
+  paid++;sfxCoin();
+  $('coinLabel').textContent='COINS: '+paid+' / 3';
+  if(paid>=3)setTimeout(endScene,700);
+}
+function endScene(){
+  state='end';
+  $('coins').classList.remove('on');
+  $('coinLabel').classList.remove('on');
+  rail(4,true);
+  say('DRAGON',L_END_DRAGON);
+  setTimeout(function(){say('HEDGEHOG',L_END_HEDGE);},1700);
+}
+
+/* ---------------- boot ---------------- */
+function boot(){
+  buildTray();
+  var img=$('dragonImg');
+  if(img.src!==A.dragHappy)img.src=A.dragHappy;
+  fit();
+}
+function fit(){
+  var W=1200,H=675;
+  var pw=window.innerWidth||W,ph=window.innerHeight||H;
+  var s=Math.min(pw/W,ph/H);
+  sp(S,'transform','translate('+((pw-W*s)/2)+'px,'+((ph-H*s)/2)+'px) scale('+s+')');
+}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x;}return a;}
+
+/* ---------------- wire up ---------------- */
+addL($('cNext'),'click',function(){
+  sfxTap();
+  $('wrap').classList.remove('on');
+  var fn=cardDone;cardDone=null;
+  if(typeof fn==='function')fn();
+});
+addL($('tapGate'),'click',onTapGate);
+addL($('gate'),'click',function(){
+  sfxTap();
+  $('gate').classList.add('off');
+  startIntro();
+});
+addL(window,'resize',fit);
+
+if(document.readyState==='loading')addL(window,'DOMContentLoaded',boot);else boot();
+
+})();
+</script>
+</body>
+</html>
