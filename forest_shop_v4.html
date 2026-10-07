@@ -478,7 +478,15 @@ function toPay(){
   rail(4,false);
   say('DRAGON',PAY.intro);
   setTimeout(function(){
-    ask(PAY,startCoins);
+    var payCard={
+      q:PAY.intro,
+      opts:PAY.opts,
+      ans:PAY.ans,
+      yes:PAY.yes,
+      no:PAY.no,
+      hint:PAY.hint
+    };
+    ask(payCard,startCoins);
   },950);
 }
 function startCoins(){
