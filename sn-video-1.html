@@ -1,789 +1,941 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Backseat - Supernatural Investigation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Courier+Prime:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Backseat — Case File</title>
 
-        :root {
-            --paper: #f2e6c9;
-            --folder-bg: #d2b48c;
-            --brown-dark: #2b1810;
-            --brown-light: #5d4037;
-            --gold: #d4a574;
-            --text-dark: #1a1510;
-            --shadow: rgba(0,0,0,0.8);
-            --rust-red: #8b0000;
-        }
+<link
+  href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Special+Elite&display=swap"
+  rel="stylesheet"
+>
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #000;
-            font-family: 'Courier Prime', monospace;
-        }
+<style>
+  :root {
+    --paper: #f2e6c9;
+    --ink: #261b13;
+    --brown: #2b1810;
+    --gold: #d4a574;
+    --red: #8b0000;
+  }
 
-        /* Container designed to fit 16:9 canvas perfectly */
-        #main-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-        /* ===== VIDEO SECTION ===== */
-        .video-section {
-            position: absolute;
-            inset: 0;
-            z-index: 100;
-            background: #000;
-            transition: opacity 0.5s, visibility 0.5s;
-        }
+  [hidden] {
+    display: none !important;
+  }
 
-        .video-section.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    font-family: "Courier Prime", monospace;
+    -webkit-font-smoothing: antialiased;
+  }
 
-        /* PRELOADER SCREEN */
-        .loader-screen {
-            position: absolute;
-            inset: 0;
-            z-index: 150;
-            background: linear-gradient(135deg, #1a0f07 0%, #0a0605 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 25px;
-            transition: opacity 0.5s, visibility 0.5s;
-        }
+  button,
+  select {
+    font: inherit;
+  }
 
-        .loader-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+  button {
+    cursor: pointer;
+  }
 
-        .loader-icon {
-            width: 70px;
-            height: 90px;
-            border: 3px solid var(--gold);
-            border-radius: 6px;
-            background: rgba(212,165,116,0.1);
-            position: relative;
-            box-shadow: 0 0 25px var(--shadow);
-            animation: caseFloat 2s ease-in-out infinite;
-        }
+  button:focus-visible,
+  select:focus-visible {
+    outline: 3px solid #ffb000;
+    outline-offset: 3px;
+  }
 
-        .loader-icon::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 8px;
-            width: 50px;
-            height: 3px;
-            background: var(--gold);
-        }
+  #main-container {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    position: relative;
+  }
 
-        .loader-icon::after {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 8px;
-            width: 44px;
-            height: 2px;
-            background: rgba(212,165,116,0.5);
-            box-shadow: 0 6px 0 rgba(212,165,116,0.5), 0 12px 0 rgba(212,165,116,0.4);
-        }
+  /* VIDEO */
 
-        @keyframes caseFloat {
-            0%, 100% { transform: translateY(0) rotate(-1deg); }
-            50% { transform: translateY(-12px) rotate(1deg); }
-        }
+  .video-section {
+    position: absolute;
+    inset: 0;
+    background: #000;
+  }
 
-        .loader-title {
-            font-family: 'Cinzel Decorative', serif;
-            font-size: 18px;
-            color: var(--gold);
-            letter-spacing: 2px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-        }
+  video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 
-        .loader-bar-bg {
-            width: 300px;
-            height: 8px;
-            background: rgba(255,255,255,0.05);
-            border: 2px solid var(--gold);
-            border-radius: 6px;
-            overflow: hidden;
-        }
+  .video-toolbar {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+  }
 
-        .loader-bar-fill {
-            width: 0%;
-            height: 100%;
-            background: var(--gold);
-            box-shadow: 0 0 10px var(--gold);
-            transition: width 0.2s ease;
-        }
+  .video-btn,
+  .btn-action {
+    padding: 10px 16px;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    background: rgba(27,17,11,0.94);
+    color: #f5deb3;
+    font-size: 13px;
+    font-weight: bold;
+    transition: background 0.2s, transform 0.2s;
+  }
 
-        .video-wrap {
-            position: absolute;
-            inset: 0;
-            z-index: 10;
-        }
+  .video-btn:hover,
+  .btn-action:hover {
+    background: #674932;
+    transform: translateY(-1px);
+  }
 
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+  .video-status {
+    position: absolute;
+    bottom: 65px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100% - 30px);
+    padding: 9px 14px;
+    border-radius: 5px;
+    color: #f5deb3;
+    background: rgba(27,17,11,0.9);
+    font-size: 13px;
+    text-align: center;
+    pointer-events: none;
+  }
 
-        /* SOUND TOGGLE */
-        .sound-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 30;
-            background: rgba(26, 15, 7, 0.85);
-            border: 2px solid var(--gold);
-            color: #f5deb3;
-            font-weight: 700;
-            font-size: 12px;
-            padding: 8px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-            transition: all 0.2s;
-            letter-spacing: 0.5px;
-        }
+  .end-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(10,6,5,0.88);
+    backdrop-filter: blur(5px);
+  }
 
-        .sound-btn:hover {
-            transform: scale(1.05);
-            background: var(--gold);
-            color: var(--brown-dark);
-        }
+  .end-card {
+    width: min(470px, 100%);
+    padding: 30px;
+    background: var(--paper);
+    color: var(--ink);
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    text-align: center;
+    animation: fadeIn 0.4s ease both;
+  }
 
-        /* END SCREEN OVERLAY */
-        .end-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 40;
-            background: rgba(10, 6, 5, 0.9);
-            backdrop-filter: blur(6px);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+  .end-text {
+    margin-bottom: 22px;
+    font-size: 20px;
+    line-height: 1.5;
+  }
 
-        .end-overlay.show {
-            display: flex;
-            animation: fadeIn 0.5s ease forwards;
-        }
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+  /* CASE FOLDER */
 
-        .end-card {
-            background: #ebdcb9;
-            border: 3px solid var(--gold);
-            border-radius: 12px;
-            padding: 30px 45px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            max-width: 500px;
-            text-align: center;
-        }
+  .case-section {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 22px;
+    background:
+      radial-gradient(circle at 50% 30%, #7d5c3b, #4a331c);
+  }
 
-        .end-text {
-            font-size: 18px;
-            color: var(--text-dark);
-            font-weight: 700;
-            line-height: 1.5;
-        }
+  .case-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(212,165,116,0.5);
+  }
 
-        .end-btn-group {
-            display: flex;
-            gap: 15px;
-        }
+  .case-title {
+    color: #f1d1a2;
+    font-family: "Special Elite", Georgia, serif;
+    font-size: clamp(16px, 2vw, 21px);
+    letter-spacing: 1px;
+  }
 
-        .btn-action {
-            padding: 10px 24px;
-            background: var(--brown-dark);
-            border: 2px solid var(--gold);
-            border-radius: 8px;
-            font-weight: 700;
-            color: var(--gold);
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-            letter-spacing: 0.5px;
-        }
+  .header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
 
-        .btn-action:hover {
-            background: var(--gold);
-            color: var(--brown-dark);
-            transform: translateY(-2px);
-        }
+  .case-badge {
+    color: #eadbc3;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 11px;
+  }
 
-        /* ===== CASE FILE SECTION (100% Canvas, No outer container scrolls) ===== */
-        .case-section {
-            position: absolute;
-            inset: 0;
-            z-index: 80;
-            background-color: #5d452d; /* Folder brown exterior color */
-            background-image: radial-gradient(circle, #7d5c3b 0%, #4a331c 100%);
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 15px 25px;
-            height: 100%;
-            width: 100%;
-        }
+  .folder-spread {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    animation: folderOpen 0.45s ease both;
+  }
 
-        .case-section.active {
-            display: flex;
-        }
+  .doc-page {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: auto;
+    padding: clamp(18px, 2.4vw, 28px);
+    border: 1px solid #d3c4a6;
+    border-radius: 4px;
+    color: var(--ink);
+    background:
+      radial-gradient(
+        ellipse at top,
+        rgba(255,255,255,0.35),
+        transparent 75%
+      ),
+      var(--paper);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    scrollbar-width: thin;
+    scrollbar-color: #a98b68 transparent;
+  }
 
-        .case-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            height: 40px;
-            border-bottom: 2px solid rgba(255, 176, 0, 0.3);
-            margin-bottom: 10px;
-        }
+  .doc-page-title {
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(43,24,16,0.2);
+    font-family: "Special Elite", Georgia, serif;
+    font-size: 20px;
+    text-align: center;
+  }
 
-        .case-title {
-            font-family: 'Special Elite', cursive;
-            color: #ffb000;
-            font-size: 18px;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 6px rgba(255, 176, 0, 0.3);
-        }
+  .doc-text {
+    font-size: 16px;
+    line-height: 1.6;
+  }
 
-        .case-badge {
-            font-family: 'Courier Prime', monospace;
-            font-size: 11px;
-            color: rgba(255,255,255,0.7);
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 2px 8px;
-            border-radius: 3px;
-        }
+  .summary-note {
+    padding: 12px 14px;
+    border-left: 3px solid #a57640;
+    background: rgba(165,118,64,0.1);
+  }
 
-        /* 16:9 two-page spread wrapper */
-        .folder-spread {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            height: calc(100% - 130px); /* Leave room for header and bottom bar */
-            width: 100%;
-        }
+  .table-wrap {
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
 
-        .doc-page {
-            background: var(--paper);
-            color: #1a130e;
-            border-radius: 4px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-            border: 1px solid #d3c4a6;
-            padding: 22px 26px;
-            height: 100%;
-            overflow-y: auto; /* Scroll individual sheets if needed, layout stays locked */
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
+  .incident-table {
+    width: 100%;
+    min-width: 390px;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.45;
+  }
 
-        /* Custom scrollbar for doc pages */
-        .doc-page::-webkit-scrollbar {
-            width: 5px;
-        }
-        .doc-page::-webkit-scrollbar-thumb {
-            background: rgba(93, 64, 55, 0.4);
-            border-radius: 3px;
-        }
+  .incident-table th,
+  .incident-table td {
+    border: 1px solid #a7987f;
+    padding: 10px 9px;
+    vertical-align: top;
+    text-align: left;
+  }
 
-        .doc-page-title {
-            font-family: 'Special Elite', cursive;
-            font-weight: bold;
-            text-align: center;
-            border-bottom: 2px solid rgba(0,0,0,0.15);
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            font-size: 1.35rem;
-            color: #2b1810;
-        }
+  .incident-table th {
+    background: rgba(43,24,16,0.08);
+    font-size: 13px;
+  }
 
-        .doc-text {
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
+  .incident-table tbody tr:nth-child(even) {
+    background: rgba(255,255,255,0.17);
+  }
 
-        .highlight {
-            background-color: rgba(212, 143, 56, 0.22);
-            padding: 1px 4px;
-            border-bottom: 1.5px dashed #d48f38;
-            font-weight: bold;
-        }
+  .clothes {
+    font-weight: bold;
+  }
 
-        .incident-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 12px;
-            font-size: 13.5px;
-        }
+  .small-note {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(43,24,16,0.2);
+    color: #65513c;
+    font-size: 13px;
+    line-height: 1.5;
+  }
 
-        .incident-table th, .incident-table td {
-            border: 1px solid #9c8e76;
-            padding: 8px 10px;
-            text-align: left;
-        }
+  .statement {
+    padding: 15px;
+    border: 1px solid rgba(43,24,16,0.16);
+    border-left: 3px solid #9b754c;
+    background: rgba(255,255,255,0.18);
+  }
 
-        .incident-table th {
-            background-color: rgba(0,0,0,0.04);
-            font-family: 'Special Elite', cursive;
-            font-size: 13px;
-        }
+  .statement-heading {
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
 
-        /* Bottom analysis action bar spanning full width */
-        .analysis-bar {
-            height: 70px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 6px;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            margin-top: 10px;
-            gap: 15px;
-        }
+  .statement-meta {
+    margin-bottom: 9px;
+    color: #735838;
+    font-size: 13px;
+  }
 
-        .analysis-label {
-            font-family: 'Special Elite', cursive;
-            color: #ffb000;
-            font-size: 15px;
-            white-space: nowrap;
-        }
+  .statement blockquote {
+    font-size: 16px;
+    line-height: 1.65;
+  }
 
-        .analysis-select-wrap {
-            flex: 1;
-            display: flex;
-            align-items: center;
-        }
+  .case-stamp {
+    align-self: flex-end;
+    margin-top: auto;
+    border: 2px solid #8b0000;
+    padding: 5px 10px;
+    color: #8b0000;
+    font-size: 12px;
+    letter-spacing: 2px;
+    transform: rotate(-5deg);
+    opacity: 0.75;
+  }
 
-        select {
-            font-family: 'Courier Prime', monospace;
-            font-weight: bold;
-            background: #1a1a1a;
-            color: #fff;
-            border: 1px solid #444;
-            padding: 8px 12px;
-            width: 100%;
-            font-size: 14px;
-            border-radius: 4px;
-            outline: none;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
+  /* ONE ANALYSIS TASK */
 
-        select:focus {
-            border-color: #ffb000;
-        }
+  .analysis-bar {
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 16px;
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 6px;
+    background: rgba(20,12,7,0.88);
+  }
 
-        .case-btn {
-            font-family: 'Special Elite', cursive;
-            background: var(--rust-red);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 8px 24px;
-            font-size: 12px;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 4px;
-            letter-spacing: 1px;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
+  .analysis-label {
+    color: #f1d1a2;
+    font-size: 14px;
+    font-weight: bold;
+  }
 
-        .case-btn:hover {
-            background: #a30000;
-            transform: scale(1.02);
-        }
+  select {
+    width: 100%;
+    min-width: 0;
+    padding: 11px;
+    border: 1px solid #9d7b51;
+    border-radius: 4px;
+    background: #201811;
+    color: #fff1da;
+    font-size: 14px;
+    cursor: pointer;
+  }
 
-        /* Overlay modal for quiz results so layout is never displaced */
-        .feedback-modal {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(4px);
-            z-index: 200;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+  .case-btn {
+    padding: 11px 22px;
+    border: 1px solid #c29667;
+    border-radius: 4px;
+    background: var(--red);
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+  }
 
-        .feedback-modal.active {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
+  .case-btn:hover {
+    background: #a30f0f;
+  }
 
-        .feedback-card {
-            background: var(--paper);
-            border: 3px solid var(--gold);
-            border-radius: 10px;
-            padding: 25px 35px;
-            max-width: 520px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
+  /* ACCESSIBLE RESULT DIALOG */
 
-        .feedback-title-text {
-            font-family: 'Special Elite', cursive;
-            font-size: 18px;
-            font-weight: bold;
-        }
+  .feedback-modal {
+    position: fixed;
+    inset: 0;
+    width: min(500px, calc(100% - 32px));
+    max-height: calc(100% - 32px);
+    margin: auto;
+    padding: 30px;
+    overflow: auto;
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    background: var(--paper);
+    color: var(--ink);
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  }
 
-        .feedback-desc-text {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #2b1810;
-        }
+  .feedback-modal::backdrop {
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(4px);
+  }
 
-        .success-code-box {
-            background: rgba(76, 175, 80, 0.12);
-            border: 2px solid #2e7d32;
-            color: #2e7d32;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-family: 'Special Elite', cursive;
-            font-size: 1.25rem;
-            letter-spacing: 3px;
-            font-weight: 700;
-            margin-top: 5px;
-        }
+  .feedback-title {
+    margin-bottom: 16px;
+    font-family: "Special Elite", Georgia, serif;
+    font-size: 23px;
+  }
 
-        .feedback-close-btn {
-            font-family: 'Special Elite', cursive;
-            background: var(--brown-light);
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+  .feedback-message {
+    margin-bottom: 24px;
+    font-size: 17px;
+    line-height: 1.65;
+  }
 
-        .feedback-close-btn:hover {
-            background: var(--brown-dark);
-        }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 
-        .case-stamp {
-            display: inline-block;
-            border: 2px double var(--gold);
-            color: var(--gold);
-            font-family: 'Courier Prime', monospace;
-            font-weight: bold;
-            font-size: 10px;
-            padding: 4px 10px;
-            transform: rotate(-6deg);
-            opacity: 0.85;
-            letter-spacing: 1px;
-        }
-    </style>
+  @keyframes folderOpen {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 740px) {
+    .case-section {
+      overflow: auto;
+      padding: 12px;
+    }
+
+    .folder-spread {
+      flex: none;
+      grid-template-columns: 1fr;
+    }
+
+    .doc-page {
+      overflow: visible;
+    }
+
+    .analysis-bar {
+      grid-template-columns: 1fr;
+    }
+
+    .case-btn {
+      width: 100%;
+    }
+
+    .case-header {
+      align-items: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
 </head>
+
 <body>
+<main id="main-container">
 
-<div id="main-container">
+  <section
+    class="video-section"
+    id="video-section"
+    aria-label="Case introduction video"
+  >
+    <video
+      id="case-video"
+      playsinline
+      preload="metadata"
+      muted
+      controls
+    >
+      <source
+        src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/video_2026-08-12_19-12-06.mp4"
+        type="video/mp4"
+      >
+      Your browser does not support video.
+    </video>
 
-    <!-- ===== VIDEO SECTION ===== -->
-    <div class="video-section" id="video-section">
+    <div class="video-toolbar">
+      <button class="video-btn" id="sound-btn" type="button">
+        Sound off
+      </button>
 
-        <!-- PRELOADER -->
-        <div class="loader-screen" id="loader">
-            <div class="loader-icon"></div>
-            <div class="loader-title">ANALYZING CASE FILE...</div>
-            <div class="loader-bar-bg">
-                <div class="loader-bar-fill" id="loader-fill"></div>
-            </div>
+      <button class="video-btn" id="btn-play" type="button">
+        ▶ Play
+      </button>
+
+      <button class="video-btn" id="btn-skip" type="button">
+        Open case →
+      </button>
+    </div>
+
+    <p class="video-status" id="video-status" role="status">
+      Loading video…
+    </p>
+
+    <div class="end-overlay" id="end-overlay" hidden>
+      <div class="end-card">
+        <p class="end-text">The evidence is yours to examine.</p>
+
+        <div class="button-group">
+          <button class="btn-action" id="btn-rewatch" type="button">
+            Rewatch
+          </button>
+
+          <button class="btn-action" id="btn-examine" type="button">
+            Examine →
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section
+    class="case-section"
+    id="case-section"
+    aria-label="Case file"
+    hidden
+  >
+    <header class="case-header">
+      <h1 class="case-title">FBI — ACTIVE CASE</h1>
+
+      <div class="header-actions">
+        <span class="case-badge">CASE FILE #1994-07</span>
+
+        <button class="video-btn" id="btn-back-video" type="button">
+          Watch video
+        </button>
+      </div>
+    </header>
+
+    <div class="folder-spread">
+
+      <article class="doc-page">
+        <h2 class="doc-page-title">THREE MISSING STUDENTS</h2>
+
+        <p class="doc-text summary-note">
+          Three students disappeared from campus in the past month.
+          Each night, there was heavy rain and thick fog.
+        </p>
+
+        <div class="table-wrap">
+          <table class="incident-table">
+            <thead>
+              <tr>
+                <th scope="col">Student / date</th>
+                <th scope="col">When they left</th>
+                <th scope="col">What witnesses saw</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <th scope="row">Thomas Wright<br>Aug 20</th>
+                <td>
+                  <span class="clothes">Green cotton hoodie</span>,
+                  jeans
+                </td>
+                <td>
+                  <span class="clothes">Yellow raincoat</span>
+                </td>
+              </tr>
+
+              <tr>
+                <th scope="row">Sarah Connor<br>Sept 2</th>
+                <td>
+                  <span class="clothes">Black leather jacket</span>,
+                  boots
+                </td>
+                <td>
+                  <span class="clothes">White evening dress</span>
+                </td>
+              </tr>
+
+              <tr>
+                <th scope="row">Lucy Miller<br>Sept 9</th>
+                <td>
+                  <span class="clothes">Blue denim jacket</span>,
+                  backpack
+                </td>
+                <td>
+                  <span class="clothes">Red varsity jacket</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        <!-- SOUND CONTROL -->
-        <button class="sound-btn" id="sound-btn">🔇 MUTED</button>
+        <p class="small-note">
+          Their roommates say the students did not own
+          the clothes described by the witnesses.
+        </p>
+      </article>
 
-        <!-- VIDEO PLAYER -->
-        <div class="video-wrap">
-            <video id="case-video" playsinline preload="auto" muted>
-                <source src="https://raw.githubusercontent.com/AlexandraGes-ESL/Pictures/main/video_2026-08-12_19-12-06.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        </div>
+      <article class="doc-page">
+        <h2 class="doc-page-title">LUCY: TWO REPORTS</h2>
 
-        <!-- END SCREEN OVERLAY -->
-        <div class="end-overlay" id="end-overlay">
-            <div class="end-card">
-                <div class="end-text">The evidence is yours to examine.</div>
-                <div class="end-btn-group">
-                    <button class="btn-action" id="btn-rewatch">🔁 REWATCH</button>
-                    <button class="btn-action" id="btn-examine">EXAMINE →</button>
-                </div>
-            </div>
-        </div>
+        <section class="statement">
+          <h3 class="statement-heading">
+            Mrs. Gable — near Blackwood Forest
+          </h3>
+
+          <p class="statement-meta">8:45 PM · Sept 9</p>
+
+          <blockquote>
+            “I saw a young woman who looked like Lucy.
+            She walked into the forest in a
+            <strong>red varsity jacket</strong>.
+            She had <strong>no bag</strong>.
+            She seemed unaware of anything around her.”
+          </blockquote>
+        </section>
+
+        <section class="statement">
+          <h3 class="statement-heading">Lucy’s roommate</h3>
+
+          <p class="statement-meta">8:30 PM · Room 213</p>
+
+          <blockquote>
+            “Lucy left for the library in her
+            <strong>blue denim jacket</strong>.
+            She took her <strong>black backpack</strong>
+            with her laptop.
+            She didn’t own a red varsity jacket.”
+          </blockquote>
+        </section>
+
+        <span class="case-stamp" aria-hidden="true">
+          CLASSIFIED
+        </span>
+      </article>
 
     </div>
 
-    <!-- ===== CASE FILE SECTION ===== -->
-    <div class="case-section" id="case-section">
-        
-        <div class="case-header">
-            <h2 class="case-title">📂 FEDERAL BUREAU OF INVESTIGATION - ACTIVE CASE</h2>
-            <div class="case-badge">CASE FILE #1994-07</div>
-        </div>
+    <form class="analysis-bar" id="analysis-form">
+      <label class="analysis-label" for="deduction-select">
+        What does the evidence show?
+      </label>
 
-        <!-- Folder spread matching 16:9 canvas perfectly -->
-        <div class="folder-spread">
-            
-            <!-- Left page: Incident summary -->
-            <div class="doc-page">
-                <div class="doc-page-title">INCIDENT PATTERN SUMMARY</div>
-                <div class="doc-text">
-                    <p><strong>Lead Agent:</strong> Collins, FBI</p>
-                    <p style="margin-top: 4px;"><strong>Local Authority:</strong> Fall River PD</p>
-                    <p style="margin-top: 8px;"><strong>Summary:</strong> Over the past 30 days, three sophomore students vanished from the campus under identical weather conditions (dense fog, heavy rainfall).</p>
-                </div>
-                
-                <table class="incident-table">
-                    <thead>
-                        <tr>
-                            <th>Victim</th>
-                            <th>Date</th>
-                            <th>Attire on Departure</th>
-                            <th>Attire Sighted by Witness</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Thomas Wright</td>
-                            <td>Aug 20</td>
-                            <td><span class="highlight">Green cotton hoodie</span>, jeans</td>
-                            <td>Bright yellow raincoat</td>
-                        </tr>
-                        <tr>
-                            <td>Sarah Connor</td>
-                            <td>Sept 2</td>
-                            <td><span class="highlight">Black leather jacket</span>, boots</td>
-                            <td>White evening dress</td>
-                        </tr>
-                        <tr>
-                            <td>Lucy Miller</td>
-                            <td>Sept 9</td>
-                            <td><span class="highlight">Blue denim jacket</span>, backpack</td>
-                            <td>Bright red varsity jacket</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="doc-text" style="font-size: 11px; margin-top: auto; font-style: italic; color: #555; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 8px;">
-                    *Roommates confirmed victims did not own the clothes described by forest-edge witnesses.
-                </div>
-            </div>
+      <select id="deduction-select" name="deduction">
+        <option value="">-- Choose your conclusion --</option>
 
-            <!-- Right page: Witness audit -->
-            <div class="doc-page">
-                <div class="doc-page-title">WITNESS TESTIMONY AUDIT</div>
-                <div class="doc-text" style="border-left: 3px solid rgba(0,0,0,0.15); padding-left: 10px; margin-bottom: 15px;">
-                    <p><strong>Witness:</strong> Mrs. Gable (Blackwood Forest border resident)</p>
-                    <p style="margin-top: 4px; font-style: italic;">"At 8:45 PM, I observed a young woman fitting Lucy's description walking into the treeline. She wore a <span class="highlight">bright red varsity jacket</span>. In dense fog, it was very visible. She was carrying <span class="highlight">no bags</span> and walked in a trance."</p>
-                </div>
-                <div class="doc-text" style="border-left: 3px solid rgba(0,0,0,0.15); padding-left: 10px;">
-                    <p><strong>Roommate Statement (Jane Doe):</strong></p>
-                    <p style="margin-top: 4px; font-style: italic;">"Lucy left Room 213 at 8:30 PM heading to the library. She wore her <span class="highlight">blue denim jacket</span> and carried her <span class="highlight">heavy black backpack</span> with her laptop. She definitely did not own a red varsity jacket."</p>
-                </div>
-                <div style="margin-top: auto; text-align: right;">
-                    <div class="case-stamp">CLASSIFIED</div>
-                </div>
-            </div>
+        <option value="wrong_1">
+          All three students wore the same clothes.
+        </option>
 
-        </div>
+        <option value="correct">
+          The witness reports do not match the students’ clothes.
+        </option>
 
-        <!-- Bottom compact action bar -->
-        <div class="analysis-bar">
-            <div class="analysis-label">🔎 SUBMIT DEDUCTIVE ANALYSIS:</div>
-            <div class="analysis-select-wrap">
-                <select id="deduction-select">
-                    <option value="">-- Choose the logical deduction --</option>
-                    <option value="wrong_1">The victims purchased new clothing immediately before disappearing.</option>
-                    <option value="correct">The witnesses could not have seen the real students. The clothing discrepancies indicate a different entity assumed their forms.</option>
-                    <option value="wrong_2">The roommates are withholding information and lying about the victims' wardrobes.</option>
-                    <option value="wrong_3">Local police altered reports to cover up a campus security failure.</option>
-                </select>
-            </div>
-            <button class="case-btn" onclick="evaluateDeduction()">Verify</button>
-        </div>
+        <option value="wrong_2">
+          Lucy left her room without a backpack.
+        </option>
 
-    </div>
+        <option value="wrong_3">
+          The reports prove the students are hiding in the forest.
+        </option>
+      </select>
 
-    <!-- Quiz Results Modal Overlay -->
-    <div class="feedback-modal" id="feedback-modal">
-        <div class="feedback-card" id="feedback-card">
-            <!-- Content dynamic in JS -->
-        </div>
-    </div>
+      <button class="case-btn" type="submit">Verify</button>
+    </form>
+  </section>
 
-</div>
+  <dialog
+    class="feedback-modal"
+    id="feedback-modal"
+    aria-labelledby="feedback-title"
+    aria-describedby="feedback-message"
+  >
+    <h2 class="feedback-title" id="feedback-title"></h2>
+    <p class="feedback-message" id="feedback-message"></p>
+
+    <button class="btn-action" id="feedback-close" type="button">
+      Back to File
+    </button>
+  </dialog>
+
+</main>
 
 <script>
-(function(){
-    var video = document.getElementById('case-video');
-    var loader = document.getElementById('loader');
-    var loaderFill = document.getElementById('loader-fill');
-    var soundBtn = document.getElementById('sound-btn');
-    var endOverlay = document.getElementById('end-overlay');
-    var rewatchBtn = document.getElementById('btn-rewatch');
-    var examineBtn = document.getElementById('btn-examine');
-    var videoSection = document.getElementById('video-section');
-    var caseSection = document.getElementById('case-section');
+(() => {
+  "use strict";
 
-    if(!video) return;
+  const get = id => document.getElementById(id);
 
-    /* Simulated Progress Bar */
-    var prog = 0;
-    var timer = setInterval(function(){
-        prog += Math.floor(Math.random() * 25) + 12;
-        if(prog > 95) prog = 95;
-        if(loaderFill) loaderFill.style.width = prog + '%';
-    }, 180);
+  const video = get("case-video");
+  const videoSection = get("video-section");
+  const caseSection = get("case-section");
+  const videoStatus = get("video-status");
+  const soundButton = get("sound-btn");
+  const playButton = get("btn-play");
+  const endOverlay = get("end-overlay");
 
-    /* Video Ready Event */
-    function startVideo(){
-        clearInterval(timer);
-        if(loaderFill) loaderFill.style.width = '100%';
-        
-        setTimeout(function(){
-            if(loader) loader.classList.add('hidden');
-            video.currentTime = 0;
-            var playPromise = video.play();
-            if(playPromise !== undefined){
-                playPromise.catch(function(){
-                    soundBtn.textContent = '▶ PLAY VIDEO';
-                });
-            }
-        }, 400);
+  const select = get("deduction-select");
+  const modal = get("feedback-modal");
+  const feedbackTitle = get("feedback-title");
+  const feedbackMessage = get("feedback-message");
+  const feedbackClose = get("feedback-close");
+
+  let view = "video";
+  let playRequest = 0;
+  let autoplayAttempted = false;
+
+  function setVideoStatus(message) {
+    videoStatus.textContent = message;
+    videoStatus.hidden = message === "";
+  }
+
+  function updateVideoButtons() {
+    playButton.textContent =
+      video.paused || video.ended ? "▶ Play" : "Ⅱ Pause";
+
+    soundButton.textContent = video.muted ? "Sound off" : "Sound on";
+
+    soundButton.setAttribute(
+      "aria-label",
+      video.muted ? "Turn sound on" : "Turn sound off"
+    );
+
+    soundButton.setAttribute(
+      "aria-pressed",
+      String(!video.muted)
+    );
+  }
+
+  async function playVideo() {
+    if (view !== "video") return;
+
+    const request = ++playRequest;
+    endOverlay.hidden = true;
+
+    try {
+      await video.play();
+
+      if (request === playRequest && view === "video") {
+        setVideoStatus("");
+      }
+    } catch (_) {
+      if (request !== playRequest || view !== "video") return;
+
+      setVideoStatus(
+        video.error
+          ? "Video could not load. You can still open the case."
+          : "Press Play to start the video."
+      );
     }
 
-    video.addEventListener('canplaythrough', startVideo, { once: true });
+    updateVideoButtons();
+  }
 
-    setTimeout(function(){
-        if(loader && !loader.classList.contains('hidden')) {
-            startVideo();
-        }
-    }, 2500);
+  function openCase() {
+    view = "case";
+    playRequest++;
+    video.pause();
 
-    /* Sound Toggle Handler */
-    soundBtn.addEventListener('click', function(){
-        if(video.muted){
-            video.muted = false;
-            video.volume = 1.0;
-            soundBtn.textContent = '🔊 SOUND ON';
-            video.play();
-        } else {
-            video.muted = true;
-            soundBtn.textContent = '🔇 MUTED';
-        }
-    });
+    endOverlay.hidden = true;
+    videoSection.hidden = true;
+    caseSection.hidden = false;
 
-    /* Video Ended Handler */
-    video.addEventListener('ended', function(){
-        if(endOverlay) endOverlay.classList.add('show');
-    });
+    select.focus({ preventScroll: true });
+  }
 
-    /* Rewatch Button */
-    rewatchBtn.addEventListener('click', function(){
-        if(endOverlay) endOverlay.classList.remove('show');
-        video.currentTime = 0;
-        video.play();
-    });
+  function showVideo() {
+    view = "video";
+    caseSection.hidden = true;
+    videoSection.hidden = false;
+    endOverlay.hidden = true;
 
-    /* Examine Button */
-    examineBtn.addEventListener('click', function(){
-        videoSection.classList.add('hidden');
-        caseSection.classList.add('active');
-    });
-})();
+    updateVideoButtons();
+    playButton.focus({ preventScroll: true });
+  }
 
-/* Case File Deduction */
-function evaluateDeduction() {
-    var select = document.getElementById('deduction-select');
-    var modal = document.getElementById('feedback-modal');
-    var card = document.getElementById('feedback-card');
-    var val = select.value;
+  function restartVideo() {
+    view = "video";
 
-    if (val === '') {
-        alert('Please select a deductive option before verifying.');
-        return;
+    try {
+      video.currentTime = 0;
+    } catch (_) {}
+
+    void playVideo();
+  }
+
+  function tryAutoplay() {
+    if (autoplayAttempted || view !== "video") return;
+
+    autoplayAttempted = true;
+    void playVideo();
+  }
+
+  video.addEventListener("canplay", tryAutoplay);
+
+  video.addEventListener("playing", () => {
+    if (view !== "video") {
+      video.pause();
+      return;
     }
 
-    modal.classList.add('active');
+    setVideoStatus("");
+    updateVideoButtons();
+  });
 
-    if (val === 'correct') {
-        card.innerHTML = `
-            <div style="font-size: 32px;">✓</div>
-            <div class="feedback-title-text" style="color: #2e7d32;">ANALYSIS VERIFIED</div>
-            <div class="feedback-desc-text">
-                The clothing differences are important. An entity is copying the students' bodies. However, the clothes are wrong. This suggests the entity knows about the victims only from descriptions and stories—not from seeing them directly.
-            </div>
-            <div class="success-code-box">
-                UNLOCK CODE: TULPA1967
-            </div>
-            <button class="feedback-close-btn" onclick="closeFeedback()">Back to File</button>
-        `;
+  video.addEventListener("pause", updateVideoButtons);
+  video.addEventListener("volumechange", updateVideoButtons);
+
+  video.addEventListener("waiting", () => {
+    if (view === "video" && !video.paused) {
+      setVideoStatus("Buffering video…");
+    }
+  });
+
+  video.addEventListener("error", () => {
+    if (view === "video") {
+      setVideoStatus(
+        "Video could not load. You can still open the case."
+      );
+    }
+  });
+
+  video.addEventListener("ended", () => {
+    if (view !== "video") return;
+
+    setVideoStatus("");
+    updateVideoButtons();
+    endOverlay.hidden = false;
+    get("btn-examine").focus({ preventScroll: true });
+  });
+
+  playButton.addEventListener("click", () => {
+    if (video.paused || video.ended) {
+      if (video.ended) {
+        try {
+          video.currentTime = 0;
+        } catch (_) {}
+      }
+
+      void playVideo();
     } else {
-        card.innerHTML = `
-            <div style="font-size: 32px; color: #c62828;">✗</div>
-            <div class="feedback-title-text" style="color: #c62828;">ANALYSIS REJECTED</div>
-            <div class="feedback-desc-text">
-                Look at the evidence again. Three different students would not randomly change their clothes right before walking into a dark forest during a storm. Study the wardrobe discrepancies.
-            </div>
-            <button class="feedback-close-btn" onclick="closeFeedback()">Try Again</button>
-        `;
+      playRequest++;
+      video.pause();
     }
-}
+  });
 
-function closeFeedback() {
-    document.getElementById('feedback-modal').classList.remove('active');
-}
+  soundButton.addEventListener("click", () => {
+    video.muted = !video.muted;
+
+    if (!video.muted && video.volume === 0) {
+      video.volume = 1;
+    }
+
+    updateVideoButtons();
+  });
+
+  get("btn-skip").addEventListener("click", openCase);
+  get("btn-examine").addEventListener("click", openCase);
+  get("btn-rewatch").addEventListener("click", restartVideo);
+  get("btn-back-video").addEventListener("click", showVideo);
+
+  /* ONE CASE-FILE TASK */
+
+  get("analysis-form").addEventListener("submit", event => {
+    event.preventDefault();
+
+    let title;
+    let message;
+    let color;
+    let buttonText;
+
+    if (select.value === "") {
+      title = "CHOOSE A CONCLUSION";
+      message = "Read the reports, then choose your answer.";
+      color = "#5d4037";
+      buttonText = "Back to File";
+    } else if (select.value === "correct") {
+      title = "GOOD CATCH";
+      message =
+        "The clothes don’t match. We need more evidence. " +
+        "Start with Lucy’s room — 213.";
+      color = "#2e7d32";
+      buttonText = "Back to File";
+    } else {
+      title = "TAKE ANOTHER LOOK";
+      message =
+        "Compare what the students wore when they left " +
+        "with what the witnesses saw.";
+      color = "#8b0000";
+      buttonText = "Try Again";
+    }
+
+    feedbackTitle.textContent = title;
+    feedbackTitle.style.color = color;
+    feedbackMessage.textContent = message;
+    feedbackClose.textContent = buttonText;
+
+    if (!modal.open) modal.showModal();
+    feedbackClose.focus();
+  });
+
+  feedbackClose.addEventListener("click", () => modal.close());
+
+  modal.addEventListener("close", () => {
+    select.focus({ preventScroll: true });
+  });
+
+  /* STOP VIDEO WHEN THIS DOCUMENT IS HIDDEN */
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      playRequest++;
+      video.pause();
+    }
+  });
+
+  window.addEventListener("pagehide", () => {
+    playRequest++;
+    video.pause();
+  });
+
+  updateVideoButtons();
+
+  if (video.readyState >= 3) {
+    tryAutoplay();
+  }
+})();
 </script>
 </body>
 </html>
