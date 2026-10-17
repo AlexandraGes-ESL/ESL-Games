@@ -1,819 +1,1431 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>John Winchester's Handbook</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>John Winchester's Handbook</title>
 
-        body {
-            background: transparent;
-            font-family: 'Georgia', serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: optimizeLegibility;
-        }
+<style>
+  :root {
+    --paper: #ebdcb9;
+    --ink: #2b221a;
+    --brown: #5d4037;
+    --gold: #d4a574;
+    --edge: #c8a882;
+  }
 
-        .handbook {
-            width: 100%;
-            height: 100vh;
-            background: transparent;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow: hidden;
-        }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-        /* ===== ОБЛОЖКА (без рамки, с подсветкой) ===== */
-        .cover-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 34px;
-            opacity: 1;
-            transition: opacity 0.5s;
-        }
+  [hidden] {
+    display: none !important;
+  }
 
-        .cover-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
+  html,
+  body {
+    width: 100%;
+    min-height: 100%;
+    background: transparent;
+  }
 
-        .cover-book {
-            width: 380px;
-            height: 500px;
-            background-image: url('https://i.yapx.ru/eFvKn.png');
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-color: transparent;
-            border: none;
-            filter: drop-shadow(0 0 18px rgba(212, 165, 116, 0.55)) drop-shadow(0 10px 25px rgba(0,0,0,0.6));
-            animation: glowPulse 3s ease-in-out infinite;
-        }
+  body {
+    font-family: Georgia, serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
 
-        @keyframes glowPulse {
-            0%, 100% {
-                filter: drop-shadow(0 0 14px rgba(212, 165, 116, 0.4)) drop-shadow(0 10px 25px rgba(0,0,0,0.6));
-            }
-            50% {
-                filter: drop-shadow(0 0 30px rgba(212, 165, 116, 0.8)) drop-shadow(0 10px 25px rgba(0,0,0,0.6));
-            }
-        }
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
 
-        .btn-open {
-            padding: 14px 38px;
-            background: #5d4037;
-            color: #f5deb3;
-            border: 2px solid #8b6f47;
-            border-radius: 6px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Georgia', serif;
-            letter-spacing: 1px;
-        }
+  button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
 
-        .btn-open:hover {
-            background: #8b6f47;
-            color: #2b2b2b;
-            transform: scale(1.05);
-        }
+  button:focus-visible,
+  input:focus-visible {
+    outline: 3px solid #e5ad54;
+    outline-offset: 4px;
+  }
 
-        /* ===== ДНЕВНИК ===== */
-        .book-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-            background: transparent;
-        }
+  .handbook {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: auto;
+    background: transparent;
+  }
 
-        .book-screen.active {
-            opacity: 1;
-            pointer-events: auto;
-            gap: 18px;
-        }
+  /* COVER */
 
-        .book {
-            width: 1000px;
-            height: 610px;
-            background: #ebdcb9;
-            border-radius: 8px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px;
-            border: 2px solid #c8a882;
-            overflow: hidden;
-        }
+  .cover-screen {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 24px;
+  }
 
-        .page {
-            position: relative;
-            padding: 38px;
-            display: flex;
-            flex-direction: column;
-            background: #ebdcb9;
-        }
+  .cover-book {
+    width: min(380px, 76vw);
+    height: min(500px, 63vh);
+    background:
+      url("https://i.yapx.ru/eFvKn.png")
+      center / contain no-repeat;
+    filter:
+      drop-shadow(0 0 18px rgba(212,165,116,0.45))
+      drop-shadow(0 10px 25px rgba(0,0,0,0.6));
+    animation: glowPulse 4s ease-in-out infinite;
+  }
 
-        .page-left {
-            border-right: 2px solid #c8a882;
-            align-items: center;
-            justify-content: center;
-        }
+  .btn-open,
+  .btn-nav {
+    border: 2px solid #8b6f47;
+    background: var(--brown);
+    color: #f5deb3;
+    border-radius: 6px;
+    font-weight: bold;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      transform 0.2s;
+  }
 
-        /* ЛЕВАЯ СТРАНИЦА - КАРТИНКА С ЭФФЕКТОМ ФОТО */
-        .photo-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  .btn-open {
+    padding: 14px 30px;
+    font-size: 17px;
+    letter-spacing: 0.5px;
+  }
 
-        .page-image {
-            width: 92%;
-            height: 92%;
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-color: #f5f0e5;
-            clip-path: polygon(
-                1% 3%, 8% 0%, 22% 1.5%, 35% 0.3%, 51% 1.8%, 67% 0%, 81% 1.2%, 94% 0.5%, 99% 2.5%,
-                100% 12%, 98.5% 25%, 100% 38%, 99% 52%, 100% 66%, 98.7% 80%, 100% 93%, 97% 99%,
-                85% 100%, 71% 98.5%, 58% 100%, 44% 98.8%, 30% 100%, 16% 98.5%, 4% 100%, 0% 90%,
-                1.5% 76%, 0% 62%, 1.2% 48%, 0% 34%, 1.5% 20%, 0% 8%
-            );
-            box-shadow: 3px 5px 15px rgba(0,0,0,0.35);
-            position: relative;
-            transform: rotate(-1.5deg);
-        }
+  .btn-open:hover,
+  .btn-nav:hover:not(:disabled) {
+    background: #8b6f47;
+    color: #20150e;
+    transform: translateY(-2px);
+  }
 
-        /* КУСОЧКИ СКОТЧА */
-        .tape {
-            position: absolute;
-            background: linear-gradient(135deg, rgba(255,250,235,0.75), rgba(240,230,205,0.55));
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15), inset 0 0 8px rgba(255,255,255,0.3);
-            border: 1px solid rgba(200,180,140,0.3);
-            z-index: 5;
-        }
+  .cover-hint {
+    max-width: 330px;
+    color: #ead7b6;
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+    text-shadow: 0 2px 6px #000;
+  }
 
-        .tape-tl {
-            width: 70px;
-            height: 26px;
-            top: -8px;
-            left: 8%;
-            transform: rotate(-35deg);
-        }
+  /* BOOK SCREEN */
 
-        .tape-tr {
-            width: 70px;
-            height: 26px;
-            top: -6px;
-            right: 10%;
-            transform: rotate(28deg);
-        }
+  .book-screen {
+    min-height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+  }
 
-        /* ПРАВАЯ СТРАНИЦА - ТЕКСТ */
-        .page-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            gap: 14px;
-            overflow-y: auto;
-            padding-right: 12px;
-        }
+  .toolbar,
+  .index,
+  .controls {
+    flex-shrink: 0;
+  }
 
-        .page-content::-webkit-scrollbar {
-            width: 6px;
-        }
+  .toolbar {
+    width: min(1000px, 100%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid rgba(212,165,116,0.5);
+    border-radius: 7px;
+    background: rgba(27,20,15,0.94);
+    color: #f5deb3;
+  }
 
-        .page-content::-webkit-scrollbar-thumb {
-            background: rgba(93, 64, 55, 0.3);
-            border-radius: 3px;
-        }
+  .toolbar-title {
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 0.5px;
+  }
 
-        .entity-name {
-            font-size: 32px;
-            font-weight: bold;
-            color: #3e2723;
-            border-bottom: 2px solid #8b6f47;
-            padding-bottom: 10px;
-            font-family: 'Georgia', serif;
-        }
+  .toolbar-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
 
-        .entity-text {
-            font-size: 19px;
-            line-height: 1.7;
-            color: #2b221a;
-            text-align: justify;
-            font-family: 'Georgia', serif;
-        }
+  .btn-small {
+    padding: 7px 11px;
+    border: 1px solid var(--gold);
+    border-radius: 5px;
+    background: transparent;
+    color: #f5deb3;
+    font-size: 12px;
+    transition: background 0.2s;
+  }
 
-        .entity-text p {
-            margin-bottom: 12px;
-        }
+  .btn-small:hover:not(:disabled) {
+    background: rgba(212,165,116,0.18);
+  }
 
-        /* СТРАНИЦА ПОСВЯЩЕНИЯ */
-        .dedication-page {
-            grid-column: 1 / 3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 50px;
-            background: #ebdcb9;
-            min-height: 610px;
-            flex-shrink: 0;
-            overflow-y: hidden;
-        }
+  .sound-setting {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    cursor: pointer;
+  }
 
-        .dedication-content {
-            max-width: 600px;
-            text-align: center;
-        }
+  .sound-setting input {
+    accent-color: var(--gold);
+  }
 
-        .dedication-title {
-            font-size: 18px;
-            color: #8b6f47;
-            font-style: italic;
-            margin-bottom: 15px;
-            letter-spacing: 0.8px;
-        }
+  /* FREE NAVIGATION */
 
-        .dedication-text {
-            font-size: 16px;
-            line-height: 1.6;
-            color: #2b221a;
-            font-family: 'Georgia', serif;
-            text-align: left;
-            font-style: italic;
-        }
+  .index {
+    width: min(1000px, 100%);
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
 
-        .dedication-text p {
-            margin-bottom: 8px;
-        }
+  .index-btn {
+    border: 1px solid rgba(212,165,116,0.6);
+    border-radius: 4px;
+    padding: 7px 12px;
+    background: rgba(34,25,18,0.94);
+    color: #f5deb3;
+    font-size: 12px;
+  }
 
-        .dedication-signature {
-            margin-top: 15px;
-            font-size: 16px;
-            color: #3e2723;
-            font-weight: bold;
-            text-align: right;
-        }
+  .index-btn:hover {
+    background: #5d4037;
+  }
 
-        /* ВЫДЕЛЕННЫЕ СЛОВА И TOOLTIPS */
-        .vocab-word {
-            position: relative;
-            border-bottom: 2px dotted #d4a574;
-            cursor: help;
-            font-weight: 600;
-            color: #5d4037;
-        }
+  .index-btn[aria-current="page"] {
+    background: #e0c397;
+    color: #342218;
+    border-color: #e0c397;
+    font-weight: bold;
+  }
 
-        .tooltip {
-            position: fixed;
-            background: rgba(45, 34, 26, 0.95);
-            color: #ffd9b3;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            white-space: nowrap;
-            z-index: 99999;
-            pointer-events: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            font-family: 'Courier New', monospace;
-            border: 1px solid #8b6f47;
-        }
+  /* BOOK SPREAD */
 
-        /* НОМЕРА СТРАНИЦ */
-        .page-number {
-            position: absolute;
-            bottom: 10px;
-            font-size: 12px;
-            color: rgba(45, 34, 26, 0.5);
-            font-family: 'Courier New', monospace;
-        }
+  .book {
+    position: relative;
+    isolation: isolate;
+    width: min(1000px, 100%);
+    height: clamp(350px, calc(100dvh - 200px), 610px);
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 2px solid var(--edge);
+    border-radius: 8px;
+    background: var(--paper);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+    overflow: hidden;
+    perspective: 1600px;
+    transform-origin: left center;
+  }
 
-        .page-number-left { left: 20px; }
-        .page-number-right { right: 20px; }
+  .book::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 22px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(70,42,19,0.16),
+      rgba(255,245,221,0.18),
+      rgba(70,42,19,0.12),
+      transparent
+    );
+    pointer-events: none;
+    z-index: 4;
+  }
 
-        /* НАВИГАЦИЯ */
-        .controls {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            justify-content: center;
-        }
+  .book.is-opening {
+    animation: bookOpen 0.65s ease-out both;
+  }
 
-        .btn-nav {
-            padding: 10px 20px;
-            background: #5d4037;
-            color: #f5deb3;
-            border: 2px solid #8b6f47;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s;
-            font-family: 'Georgia', serif;
-        }
+  .book.is-turning .page-right,
+  .book.is-turning .dedication-content {
+    animation: pageSettle 0.42s ease-out both;
+  }
 
-        .btn-nav:hover:not(:disabled) {
-            background: #8b6f47;
-            color: #2b2b2b;
-        }
+  .book.is-turning .photo-wrapper {
+    animation: photoSettle 0.5s ease-out both;
+  }
 
-        .btn-nav:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+  .page {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    padding: clamp(22px, 3vw, 38px);
+    background:
+      radial-gradient(
+        ellipse at center,
+        rgba(255,248,225,0.35),
+        transparent 75%
+      ),
+      var(--paper);
+  }
 
-        .page-counter {
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
-            color: #5d4037;
-            min-width: 60px;
-            text-align: center;
-        }
+  .page-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--edge);
+  }
 
-        /* ===== ФИНАЛЬНОЕ ЗАДАНИЕ ===== */
-        .quiz-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-            background: transparent;
-        }
+  .page-right {
+    transform-origin: left center;
+    overflow: auto;
+  }
 
-        .quiz-screen.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+  .photo-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-        .quiz-container {
-            width: 780px;
-            background: #ebdcb9;
-            border: 2px solid #c8a882;
-            border-radius: 8px;
-            padding: 40px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            max-height: 85vh;
-            overflow-y: auto;
-        }
+  .page-image {
+    display: block;
+    width: 92%;
+    height: 92%;
+    object-fit: contain;
+    background: #f5f0e5;
+    transform: rotate(-1.5deg);
+    box-shadow: 3px 5px 15px rgba(0,0,0,0.28);
+    clip-path: polygon(
+      1% 3%, 8% 0%, 22% 1.5%, 35% 0.3%,
+      51% 1.8%, 67% 0%, 81% 1.2%, 94% 0.5%,
+      99% 2.5%, 100% 12%, 98.5% 25%, 100% 38%,
+      99% 52%, 100% 66%, 98.7% 80%, 100% 93%,
+      97% 99%, 85% 100%, 71% 98.5%, 58% 100%,
+      44% 98.8%, 30% 100%, 16% 98.5%, 4% 100%,
+      0% 90%, 1.5% 76%, 0% 62%, 1.2% 48%,
+      0% 34%, 1.5% 20%, 0% 8%
+    );
+  }
 
-        .quiz-title {
-            font-size: 28px;
-            font-weight: bold;
-            color: #3e2723;
-            text-align: center;
-            margin-bottom: 10px;
-            border-bottom: 3px solid #8b6f47;
-            padding-bottom: 15px;
-            -webkit-font-smoothing: antialiased;
-        }
+  .tape {
+    position: absolute;
+    top: 1%;
+    width: 70px;
+    height: 26px;
+    border: 1px solid rgba(200,180,140,0.3);
+    background: linear-gradient(
+      135deg,
+      rgba(255,250,235,0.8),
+      rgba(240,230,205,0.55)
+    );
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    z-index: 2;
+  }
 
-        .quiz-subtitle {
-            font-size: 15px;
-            color: #8b6f47;
-            font-style: italic;
-            text-align: center;
-            margin-bottom: 30px;
-        }
+  .tape-tl {
+    left: 7%;
+    transform: rotate(-35deg);
+  }
 
-        .quiz-question {
-            margin-bottom: 28px;
-            padding: 18px 20px;
-            background: rgba(255,255,255,0.4);
-            border-radius: 8px;
-            border-left: 4px solid #8b6f47;
-        }
+  .tape-tr {
+    right: 8%;
+    transform: rotate(28deg);
+  }
 
-        .quiz-q-number {
-            font-size: 15px;
-            font-weight: bold;
-            color: #8b6f47;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            -webkit-font-smoothing: antialiased;
-        }
+  .page-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 20px;
+  }
 
-        .quiz-q-text {
-            font-size: 17px;
-            line-height: 1.65;
-            color: #2b221a;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
+  .entity-name {
+    border-bottom: 2px solid #8b6f47;
+    padding-bottom: 10px;
+    color: #3e2723;
+    font-size: clamp(25px, 3vw, 32px);
+  }
 
-        .blank-select {
-            display: inline-block;
-            min-width: 200px;
-            padding: 8px 12px;
-            border: none;
-            border-bottom: 3px solid #d4a574;
-            background: rgba(212,165,116,0.15);
-            font-size: 18px;
-            font-weight: 700;
-            font-family: 'Georgia', serif;
-            color: #5d4037;
-            border-radius: 4px 4px 0 0;
-            cursor: pointer;
-            -webkit-font-smoothing: antialiased;
-        }
+  .entity-text {
+    font-size: clamp(17px, 1.8vw, 19px);
+    line-height: 1.65;
+    text-align: left;
+  }
 
-        .blank-select:focus {
-            outline: none;
-            background: rgba(212,165,116,0.3);
-        }
+  .advice {
+    padding: 14px 16px;
+    border-left: 3px solid #8b6f47;
+    background: rgba(139,111,71,0.1);
+  }
 
-        .blank-select.correct {
-            background: rgba(76, 175, 80, 0.25);
-            border-bottom-color: #2e7d32;
-            color: #1b5e20;
-        }
+  .advice-label {
+    margin-bottom: 7px;
+    color: #6a4834;
+    font-size: 13px;
+    font-style: italic;
+  }
 
-        .blank-select.wrong {
-            background: rgba(244, 67, 54, 0.2);
-            border-bottom-color: #c62828;
-            color: #b71c1c;
-        }
+  .advice-text {
+    font-size: 18px;
+    line-height: 1.6;
+  }
 
-        .quiz-feedback-line {
-            font-size: 14px;
-            margin-top: 8px;
-            display: none;
-            font-weight: 600;
-        }
+  .page-number {
+    position: absolute;
+    bottom: 10px;
+    color: rgba(45,34,26,0.5);
+    font: 12px "Courier New", monospace;
+  }
 
-        .quiz-feedback-line.show { display: block; }
+  .page-number-left {
+    left: 20px;
+  }
 
-        .btn-check {
-            width: 100%;
-            padding: 14px;
-            background: #5d4037;
-            color: #f5deb3;
-            border: 2px solid #8b6f47;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s;
-            font-family: 'Georgia', serif;
-            margin-top: 15px;
-        }
+  .page-number-right {
+    right: 20px;
+  }
 
-        .btn-check:hover {
-            background: #8b6f47;
-            color: #2b2b2b;
-        }
+  /* JOHN'S MESSAGE */
 
-        .final-message {
-            display: none;
-            margin-top: 20px;
-            padding: 18px;
-            background: rgba(76, 175, 80, 0.15);
-            border: 2px solid #2e7d32;
-            border-radius: 6px;
-            text-align: center;
-            color: #1b5e20;
-            font-size: 16px;
-            font-weight: 600;
-        }
+  .dedication-page {
+    grid-column: 1 / -1;
+    min-height: 0;
+    overflow: auto;
+    padding: 30px 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper);
+  }
 
-        .final-message.show { display: block; }
+  .dedication-content {
+    position: relative;
+    z-index: 5;
+    width: min(570px, 100%);
+    padding: 12px 24px;
+    background: var(--paper);
+  }
 
-        @media (max-width: 1050px) {
-            .book {
-                width: 95vw;
-                height: auto;
-                min-height: 400px;
-                grid-template-columns: 1fr;
-            }
-            .page-left {
-                border-right: none;
-                border-bottom: 2px solid #c8a882;
-                min-height: 250px;
-            }
-            .dedication-page {
-                grid-column: 1;
-                padding: 30px;
-            }
-            .quiz-container { width: 95vw; }
-        }
-    </style>
+  .dedication-title {
+    margin-bottom: 22px;
+    color: #795a3b;
+    text-align: center;
+    font-size: 15px;
+    font-style: italic;
+    letter-spacing: 0.7px;
+  }
+
+  .dedication-text {
+    color: var(--ink);
+    font-size: clamp(17px, 1.8vw, 20px);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .dedication-text p + p {
+    margin-top: 15px;
+  }
+
+  .dedication-signature {
+    margin-top: 22px;
+    text-align: right;
+    color: #3e2723;
+    font-size: 19px;
+    font-weight: bold;
+  }
+
+  /* VOCABULARY SUPPORT */
+
+  .vocab-word {
+    display: inline;
+    border: 0;
+    border-bottom: 2px dotted #a87b45;
+    border-radius: 0;
+    background: transparent;
+    color: #5d4037;
+    font: inherit;
+    font-weight: bold;
+    cursor: help;
+    padding: 0;
+  }
+
+  .vocab-word:hover,
+  .vocab-word[aria-expanded="true"] {
+    background: rgba(212,165,116,0.23);
+  }
+
+  .tooltip {
+    position: fixed;
+    z-index: 1000;
+    max-width: min(290px, calc(100vw - 16px));
+    padding: 9px 12px;
+    border: 1px solid #8b6f47;
+    border-radius: 6px;
+    background: rgba(45,34,26,0.98);
+    color: #ffd9b3;
+    font: 14px/1.4 Georgia, serif;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    pointer-events: none;
+    overflow-wrap: anywhere;
+  }
+
+  /* CONTROLS */
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+  }
+
+  .btn-nav {
+    padding: 9px 17px;
+    font-size: 13px;
+  }
+
+  .page-counter {
+    min-width: 55px;
+    text-align: center;
+    color: #f5deb3;
+    font: 14px "Courier New", monospace;
+    text-shadow: 0 2px 5px #000;
+  }
+
+  .audio-status {
+    min-height: 18px;
+    color: #f5deb3;
+    font-size: 12px;
+    text-align: center;
+    text-shadow: 0 2px 5px #000;
+  }
+
+  .page-right,
+  .dedication-page {
+    scrollbar-width: thin;
+    scrollbar-color: #b99a73 transparent;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% {
+      filter:
+        drop-shadow(0 0 14px rgba(212,165,116,0.35))
+        drop-shadow(0 10px 25px rgba(0,0,0,0.6));
+    }
+    50% {
+      filter:
+        drop-shadow(0 0 25px rgba(212,165,116,0.6))
+        drop-shadow(0 10px 25px rgba(0,0,0,0.6));
+    }
+  }
+
+  @keyframes bookOpen {
+    from {
+      opacity: 0;
+      transform: rotateY(-12deg) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: rotateY(0) scale(1);
+    }
+  }
+
+  @keyframes pageSettle {
+    from {
+      opacity: 0.6;
+      transform: rotateY(-7deg) translateX(6px);
+    }
+    to {
+      opacity: 1;
+      transform: rotateY(0) translateX(0);
+    }
+  }
+
+  @keyframes photoSettle {
+    from {
+      opacity: 0.65;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* SMALL SCREENS */
+
+  @media (max-width: 680px) {
+    .book-screen {
+      padding: 12px;
+      justify-content: flex-start;
+    }
+
+    .toolbar {
+      justify-content: center;
+    }
+
+    .toolbar-title {
+      width: 100%;
+      text-align: center;
+    }
+
+    .toolbar-actions {
+      justify-content: center;
+    }
+
+    .index-btn {
+      padding: 7px 9px;
+    }
+
+    .book {
+      height: auto;
+      grid-template-columns: 1fr;
+    }
+
+    .book::after {
+      display: none;
+    }
+
+    .page-left {
+      height: 260px;
+      border-right: 0;
+      border-bottom: 1px solid var(--edge);
+    }
+
+    .page-right {
+      overflow: visible;
+      padding: 25px;
+    }
+
+    .dedication-page {
+      padding: 28px 18px;
+    }
+
+    .dedication-content {
+      padding: 0;
+    }
+
+    .controls {
+      gap: 12px;
+    }
+
+    .btn-nav {
+      padding: 9px 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
 </head>
+
 <body>
+<main class="handbook" id="handbook">
 
-<div class="handbook">
-    <!-- ОБЛОЖКА -->
-    <div class="cover-screen" id="coverScreen">
-        <div class="cover-book"></div>
-        <button class="btn-open" id="btnOpen">Open Handbook ✦</button>
+  <section class="cover-screen" id="coverScreen">
+    <div
+      class="cover-book"
+      role="img"
+      aria-label="John Winchester's worn leather handbook"
+    ></div>
+
+    <button class="btn-open" id="btnOpen" type="button">
+      Open &amp; listen ✦
+    </button>
+
+    <p class="cover-hint">
+      John Winchester’s field notes.<br>
+      Know what you’re hunting.
+    </p>
+  </section>
+
+  <section
+    class="book-screen"
+    id="bookScreen"
+    aria-label="Hunter's handbook"
+    hidden
+  >
+    <div class="toolbar">
+      <span class="toolbar-title">John Winchester’s field notes</span>
+
+      <div class="toolbar-actions">
+        <button
+          class="btn-small"
+          id="btnListen"
+          type="button"
+          aria-pressed="false"
+        >
+          ▶ Listen
+        </button>
+
+        <label class="sound-setting">
+          <input id="pageSounds" type="checkbox" checked>
+          Page sounds
+        </label>
+
+        <button class="btn-small" id="btnClose" type="button">
+          Close handbook
+        </button>
+      </div>
     </div>
 
-    <!-- ДНЕВНИК -->
-    <div class="book-screen" id="bookScreen">
-        <div class="book" id="bookEl"></div>
-        <div class="controls">
-            <button class="btn-nav" id="btnPrev" disabled>← PREVIOUS</button>
-            <div class="page-counter"><span id="currentPage">1</span> / 6</div>
-            <button class="btn-nav" id="btnNext">NEXT →</button>
-        </div>
+    <nav class="index" id="indexNav" aria-label="Choose a page"></nav>
+
+    <div class="book" id="bookEl"></div>
+
+    <div class="controls">
+      <button class="btn-nav" id="btnPrev" type="button">
+        ← Previous
+      </button>
+
+      <div
+        class="page-counter"
+        id="pageCounter"
+        aria-live="polite"
+        aria-atomic="true"
+      ></div>
+
+      <button class="btn-nav" id="btnNext" type="button">
+        Next →
+      </button>
     </div>
 
-    <!-- ФИНАЛЬНОЕ ЗАДАНИЕ -->
-    <div class="quiz-screen" id="quizScreen">
-        <div class="quiz-container">
-            <div class="quiz-title">Complete John's Notes</div>
-            <div class="quiz-subtitle">Fill in the blanks using the correct hunter's terminology</div>
-            <div id="quizContent"></div>
-            <div class="final-message" id="finalMessage">
-                ✓ Well done, agent. You now know John Winchester's field notes by heart. Time to move out.
-            </div>
-        </div>
-    </div>
-</div>
+    <p
+      class="audio-status"
+      id="audioStatus"
+      role="status"
+      aria-live="polite"
+    ></p>
+  </section>
 
-<div id="tooltip" class="tooltip" style="display: none;"></div>
+</main>
+
+<audio id="johnAudio" preload="metadata">
+  <source
+    src="https://raw.githubusercontent.com/AlexandraGes-ESL/Sounds/main/494003.mp3"
+    type="audio/mpeg"
+  >
+</audio>
+
+<div class="tooltip" id="tooltip" role="tooltip" hidden></div>
 
 <script>
-// ===== СТРАНИЦЫ: ПОСВЯЩЕНИЕ + 5 СУЩЕСТВ =====
-const PAGES = [
+(() => {
+  "use strict";
+
+  const vocab = (word, translation) =>
+    `<button
+      type="button"
+      class="vocab-word"
+      data-tip="${translation}"
+      aria-expanded="false"
+    >${word}</button>`;
+
+  const PAGES = [
     {
-        type: 'dedication',
-        html: `
-            <div class="dedication-page">
-                <div class="dedication-content">
-                    <div class="dedication-title">— Fall River, three missing: Thomas, Sara, Lucy —</div>
-                    <div class="dedication-text">
-                        <p>Dean. Sam.</p>
-                        <p>Three kids gone. No trace. I wrote this book so you'd never walk into darkness unprepared.</p>
-                        <p>Five creatures. Five ways to stop them. Learn every word. The right term — <span class="vocab-word" data-tip="кремировать, сжечь">cremate</span>, <span class="vocab-word" data-tip="обезглавить">decapitate</span>, <span class="vocab-word" data-tip="изгнать (демона)">exorcise</span> — might save your life.</p>
-                        <p>Trust the research. Finish what I started.</p>
-                    </div>
-                    <div class="dedication-signature">— Dad</div>
-                </div>
-            </div>
-        `
+      type: "dedication",
+      name: "John’s message"
     },
     {
-        type: 'entity',
-        name: 'Ghost',
-        image: 'https://i.yapx.ru/eFuQv.png',
-        desc: 'A ghost is the spirit of a dead person. It cannot leave our world because it is <span class="vocab-word" data-tip="закреплён, привязан">anchored</span> to something — usually its own bones or a personal object.<br><br>Locate the remains and <span class="vocab-word" data-tip="кремировать, сжечь">cremate</span> them with salt and fire. After that, the spirit cannot <span class="vocab-word" data-tip="появляться, проявляться">manifest</span> anymore. It\'s gone for good.'
+      type: "entity",
+      name: "Ghost",
+      image: "https://i.yapx.ru/eFuQv.png",
+      desc:
+        `A ghost is the spirit of a dead person. Some ghosts stay ` +
+        `close to their bones or a special object. They may move ` +
+        `things, make rooms cold, or hurt people.`,
+      advice:
+        `Find what keeps it here. Salt and burn the ` +
+        vocab("remains", "останки") + `.`
     },
     {
-        type: 'entity',
-        name: 'Werewolf',
-        image: 'https://i.yapx.ru/eFuQw.png',
-        desc: 'A werewolf is a person carrying a dangerous <span class="vocab-word" data-tip="проклятие">curse</span>. On full-moon nights, this person changes into a wolf-like monster and loses all control.<br><br>Silver can hurt a werewolf, but only a <span class="vocab-word" data-tip="освящённый">blessed</span> silver bullet through the heart will stop it for good.'
+      type: "entity",
+      name: "Werewolf",
+      image: "https://i.yapx.ru/eFuQw.png",
+      desc:
+        `A werewolf looks human until it changes. Then it becomes ` +
+        `strong, fast, and dangerous. Many werewolves change ` +
+        `during the ` + vocab("full moon", "полнолуние") + `.`,
+      advice:
+        `A ` + vocab("silver bullet", "серебряная пуля") +
+        ` through the heart can stop it.`
     },
     {
-        type: 'entity',
-        name: 'Vampire',
-        image: 'https://i.yapx.ru/eFuQz.png',
-        desc: 'Vampires are some of the oldest <span class="vocab-word" data-tip="существа, сущности">entities</span> a hunter will face. They\'re extremely strong, and wounds <span class="vocab-word" data-tip="восстанавливаться">regenerate</span> almost instantly.<br><br>Guns and knives won\'t help — they\'re <span class="vocab-word" data-tip="неуязвимый">immune</span> to normal weapons. To neutralize a vampire, one must <span class="vocab-word" data-tip="обезглавить">decapitate</span> the subject using a blade. There is no other way.'
+      type: "entity",
+      name: "Vampire",
+      image: "https://i.yapx.ru/eFuQz.png",
+      desc:
+        `Vampires look human, but they drink blood. They are strong, ` +
+        `and their ` + vocab("wounds", "раны") +
+        ` heal quickly. They often live and hunt in groups.`,
+      advice:
+        `Ordinary weapons won’t finish the job. Cut off the head.`
     },
     {
-        type: 'entity',
-        name: 'Demon',
-        image: 'https://i.yapx.ru/eFuQ0.png',
-        desc: 'A demon is a <span class="vocab-word" data-tip="разумный, сознательный">sentient</span> <span class="vocab-word" data-tip="существо, сущность">entity</span> from another world. It needs a human body to stay here, so it must <span class="vocab-word" data-tip="овладевать, вселяться">possess</span> a person.<br><br>To remove it, hunters <span class="vocab-word" data-tip="изгонять демона">exorcise</span> the host with a special ritual. Holy water and a salt circle can hold it back for a while.'
+      type: "entity",
+      name: "Demon",
+      image: "https://i.yapx.ru/eFuQ0.png",
+      desc:
+        `A demon can enter a person’s body and control it. ` +
+        `The person may still be alive inside. ` +
+        vocab("Holy water", "святая вода") +
+        ` can help you discover what you’re facing.`,
+      advice:
+        `Trap the demon. Use an ` +
+        vocab("exorcism", "ритуал изгнания демона") +
+        ` to force it out.`
     },
     {
-        type: 'entity',
-        name: 'Tulpa',
-        image: 'https://i.yapx.ru/eFuQy.png',
-        desc: 'A tulpa is different from every other <span class="vocab-word" data-tip="существо, сущность">entity</span> in this book. It has no real body — people create it with their own <span class="vocab-word" data-tip="вера, убеждение">belief</span>.<br><br>Tulpas are unique: they are <span class="vocab-word" data-tip="умственные проявления, порождённые верой">cognitive manifestations</span> brought to life by collective belief. Change the story people believe, and the tulpa itself will change too.'
+      type: "entity",
+      name: "Tulpa",
+      image: "https://i.yapx.ru/eFuQy.png",
+      desc:
+        `A tulpa is a creature brought to life by people’s ` +
+        vocab("belief", "вера, убеждение") +
+        `. If enough people believe the same story, it can become real.`,
+      advice:
+        `Check the story. What people believe can change the creature.`
     }
-];
+  ];
 
-// ===== ФИНАЛЬНОЕ ЗАДАНИЕ (точно по сценарию) =====
-const BLANKS = [
-    {
-        before: 'To neutralize a vampire, one must',
-        after: 'the subject using a blade.',
-        options: ['exorcise', 'dissect', 'decapitate'],
-        correct: 'decapitate'
-    },
-    {
-        before: 'Spectral entities are often anchored to the earthly realm by physical remains; locate and',
-        after: 'them with salt.',
-        options: ['bury', 'submerge', 'cremate'],
-        correct: 'cremate'
-    },
-    {
-        before: 'Tulpas are unique: they are',
-        after: 'brought to life by collective belief.',
-        options: ['demonic curses', 'cognitive manifestations', 'radioactive anomalies'],
-        correct: 'cognitive manifestations'
-    }
-];
+  const coverScreen = document.getElementById("coverScreen");
+  const bookScreen = document.getElementById("bookScreen");
+  const bookEl = document.getElementById("bookEl");
+  const indexNav = document.getElementById("indexNav");
 
-let currentPage = 0;
-const totalPages = PAGES.length;
-const tooltip = document.getElementById('tooltip');
+  const btnOpen = document.getElementById("btnOpen");
+  const btnClose = document.getElementById("btnClose");
+  const btnListen = document.getElementById("btnListen");
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
 
-function renderPage(idx) {
-    if (idx < 0 || idx >= totalPages) return;
-    const page = PAGES[idx];
-    const bookEl = document.getElementById('bookEl');
+  const pageCounter = document.getElementById("pageCounter");
+  const pageSounds = document.getElementById("pageSounds");
+  const audioStatus = document.getElementById("audioStatus");
+  const johnAudio = document.getElementById("johnAudio");
+  const tooltip = document.getElementById("tooltip");
 
-    if (page.type === 'dedication') {
-        bookEl.innerHTML = page.html;
-    } else {
-        bookEl.innerHTML = `
-            <div class="page page-left">
-                <div class="photo-wrapper">
-                    <div class="page-image" style="background-image:url('${page.image}');">
-                        <div class="tape tape-tl"></div>
-                        <div class="tape tape-tr"></div>
-                    </div>
-                </div>
-                <div class="page-number page-number-left">${idx * 2 + 1}</div>
-            </div>
-            <div class="page page-right">
-                <div class="page-content">
-                    <div class="entity-name">${page.name}</div>
-                    <div class="entity-text">${page.desc}</div>
-                </div>
-                <div class="page-number page-number-right">${idx * 2 + 2}</div>
-            </div>
-        `;
-    }
+  const synth = window.speechSynthesis;
+  const speechSupported =
+    Boolean(synth) && "SpeechSynthesisUtterance" in window;
 
-    document.getElementById('currentPage').textContent = idx + 1;
-    document.getElementById('btnPrev').disabled = (idx === 0);
+  let currentPage = 0;
+  let isOpen = false;
+  let isListening = false;
 
-    currentPage = idx;
-    setupTooltips();
-}
+  // Prevent stale audio callbacks from changing the current page's UI.
+  let playbackToken = 0;
+  let utterance = null;
+  let voices = [];
 
-function setupTooltips() {
-    const words = document.querySelectorAll('.vocab-word');
-    words.forEach(word => {
-        word.addEventListener('mouseenter', () => {
-            const tip = word.getAttribute('data-tip');
-            tooltip.textContent = tip;
-            tooltip.style.display = 'block';
-            const rect = word.getBoundingClientRect();
-            tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
-            tooltip.style.top = (rect.top - 38) + 'px';
-        });
-        word.addEventListener('mouseleave', () => {
-            tooltip.style.display = 'none';
-        });
-    });
-}
+  let audioContext = null;
+  let rustleBuffer = null;
+  let tooltipWord = null;
+  let pinnedWord = null;
 
-function showQuiz() {
-    document.getElementById('bookScreen').classList.remove('active');
-    document.getElementById('quizScreen').classList.add('active');
+  function setAudioState(listening, message = "") {
+    isListening = listening;
+    btnListen.textContent = listening ? "■ Stop" : "▶ Listen";
+    btnListen.setAttribute("aria-pressed", String(listening));
+    audioStatus.textContent = message;
+  }
 
-    let html = '';
-    BLANKS.forEach((b, i) => {
-        const shuffled = [...b.options];
-        html += `
-            <div class="quiz-question">
-                <div class="quiz-q-number">Sentence ${i + 1} / ${BLANKS.length}</div>
-                <div class="quiz-q-text">
-                    ${b.before}
-                    <select class="blank-select" id="blank-${i}">
-                        <option value="">— choose —</option>
-                        ${shuffled.map(o => `<option value="${o}">${o}</option>`).join('')}
-                    </select>
-                    ${b.after}
-                </div>
-                <div class="quiz-feedback-line" id="feedback-${i}"></div>
-            </div>
-        `;
-    });
-    html += `<button class="btn-check" id="btnCheck">Check My Answers</button>`;
+  function stopAudio() {
+    playbackToken++;
 
-    document.getElementById('quizContent').innerHTML = html;
-    document.getElementById('btnCheck').addEventListener('click', checkAnswers);
-}
+    johnAudio.pause();
 
-function checkAnswers() {
-    let allCorrect = true;
-
-    BLANKS.forEach((b, i) => {
-        const select = document.getElementById(`blank-${i}`);
-        const feedback = document.getElementById(`feedback-${i}`);
-        const value = select.value;
-
-        select.classList.remove('correct', 'wrong');
-
-        if (value === b.correct) {
-            select.classList.add('correct');
-            feedback.textContent = '✓ Correct!';
-            feedback.style.color = '#1b5e20';
-        } else {
-            select.classList.add('wrong');
-            feedback.textContent = value ? '✗ Not quite. Try again.' : '✗ Please choose an answer.';
-            feedback.style.color = '#b71c1c';
-            allCorrect = false;
-        }
-        feedback.classList.add('show');
-    });
-
-    if (allCorrect) {
-        document.getElementById('finalMessage').classList.add('show');
-    }
-}
-
-document.getElementById('btnOpen').addEventListener('click', () => {
-    document.getElementById('coverScreen').classList.add('hidden');
-    document.getElementById('bookScreen').classList.add('active');
-    renderPage(0);
-});
-
-document.getElementById('btnNext').addEventListener('click', () => {
-    playPageTurnSound();
-    if (currentPage < totalPages - 1) {
-        renderPage(currentPage + 1);
-    } else {
-        showQuiz();
-    }
-});
-
-document.getElementById('btnPrev').addEventListener('click', () => {
-    playPageTurnSound();
-    if (currentPage > 0) renderPage(currentPage - 1);
-});
-
-/* ===== PAGE TURN SOUND (Web Audio API) ===== */
-function playPageTurnSound() {
     try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const now = audioContext.currentTime;
-        
-        // Создаём шелест (белый шум)
-        const bufferSize = audioContext.sampleRate * 0.15;
-        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-        const data = buffer.getChannelData(0);
-        
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
-        
-        const source = audioContext.createBufferSource();
-        source.buffer = buffer;
-        
-        // Фильтруем шум (фильтр для шелеста)
-        const filter = audioContext.createBiquadFilter();
-        filter.type = 'highpass';
-        filter.frequency.value = 4000;
-        
-        // Громкость
-        const gainNode = audioContext.createGain();
-        gainNode.gain.setValueAtTime(0.15, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-        
-        // Подключаем
-        source.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        source.start(now);
-        source.stop(now + 0.15);
-    } catch (e) {
-        console.log('Audio not supported');
+      johnAudio.currentTime = 0;
+    } catch (_) {
+      // The media may not have loaded yet.
     }
-}
-</script>
 
+    johnAudio.onended = null;
+    johnAudio.onerror = null;
+
+    if (utterance) {
+      utterance.onend = null;
+      utterance.onerror = null;
+      utterance = null;
+    }
+
+    if (speechSupported) {
+      synth.cancel();
+    }
+
+    setAudioState(false);
+  }
+
+  function updateVoices() {
+    if (speechSupported) {
+      voices = synth.getVoices();
+    }
+  }
+
+  function chooseEnglishVoice() {
+    const english = voices.filter(voice =>
+      /^en(?:[-_]|$)/i.test(voice.lang)
+    );
+
+    return (
+      english.find(voice => /^en[-_]US$/i.test(voice.lang)) ||
+      english.find(voice => /^en[-_]GB$/i.test(voice.lang)) ||
+      english[0] ||
+      null
+    );
+  }
+
+  if (speechSupported) {
+    updateVoices();
+    synth.addEventListener("voiceschanged", updateVoices);
+  }
+
+  function plainText(html) {
+    const node = document.createElement("div");
+    node.innerHTML = html;
+    return node.textContent.trim();
+  }
+
+  async function startListening() {
+    if (!isOpen) return;
+
+    stopAudio();
+    const token = playbackToken;
+
+    if (currentPage === 0) {
+      setAudioState(true, "Loading John’s recording…");
+
+      johnAudio.onended = () => {
+        if (token !== playbackToken) return;
+        setAudioState(false, "John’s recording finished.");
+      };
+
+      johnAudio.onerror = () => {
+        if (token !== playbackToken) return;
+
+        stopAudio();
+        audioStatus.textContent =
+          "The recording could not load. You can still read the message.";
+      };
+
+      try {
+        await johnAudio.play();
+
+        if (token === playbackToken && !johnAudio.paused) {
+          setAudioState(true, "Playing John’s recording…");
+        }
+      } catch (_) {
+        if (token !== playbackToken) return;
+
+        stopAudio();
+        audioStatus.textContent =
+          "Audio could not start. Press Listen to try again.";
+      }
+
+      return;
+    }
+
+    if (!speechSupported) {
+      audioStatus.textContent =
+        "Speech playback is unavailable in this browser.";
+      return;
+    }
+
+    const page = PAGES[currentPage];
+
+    updateVoices();
+
+    const speech = new SpeechSynthesisUtterance(
+      `${page.name}. ${plainText(page.desc)} ` +
+      `John’s advice. ${plainText(page.advice)}`
+    );
+
+    const voice = chooseEnglishVoice();
+
+    if (voice) {
+      speech.voice = voice;
+      speech.lang = voice.lang;
+    } else {
+      speech.lang = "en-US";
+    }
+
+    speech.rate = 0.88;
+    speech.pitch = 0.92;
+    speech.volume = 1;
+
+    utterance = speech;
+    setAudioState(true, "Reading the field notes…");
+
+    speech.onend = () => {
+      if (token !== playbackToken) return;
+
+      utterance = null;
+      setAudioState(false, "Reading finished.");
+    };
+
+    speech.onerror = () => {
+      if (token !== playbackToken) return;
+
+      utterance = null;
+      setAudioState(
+        false,
+        "Speech playback could not start. You can still read the notes."
+      );
+    };
+
+    try {
+      synth.speak(speech);
+    } catch (_) {
+      stopAudio();
+      audioStatus.textContent =
+        "Speech playback is unavailable. You can still read the notes.";
+    }
+  }
+
+  function animateBook(className) {
+    bookEl.classList.remove("is-opening", "is-turning");
+
+    // Restart the short animation after replacing the page content.
+    void bookEl.offsetWidth;
+    bookEl.classList.add(className);
+  }
+
+  function renderPage(index, animation = "is-turning") {
+    if (index < 0 || index >= PAGES.length) return;
+
+    stopAudio();
+    hideTooltip();
+
+    currentPage = index;
+    const page = PAGES[index];
+
+    if (page.type === "dedication") {
+      bookEl.innerHTML = `
+        <article class="dedication-page" aria-labelledby="pageHeading">
+          <div class="dedication-content">
+            <h1 class="dedication-title" id="pageHeading">
+              — A note from John —
+            </h1>
+
+            <div class="dedication-text">
+              <p>Dean. Sam.</p>
+
+              <p>
+                If someone else is reading this,
+                I hope you’re looking after them.
+              </p>
+
+              <p>
+                Don’t believe everything you hear.
+                Look for clues. Check the facts.
+              </p>
+
+              <p>
+                Find out what you’re hunting
+                before you try to stop it.
+              </p>
+
+              <p>And watch each other’s backs.</p>
+            </div>
+
+            <div class="dedication-signature">— Dad</div>
+          </div>
+        </article>
+      `;
+    } else {
+      bookEl.innerHTML = `
+        <div class="page page-left">
+          <div class="photo-wrapper">
+            <img
+              class="page-image"
+              src="${page.image}"
+              alt="Field sketch of a ${page.name.toLowerCase()}"
+            >
+            <span class="tape tape-tl" aria-hidden="true"></span>
+            <span class="tape tape-tr" aria-hidden="true"></span>
+          </div>
+
+          <span class="page-number page-number-left" aria-hidden="true">
+            ${index * 2 + 1}
+          </span>
+        </div>
+
+        <article class="page page-right" aria-labelledby="pageHeading">
+          <div class="page-content">
+            <h1 class="entity-name" id="pageHeading">${page.name}</h1>
+
+            <p class="entity-text">${page.desc}</p>
+
+            <aside class="advice" aria-label="John's advice">
+              <p class="advice-label">John’s advice</p>
+              <p class="advice-text">${page.advice}</p>
+            </aside>
+          </div>
+
+          <span class="page-number page-number-right" aria-hidden="true">
+            ${index * 2 + 2}
+          </span>
+        </article>
+      `;
+    }
+
+    pageCounter.textContent = `${index + 1} / ${PAGES.length}`;
+
+    btnPrev.disabled = index === 0;
+    btnNext.disabled = index === PAGES.length - 1;
+    btnListen.disabled = index !== 0 && !speechSupported;
+
+    indexNav.querySelectorAll(".index-btn").forEach((button, i) => {
+      if (i === index) {
+        button.setAttribute("aria-current", "page");
+      } else {
+        button.removeAttribute("aria-current");
+      }
+    });
+
+    if (btnListen.disabled) {
+      audioStatus.textContent =
+        "Speech playback is unavailable in this browser.";
+    }
+
+    animateBook(animation);
+  }
+
+  function navigateTo(index) {
+    if (
+      !isOpen ||
+      index === currentPage ||
+      index < 0 ||
+      index >= PAGES.length
+    ) return;
+
+    playPageTurnSound();
+    renderPage(index);
+  }
+
+  function openBook() {
+    isOpen = true;
+    coverScreen.hidden = true;
+    bookScreen.hidden = false;
+
+    renderPage(0, "is-opening");
+    btnListen.focus({ preventScroll: true });
+
+    // Invoked directly from the user's click, not from a timer.
+    void startListening();
+  }
+
+  function closeBook() {
+    stopAudio();
+    hideTooltip();
+
+    isOpen = false;
+    bookScreen.hidden = true;
+    coverScreen.hidden = false;
+
+    btnOpen.focus({ preventScroll: true });
+  }
+
+  indexNav.innerHTML = PAGES.map((page, index) => `
+    <button
+      class="index-btn"
+      type="button"
+      data-page="${index}"
+      ${index === 0 ? 'aria-current="page"' : ""}
+    >
+      ${page.name}
+    </button>
+  `).join("");
+
+  btnOpen.addEventListener("click", openBook);
+  btnClose.addEventListener("click", closeBook);
+
+  btnListen.addEventListener("click", () => {
+    if (isListening) {
+      stopAudio();
+    } else {
+      void startListening();
+    }
+  });
+
+  btnPrev.addEventListener("click", () => {
+    navigateTo(currentPage - 1);
+  });
+
+  btnNext.addEventListener("click", () => {
+    navigateTo(currentPage + 1);
+  });
+
+  indexNav.addEventListener("click", event => {
+    const button = event.target.closest("[data-page]");
+    if (!button) return;
+
+    navigateTo(Number(button.dataset.page));
+  });
+
+  /* VOCABULARY: HOVER, KEYBOARD AND TOUCH */
+
+  function hideTooltip() {
+    if (tooltipWord) {
+      tooltipWord.setAttribute("aria-expanded", "false");
+      tooltipWord.removeAttribute("aria-describedby");
+    }
+
+    tooltipWord = null;
+    pinnedWord = null;
+    tooltip.hidden = true;
+  }
+
+  function showTooltip(word, pin = false) {
+    if (tooltipWord && tooltipWord !== word) {
+      tooltipWord.setAttribute("aria-expanded", "false");
+      tooltipWord.removeAttribute("aria-describedby");
+    }
+
+    tooltipWord = word;
+    if (pin) pinnedWord = word;
+
+    word.setAttribute("aria-expanded", "true");
+    word.setAttribute("aria-describedby", "tooltip");
+
+    tooltip.textContent = word.dataset.tip;
+    tooltip.hidden = false;
+    tooltip.style.left = "8px";
+    tooltip.style.top = "8px";
+
+    const rect = word.getBoundingClientRect();
+    const width = tooltip.offsetWidth;
+    const height = tooltip.offsetHeight;
+    const margin = 8;
+
+    const left = Math.max(
+      margin,
+      Math.min(
+        rect.left + rect.width / 2 - width / 2,
+        window.innerWidth - width - margin
+      )
+    );
+
+    let top = rect.top - height - margin;
+
+    if (top < margin) {
+      top = rect.bottom + margin;
+    }
+
+    top = Math.max(
+      margin,
+      Math.min(top, window.innerHeight - height - margin)
+    );
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+  }
+
+  bookEl.addEventListener("pointerover", event => {
+    if (event.pointerType === "touch") return;
+
+    const word = event.target.closest(".vocab-word");
+
+    if (word && !pinnedWord) {
+      showTooltip(word);
+    }
+  });
+
+  bookEl.addEventListener("pointerout", event => {
+    const word = event.target.closest(".vocab-word");
+    if (!word || pinnedWord) return;
+
+    if (
+      event.relatedTarget instanceof Node &&
+      word.contains(event.relatedTarget)
+    ) return;
+
+    if (document.activeElement !== word) {
+      hideTooltip();
+    }
+  });
+
+  bookEl.addEventListener("focusin", event => {
+    const word = event.target.closest(".vocab-word");
+    if (word) showTooltip(word);
+  });
+
+  bookEl.addEventListener("focusout", event => {
+    if (event.target.closest(".vocab-word")) {
+      hideTooltip();
+    }
+  });
+
+  bookEl.addEventListener("click", event => {
+    const word = event.target.closest(".vocab-word");
+
+    if (!word) {
+      hideTooltip();
+      return;
+    }
+
+    if (pinnedWord === word) {
+      hideTooltip();
+    } else {
+      showTooltip(word, true);
+    }
+  });
+
+  document.addEventListener("click", event => {
+    if (!event.target.closest(".vocab-word")) {
+      hideTooltip();
+    }
+  });
+
+  window.addEventListener("resize", hideTooltip);
+  window.addEventListener("scroll", hideTooltip, true);
+
+  document.addEventListener("keydown", event => {
+    if (!isOpen) return;
+
+    if (event.key === "Escape") {
+      if (!tooltip.hidden) {
+        hideTooltip();
+      } else {
+        closeBook();
+      }
+
+      return;
+    }
+
+    // Do not override keyboard operation of buttons or inputs.
+    if (event.target.closest("button, input, select, textarea")) return;
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      navigateTo(currentPage + 1);
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      navigateTo(currentPage - 1);
+    }
+  });
+
+  /* PAGE RUSTLE: REUSE A SINGLE AUDIO CONTEXT */
+
+  async function playPageTurnSound() {
+    if (!pageSounds.checked) return;
+
+    try {
+      const AudioContextClass =
+        window.AudioContext || window.webkitAudioContext;
+
+      if (!AudioContextClass) return;
+
+      if (!audioContext || audioContext.state === "closed") {
+        audioContext = new AudioContextClass();
+        rustleBuffer = null;
+      }
+
+      if (audioContext.state === "suspended") {
+        await audioContext.resume();
+      }
+
+      if (!pageSounds.checked || !isOpen) return;
+
+      const duration = 0.18;
+
+      if (!rustleBuffer) {
+        const length = Math.floor(audioContext.sampleRate * duration);
+
+        rustleBuffer = audioContext.createBuffer(
+          1,
+          length,
+          audioContext.sampleRate
+        );
+
+        const data = rustleBuffer.getChannelData(0);
+
+        for (let i = 0; i < length; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+      }
+
+      const source = audioContext.createBufferSource();
+      const filter = audioContext.createBiquadFilter();
+      const gain = audioContext.createGain();
+      const now = audioContext.currentTime;
+
+      source.buffer = rustleBuffer;
+
+      filter.type = "bandpass";
+      filter.frequency.value = 2600;
+      filter.Q.value = 0.65;
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.08, now + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioContext.destination);
+
+      source.onended = () => {
+        source.disconnect();
+        filter.disconnect();
+        gain.disconnect();
+      };
+
+      source.start(now);
+      source.stop(now + duration);
+    } catch (_) {
+      // Page-turn audio is optional; reading remains available.
+    }
+  }
+
+  /* STOP NARRATION WHEN THE DOCUMENT IS NO LONGER VISIBLE */
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      stopAudio();
+      hideTooltip();
+    }
+  });
+
+  window.addEventListener("pagehide", () => {
+    stopAudio();
+    hideTooltip();
+
+    if (audioContext && audioContext.state !== "closed") {
+      audioContext.close().catch(() => {});
+    }
+  });
+})();
+</script>
 </body>
 </html>
