@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>British or American? — Rules & Listening Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#f5f1e8;--paper:#fbf8f2;--ink:#141a1c;
+  --uk:#1f3a78;--us:#b02f2a;--gold:#c9962e;
+  --muted:#7d8378;--line:#ded7c7;
+  --ok:#2b7a5c;--okbg:#e9f5ef;--no:#a83a2c;--nobg:#fbeeea;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--cream);
+  background-image:
+    radial-gradient(760px 420px at 88% -6%, rgba(176,47,42,.07), transparent 62%),
+    radial-gradient(700px 400px at 4% 2%, rgba(31,58,120,.08), transparent 60%);
+  background-attachment:fixed;
+  color:var(--ink);line-height:1.6;padding:30px 16px 70px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:720px;margin:0 auto}
+
+/* ══ HERO ══ */
+.hero{text-align:center;margin-bottom:26px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:.7rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:16px;
+}
+.eyebrow i{display:block;width:28px;height:2px;background:var(--gold)}
+h1{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(2.1rem,7.4vw,3.2rem);line-height:.98;
+  font-weight:800;letter-spacing:-.035em;margin-bottom:14px;
+}
+h1 em{font-style:italic;font-weight:600;color:var(--uk)}
+h1 b{font-weight:800;color:var(--us)}
+.dek{font-size:clamp(.9rem,2.6vw,1.02rem);color:#4a5148;max-width:470px;margin:0 auto;line-height:1.6}
+.dek strong{color:var(--ink);font-weight:800}
+
+/* ══ CARDS ══ */
+.card{
+  background:var(--paper);border:1px solid var(--line);border-radius:20px;
+  padding:24px 22px;margin-bottom:18px;
+  box-shadow:0 10px 34px -22px rgba(20,26,28,.4);
+}
+.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:4px}
+.card-title{font-family:'Playfair Display',Georgia,serif;font-size:1.16rem;font-weight:700;letter-spacing:-.01em}
+.card-note{font-size:.72rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.card-sub{font-size:.86rem;color:var(--muted);margin-bottom:16px}
+
+/* ══ RULE ROWS ══ */
+.rules{margin-top:4px}
+.rule{
+  display:grid;grid-template-columns:1fr 190px 1fr;align-items:center;gap:8px;
+  padding:15px 0;border-bottom:1px solid var(--line);
+}
+.rule:last-child{border-bottom:none;padding-bottom:4px}
+.say{font-size:clamp(1rem,3.4vw,1.3rem);font-weight:800;letter-spacing:-.01em;line-height:1.15}
+.say.uk{color:var(--uk);text-align:right}
+.say.us{color:var(--us);text-align:left}
+.word{text-align:center;line-height:1.1}
+.word .w{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.15rem,4vw,1.5rem);font-weight:600;letter-spacing:-.02em}
+.word .f{display:block;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+.mini{
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  margin-top:7px;border:1px solid var(--line);background:#fff;border-radius:100px;
+  padding:4px 11px;font-family:inherit;font-size:.7rem;font-weight:800;letter-spacing:.06em;
+  color:var(--muted);cursor:pointer;transition:.16s;
+}
+.mini:hover{border-color:var(--gold);color:#8a6a14;background:#fdf6e6}
+.mini.playing{border-color:var(--gold);background:#fdf6e6;color:#8a6a14}
+
+/* ══ VOCAB ══ */
+.vocab-title{
+  display:flex;align-items:center;gap:10px;
+  font-size:.72rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);margin:22px 0 12px;padding-top:18px;border-top:2px solid var(--ink);
+}
+.vocab-title i{display:block;width:26px;height:2px;background:var(--gold)}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.chip{
+  background:#fff;border:1.5px solid var(--line);border-radius:12px;
+  padding:11px 8px;text-align:center;line-height:1.2;
+}
+.chip .u{font-size:.86rem;font-weight:800;color:var(--uk)}
+.chip .a{font-size:.86rem;font-weight:800;color:var(--us);margin-top:2px}
+
+/* ══ START ══ */
+.start-wrap{text-align:center;margin-bottom:22px}
+.start{
+  display:inline-flex;align-items:center;gap:9px;
+  border:none;border-radius:100px;padding:14px 34px;
+  background:var(--ink);color:#fff;font-family:inherit;font-size:.94rem;font-weight:800;
+  letter-spacing:.01em;cursor:pointer;
+  box-shadow:0 12px 26px -14px rgba(20,26,28,.9);transition:.18s;
+}
+.start:hover{transform:translateY(-1px);background:#22453a}
+
+/* ══ PRACTICE ══ */
+#practice{scroll-margin-top:20px}
+.pbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}
+.pstep{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.pscore{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.track{height:5px;background:#e6e0d2;border-radius:100px;overflow:hidden;margin-bottom:18px}
+.track .f{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#e4bd68);
+  border-radius:100px;transition:width .45s cubic-bezier(.22,.61,.36,1)}
+
+.phrase{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(1.45rem,5.4vw,2rem);font-weight:600;line-height:1.2;
+  text-align:center;margin:4px 0 18px;
+}
+.phrase.in{animation:pop .3s cubic-bezier(.22,.61,.36,1) both}
+@keyframes pop{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+.playall{
+  display:flex;margin:0 auto 16px;
+  align-items:center;gap:9px;border:none;border-radius:100px;padding:12px 26px;
+  background:#22453a;color:#fff;font-family:inherit;font-size:.9rem;font-weight:700;
+  cursor:pointer;box-shadow:0 9px 22px -14px rgba(34,69,58,.95);transition:.18s;
+}
+.playall:hover:not(:disabled){background:#2f5a49;transform:translateY(-1px)}
+.playall:disabled{cursor:default;opacity:.85}
+
+.nums{display:flex;gap:9px;justify-content:center;margin-bottom:18px}
+.num{
+  width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+  border:2px solid var(--line);color:#b6bdb8;font-weight:800;font-size:.96rem;transition:.2s;
+}
+.num.on{border-color:var(--gold);background:#fdf6e6;color:#8a6a14;transform:scale(1.07)}
+.num.done{border-color:#d3d0c3;color:#8f9487}
+
+.ask{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);text-align:center;margin-bottom:11px}
+.picks{display:flex;gap:10px;justify-content:center}
+.pick{
+  flex:1 1 140px;max-width:230px;cursor:pointer;
+  border:2px solid var(--line);border-radius:14px;background:#fff;padding:13px 10px;
+  font-family:inherit;font-size:.9rem;font-weight:700;color:var(--ink);transition:.18s;
+}
+.pick span{display:block;font-size:1.3rem;font-weight:900;line-height:1;color:#c1c6b9;margin-bottom:5px;transition:.18s}
+.pick:hover:not(:disabled){transform:translateY(-2px);border-color:#22453a;background:#f3f7f5}
+.pick:hover:not(:disabled) span{color:#22453a}
+.pick:disabled{cursor:default;opacity:.55}
+.pick.right{border-color:var(--ok);background:var(--okbg);opacity:1}
+.pick.right span{color:var(--ok)}
+.pick.wrong{border-color:var(--no);background:var(--nobg);opacity:1}
+.pick.wrong span{color:var(--no)}
+
+.fb{min-height:54px;margin-top:15px;text-align:center;font-size:.9rem;font-weight:600;
+  line-height:1.55;opacity:0;transition:opacity .25s}
+.fb.show{opacity:1}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--no)}
+.fb .pair{display:block;font-weight:500;color:var(--muted);font-size:.86rem;margin-top:5px}
+.fb .pair b{color:var(--ink);font-weight:700}
+
+.cmp{display:none;gap:8px;justify-content:center;margin-top:4px}
+.cmp.show{display:flex}
+.cmp button{
+  border:1.5px solid var(--line);background:#fff;border-radius:100px;padding:7px 15px;
+  font-family:inherit;font-size:.78rem;font-weight:800;color:var(--muted);cursor:pointer;transition:.16s;
+}
+.cmp button:hover{transform:translateY(-1px)}
+.cmp .cu:hover{border-color:var(--uk);color:var(--uk);background:#f2f4fb}
+.cmp .ca:hover{border-color:var(--us);color:var(--us);background:#fdf3f2}
+
+.next{
+  display:block;margin:14px auto 0;border:none;border-radius:100px;padding:12px 30px;
+  font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;
+  background:var(--ink);color:#fff;box-shadow:0 10px 24px -14px rgba(20,26,28,.9);
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .18s;
+}
+.next.show{opacity:1;pointer-events:auto}
+.next:hover{transform:translateY(-1px)}
+
+/* ══ RESULT ══ */
+.end{display:none}
+.end.show{display:block;animation:pop .35s cubic-bezier(.22,.61,.36,1) both}
+.score{text-align:center;margin-bottom:18px}
+.score .big{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,10vw,3.3rem);
+  font-weight:800;line-height:1;color:#22453a}
+.score .lbl{font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin-top:7px}
+.score .msg{font-weight:700;margin-top:12px;font-size:.92rem}
+
+.diff{width:100%;border-collapse:collapse;font-size:.85rem}
+.diff th{background:#22453a;color:#fff;text-align:left;padding:9px 14px;font-size:.68rem;
+  letter-spacing:.07em;text-transform:uppercase;font-weight:800}
+.diff td{padding:10px 14px;border-top:1px solid #efebe2;color:var(--muted);vertical-align:middle;line-height:1.45}
+.diff tr:nth-child(even) td{background:#faf8f4}
+.diff td.ph{color:var(--ink);font-weight:700;width:42%}
+.diff .rb{
+  border:1px solid var(--line);background:#fff;border-radius:100px;padding:5px 11px;
+  font-family:inherit;font-size:.72rem;font-weight:800;color:var(--muted);cursor:pointer;white-space:nowrap;
+}
+.diff .rb:hover{border-color:var(--gold);color:#8a6a14;background:#fdf6e6}
+
+.again{
+  display:block;width:100%;margin-top:16px;border:1.5px solid var(--line);background:#fff;
+  border-radius:100px;padding:13px;font-family:inherit;font-size:.9rem;font-weight:800;
+  color:var(--muted);cursor:pointer;transition:.18s;
+}
+.again:hover{border-color:#22453a;color:#22453a}
+
+.foot{text-align:center;font-size:.8rem;color:var(--muted);margin-top:26px}
+.foot b{color:var(--ink)}
+
+.toast{
+  position:fixed;bottom:20px;left:50%;transform:translate(-50%,10px);
+  background:var(--no);color:#fff;padding:10px 20px;border-radius:100px;
+  font-size:.8rem;font-weight:600;opacity:0;transition:.3s;pointer-events:none;z-index:99;
+  box-shadow:0 12px 30px -12px rgba(0,0,0,.5);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:600px){
+  .card{padding:20px 16px}
+  .chips{grid-template-columns:1fr 1fr}
+  .diff td{padding:9px 11px}.diff th{padding:8px 11px}
+}
+@media (max-width:560px){
+  .rule{grid-template-columns:1fr;gap:3px;text-align:center;padding:14px 0}
+  .say.uk,.say.us{text-align:center}
+  .word{order:-1}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="eyebrow"><i></i>Same language · Two sounds</span>
+    <h1>British<br>or <em>American</em><b>?</b></h1>
+    <p class="dek">You say the same sentence. You mean the same thing. But <strong>one sound</strong> gives you away.</p>
+  </header>
+
+  <!-- ══ RULES ══ -->
+  <section class="card">
+    <div class="card-head">
+      <h2 class="card-title">Sounds that give you away</h2>
+      <span class="card-note">Listen</span>
+    </div>
+    <p class="card-sub">Tap ▶ to hear the same sentence in both accents.</p>
+
+    <div class="rules" id="rules"></div>
+
+    <div class="vocab-title"><i></i>And the words that change completely</div>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <div class="start-wrap">
+    <button class="start" id="startBtn" type="button">Start listening practice ↓</button>
+  </div>
+
+  <!-- ══ PRACTICE ══ -->
+  <section id="practice">
+    <main id="game">
+      <div class="card">
+        <div class="pbar">
+          <span class="pstep" id="pstep">Round 1 of 9</span>
+          <span class="pscore" id="pscore">0 correct</span>
+        </div>
+        <div class="track"><div class="f" id="fill"></div></div>
+
+        <p class="phrase" id="phrase">My car is red.</p>
+
+        <button class="playall" id="playAll" type="button">▶ Play both</button>
+
+        <div class="nums">
+          <span class="num" id="n1">1</span>
+          <span class="num" id="n2">2</span>
+        </div>
+
+        <p class="ask" id="ask">Which one was British?</p>
+        <div class="picks">
+          <button class="pick" type="button" data-pick="1"><span>1</span> was British</button>
+          <button class="pick" type="button" data-pick="2"><span>2</span> was British</button>
+        </div>
+
+        <p class="fb" id="fb" role="status" aria-live="polite"></p>
+
+        <div class="cmp" id="cmp">
+          <button type="button" class="cu" data-play="uk">🇬🇧 UK</button>
+          <button type="button" class="ca" data-play="us">🇺🇸 US</button>
+        </div>
+
+        <button class="next" id="next" type="button">Next →</button>
+      </div>
+    </main>
+
+    <div class="end" id="end" aria-live="polite">
+      <div class="card">
+        <div class="score">
+          <div class="big"><span id="scoreNum">0</span> / <span id="scoreTot">9</span></div>
+          <div class="lbl">correct</div>
+          <div class="msg" id="scoreMsg"></div>
+        </div>
+
+        <table class="diff">
+          <thead><tr><th>Sentence</th><th>Listen for</th><th></th></tr></thead>
+          <tbody id="diffBody"></tbody>
+        </table>
+
+        <button class="again" id="again" type="button">↺ Play again</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot"><b>Both are correct.</b> Pick one and stay consistent.</p>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var BASE = 'https://raw.githubusercontent.com/AlexandraGes/ESL/main/Sounds/audio/';
+
+  /* правила: как звучит, слово, какой звук меняется, какая пара аудио */
+  var RULES = [
+    { uk:'CAH',        word:'car',     feature:'the /r/',    id:'01', us:'CARR' },
+    { uk:'WAW-tuh',    word:'water',   feature:'t → d',      id:'03', us:'WAW-der' },
+    { uk:'KAHNT',      word:'can’t',   feature:'long /ɑː/',  id:'05', us:'KANT' },
+    { uk:'tuh-MAH-toh',word:'tomato',  feature:'the /a/',    id:'08', us:'tuh-MAY-toh' },
+    { uk:'NYOO',       word:'new',     feature:'the /j/',    id:'09', us:'NOO' },
+    { uk:'TYOOZ-day',  word:'Tuesday', feature:'the /j/',    id:'10', us:'TOOZ-day' }
+  ];
+
+  var PAIRS = [
+    { id:'01', text:'My car is red.',          tip:'In <b>car</b> the American says /r/. The British voice doesn’t.' },
+    { id:'02', text:'My sister is a teacher.', tip:'British: <b>sistuh, teachuh</b>. American: clear /r/ at the end.' },
+    { id:'03', text:'A glass of water.',       tip:'In the US, <b>water</b> sounds like “wader”.' },
+    { id:'04', text:'I live in a big city.',   tip:'In the US, <b>city</b> sounds like “cidy”.' },
+    { id:'05', text:'I can’t swim.',           tip:'British <b>can’t</b> has a long /ɑː/. American is short and flat.' },
+    { id:'07', text:'It’s very hot.',          tip:'British <b>hot</b> is short. American is longer: “haht”.' },
+    { id:'08', text:'Tomato soup, please.',    tip:'British <b>tuh-MAH-toh</b>. American <b>tuh-MAY-toh</b>.' },
+    { id:'09', text:'A new student.',          tip:'British <b>nyoo, styoodent</b>. American <b>noo, stoodent</b>.' },
+    { id:'10', text:'See you Tuesday.',        tip:'British <b>TYOOZ-day</b>. American <b>TOOZ-day</b>.' }
+  ];
+
+  var WORDS = [
+    ['flat','apartment'],['lift','elevator'],['rubbish','garbage'],
+    ['biscuit','cookie'],['sweets','candy'],['underground','subway'],
+    ['holiday','vacation'],['autumn','fall'],['mobile phone','cell phone']
+  ];
+
+  var el = {
+    rules:document.getElementById('rules'),
+    chips:document.getElementById('chips'),
+    startBtn:document.getElementById('startBtn'),
+    practice:document.getElementById('practice'),
+    pstep:document.getElementById('pstep'),
+    pscore:document.getElementById('pscore'),
+    fill:document.getElementById('fill'),
+    game:document.getElementById('game'),
+    end:document.getElementById('end'),
+    phrase:document.getElementById('phrase'),
+    playAll:document.getElementById('playAll'),
+    n1:document.getElementById('n1'),
+    n2:document.getElementById('n2'),
+    ask:document.getElementById('ask'),
+    picks:[].slice.call(document.querySelectorAll('.pick')),
+    fb:document.getElementById('fb'),
+    cmp:document.getElementById('cmp'),
+    next:document.getElementById('next'),
+    scoreNum:document.getElementById('scoreNum'),
+    scoreTot:document.getElementById('scoreTot'),
+    scoreMsg:document.getElementById('scoreMsg'),
+    diffBody:document.getElementById('diffBody'),
+    again:document.getElementById('again'),
+    toast:document.getElementById('toast')
+  };
+
+  var order=[], idx=0, score=0, locked=false, firstIsUK=true, playing=false, cache={};
+
+  /* ── utils ── */
+  function toast(msg){
+    el.toast.textContent = msg;
+    el.toast.classList.add('show');
+    clearTimeout(toast.t);
+    toast.t = setTimeout(function(){ el.toast.classList.remove('show'); }, 2800);
+  }
+
+  function shuffle(a){
+    a = a.slice();
+    for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+
+  function audio(url){
+    if(!cache[url]){ var a = new Audio(url); a.preload='auto'; cache[url]=a; }
+    return cache[url];
+  }
+
+  function file(id, accent){ return BASE + 'pair' + id + '-' + accent + '.mp3'; }
+
+  function playOne(id, accent, onEnd){
+    var a = audio(file(id, accent));
+    try { a.pause(); a.currentTime = 0; } catch(e){}
+    var p = a.play();
+    if(p && p.catch){ p.catch(function(){ toast('Audio didn’t load — check the file name.'); if(onEnd) onEnd(); }); }
+    a.onended = function(){ if(onEnd) onEnd(); };
+    return a;
+  }
+
+  /* ── правила ── */
+  function buildRules(){
+    el.rules.innerHTML = RULES.map(function(r){
+      return '<div class="rule">' +
+        '<div class="say uk">' + r.uk + '</div>' +
+        '<div class="word"><span class="w">' + r.word + '</span>' +
+          '<span class="f">' + r.feature + '</span>' +
+          '<button class="mini" type="button" data-pair="' + r.id + '">▶ pair</button>' +
+        '</div>' +
+        '<div class="say us">' + r.us + '</div>' +
+      '</div>';
+    }).join('');
+
+    el.rules.querySelectorAll('.mini').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var id = btn.dataset.pair;
+        el.rules.querySelectorAll('.mini').forEach(function(b){ b.classList.remove('playing'); });
+        btn.classList.add('playing');
+        btn.textContent = '🔊';
+        playOne(id, 'uk', function(){
+          setTimeout(function(){
+            playOne(id, 'us', function(){
+              btn.classList.remove('playing');
+              btn.textContent = '▶ pair';
+            });
+          }, 450);
+        });
+      });
+    });
+
+    el.chips.innerHTML = WORDS.map(function(w){
+      return '<div class="chip"><div class="u">' + w[0] + '</div><div class="a">' + w[1] + '</div></div>';
+    }).join('');
+  }
+
+  /* ── практика ── */
+  function paint(){
+    el.pstep.textContent = 'Round ' + (idx+1) + ' of ' + PAIRS.length;
+    el.pscore.textContent = score + ' correct';
+    el.fill.style.width = Math.round((idx/PAIRS.length)*100) + '%';
+  }
+
+  function show(){
+    locked=false; playing=false; firstIsUK = Math.random() < 0.5;
+    var item = PAIRS[order[idx]];
+
+    el.phrase.textContent = item.text;
+    el.phrase.classList.remove('in');
+    void el.phrase.offsetWidth;
+    el.phrase.classList.add('in');
+
+    el.ask.textContent = 'Which one was British?';
+    el.fb.className = 'fb';
+    el.fb.innerHTML = '';
+    el.cmp.classList.remove('show');
+    el.next.classList.remove('show');
+    el.playAll.disabled = false;
+    el.playAll.textContent = '▶ Play both';
+    el.picks.forEach(function(b){ b.disabled=false; b.classList.remove('right','wrong'); });
+    el.n1.className = 'num';
+    el.n2.className = 'num';
+    paint();
+  }
+
+  function playBoth(){
+    if(playing) return;
+    playing = true;
+    el.playAll.disabled = true;
+    el.playAll.textContent = '⏸ Playing…';
+
+    var first  = firstIsUK ? 'uk' : 'us';
+    var second = firstIsUK ? 'us' : 'uk';
+    var item = PAIRS[order[idx]];
+
+    el.n1.className = 'num on';
+    el.n2.className = 'num';
+
+    playOne(item.id, first, function(){
+      el.n1.className = 'num done';
+      setTimeout(function(){
+        el.n2.className = 'num on';
+        playOne(item.id, second, function(){
+          el.n2.className = 'num done';
+          el.playAll.disabled = false;
+          el.playAll.textContent = '↺ Play again';
+          playing = false;
+        });
+      }, 550);
+    });
+  }
+
+  function pick(btn){
+    if(locked) return;
+    locked = true;
+
+    var chosen = parseInt(btn.dataset.pick, 10);
+    var ukNum = firstIsUK ? 1 : 2;
+    var ok = chosen === ukNum;
+
+    el.picks.forEach(function(b){ b.disabled = true; });
+    btn.classList.add(ok ? 'right' : 'wrong');
+    if(!ok){ el.picks[ukNum-1].classList.add('right'); }
+    if(ok) score++;
+
+    el.ask.textContent = 'Answer';
+    el.fb.className = 'fb show ' + (ok ? 'ok' : 'no');
+    el.fb.innerHTML = (ok ? '✓ Yes! Number ' : '✗ Not quite. Number ') + ukNum +
+      ' was British.<span class="pair">' + PAIRS[order[idx]].tip + '</span>';
+
+    el.cmp.classList.add('show');
+    el.next.textContent = (idx === PAIRS.length-1) ? 'See results →' : 'Next →';
+    el.next.classList.add('show');
+    paint();
+  }
+
+  function next(){
+    idx++;
+    if(idx >= PAIRS.length){ finish(); return; }
+    show();
+  }
+
+  function finish(){
+    el.fill.style.width = '100%';
+    el.pstep.textContent = 'Finished';
+    el.pscore.textContent = score + ' / ' + PAIRS.length;
+    el.game.style.display = 'none';
+    el.end.classList.add('show');
+    el.scoreNum.textContent = score;
+    el.scoreTot.textContent = PAIRS.length;
+
+    var t = PAIRS.length, msg;
+    if(score === t)       msg = 'Perfect! You hear both accents clearly. 🎉';
+    else if(score >= t*.7) msg = 'Great ears! A couple of sounds need one more listen. 👏';
+    else if(score >= t*.4) msg = 'Good start. Replay the pairs below and listen again. 💪';
+    else                   msg = 'Now you know what to listen for. Try once more! 🔁';
+    el.scoreMsg.textContent = msg;
+
+    el.diffBody.innerHTML = PAIRS.map(function(it){
+      return '<tr><td class="ph">' + it.text + '</td><td>' + it.tip + '</td>' +
+        '<td><button class="rb" type="button" data-pair="' + it.id + '">▶ pair</button></td></tr>';
+    }).join('');
+
+    el.diffBody.querySelectorAll('.rb').forEach(function(b){
+      b.addEventListener('click', function(){
+        var id = b.dataset.pair;
+        b.textContent = '🔊';
+        playOne(id, 'uk', function(){
+          setTimeout(function(){
+            playOne(id, 'us', function(){ b.textContent = '▶ pair'; });
+          }, 450);
+        });
+      });
+    });
+
+    el.end.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function start(){
+    order = shuffle(PAIRS.map(function(_,i){ return i; }));
+    idx = 0; score = 0; locked = false;
+    el.end.classList.remove('show');
+    el.game.style.display = 'block';
+    el.fill.style.width = '0%';
+    show();
+    el.practice.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  el.playAll.addEventListener('click', playBoth);
+  el.picks.forEach(function(b){ b.addEventListener('click', function(){ pick(b); }); });
+  el.next.addEventListener('click', next);
+  el.again.addEventListener('click', start);
+  el.startBtn.addEventListener('click', start);
+  el.cmp.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click', function(){
+      playOne(PAIRS[order[idx]].id, b.dataset.play, null);
+    });
+  });
+
+  buildRules();
+})();
+</script>
+</body>
+</html>
