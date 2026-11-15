@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d1322">
+<title>Past Tense Quest · Past Simple vs Past Continuous · A2</title>
+<style>
+:root{
+ --bg:#0d1322; --bg2:#141d33; --card:#1a2540; --card2:#223054;
+ --line:#3a4b70; --line2:#5a6f95;
+ --ink:#f4f7ff; --sub:#b9c6df; --dim:#8fa0bf;
+ --simple:#ffc857; --cont:#5ee0f5; --hot:#ff6f61; --pink:#ff8fb1;
+ --ok:#7ee2a8; --bad:#ff9b8a;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+ margin:0; color:var(--ink);
+ background:
+  radial-gradient(900px 420px at 82% -8%, #3a2350 0%, transparent 62%),
+  radial-gradient(700px 380px at 8% 4%, #1c3c5a 0%, transparent 60%),
+  var(--bg);
+ font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+ -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--cont);outline-offset:3px}
+button:disabled{cursor:default}
+[hidden]{display:none!important}
+.wrap{width:min(1020px,calc(100% - 28px));margin:auto}
+.top{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);background:#0b1120e8;border-bottom:1px solid #2b3a58}
+.top .wrap{min-height:64px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.logo{border:0;background:none;color:#fff;font-weight:900;letter-spacing:.06em;padding:10px 0;font-size:15px}
+.logo b{color:var(--simple)}
+.page{padding:22px 0 64px}
+.eyebrow{display:block;font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:850;color:var(--cont)}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(30px,6vw,52px);line-height:1.06;letter-spacing:-.03em;margin:12px 0}
+h2{font-size:clamp(23px,4vw,32px);line-height:1.18}
+h3{font-size:18px;line-height:1.25}
+.muted{color:var(--sub)}
+.small{font-size:13.5px;color:var(--dim)}
+
+/* ==== HERO ==== */
+.hero{position:relative;border-radius:20px;overflow:hidden;border:1px solid #46577c;background:#0a1020;box-shadow:0 18px 48px #05091299}
+.hero img{display:block;width:100%;height:auto}
+.hero-scrim{display:none}
+.hero-body{position:relative;background:#101a2e;padding:clamp(16px,3.4vw,30px);display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+.hero-copy{max-width:600px}
+.hero h1{font-size:clamp(27px,5.4vw,46px);margin:8px 0 6px}
+.hero p{color:#e6edfb;font-size:clamp(13.5px,2.4vw,16px);max-width:520px}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.chip{font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:5px 10px;border-radius:999px;border:1px solid #ffffff40;background:#0d1526b0;color:#dfe8f8}
+.chip.s{color:var(--simple);border-color:#ffc85755}
+.chip.c{color:var(--cont);border-color:#5ee0f555}
+.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.btn{min-height:48px;border:0;border-radius:12px;padding:11px 18px;font-weight:800;background:linear-gradient(180deg,#ff8264,#f2543f);color:#fff;box-shadow:0 6px 0 #a8321f}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(2px);box-shadow:0 4px 0 #a8321f}
+.btn.ghost{background:#1b2743;color:#eaf1ff;border:1px solid var(--line2);box-shadow:0 6px 0 #0b1120}
+.btn.ghost:active{box-shadow:0 4px 0 #0b1120}
+.btn.small{min-height:40px;padding:8px 13px;font-size:13.5px;box-shadow:none;border-radius:10px}
+.btn.small:active{transform:none}
+
+/* ==== MAP ==== */
+.head-row{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:34px 0 14px;flex-wrap:wrap}
+.map{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.mission{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.mission .n{font-size:12px;font-weight:900;color:var(--dim);letter-spacing:.1em}
+.mission p{color:var(--sub);font-size:14px}
+.mission .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:10px}
+.done{color:var(--ok);font-weight:800;font-size:13px}
+.bar{height:6px;border-radius:99px;background:#0a1020;overflow:hidden;margin:2px 0 6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cont),var(--simple))}
+
+/* ==== THEORY ==== */
+.sheet{background:linear-gradient(180deg,#1b2742,#16203a);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,3vw,26px);margin-top:14px}
+.sheet > * + *{margin-top:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.box{background:#111a2e;border:1px solid #33456a;border-radius:14px;padding:15px}
+.box h3{margin-bottom:7px}
+.box.s h3,.s-text{color:var(--simple)}
+.box.c h3,.c-text{color:var(--cont)}
+.box p{color:var(--sub);font-size:14.5px}
+.ex{margin-top:10px;background:#0c1424;border-left:3px solid #44598a;border-radius:10px;padding:10px 12px;font-size:16px}
+.ex.s{border-left-color:var(--simple)}
+.ex.c{border-left-color:var(--cont)}
+.ex .ru{display:block;margin-top:4px;font-size:13.5px;color:var(--dim)}
+figure{margin:0}
+figure img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid #3d5075}
+figcaption{font-size:13px;color:var(--dim);padding:7px 2px 0}
+.note{border-left:4px solid var(--simple);background:#20180f;border-radius:0 10px 10px 0;padding:11px 14px;font-size:14.5px}
+.note.c{border-left-color:var(--cont);background:#0e2430}
+details.sheet{padding:0;overflow:hidden}
+details.sheet>summary{cursor:pointer;padding:16px;font-weight:850;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:center}
+details.sheet>summary::-webkit-details-marker{display:none}
+details.sheet>summary::after{content:"＋";color:var(--cont);font-size:20px;font-weight:700}
+details.sheet[open]>summary::after{content:"–"}
+details.sheet .inside{padding:0 16px 18px;display:grid;gap:14px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid #2f4064}
+th{color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+td:nth-child(2){color:var(--simple);font-weight:700}
+
+/* ==== TASK ==== */
+.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.pbar{height:7px;border-radius:99px;background:#0a1020;overflow:hidden;margin-bottom:16px;border:1px solid #2b3a58}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--cont),var(--simple));transition:width .25s}
+.card{background:linear-gradient(180deg,#1b2742,#16203a);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,3.6vw,30px)}
+.qtext{font-size:clamp(21px,3.4vw,28px);line-height:1.45;margin:14px 0 6px}
+.blank{display:inline-block;min-width:78px;border-bottom:3px dashed #7c8db3;color:#fff;text-align:center}
+.qhint{color:var(--sub);font-size:14.5px;margin-top:8px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.opts.one{grid-template-columns:1fr}
+.opt{min-height:56px;border:2px solid #4a5f8a;background:#1b2743;color:#eef4ff;border-radius:12px;padding:11px 14px;text-align:left;font-weight:700;font-size:16.5px;line-height:1.3}
+.opt:hover:not(:disabled){border-color:var(--cont);background:#1f2f52}
+.opt.wrong{border-color:var(--bad);background:#3c2027}
+.opt.right{border-color:var(--ok);background:#12362b}
+.opt .tag{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.field{width:100%;min-height:54px;margin-top:16px;background:#0c1424;border:2px solid #4a5f8a;color:#fff;border-radius:12px;padding:11px 13px;font-size:17px}
+.fb{margin-top:16px;border-radius:12px;padding:13px 15px;background:#102a22;border-left:4px solid var(--ok);font-size:15px}
+.fb.bad{background:#331d22;border-left-color:var(--bad)}
+.fb b{display:block;margin-bottom:4px}
+.fb .ru{margin-top:6px;color:var(--dim);font-size:13.5px}
+.help{margin-top:14px;display:grid;gap:8px}
+.help details{background:#111a2e;border:1px solid #2f4064;border-radius:10px;padding:10px 13px;font-size:14.5px}
+.help summary{cursor:pointer;color:var(--cont);font-weight:750}
+.help p{padding-top:7px;color:var(--sub)}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:18px}
+.row .right{margin-left:auto}
+.finish{max-width:760px;margin:0 auto}
+.score{font-size:clamp(34px,8vw,52px);font-weight:900;color:var(--simple);letter-spacing:-.02em;line-height:1}
+.wlist{display:grid;gap:9px;margin-top:10px}
+.witem{background:#111a2e;border:1px solid #2f4064;border-radius:10px;padding:10px 12px;font-size:14.5px}
+.witem b{color:#fff}
+.author{border-top:1px solid #2b3a58;margin-top:10px;background:#0b1120}.author-row{min-height:64px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;font-size:13.5px;color:var(--dim)}.author-links{display:flex;gap:8px}.author a{color:var(--cont);font-weight:800;text-decoration:none;padding:8px 12px;border:1px solid #2f4064;border-radius:999px}.author a:hover{background:#15243c}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.footer{color:var(--dim);font-size:12.5px;margin-top:22px}
+@media(max-width:720px){
+ .map,.two,.opts{grid-template-columns:1fr}
+ 
+ .hero-body{position:static;background:#101a2e;padding:16px}
+ 
+ .btn{width:100%;justify-content:center}
+ .row .btn{width:auto}
+ .row .right{width:100%;margin-left:0}
+ .row .right .btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <button id="homeBtn" class="logo">PAST <b>QUEST</b></button>
+  <button id="guideBtn" class="btn ghost small">📖 Теория</button>
+</div></header>
+<main id="app" class="wrap page"><noscript>Для работы тренажёра нужен JavaScript.</noscript></main>
+<footer class="author"><div class="wrap author-row">
+  <span>Автор методики и материалов: <b style="color:#f4f7ff">Alexandra Ges · ESL</b></span>
+  <nav class="author-links" aria-label="Ссылки автора">
+    <a href="https://boosty.to/alexandrages_esl" target="_blank" rel="noopener noreferrer">Boosty</a>
+    <a href="https://t.me/alexandragesESL" target="_blank" rel="noopener noreferrer">Telegram</a>
+  </nav>
+</div></footer>
+
+
+<script>
+'use strict';
+
+/* ---------- illustrations ---------- */
+const IMG = {
+  hero:  'https://i.yapx.ru/eZUE3.jpg',
+  event: 'https://i.yapx.ru/eZUE5.jpg',
+  para:  'https://i.yapx.ru/eZUE1.jpg',
+  seq:   'https://i.yapx.ru/eZUFk.jpg',
+  line:  'https://i.yapx.ru/eZUE2.jpg'
+};
+
+/* ---------- tasks ---------- */
+const STAGES = [
+ {
+  id:'meaning', label:'01 · Смысл', title:'Процесс или событие',
+  intro:'Сначала реши, что произошло: событие, процесс или цепочка действий.',
+  tasks:[
+   {type:'choice', q:'At 7 p.m. yesterday, I ___ a game. The game was still on when Mum called.',
+    options:['was playing','played','were playing'], answer:'was playing',
+    hint:'В 7 вечера игра уже шла — это процесс. Смотрим на время и на «was still on».',
+    why:'Процесс в конкретный момент. I + was + playing. «played» здесь был бы просто фактом, но вторая фраза уточняет, что игра продолжалась.',
+    tr:'Вчера в 7 вечера я играл в игру. Игра ещё шла, когда мама позвонила.'},
+   {type:'choice', q:'Yesterday I ___ my friend, and then we went to the park.',
+    options:['met','was meeting','meet'], answer:'met',
+    hint:'Событие + continued: «and then we went». Встреча — завершённый факт.',
+    why:'met — Past Simple от meet. Это событие в цепочке: встретил → пошли.',
+    tr:'Вчера я встретил друга, а потом мы пошли в парк.'},
+   {type:'choice', q:'I ___ dinner when my friend called.',
+    options:['was having','had','were having'], answer:'was having',
+    hint:'Что уже происходило в момент звонка?',
+    why:'was having — процесс; called — событие, которое его прервало.',
+    tr:'Я ужинал, когда позвонил друг.'},
+   {type:'choice', q:'I was walking home when I ___ an old friend.',
+    options:['saw','was seeing','see'], answer:'saw',
+    hint:'Прогулка — фон. Что случилось на этом фоне?',
+    why:'saw — событие в Past Simple; was walking — процесс.',
+    tr:'Я шёл домой, когда увидел старого друга.'},
+   {type:'choice', q:'While I was cooking, my brother ___ the table.',
+    options:['was setting','sets','were setting'], answer:'was setting',
+    hint:'Два действия шли одновременно — оба в процессе.',
+    why:'Параллельные процессы: was cooking и was setting. Подлежащее my brother → was.',
+    tr:'Пока я готовил, брат накрывал на стол.'},
+   {type:'choice', q:'I got up, had breakfast and ___ the house.',
+    options:['left','was leaving','leave'], answer:'left',
+    hint:'События идут одно за другим: 1 → 2 → 3.',
+    why:'left — Past Simple от leave. Цепочка завершённых событий.',
+    tr:'Я встал, позавтракал и вышел из дома.'}
+  ]
+ },
+ {
+  id:'form', label:'02 · Форма', title:'Собери форму',
+  intro:'Здесь важны was / were, didn’t, did и форма самого глагола.',
+  tasks:[
+   {type:'choice', q:'They ___ playing football at 5 p.m.',
+    options:['were','was','did'], answer:'were',
+    hint:'What do we use with they?',
+    why:'they → were + V-ing.',
+    tr:'В 5 вечера они играли в футбол.'},
+   {type:'choice', q:'I ___ go to school yesterday because I was ill.',
+    options:["didn't","wasn't","weren't"], answer:"didn't",
+    hint:'После пропуска стоит начальная форма go.',
+    why:"Past Simple, отрицание: didn't + go.",
+    tr:'Вчера я не пошёл в школу, потому что болел.'},
+   {type:'choice', q:'___ you playing at 8 p.m.?',
+    options:['Were','Did','Was'], answer:'Were',
+    hint:'В вопросе Past Continuous was / were стоят перед подлежащим.',
+    why:'Were you playing? — вопрос о процессе; с you используем were.',
+    tr:'Ты играл в 8 вечера?'},
+   {type:'choice', q:'Did she ___ the game yesterday?',
+    options:['finish','finished','finishing'], answer:'finish',
+    hint:'После did — начальная форма.',
+    why:'Did + she + finish. После did форма -ed не нужна.',
+    tr:'Она закончила игру вчера?'},
+   {type:'input', q:'At 6 p.m., we ___ dinner. (have)', answers:['were having'], display:'were having',
+    hint:'we + were + have → having (убираем конечную -e).',
+    why:'We were having: процесс в конкретный момент. have → having.',
+    tr:'В 6 вечера мы ужинали.'},
+   {type:'input', q:'Yesterday I ___ football. (not play)', answers:["didn't play",'did not play','didn’t play'], display:"didn't play",
+    hint:"Past Simple, отрицание: didn't + начальная форма.",
+    why:"didn't play: после didn't глагол остаётся в начальной форме.",
+    tr:'Вчера я не играл в футбол.'}
+  ]
+ },
+ {
+  id:'mixed', label:'03 · Микс', title:'Смешанная практика',
+  intro:'Теперь без подсказки по теме: смотри только на смысл предложения.',
+  tasks:[
+   {type:'choice', q:'While Leo ___ a video, his mum came in.',
+    options:['was watching','watched','were watching'], answer:'was watching',
+    hint:'Видео уже шло, когда вошла мама.',
+    why:'was watching — процесс; came in — событие.',
+    tr:'Пока Лео смотрел видео, мама вошла.'},
+   {type:'choice', q:'I ___ the answer, so I put up my hand.',
+    options:['knew','was knowing','know'], answer:'knew',
+    hint:'Know описывает состояние, а не действие.',
+    why:'В этом значении know обычно не ставят в Continuous. Past Simple: knew.',
+    tr:'Я знал ответ, поэтому поднял руку.'},
+   {type:'input', q:'She was reading when the phone ___. (ring)', answers:['rang'], display:'rang',
+    hint:'Событие в Past Simple. ring → rang.',
+    why:'rang — завершённое событие; was reading — процесс.',
+    tr:'Она читала, когда зазвонил телефон.'},
+   {type:'input', q:'At 9 p.m., he ___ a message. (write)', answers:['was writing'], display:'was writing',
+    hint:'he + was + write → writing.',
+    why:'was writing — действие в процессе в 9 вечера. write → writing.',
+    tr:'В 9 вечера он писал сообщение.'},
+   {type:'choice', q:'First we watched a film. Then we ___ home.',
+    options:['went','were going','go'], answer:'went',
+    hint:'First … then … — действия по порядку.',
+    why:'went — завершённое действие после фильма.',
+    tr:'Сначала мы посмотрели фильм. Затем пошли домой.'},
+   {type:'choice', q:'At 7 p.m., it ___, so we took an umbrella.',
+    options:['was raining','is raining','were raining'], answer:'was raining',
+    hint:'Погода в конкретный момент прошлого.',
+    why:'was raining описывает обстановку в тот момент; с it используем was.',
+    tr:'В 7 вечера шёл дождь, поэтому мы взяли зонт.'}
+  ]
+ },
+ {
+  id:'fix', label:'04 · Охота за ошибками', title:'Выбери правильное предложение',
+  intro:'Три варианта, но только один грамматически верный. Это задание про форму, а не про смысл.',
+  tasks:[
+   {type:'choice', q:'Which sentence is correct?', sub:'❌ She didn’t went home.',
+    options:["She didn't go home.","She doesn't went home.","She didn't goes home."], answer:"She didn't go home.",
+    hint:'После didn’t — начальная форма.',
+    why:"didn't + go. Окончание -ed и формы went после didn't не нужны.",
+    tr:'Она не пошла домой.'},
+   {type:'choice', q:'Which sentence is correct?', sub:'❌ We was watching TV.',
+    options:['We were watching TV.','We was watch TV.','We were watched TV.'], answer:'We were watching TV.',
+    hint:'Подлежащее we требует were.',
+    why:'were + V-ing. После were нужна форма -ing, а не V2.',
+    tr:'Мы смотрели телевизор.'},
+   {type:'choice', q:'Which sentence is correct?', sub:'❌ Did you saw the film?',
+    options:['Did you see the film?','Did you seen the film?','Do you saw the film?'], answer:'Did you see the film?',
+    hint:'Вопрос в Past Simple: did + подлежащее + начальная форма.',
+    why:'После did — see, а не saw / seen.',
+    tr:'Ты видел этот фильм?'},
+   {type:'choice', q:'Which sentence is correct?', sub:'❌ He was wrote a message.',
+    options:['He was writing a message.','He were writing a message.','He was write a message.'], answer:'He was writing a message.',
+    hint:'was + V-ing; подлежащее he.',
+    why:'he → was; после was нужна форма -ing: writing.',
+    tr:'Он писал сообщение.'}
+  ]
+ }
+];
+const TOTAL = STAGES.reduce((n,s)=>n+s.tasks.length,0);
+
+/* ---------- storage ---------- */
+const KEY='past-quest-v3';
+const blankState=()=>({v:3,stage:0,index:0,first:STAGES.map(()=>0),mistakes:[],done:false});
+let state=blankState(); let canSave=true;
+try{
+  const raw=JSON.parse(localStorage.getItem(KEY));
+  if(raw && raw.v===3 && Array.isArray(raw.first) && raw.first.length===STAGES.length){
+    state={...blankState(),...raw};
+    state.stage=Math.min(Math.max(0,raw.stage|0),STAGES.length-1);
+    state.index=Math.min(Math.max(0,raw.index|0),STAGES[state.stage].tasks.length-1);
+    state.mistakes=Array.isArray(raw.mistakes)?raw.mistakes:[];
+  }
+}catch(e){canSave=false}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){canSave=false}}
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const app=$('#app');
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=v=>v.trim().toLowerCase().replace(/[’‘]/g,"'").replace(/\s+/g,' ');
+const toTop=()=>window.scrollTo(0,0);
+const qWithBlank=t=>esc(t.q).replace('___','<span class="blank">?</span>');
+const taskKey=(si,ti)=>si+'-'+ti;
+const isStageDone=i=>!!(state.doneStages&&state.doneStages[i]);
+
+/* ---------- screens ---------- */
+function home(){
+  const doneCount=STAGES.filter((_,i)=>isStageDone(i)).length;
+  app.innerHTML=`
+   <section class="hero">
+     <img src="${IMG.hero}" alt="Подросток-репортёр в студии между двумя дорожками: Past Simple и Past Continuous" loading="eager">
+     <div class="hero-body">
+       <div class="hero-copy">
+         <span class="eyebrow">Grammar mission · A2</span>
+         <h1>Past Simple<br>vs Past Continuous</h1>
+         <p>Смотри на ситуацию: событие — это точка, процесс — это линия. Четыре миссии, без таймера.</p>
+         <div class="chips"><span class="chip s">● Past Simple · событие</span><span class="chip c">━━ Past Continuous · процесс</span></div>
+       </div>
+       <div class="actions">
+         <button class="btn" id="go">${doneCount?'Продолжить':'Начать'} →</button>
+         <button class="btn ghost" id="theory">📖 Теория</button>
+       </div>
+     </div>
+   </section>
+
+   <div class="head-row"><div><span class="eyebrow">Карта</span><h2>Четыре миссии</h2></div>
+     <p class="small">${doneCount} из ${STAGES.length} пройдено</p></div>
+
+   <div class="map">
+     ${STAGES.map((s,i)=>`
+      <article class="mission">
+        <span class="n">${s.label}</span>
+        <h3>${esc(s.title)}</h3>
+        <p>${esc(s.intro)}</p>
+        <div class="bar"><i style="width:${isStageDone(i)?100:0}%"></i></div>
+        <div class="foot">
+          <span class="small">${s.tasks.length} заданий</span>
+          ${isStageDone(i)?'<span class="done">✓ пройдено</span>':'<button class="btn small" data-stage="'+i+'">Открыть</button>'}
+        </div>
+      </article>`).join('')}
+   </div>
+
+   <p class="footer">${canSave?'Прогресс сохраняется в этом браузере.':'Сохранение недоступно — прогресс не сохранится.'} · <button class="btn ghost small" id="reset">Начать заново</button></p>`;
+  $('#go').onclick=()=>start(firstUnfinished());
+  $('#theory').onclick=()=>theory(false);
+  app.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>start(Number(b.dataset.stage)));
+  $('#reset').onclick=reset;
+  toTop();
+}
+function firstUnfinished(){const i=STAGES.findIndex((_,k)=>!isStageDone(k));return i===-1?0:i}
+
+function theory(fromTask){
+  app.innerHTML=`
+   <div class="stage-head"><div><span class="eyebrow">Опора</span><h2>Два взгляда на прошлое</h2></div>
+     <button class="btn ghost small" id="back">← Назад</button></div>
+
+   <section class="sheet">
+     <p class="muted">Оба времени — про прошлое. Разница в том, <b>как</b> мы смотрим на действие: как на точку или как на линию.</p>
+     <div class="two">
+       <div class="box s"><h3>● Past Simple</h3><p>Факт. Действие произошло и закончилось.</p>
+         <div class="ex s">I <b>played</b> a game yesterday.<span class="ru">Вчера я поиграл в игру.</span></div></div>
+       <div class="box c"><h3>━━ Past Continuous</h3><p>Процесс. Действие шло в определённый момент.</p>
+         <div class="ex c">At 7 p.m. I <b>was playing</b>.<span class="ru">В 7 вечера я играл — процесс уже шёл.</span></div></div>
+     </div>
+
+     <figure><img src="${IMG.event}" alt="Подросток играет, на столе звонит телефон, часы показывают 7:00" loading="lazy">
+       <figcaption>Игра — линия. Звонок — точка на этой линии.</figcaption></figure>
+     <div class="ex c">I <b>was playing</b> when my friend <b class="s-text">called</b>.</div>
+     <figure><img src="${IMG.line}" alt="Схема: длинная волна was playing и вспышка called" loading="lazy"></figure>
+     <div class="note"><b>Проверь себя:</b> игра шла до звонка? — да. Мы знаем, закончил ли он играть после? — нет, и для этого предложения это не важно.</div>
+   </section>
+
+   <details class="sheet" open><summary>01 · Форма Past Simple</summary><div class="inside">
+     <div class="ex s">+ I <b>played</b>. / She <b>went</b> home.</div>
+     <div class="ex s">− I <b>didn’t play</b>. <span class="ru">После didn’t — начальная форма, не «didn’t played».</span></div>
+     <div class="ex s">? <b>Did</b> you <b>play</b>? <span class="ru">После did — начальная форма.</span></div>
+     <p class="muted">Частые неправильные глаголы:</p>
+     <table><thead><tr><th>Начальная</th><th>Прошедшая</th><th>Перевод</th></tr></thead><tbody>
+       <tr><td>go</td><td>went</td><td>идти</td></tr>
+       <tr><td>see</td><td>saw</td><td>видеть</td></tr>
+       <tr><td>take</td><td>took</td><td>взять</td></tr>
+       <tr><td>come</td><td>came</td><td>прийти</td></tr>
+       <tr><td>have</td><td>had</td><td>иметь, есть</td></tr>
+     </tbody></table>
+     <div class="note">Глагол <b>be</b>: I / he / she / it → <b>was</b>; you / we / they → <b>were</b>. Вопрос: <b>Were you at home?</b> — не «Did you be».</div>
+   </div></details>
+
+   <details class="sheet"><summary>02 · Форма Past Continuous</summary><div class="inside">
+     <div class="ex c"><b>was / were + V-ing</b></div>
+     <div class="ex c">I / he / she / it + <b>was</b> playing</div>
+     <div class="ex c">you / we / they + <b>were</b> playing</div>
+     <div class="ex c">− She <b>wasn’t</b> playing. / They <b>weren’t</b> playing.</div>
+     <div class="ex c">? <b>Was</b> she playing? / <b>Were</b> they playing?</div>
+     <div class="note c">Правописание -ing: play → playing, make → making, run → running.</div>
+   </div></details>
+
+   <details class="sheet"><summary>03 · Когда какое?</summary><div class="inside">
+     <figure><img src="${IMG.para}" alt="Подросток готовит, брат накрывает на стол" loading="lazy">
+       <figcaption>Два процесса одновременно.</figcaption></figure>
+     <div class="ex c">While I <b>was cooking</b>, my brother <b>was setting</b> the table.</div>
+
+     <figure><img src="${IMG.seq}" alt="Три кадра: проснулся, позавтракал, вышел" loading="lazy">
+       <figcaption>Три события по порядку.</figcaption></figure>
+     <div class="ex s">I <b>got up</b>, <b>had breakfast</b> and <b>left home</b>.</div>
+
+     <div class="note"><b>when / while</b> — подсказки, но не автоматический выбор. Смотри на смысл: <b>when</b> часто вводит точку, <b>while</b> — линию.</div>
+     <div class="note c">Глаголы состояния (<b>know, like, want</b>) в этих значениях <b>обычно</b> не используются в Continuous: I <b>knew</b> the answer.</div>
+     <div class="note">Если ты говоришь по-немецки, не переноси Perfekt: <b>yesterday</b> → Past Simple. Не «I have played yesterday», а <b>I played yesterday</b>.</div>
+   </div></details>
+
+   <div class="actions"><button class="btn" id="toPractice">К практике →</button></div>`;
+  $('#back').onclick=()=>fromTask?render():home();
+  $('#toPractice').onclick=()=>{ if(state.done) result(); else render(); };
+  toTop();
+}
+
+/* ---------- practice ---------- */
+function start(stageIndex){state.stage=stageIndex;state.index=0;state.done=false;wrongCount=0;hintShown=false;save();render()}
+
+function current(){return STAGES[state.stage].tasks[state.index]}
+
+function render(){
+  if(state.done){result();return}
+  const st=STAGES[state.stage], t=current();
+  if(!t._solved){wrongCount=0;hintShown=false}
+  const flat=STAGES.slice(0,state.stage).reduce((n,s)=>n+s.tasks.length,0)+state.index;
+  app.innerHTML=`
+   <div class="stage-head">
+     <div><span class="eyebrow">${st.label}</span>
+       <h2>${esc(st.title)}</h2>
+       <p class="small">Задание ${state.index+1} из ${st.tasks.length} · всего ${flat+1} / ${TOTAL}</p></div>
+     <button class="btn ghost small" id="menu">← Меню</button>
+   </div>
+   <div class="pbar"><i style="width:${flat/TOTAL*100}%"></i></div>
+
+   <section class="card">
+     ${t.sub?`<p class="small">Найди ошибку:</p><p class="qtext" lang="en">${esc(t.sub)}</p>`:''}
+     <p class="qtext" lang="en">${qWithBlank(t)}</p>
+     ${t.type==='input'?'<p class="qhint">Впиши пропущенную форму целиком.</p>':'<p class="qhint">Выбери один вариант.</p>'}
+     <div id="answer"></div>
+     <div id="fb" aria-live="polite"></div>
+     <div class="help">
+       <details id="hintBox"><summary>Подсказка</summary><p>${esc(t.hint)}</p></details>
+       <details><summary>Перевод</summary><p>${esc(t.tr)}</p></details>
+     </div>
+     <div class="row">
+       <button class="btn ghost small" id="toTheory">📖 Теория</button>
+       <button class="btn right" id="next" hidden>${state.index===st.tasks.length-1?'Завершить миссию':'Дальше'} →</button>
+     </div>
+   </section>`;
+
+  $('#menu').onclick=home;
+  $('#toTheory').onclick=()=>theory(true);
+  $('#hintBox').addEventListener('toggle',e=>{if(e.target.open)hintShown=true});
+  $('#next').onclick=next;
+
+  renderAnswers(t);
+  if(t._solved) showSolved(t);
+  toTop();
+}
+
+let hintShown=false, wrongCount=0;
+
+function renderAnswers(t){
+  const box=$('#answer');
+  if(t.type==='choice'){
+    box.innerHTML=`<div class="opts${t.sub?' one':''}">${t.options.map(o=>
+      `<button class="opt" data-a="${esc(o)}" lang="en">${esc(o)}</button>`).join('')}</div>`;
+    box.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>check(b.dataset.a,b));
+  }else{
+    box.innerHTML=`<form id="form"><label class="sr" for="input">Ответ</label>
+      <input id="input" class="field" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Ответ на английском">
+      <div class="row"><button class="btn" id="checkBtn" type="submit">Проверить</button></div></form>`;
+    $('#form').onsubmit=e=>{e.preventDefault();check($('#input').value,null)};
+  }
+}
+
+function check(value,btn){
+  const t=current();
+  if(t._solved)return;
+  const ok = t.type==='choice' ? value===t.answer : t.answers.map(norm).includes(norm(value));
+  if(ok){
+    if(wrongCount===0 && !hintShown) state.first[state.stage]++;
+    t._solved=true; save();
+    showSolved(t);
+    return;
+  }
+  wrongCount++;
+  const key=taskKey(state.stage,state.index);
+  if(!state.mistakes.includes(key)) state.mistakes.push(key);
+  save();
+  if(btn) btn.classList.add('wrong');
+  if(wrongCount>=2){ // second miss → reveal, so learner is never stuck
+    t._solved=true;
+    showSolved(t,true);
+    return;
+  }
+  $('#fb').innerHTML='<div class="fb bad"><b>Пока не так.</b>Посмотри на подсказку — там есть ключ. После второй попытки покажу ответ.</div>';
+}
+
+function showSolved(t,revealed){
+  const box=$('#answer');
+  if(t.type==='choice'){
+    box.querySelectorAll('[data-a]').forEach(b=>{
+      b.disabled=true;
+      if(b.dataset.a===t.answer)b.classList.add('right');
+    });
+  }else{
+    const inp=$('#input'); if(inp){inp.value=t.display;inp.disabled=true;}
+    const c=$('#checkBtn'); if(c)c.disabled=true;
+  }
+  $('#fb').innerHTML=`<div class="fb"><b>${revealed?'Смотри: правильный вариант выше.':'Верно ✓'}</b>${esc(t.why)}<span class="ru">${esc(t.tr)}</span></div>`;
+  $('#next').hidden=false;
+}
+
+function next(){
+  const t=current();
+  if(!t._solved)return;
+  t._solved=false; wrongCount=0; hintShown=false;
+  if(state.index < STAGES[state.stage].tasks.length-1){
+    state.index++; save(); render(); return;
+  }
+  // stage finished
+  const finished=state.stage;
+  const summary=`<section class="card finish">
+      <span class="eyebrow">Миссия пройдена</span>
+      <h2>${esc(STAGES[finished].title)} ✓</h2>
+      <p class="muted">С первой попытки и без подсказок: <b>${state.first[finished]} / ${STAGES[finished].tasks.length}</b>.</p>
+      <div class="row"><button class="btn ghost" id="toMenu">Меню</button>
+      <button class="btn right" id="nextStage">${finished<STAGES.length-1?'Следующая миссия':'К результату'} →</button></div>
+    </section>`;
+  if(finished<STAGES.length-1){
+    state.doneStages=state.doneStages||{}; state.doneStages[finished]=true;
+    state.stage=finished+1; state.index=0; save();
+    app.innerHTML=summary;
+    $('#toMenu').onclick=home;
+    $('#nextStage').onclick=render;
+  }else{
+    state.doneStages=state.doneStages||{}; state.doneStages[finished]=true;
+    state.done=true; save(); result();
+  }
+  toTop();
+}
+
+function result(){
+  const score=state.first.reduce((a,b)=>a+b,0);
+  const missed=state.mistakes.length;
+  app.innerHTML=`<section class="card finish">
+    <span class="eyebrow">Готово</span>
+    <h2>Миссии пройдены</h2>
+    <p class="score">${score} / ${TOTAL}</p>
+    <p class="muted">Это ответы с первой попытки и без подсказки. Ошибки — нормальная часть практики.</p>
+
+    <div class="note" style="margin-top:18px"><b>Твой ход.</b> Вспомни вчерашний вечер и скажи вслух одно предложение:
+      <span lang="en">I was … when …</span> — например, <span lang="en">I was doing my homework when my dad called.</span></div>
+
+    ${missed?`<details class="sheet" style="margin-top:14px"><summary>Что повторить · ${missed}</summary>
+      <div class="wlist">${state.mistakes.map(k=>{
+        const [si,ti]=k.split('-').map(Number); const t=STAGES[si]?.tasks[ti]; if(!t)return '';
+        return `<div class="witem"><b lang="en">${esc((t.answers?t.display:t.answer)||'')}</b><br>${esc(t.why)}</div>`;
+      }).join('')}</div></details>`:'<p class="small" style="margin-top:12px">Ни одной ошибки — можно сразу к своему примеру.</p>'}
+
+    <div class="row"><button class="btn ghost" id="toMenu">Меню</button>
+      <button class="btn right" id="again">Пройти снова</button></div>
+  </section>`;
+  $('#toMenu').onclick=home;
+  $('#again').onclick=reset;
+  toTop();
+}
+
+function reset(){
+  if(!confirm('Начать заново? Сохранённый прогресс будет удалён.'))return;
+  state=blankState(); save(); home();
+}
+
+/* boot */
+$('#homeBtn').onclick=()=>{state.done?result():home()};
+$('#guideBtn').onclick=()=>theory(!state.done && app.querySelector('.card'));
+home();
+</script>
+</body>
+</html>
