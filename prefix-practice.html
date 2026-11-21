@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCE (B2) Practice: Prefixes</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --error: #dc2626;
+            --error-bg: #fee2e2;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--card);
+            padding: 24px 30px;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+            border-left: 6px solid var(--primary);
+        }
+
+        h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.6rem;
+            color: #0f172a;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .cheat-sheet {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            font-size: 0.88rem;
+        }
+
+        .badge {
+            background: #eff6ff;
+            color: #1e40af;
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+
+        .section {
+            background: var(--card);
+            padding: 26px 30px;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-desc {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .question-item {
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .question-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        select, input[type="text"] {
+            padding: 7px 12px;
+            font-size: 0.95rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        input[type="text"] {
+            width: 175px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .root-word {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            color: #334155;
+            margin-left: 8px;
+        }
+
+        .feedback {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        .correct {
+            border-color: var(--success) !important;
+            background-color: var(--success-bg) !important;
+        }
+
+        .incorrect {
+            border-color: var(--error) !important;
+            background-color: var(--error-bg) !important;
+        }
+
+        .text-success { color: var(--success); }
+        .text-error { color: var(--error); }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        button.secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        button.secondary:hover {
+            background: #cbd5e1;
+        }
+
+        #score-box {
+            font-weight: 700;
+            font-size: 1.05rem;
+            padding: 10px 16px;
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>FCE (B2) Homework: Prefixes</h1>
+        <p class="subtitle">Тренажёр по списку слов с приставками <b>dis-, mis-, pre-, re-, over-, under-</b></p>
+        <div class="cheat-sheet">
+            <div class="badge"><b>dis-</b> — отрицание / отмена действия</div>
+            <div class="badge"><b>mis-</b> — неправильно / ошибочно</div>
+            <div class="badge"><b>pre-</b> — заранее / до чего-то</div>
+            <div class="badge"><b>re-</b> — заново / снова</div>
+            <div class="badge"><b>over-</b> — слишком много / сверх</div>
+            <div class="badge"><b>under-</b> — недостаточно / мало</div>
+        </div>
+    </header>
+
+    <!-- TASK 1 -->
+    <div class="section">
+        <h2>Task 1. Значение в контексте (Choose the right prefix)</h2>
+        <p class="task-desc">Обратите внимание на разницу между однокоренными словами с разными приставками (например, <i>misuse / overuse / reuse / underuse</i>).</p>
+
+        <div class="question-item" data-answer="misuse">
+            1. Critics say that some politicians 
+            <select>
+                <option value="">-- выберите --</option>
+                <option value="misuse">misuse</option>
+                <option value="reuse">reuse</option>
+                <option value="underuse">underuse</option>
+            </select>
+            their power for personal gain. <span class="feedback"></span>
+        </div>
+
+        <div class="question-item" data-answer="reuse">
+            2. To reduce plastic waste, we should wash and 
+            <select>
+                <option value="">-- выберите --</option>
+                <option value="overuse">overuse</option>
+                <option value="reuse">reuse</option>
+                <option value="misuse">misuse</option>
+            </select>
+            glass jars whenever possible. <span class="feedback"></span>
+        </div>
+
+        <div class="question-item" data-answer="overuse">
+            3. Doctors warn that if we 
+            <select>
+                <option value="">-- выберите --</option>
+                <option value="underuse">underuse</option>
+                <option value="reuse">reuse</option>
+                <option value="overuse">overuse</option>
+            </select>
+            antibiotics, they may stop working in the future. <span class="feedback"></span>
+        </div>
+
+        <div class="question-item" data-answer="underpaid">
+            4. Many nurses feel they are overworked and 
+            <select>
+                <option value="">-- выберите --</option>
+                <option value="overpaid">overpaid</option>
+                <option value="prepaid">prepaid</option>
+                <option value="underpaid">underpaid</option>
+            </select>
+            for the stressful job they do. <span class="feedback"></span>
+        </div>
+
+        <div class="question-item" data-answer="repay">
+            5. It took him five years to 
+            <select>
+                <option value="">-- выберите --</option>
+                <option value="prepay">prepay</option>
+                <option value="repay">repay</option>
+                <option value="overpay">overpay</option>
+            </select>
+            the money he had borrowed from the bank. <span class="feedback"></span>
+        </div>
+
+        <div class="question-item" data-answer="prepaid">
+            6. You don't need to bring cash to the concert; all tickets are 
+            <select>
+                <option value="">-- выберите --</option>
+                <option value="prepaid">prepaid</option>
+                <option value="underpaid">underpaid</option>
+                <option value="repaid">repaid</option>
+            </select>
+            online. <span class="feedback"></span>
+        </div>
+    </div>
+
+    <!-- TASK 2 -->
+    <div class="section">
+        <h2>Task 2. Подберите слово по смыслу (Vocabulary in Context)</h2>
+        <p class="task-desc">Впишите подходящее слово из списка (в нужной грамматической форме). Слова для справок: <i>misplace, reheat, undercooked, overflow, prejudge, disconnect, dismiss, disorder</i>.</p>
+
+        <div class="question-item" data-answer="undercooked">
+            1. I sent the chicken back to the kitchen because it was still pink and <input type="text" placeholder="слово..."> inside. <span class="feedback"></span>
+        </div>
+
+        <div class="question-item" data-answer="misplaced">
+            2. Have you seen my keys? I seem to have <input type="text" placeholder="Past Simple / V3..."> them again! <span class="feedback"></span>
+        </div>
+
+        <div class="question-item" data-answer="reheat">
+            3. There is some leftover pasta in the fridge — just <input type="text" placeholder="инфинитив..."> it in the microwave. <span class="feedback"></span>
+        </div>
+
+        <div class="question-item" data-answer="prejudge">
+4. Don't  people before you actually get to know them. 
+5. Someone forgot to turn off the tap, so the sink  and flooded the bathroom. 
+6. Always  the iron from the electricity supply before cleaning it. 
+7. The manager  my idea without even listening to the details. 
+
+Task 3. Формат FCE: Use of English Part 3 (Word Formation)
+Измените слово в скобках так, чтобы оно грамматически и лексически подходило в пропуск (обращайте внимание на часть речи: n, v, adj, adv).
+1. The event was a total disaster due to complete  among the staff. ORGANISE 
+2. I  thought the meeting was on Thursday, so I missed it. MISTAKE 
+3. Traveling to other countries helps to challenge our  about different cultures. CONCEPTION 
+4. We  how long the journey would take and arrived two hours late. ESTIMATE 
+5. It would be  to pretend that I enjoyed the film when I actually hated it. HONEST 
+6. The city council plans to  the old industrial area into a modern park. DEVELOP 
+7. My comment was completely ; I didn't mean to offend anyone. INTERPRET 
+8. Despite being very bright, he is  at school because he rarely does his homework. ACHIEVE 
+Проверить ответы
+Сбросить
+
+
+
+function checkAnswers() {
+const items = document.querySelectorAll('.question-item');
+let correctCount = 0;
+items.forEach(item => {
+const expectedRaw = item.getAttribute('data-answer').toLowerCase();
+const expectedOptions = expectedRaw.split('|');
+const input = item.querySelector('select, input');
+const feedback = item.querySelector('.feedback');
+const userVal = input.value.trim().toLowerCase();
+input.classList.remove('correct', 'incorrect');
+if (expectedOptions.includes(userVal) && userVal !== '') {
+input.classList.add('correct');
+feedback.innerHTML = '✓ Верно!';
+correctCount++;
+} else {
+input.classList.add('incorrect');
+feedback.innerHTML = <span class="text-error">✗ Правильно: <b>${expectedOptions[0]}</b></span>;
+}
+});
+const scoreBox = document.getElementById('score-box');
+scoreBox.style.display = 'inline-block';
+scoreBox.textContent = Результат: ${correctCount} из ${items.length};
+if (correctCount === items.length) {
+scoreBox.style.background = '#dcfce7';
+scoreBox.style.color = '#16a34a';
+} else {
+scoreBox.style.background = '#eff6ff';
+scoreBox.style.color = '#1e40af';
+}
+}
+function resetQuiz() {
+const items = document.querySelectorAll('.question-item');
+items.forEach(item => {
+const input = item.querySelector('select, input');
+const feedback = item.querySelector('.feedback');
+input.value = '';
+input.classList.remove('correct', 'incorrect');
+feedback.innerHTML = '';
+});
+document.getElementById('score-box').style.display = 'none';
+}
